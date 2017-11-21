@@ -1,0 +1,33 @@
+# The order of packages is significant, because pip processes them in the order
+# of appearance. Changing the order has an impact on the overall integration
+# process, which may cause wedges in the gate later.
+#
+# You should install pbr first if you use the "pip install -r requirements.txt"
+# command to install
+
+setuptools>=17.1 # MIT
+pbr==1.8.1 # Apache-2.0
+six==1.9.0 # MIT
+prettytable==0.7.2 # BSD
+pytz==2017.2 # MIT
+Babel==2.3.4 # BSD
+pyparsing==2.2.0 # MIT
+oslo.i18n==3.4.0 # Apache-2.0
+funcsigs==1.0.2 # Apache-2.0
+iso8601==0.1.11 # MIT
+monotonic==1.1 # Apache-2.0
+wrapt==1.10.6 # BSD
+debtcollector==1.10.0 # Apache-2.0
+netaddr==0.7.18 # BSD
+netifaces==0.10.4 # MIT
+oslo.utils==3.18.0 # Apache-2.0
+jsonpointer==1.10 # BSD
+jsonpatch==1.14 # BSD
+functools32==3.2.3-2 # PSF
+vcversioner==2.16.0.0 # ISC
+jsonschema==2.5.1 # MIT
+warlock==1.2.0 # Apache-2.0
+requests==2.13.0 # Apache-2.0
+positional==1.1.1 # Apache-2.0
+stevedore==1.19.1 # Apache-2.0
+keystoneauth1==2.18.0 # Apache-2.0

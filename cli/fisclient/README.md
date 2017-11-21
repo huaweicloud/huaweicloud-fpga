@@ -1,5 +1,5 @@
 # fisclient #
-fisclient is a command-line client for FIS API that brings the command set for FPGA image management together in a single shell. It is developed and tested under CentOS 7.3 and Python 2.7 and is not guaranteed for other environments.
+fisclient is a command-line client for FIS API that brings the command set for FPGA image management together in a single shell. It was developed and tested under CentOS 7.3 and Python 2.7 and is not guaranteed for other environments.
 
 - [Installation](#installation)
   - [Bound the Elastic IP](#bound-the-elastic-ip)
@@ -25,7 +25,7 @@ fisclient is a command-line client for FIS API that brings the command set for F
 You should first make sure that you have logged in to the Elastic Cloud Server as **root** before installation.
 
 ## Bound the Elastic IP ##
-During the installation, you need to get **pip** and **fisclient** via **Elastic IP**. See [Bound the Elastic IP]() about how to bind Elastic IP to the Elastic Cloud  Server.
+During the installation, you need to get **pip** and **fisclient** via **Elastic IP**. See [Bound the Elastic IP]() for how to bind Elastic IP to the Elastic Cloud  Server.
 
 ## Install the pip ##
 Run the following command to install the pip.
@@ -34,7 +34,7 @@ Run the following command to install the pip.
 </pre>
 
 ## Install the fisclient ##
-- Download the fisclient source package from the [huaweicloud-fpga repository](https://github.com/Huawei/huaweicloud-fpga), and switch to the **fisclient** directory.
+- Download the **fisclient** source package from the [huaweicloud-fpga repository](https://github.com/Huawei/huaweicloud-fpga), and switch to the **fisclient** directory.
 <pre>
 [root@ ~]# git clone https://github.com/Huawei/huaweicloud-fpga.git
 [root@ ~]# cd huaweicloud-fpga/cli/fisclient
@@ -48,13 +48,18 @@ Run the following command to install the pip.
 <pre>
 [root@ fisclient]# python setup.py install
 </pre>
-- Create /etc/cfg.file and enter the following.
+- Create the config file **/etc/cfg.file**.
+<pre>
+[root@ fisclient]# vim /etc/cfg.file
+</pre>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Then enter the following:
 <pre>
 OS_AUTH_URL = 
 OS_FIS_URL = 
 OS_USER_ID = 
 OS_TENANT_ID = 
 </pre>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See [configuring /etc/cfg.file]() for how to configure this file.
 
 # Introduction #
 After [configuring the DNS]() and [configuring /etc/cfg.file](), run the fisclient command on the Linux shell to go to the fisclient login screen and enter the **huaweicloud** account password when prompted. On the fisclient CLI, you can run corresponding commands to query, delete, associate, disassociate FPGA images and query associations.

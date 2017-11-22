@@ -49,7 +49,7 @@ Run the following command to install the pip.
 [root@ ~]# cd huaweicloud-fpga/cli/fisclient
 </pre>
 
-> Ensure that you are in the **huaweicloud-fpga/cli/fisclient** directory during the installation.
+> Ensure that you are in the **huaweicloud-fpga/cli/fisclient** directory during the installation of **fisclient**.
 
 - Install the dependency packages.
 <pre>

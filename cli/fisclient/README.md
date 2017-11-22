@@ -68,7 +68,7 @@ Run the following command to install the pip.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See [configuring /etc/cfg.file]() for how to configure the **/etc/cfg.file** file.
 
 # Introduction #
-After [configuring the DNS]() and [configuring /etc/cfg.file](), run the fisclient command on the Linux shell to go to the fisclient login screen and enter the **huaweicloud** account password when prompted. On the fisclient CLI, you can run corresponding commands to query, delete, associate, disassociate FPGA images and query associations.
+After [configuring /etc/resolv.conf]() and [configuring /etc/cfg.file](), run the fisclient command on the Linux shell to go to the fisclient login screen and enter the **huaweicloud** account password when prompted. On the fisclient CLI, you can run corresponding commands to query, delete, associate, disassociate FPGA images and query associations.
 <pre>
 [root@ ~]# fisclient
 please input the password:

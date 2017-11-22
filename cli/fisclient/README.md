@@ -194,6 +194,8 @@ By associating a registered FPGA image, you can share the FPGA image with other 
 By querying associations, you can query the FPGA images provided by other users. By disassociating an FPGA image, you can stop sharing the FPGA image with other users. <br/>
 This section uses the FPGA image sharing scenario as an example to describe how to associate or disassociate an FPGA image, and query associations. For more details about these subcommands, see [Association Subcommand](#association-subcommand), [Disassociation Subcommand](#disassociation-subcommand) and [Association Query Subcommand](#association-query-subcommand).
 
+> For more details about marketing scenario, see [Publishing the FPGA Image In the Cloud Market]().
+
 ### Sharing the FPGA Image ###
 If user A wants to share a self-owned registered FPGA image with user B, user A needs to perform the following steps. The following assumes that user A wants to share the **general-purpose architecture** FPGA image whose ID is **4010b39c5d4\*\*\*\*\*\*\*\*\*\*f2cf8070c7e** with user B.
 

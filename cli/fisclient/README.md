@@ -43,11 +43,14 @@ Run the following command to install the pip.
 </pre>
 
 ## Install the fisclient ##
-- Download the **fisclient** source package from the [huaweicloud-fpga repository](https://github.com/Huawei/huaweicloud-fpga), and switch to the **fisclient** directory.
+- Download the **fisclient** source package from the [huaweicloud-fpga repository](https://github.com/Huawei/huaweicloud-fpga), and switch to the **huaweicloud-fpga/cli/fisclient** directory.
 <pre>
 [root@ ~]# git clone https://github.com/Huawei/huaweicloud-fpga.git
 [root@ ~]# cd huaweicloud-fpga/cli/fisclient
 </pre>
+
+> Ensure that you are in the **huaweicloud-fpga/cli/fisclient** directory during the installation.
+
 - Install the dependency packages.
 <pre>
 [root@ fisclient]# pip install pbr==1.8.1

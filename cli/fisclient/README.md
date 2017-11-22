@@ -1,6 +1,7 @@
 # fisclient #
-fisclient is a command-line client for FIS API that brings the command set for FPGA image management together in a single shell. It was developed and tested under CentOS 7.3 and Python 2.7 and is not guaranteed for other environments.
+**fisclient** is a command-line client for FIS API that brings the command set for FPGA image management together in a single shell.
 
+- [Operating Environment Requirements](#operating-environment-requirements)
 - [Installation](#installation)
   - [Bound the Elastic IP](#bound-the-elastic-ip)
   - [Install the pip](#install-the-pip)
@@ -20,6 +21,14 @@ fisclient is a command-line client for FIS API that brings the command set for F
   - [Association Subcommand](#association-subcommand)
   - [Disassociation Subcommand](#disassociation-subcommand)
   - [Association Query Subcommand](#association-query-subcommand)
+
+# Operating Environment Requirements #
+**fisclient** is developed and tested in the following environments:
+
+- CentOS 7.3
+- Python 2.7
+
+For other environments, availability is not guaranteed.
 
 # Installation #
 You should first make sure that you have logged in to the Elastic Cloud Server as **root** before installation.
@@ -292,7 +301,7 @@ The deletion subcommand is used to delete an FPGA image from the FPGA image mana
 | **--fpga-image-id** | Specifies the ID of the FPGA image to be deleted. This parameter is mandatory. | The value of **fpga-image-id** is a string of 32 characters, including lowercase letters a to f and digits 0 to 9. | You can check the ID of an FPGA image in the output of a query subcommand. |
 | **--force** | Forcibly deletes an FPGA without user confirmation. This parameter is optional. | - | By default, fisclient provides the deletion confirmation function. You need to enter yes or no to decide whether to perform the deletion: **yes** executes the deletion operation, while **no** cancels the deletion operation. |
 
-**--force** only cancels the deletion confirmation function, but does not ensure that the FPGA image can be deleted successfully.
+> **force** only cancels the deletion confirmation function, but does not ensure that the FPGA image can be deleted successfully.
 
 ### Usage Guidelines ###
 If the command output is **Success: 204 No Content**, the deletion subcommand is executed successfully.
@@ -405,7 +414,7 @@ The association subcommand is used to associate an FPGA image with an ECS image.
 | **--fpga-image-id** | Specifies the ID of the FPGA image to be associated. This parameter is mandatory. | The value of **fpga-image-id** is a string of 32 characters, including lowercase letters a to f and digits 0 to 9. | You can check the ID of an FPGA image in the output of a query subcommand. |
 | **--image-id** | Specifies the ID of the ECS image to be associated. This parameter is mandatory. | **image-id** complies with IMS image ID rules. | See [Obtaining The Image ID]() about how to get the **image-id** parameter. |
 
-The ECS image to be associated must be a **private** one before the FPGA image management module performs an association. After being published to the image market or shared, a private image will become a **market** or **shared** one and cannot be associated. You need to remove the published image from the image market image or cancel the sharing before association.
+> The ECS image to be associated must be a **private** one before the FPGA image management module performs an association. After being published to the image market or shared, a private image will become a **market** or **shared** one and cannot be associated. You need to remove the published image from the image market image or cancel the sharing before association.
 
 ### Usage Guidelines ###
 If the command output is **Success: 204 No Content**, the association subcommand is executed successfully.
@@ -455,7 +464,7 @@ The disassociation subcommand is used to disassociate an FPGA image from an ECS 
 | **--fpga-image-id** | Specifies the ID of the FPGA image to be disassociated. This parameter is mandatory. | The value of **fpga-image-id** is a string of 32 characters, including lowercase letters a to f and digits 0 to 9. | You can check the ID of an FPGA image in the output of an association query subcommand. |
 | **--image-id** | Specifies the ID of the ECS image to be disassociated. This parameter is mandatory. | **image-id** complies with IMS image ID rules. | You can check the ID of an image in the output of an association query subcommand. |
 
-The ECS image to be disassociated must be a **private** one before the FPGA image management module performs a disassociation. After being published to the image market or shared, a private image will become a **market** or **shared** one and cannot be disassociated. You need to remove the published image from the image market image or cancel the sharing before disassociation.
+> The ECS image to be disassociated must be a **private** one before the FPGA image management module performs a disassociation. After being published to the image market or shared, a private image will become a **market** or **shared** one and cannot be disassociated. You need to remove the published image from the image market image or cancel the sharing before disassociation.
 
 ### Usage Guidelines ###
 If the command output is Success: **204 No Content**, the disassociation subcommand is executed successfully.

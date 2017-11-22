@@ -60,18 +60,12 @@ Run the following command to install the pip.
 <pre>
 [root@ fisclient]# python setup.py install
 </pre>
-- Create the config file **/etc/cfg.file**.
+- Copy the config file **cfg.file** to the **/etc** directory.
 <pre>
-[root@ fisclient]# vim /etc/cfg.file
+[root@ fisclient]# cp cfg.file /etc
 </pre>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Then enter the following:
-<pre>
-OS_AUTH_URL = 
-OS_FIS_URL = 
-OS_USER_ID = 
-OS_TENANT_ID = 
-</pre>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See [configuring /etc/cfg.file]() for how to configure this file.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See [configuring /etc/cfg.file]() for how to configure the **/etc/cfg.file** file.
 
 # Introduction #
 After [configuring the DNS]() and [configuring /etc/cfg.file](), run the fisclient command on the Linux shell to go to the fisclient login screen and enter the **huaweicloud** account password when prompted. On the fisclient CLI, you can run corresponding commands to query, delete, associate, disassociate FPGA images and query associations.

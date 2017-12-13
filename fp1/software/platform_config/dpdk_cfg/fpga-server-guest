@@ -1,0 +1,54 @@
+#!/bin/bash
+#
+#-------------------------------------------------------------------------------
+#      Copyright 2017 Huawei Technologies Co., Ltd. All Rights Reserved.
+# 
+#      This program is free software; you can redistribute it and/or modify
+#      it under the terms of the Huawei Software License (the "License").
+#      A copy of the License is located in the "LICENSE" file accompanying 
+#      this file.
+# 
+#      This program is distributed in the hope that it will be useful,
+#      but WITHOUT ANY WARRANTY; without even the implied warranty of
+#      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#      Huawei Software License for more details. 
+#-------------------------------------------------------------------------------
+
+LOGFILE=/var/log/fpga/AtlasBindVFPFLog
+mkdir -p ${LOGFILE%/*}
+rm -rf $LOGFILE
+
+VF_VENDOR_DEVICE_ID=d503
+
+echo "-----------------------------------------------------"| tee -a $LOGFILE
+echo "modprobe igb_uio" | tee -a $LOGFILE
+`modprobe igb_uio`
+MODPROBE_ret=$?
+echo "modprobe igb_uio ret=$MODPROBE_ret"
+if [ "$MODPROBE_ret" != "0" ]; then
+	echo "modprobe igb_uio failed, exit" | tee -a $LOGFILE
+	exit 1
+else
+	echo "modprobe igb_uio success" | tee -a $LOGFILE
+fi
+
+# Traverse fpga devices
+dpdk_nic_bind.py --status | grep $VF_VENDOR_DEVICE_ID |cut -b 1-12 | while read line
+do
+	VF_DBDF=${line}
+	echo "VF_DBDF = $VF_DBDF"| tee -a $LOGFILE
+	
+	# Check if VF device has been binded with igb_uio, if yes, unbind it. 
+   Bind_ret=`dpdk_nic_bind.py --status | grep $VF_DBDF | awk -F ' ' '{printf $4}'`
+   echo "VF_DBDF=$VF_DBDF"| tee -a $LOGFILE
+   
+   
+   if [ "$Bind_ret" = "drv=igb_uio" ]; then
+	echo "has bind, to unbind it"| tee -a $LOGFILE
+	dpdk_nic_bind.py --unbind $VF_DBDF
+   fi
+   
+   # Bind VF device with igb_uio driver
+   echo "dpdk_nic_bind.py --bind=igb_uio $VF_DBDF" | tee -a $LOGFILE
+   dpdk_nic_bind.py --bind=igb_uio $VF_DBDF
+done

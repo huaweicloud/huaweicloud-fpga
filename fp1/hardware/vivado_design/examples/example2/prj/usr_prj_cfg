@@ -1,0 +1,93 @@
+#!/bin/sh
+#
+#-------------------------------------------------------------------------------
+#      Copyright 2017 Huawei Technologies Co., Ltd. All Rights Reserved.
+# 
+#      This program is free software; you can redistribute it and/or modify
+#      it under the terms of the Huawei Software License (the "License").
+#      A copy of the License is located in the "LICENSE" file accompanying 
+#      this file.
+# 
+#      This program is distributed in the hope that it will be useful,
+#      but WITHOUT ANY WARRANTY; without even the implied warranty of
+#      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+#      Huawei Software License for more details. 
+#-------------------------------------------------------------------------------
+
+#######################################################################################################################
+## The user-defined project name.
+#######################################################################################################################
+
+USR_PRJ_NAME=ul_pr_top
+
+
+#######################################################################################################################
+## The USR_TOP is the top module name.
+#######################################################################################################################
+
+USR_TOP=ul_pr_top
+
+#######################################################################################################################
+## The user-defined synthesis strategy.
+##   Synthesis Supported values include:         
+##                                     DEFAULT                                              
+##                                     AreaOptimized_high                                   
+##                                     AreaOptimized_medium                                 
+##                                     AreaMultThresholdDSP                                 
+##                                     AlternateRoutability                                 
+##                                     PerfOptimized_high                                   
+##                                     PerfThresholdCarry                                   
+##                                     RuntimeOptimized   
+## for more details about strategy  Arguments,please use "sh fpga_design_run.sh -s_strategy_help" in ../../../lib/scripts/                                                                                       
+#######################################################################################################################
+
+USR_SYN_STRATEGY=DEFAULT
+
+#######################################################################################################################
+## The user-defined implementation strategy.
+##   Implementation Supported values include:  
+##                                     DEFAULT                                            
+##                                     Explore                                            
+##                                     ExplorePostRoutePhysOpt                            
+##                                     WLBlockPlacement                                   
+##                                     WLBlockPlacementFanoutOpt                          
+##                                     NetDelay_high                                      
+##                                     NetDelay_low                                       
+##                                     Retiming                                           
+##                                     ExtraTimingOpt                                     
+##                                     RefinePlacement                                    
+##                                     SpreadSLLs                                         
+##                                     BalanceSLLs                                        
+##                                     SpreadLogic_high                                   
+##                                     SpreadLogic_medium                                 
+##                                     SpreadLogic_low                                    
+##                                     SpreadLogic_Explore                                
+##                                     SSI_SpreadLogic_high                               
+##                                     SSI_SpreadLogic_low                                
+##                                     SSI_SpreadLogic_Explore                            
+##                                     Area_Explore                                       
+##                                     Area_ExploreSequential                             
+##                                     Area_ExploreWithRemap                              
+##                                     Power_DefaultOpt                                   
+##                                     Power_ExploreArea                                  
+##                                     Flow_RunPhysOpt                                    
+##                                     Flow_RunPostRoutePhysOpt                           
+##                                     Flow_RuntimeOptimized                              
+##                                     Flow_Quick                                         
+## for more details about strategy  Arguments,please use "sh fpga_design_run.sh -i_strategy_help" in ../../../lib/scripts/                                       
+#######################################################################################################################
+
+USR_IMPL_STRATEGY=Explore
+
+#######################################################################################################################
+## The user-defined constraints.
+#######################################################################################################################
+
+USR_CONSTRAINTS="
+#set_multicycle_path -setup -from [get_pins cpu_data_out*/D] 3
+#set_multicycle_path -hold  -from [get_pins cpu_data_out*/D] 2 
+"
+ 
+ 
+
+

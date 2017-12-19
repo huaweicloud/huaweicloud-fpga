@@ -39,15 +39,18 @@ See [Bound the Elastic IP]() for how to bind Elastic IP to the Elastic Cloud Ser
 </pre>
 
 ### Step 3. Install the fisclient ###
-- Download the **fisclient** source package (in [huaweicloud-fpga](https://github.com/Huawei/huaweicloud-fpga) source package), and switch to the **huaweicloud-fpga/cli/fisclient** directory.
+- Download the **fisclient** source package (in [FPGA Development Suite](https://github.com/Huawei/huaweicloud-fpga)), 
 <pre>
 [root@ ~]# git clone https://github.com/Huawei/huaweicloud-fpga.git
-[root@ ~]# cd huaweicloud-fpga/cli/fisclient
 </pre>
 
-> Ensure that you use **git** to download the source package.<br/>
-> Ensure that there is not any file or directory named **huaweicloud-fpga** in the current directory before download the **fisclient** source package.<br/>
-> Ensure that you are in the **huaweicloud-fpga/cli/fisclient** directory during the installation of **fisclient**.
+> If you have downloaded the **FPGA Development Suite**, skip this step. If you need to download the **FPGA Development Suite**, please use **git** to download, and ensure that there is not any file or directory named **huaweicloud-fpga** in the current directory.<br/>
+
+- Switch to the **huaweicloud-fpga/cli/fisclient** directory of the **FPGA Development Suite**.
+<pre>
+[root@ ~]# cd huaweicloud-fpga/cli/fisclient
+</pre>
+> Ensure that you are in the **huaweicloud-fpga/cli/fisclient** directory during the subsequent installation of **fisclient**.
 
 - Install the dependency packages.
 <pre>
@@ -213,9 +216,9 @@ If **Success: 204 No Content** is displayed, the association is successful.
 If user B wants to use a registered FPGA image shared by user A, user B needs to perform the following steps.
 
 - Step 1. Accept the ECS image shared by user A. For more details, see [Accepting the shared image]().
-- Step 2. Obtain the architecture of the FPGA image from user A. In this example, it is **general-purpose architecture**.
-- Step 3. Use the shared ECS image to create an FPGA Elastic Cloud Server with the same architecture as the FPGA image. For more details, see [Using a shared image to create an FPGA Elastic Cloud Server](). In this example, user B needs to create an FPGA Elastic Cloud Server of **general-purpose architecture**.
-> Ensure that the architecture of the created FPGA Elastic Cloud Server is the same with that of the shared FPGA image.
+- Step 2. Obtain the type of the FPGA image from user A. In this example, it is **general-purpose architecture**.
+- Step 3. Use the shared ECS image to create an FPGA Elastic Cloud Server with the same type as the FPGA image. For more details, see [Using a shared image to create an FPGA Elastic Cloud Server](). In this example, user B needs to create an FPGA Elastic Cloud Server of **general-purpose architecture**.
+> Ensure that the type of the created FPGA Elastic Cloud Server is the same with that of the shared FPGA image.
 
 - Step 4. Obtain the image ID of the shared ECS image. For more details, see [Obtaining The Image ID](). In this example, it is **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**.
 - Step 5. Query the FPGA image shared by user A using the image ID of the shared ECS image.

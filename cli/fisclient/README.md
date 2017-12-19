@@ -1,5 +1,5 @@
 # fisclient #
-[Switch to the Chinese version](https://github.com/Huawei/huaweicloud-fpga/blob/master/cli/fisclient/README_CN.md)<br/>
+[切换到中文版](https://github.com/Huawei/huaweicloud-fpga/blob/master/cli/fisclient/README_CN.md)<br/><br/>
 **fisclient** is a command-line client for FIS (FPGA Image Service) that brings the command set for FPGA image management together in a single shell.
 
 - [1 Operating Environment Requirements](#1-operating-environment-requirements)

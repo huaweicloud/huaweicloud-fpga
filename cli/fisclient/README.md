@@ -39,15 +39,18 @@
 </pre>
 
 ## 步骤3 安装fisclient ##
-- 下载 **fisclient** 源码包（位于[huaweicloud-fpga](https://github.com/Huawei/huaweicloud-fpga)源码包中），并切换到源码包的 **huaweicloud-fpga/cli/fisclient** 目录。
+- 下载 **fisclient** 源码包（位于[FPGA开发套件](https://github.com/Huawei/huaweicloud-fpga)中）
 <pre>
 [root@ ~]# git clone https://github.com/Huawei/huaweicloud-fpga.git
-[root@ ~]# cd huaweicloud-fpga/cli/fisclient
 </pre>
 
-> 请确保使用 **git** 下载源码包。<br/>
-> 请确保在下载 **fisclient** 源码包前，当前目录下没有以 **huaweicloud-fpga** 命名的文件或目录。<br/>
-> 在 **fisclient** 工具的整个安装过程中，用户需要一直位于 **huaweicloud-fpga/cli/fisclient** 目录下。
+> 如果用户已经下载了 **FPGA开发套件**，则不需要重复下载。如果用户需要下载 **FPGA开发套件**，请使用 **git** 进行下载，并确保当前目录下没有以 **huaweicloud-fpga** 命名的文件或目录。<br/>
+
+- 切换到 **FPGA开发套件** 的 **huaweicloud-fpga/cli/fisclient** 目录。
+<pre>
+[root@ ~]# cd huaweicloud-fpga/cli/fisclient
+</pre>
+> 在 **fisclient** 工具的后续安装过程中，用户需要一直位于 **huaweicloud-fpga/cli/fisclient** 目录下。
 
 - 安装依赖包。
 <pre>
@@ -213,9 +216,9 @@ Success: 204 No Content
 当用户B想要使用用户A共享的FPGA镜像时，需要完成以下步骤。
 
 - 步骤1：接受用户A共享的ECS镜像，更多详细信息请参见[接受共享镜像]()。
-- 步骤2：从用户A处获取共享的FPGA镜像的架构。在本示例中，FPGA镜像的架构是 **通用型架构**。
-- 步骤3：使用共享的ECS镜像创建一个与FPGA镜像相同架构的FPGA弹性云服务器，更多详细信息请参见[使用共享镜像创建FACS]()。在本示例中，用户B需要创建一个 **通用型架构** 的FPGA弹性云服务器。
-> 确保创建的FPGA弹性云服务器的架构与共享的FPGA镜像的架构相同。
+- 步骤2：从用户A处获取共享的FPGA镜像的类型。在本示例中，FPGA镜像的类型是 **通用型架构**。
+- 步骤3：使用共享的ECS镜像创建一个与FPGA镜像相同类型的FPGA弹性云服务器，更多详细信息请参见[使用共享镜像创建FACS]()。在本示例中，用户B需要创建一个 **通用型架构** 的FPGA弹性云服务器。
+> 确保创建的FPGA弹性云服务器的类型与共享的FPGA镜像的类型相同。
 
 - 步骤4：获取共享的ECS镜像的镜像ID，更多详细信息请参见[获取镜像ID]()。在本示例中，共享的ECS镜像的镜像ID是 **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**。
 - 步骤5：使用共享的ECS镜像的镜像ID作为参数来查询用户A共享的FPGA镜像。

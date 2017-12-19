@@ -1,132 +1,128 @@
 # fisclient #
-**fisclient** 是FIS（FPGA镜像服务）的命令行客户端，它将用于FPGA镜像管理的命令集成到一个shell中。
+**fisclient** is a command-line client for FIS (FPGA Image Service) that brings the command set for FPGA image management together in a single shell.
 
-- [1 运行环境要求](#1-运行环境要求)
-- [2 安装](#2-安装)
-- [3 介绍](#3-介绍)
-  - [3.1 命令](#31-命令)
-  - [3.2 超时退出](#32-超时退出)
-  - [3.3 日志记录](#33-日志记录)
-- [4 使用场景](#4-使用场景)
-  - [4.1 查询](#41-查询)
-  - [4.2 删除](#42-删除)
-  - [4.3 关联、解关联和查询关联](#43-关联解关联和查询关联)
-- [5 fis命令详解](#5-fis命令详解)
-  - [5.1 查看帮助信息](#51-查看帮助信息)
-  - [5.2 删除子命令](#52-删除子命令)
-  - [5.3 查询子命令](#53-查询子命令)
-  - [5.4 关联子命令](#54-关联子命令)
-  - [5.5 解关联子命令](#55-解关联子命令)
-  - [5.6 查询关联子命令](#56-查询关联子命令)
+- [1 Operating Environment Requirements](#1-operating-environment-requirements)
+- [2 Installation](#2-installation)
+- [3 Introduction](#3-introduction)
+  - [3.1 Commands](#31-commands)
+  - [3.2 Exit upon Timeout](#32-exit-upon-timeout)
+  - [3.3 Logs](#33-logs)
+- [4 Application Scenario](#4-application-scenario)
+  - [4.1 Querying FPGA Images](#41-querying-fpga-images)
+  - [4.2 Deleting an FPGA Image](#42-deleting-an-fpga-image)
+  - [4.3 Associating and Disassociating FPGA Images, and Querying Associations](#43-associating-and-disassociating-fpga-images-and-querying-associations)
+- [5 fis Command Description](#5-fis-command-description)
+  - [5.1 Viewing Help Information](#51-viewing-help-information)
+  - [5.2 Deletion Subcommand](#52-deletion-subcommand)
+  - [5.3 Query Subcommand](#53-query-subcommand)
+  - [5.4 Association Subcommand](#54-association-subcommand)
+  - [5.5 Disassociation Subcommand](#55-disassociation-subcommand)
+  - [5.6 Association Query Subcommand](#56-association-query-subcommand)
 
-# 1 运行环境要求 #
-**fisclient** 是在以下环境中开发和测试的：
+# 1 Operating Environment Requirements #
+**fisclient** is developed and tested in the following environments:
 
 - CentOS 7.3
 - Python 2.7
 
-对于其他环境，不保证可用性。
+For other environments, availability is not guaranteed.
 
-# 2 安装 #
-在安装之前，用户首先要确保已经以 **root** 身份登录弹性云服务器。
+# 2 Installation #
+You should first make sure that you have logged in to the Elastic Cloud Server as **root** before installation.
 
-## 步骤1 绑定弹性IP ##
-如何为弹性云服务器绑定弹性IP请参见[绑定弹性IP]()。只有在为弹性云服务器绑定弹性IP之后，用户才能在安装过程中通过弹性IP来获取 **pip** 和 **fisclient** 工具。
+### Step 1. Bound the Elastic IP ###
+See [Bound the Elastic IP]() for how to bind Elastic IP to the Elastic Cloud Server. Only after bind Elastic IP to the Elastic Cloud Server, can you get **pip** and **fisclient** via Elastic IP during the installation.
 
-## 步骤2 安装pip ##
-运行 **easy_install pip** 命令安装pip工具。
+### Step 2. Install the pip ###
 <pre>
 [root@ ~]# easy_install pip
 </pre>
 
-## 步骤3 安装fisclient ##
-- 使用 **git** 工具下载 **fisclient** 源码包（位于[FPGA开发套件](https://github.com/Huawei/huaweicloud-fpga)中）。
+### Step 3. Install the fisclient ###
+- Download the **fisclient** source package (in [FPGA Development Suite](https://github.com/Huawei/huaweicloud-fpga)), 
 <pre>
 [root@ ~]# git clone https://github.com/Huawei/huaweicloud-fpga.git
 </pre>
 
-> 如果用户已经下载了 **FPGA开发套件**，则不需要重复下载。如果用户需要下载 **FPGA开发套件**，请使用 **git** 工具进行下载，并确保当前目录下没有以 **huaweicloud-fpga** 命名的文件或目录。<br/>
+> If you have downloaded the **FPGA Development Suite**, skip this step. If you need to download the **FPGA Development Suite**, please use **git** to download, and ensure that there is not any file or directory named **huaweicloud-fpga** in the current directory.<br/>
 
-- 切换到 **FPGA开发套件** 的 **huaweicloud-fpga/cli/fisclient** 目录。
+- Switch to the **huaweicloud-fpga/cli/fisclient** directory of the **FPGA Development Suite**.
 <pre>
 [root@ ~]# cd huaweicloud-fpga/cli/fisclient
 </pre>
-> 在 **fisclient** 工具的后续安装过程中，用户需要一直位于 **huaweicloud-fpga/cli/fisclient** 目录下。
+> Ensure that you are in the **huaweicloud-fpga/cli/fisclient** directory during the subsequent installation of **fisclient**.
 
-- 安装依赖包。
-
-依次运行 **pip install pbr==1.8.1** 命令和 **pip install -r requirements.txt** 命令安装fisclient工具的依赖包。
+- Install the dependency packages.
 <pre>
 [root@ fisclient]# pip install pbr==1.8.1
 [root@ fisclient]# pip install -r requirements.txt
 </pre>
-- 安装fisclient工具。
-
-运行 **python setup.py install** 命令安装fisclient工具。
+- Install the fisclient.
 <pre>
 [root@ fisclient]# python setup.py install
 </pre>
-- 将配置文件 **cfg.file** 复制到 **/etc** 目录下。
+- Copy the config file **cfg.file** to the **/etc** directory.
 <pre>
 [root@ fisclient]# cp cfg.file /etc
 </pre>
-如何配置 **/etc/cfg.file** 文件请参见[配置/etc/cfg.file文件]()。
 
-# 3 介绍 #
-在完成[配置/etc/resolv.conf文件]()和[配置/etc/cfg.file文件]()后，用户通过在Linux操作系统的shell中执行 **fisclient** 命令进入fisclient登录界面，根据提示信息输入**华为云账户密码**，通过校验后进入fisclient命令行。在fisclient命令行中，用户可以执行相应的命令进行FPGA镜像的查询、删除、关联、解关联和查询关联等操作。
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;See [configuring /etc/cfg.file]() for how to configure the **/etc/cfg.file** file.
+
+# 3 Introduction #
+After [configuring /etc/resolv.conf]() and [configuring /etc/cfg.file](), run the **fisclient** command on the Linux shell to go to the fisclient login screen and enter the **huaweicloud account password** when prompted. On the fisclient CLI, you can run corresponding commands to query, delete, associate, disassociate FPGA images and query associations.
 <pre>
 [root@ ~]# fisclient
 please input the password:
 [fisclient] >
 </pre>
 
-## 3.1 命令 ##
-fisclient命令行支持两种命令：**fis** 和 **quit**。
+## 3.1 Commands ##
+The fisclient CLI supports two types of commands, **fis** and **quit**.
 
-**fis** 命令用于FPGA镜像的管理。例如，删除FPGA镜像的命令如下：
+**fis** commands are used for FPGA image management. For example, to delete an FPGA image, run the following command:
 <pre>
 [fisclient] > fis fpga-image-delete --fpga-image-id 000000005d19********30dc17ab02ab --force
 Success: 204 No Content
 </pre>
-- **fpga-image-delete** 指定执行fis命令的删除子命令，即删除FPGA镜像。
-- **--fpga-image-id** 和 **--force** 是删除子命令的命令选项。 **--fpga-image-id** 选项指定待删除的FPGA镜像的ID，例如 **000000005d19\*\*\*\*\*\*\*\*30dc17ab02ab**。 **--force** 选项指定执行强制删除操作，即删除前不需要用户确认。
+- **fpga-image-delete** is the subcommand to delete an FPGA image.
+- **--fpga-image-id** and **--force** are command options of the deletion subcommand. **--fpga-image-id** specifies of the ID of the FPGA image to be deleted, for example, **000000005d19\*\*\*\*\*\*\*\*30dc17ab02ab**. **--force** indicates that the FPGA image can be deleted without user confirmation.
 
-fis命令的详细使用说明请参见[fis命令详解](#5-fis命令详解)。
+For details about how to use the fis commands, see [fis command Description](#fis-command-description).
 
-**quit** 命令用于退出fisclient命令行。
+**quit** exits the fisclient CLI.
 <pre>
 [fisclient] > quit 
 [root@ ~]#
 </pre>
 
-## 3.2 超时退出 ##
-在fisclient命令行中，如果用户在 **3600** 秒内没有执行任何命令，fisclient将自动超时退出。
+## 3.2 Exit upon Timeout ##
+If no operation is performed on the fisclient CLI within **3600** seconds, fisclient will automatically exit.
 <pre>
 [fisclient] > 
 time out, please press Enter to exit
 [root@ ~]#
 </pre>
 
-## 3.3 日志记录 ##
-fisclient会将用户对IAM和fis服务的访问记录保存在 **/var/log/fiscli/** 目录下的相应日志文件中。日志文件按照日期命名，例如 **2017_09_01.log** 文件中记录的是用户在2017年9月1日的访问记录。
+## 3.3 Logs ##
+fisclient saves IAM and fis service access records in logs in the **/var/log/fiscli/** directory. The logs are named by date. For example, 2017_09_01.log records user access on September 1, 2017.
 <br/>
-日志信息按照 **时间 租户 操作 [参数] 结果** 的格式进行记录。例如：
+The Log information is recorded in the format of **Time tenant Operation Result**. Examples:
 <pre>
 [2017-09-01-08-58-48] tenant [f26e********4e489b611af0910845b3] get_token Success, Created. (HTTP 201)
 </pre>
-上述信息表示在2017年9月1日8时58分48秒，租户f26e\*\*\*\*\*\*\*\*4e489b611af0910845b3身份校验通过，成功访问IAM服务获取token。
+The preceding information indicates that the tenant f26e\*\*\*\*\*\*\*\*4e489b611af0910845b3 passed the authentication and accessed the IAM service to obtain the token at 8:58:48 on September 1, 2017.
 <pre>
 [2017-09-01-15-34-40] tenant [f26e********4e489b611af0910845b3] do_fpga_image_list {"page": "1", "size": "8"}, Success, 200 OK
 </pre>
-上述信息表示在2017年9月1日15时34分40秒，租户f26e\*\*\*\*\*\*\*\*4e489b611af0910845b3执行FPGA镜像查询操作，**page** 参数为1，**size** 为8，成功访问fis服务查询FPGA镜像信息。
+The preceding information indicates that the tenant f26e\*\*\*\*\*\*\*\*4e489b611af0910845b3 queried the FPGA image list at 15:34:40 on September 1, 2017. **page** was set to **1** and **size** was set to **8**. The tenant successfully accessed the fis service and queried the FPGA image list.
 
-# 4 使用场景 #
-## 4.1 查询 ##
-在注册FPGA镜像后，用户可以使用fis查询子命令查询自身拥有的FPGA镜像的信息。在确认FPGA镜像的状态是 **active** 后，用户可以使用相应的FPGA镜像ID执行后续的加载、删除、关联等操作。<br/>
-fis查询子命令以一个表格来呈现FPGA镜像信息，并且支持分页查询功能。更多详细信息请参见[查询子命令](#53-查询子命令)。
+# 4 Application Scenario #
+## 4.1 Querying FPGA Images ##
+After registering an FPGA image, you can use the fis query subcommand to query information about FPGA images owned by youself. After the **status** of an FPGA image changes to **active**, you can use the corresponding FPGA image ID to load, delete, and associate the FPGA image.<br/>
+The fis query subcommand displays FPGA image information in a table, and also supports pagination query. For more details, see [Query Subcommand](#query-subcommand).
 
-### 示例 ###
-执行以下fis命令查询FPGA镜像：
+### Example ###
+Run the following command to query FPGA images:
 <pre>
 [fisclient] > fis fpga-image-list
 Success: 200 OK
@@ -136,20 +132,19 @@ Success: 200 OK
 | 000000******08b4015e3224afe203c3 | OCL_001 | active | False     | 43   | 2017-09-19 02:27:31 | mmult_01    | {"manifest_format_version": "1", "pci_vendor_id": "0x19e5", "pci_device_id": "0xD512", "pci_subsystem_id": "-", "pci_subsystem_vendor_id": "-", "shell_type": "0x121", "shell_version": "0x0001", "hdk_version": "SDx 2017.1", "date": "2017/09/17_18:37:12"} |         |
 +----------------------------------+---------+--------+-----------+------+---------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------+
 </pre>
-- 用户之前注册的FPGA镜像的ID为 **000000\*\*\*\*\*\*08b4015e3224afe203c3**。
-- FPGA镜像的状态为 **active**，表示用户之前的注册操作执行成功。
+- The ID of the FPGA image is **000000\*\*\*\*\*\*08b4015e3224afe203c3**.
+- The state of the FPGA image is **active**, indicating that image has been registered successfully.
 
-因此，用户可以使用该FPGA镜像ID进行后续的加载、删除、关联等操作。
+Therefore, you can use the ID of the FPGA image to load, delete, or associate the FPGA image.
 
-## 4.2 删除 ##
-删除操作允许FPGA镜像的拥有者执行FPGA镜像的删除操作。当用户不再使用某个注册成功的FPGA镜像，并且希望从FPGA镜像管理模块中删除该FPGA镜像相关的记录时，可以使用fis删除子命令进行FPGA镜像删除操作。此外，如果用户在执行fis查询子命令时发现某个FPGA镜像的状态是 **error** 时，可以使用fis删除子命令删除该FPGA镜像记录。<br/>
-如果FPGA镜像已经和某个弹性云服务器镜像关联，FPGA镜像将被置于“保护”状态（FPGA镜像的 **protected** 属性被置为 **True**），不允许被删除。更多详细信息请参见[删除子命令](#52-删除子命令)。
+## 4.2 Deleting an FPGA Image ##
+An FPGA image can be deleted only by its owner. If a registered FPGA image is no longer used and you want to delete the FPGA image record from the FPGA image management module, you can run a fis deletion subcommand to delete it. In addition, if the **status** of an FPGA image is **error**, you can also use the fis deletion subcommand to delete the FPGA image record. If an FPGA image has been associated with an ECS image, the FPGA image will be **protected** (the value of **protected** is **True**) and cannot be deleted. For more details, see [Deletion Subcommand](#deletion-subcommand).
 
-### 删除确认 ###
-默认情况下，fisclient为用户提供删除确认功能，在用户执行删除操作时会提示用户输入 **yes** 或 **no** 以确认是否进行删除操作。
+### Confirming the Deletion ###
+fisclient provides the deletion confirmation function. You need to enter **yes** or **no** to decide whether to perform the deletion.
 
-- 如果用户输入 **yes**，则执行当前的删除操作。
-- 如果用户输入 **no**，则取消当前的删除操作。
+- **yes** executes the deletion operation.
+- **no** cancels the deletion operation.
 
 <pre>
 [fisclient] > fis fpga-image-delete --fpga-image-id 4010b39d********015d5ee5c3b00501
@@ -159,10 +154,10 @@ cancel fpga-image-delete
 Deleted fpga-image cannot be restored! Are you absolutely sure? (yes/no): yes
 Success: 204 No Content
 </pre>
-如果用户不想在每次执行fis删除子命令时都进行用户确认操作，则可以指定 **--force** 选项，强制执行删除操作。
+If you do not want to confirm the deletion operation each time you run the fis deletion command, you can specify the **--force** option to forcibly perform the deletion operation.
 
-### 示例 ###
-用户在某次执行查询操作时返回的FPGA镜像信息如下所示：
+### Example ###
+The output of an FPGA image query operation is as follows:
 <pre>
 +----------------------------------+----------+--------+-----------+------+---------------------+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------+
 | id                               | name     | status | protected | size | createdAt           | description | metadata                                                                                                                                                                                                                                                                                                                                                                                  | message                    |
@@ -171,63 +166,64 @@ Success: 204 No Content
 | 4010b39c5d4********48e97411005ae | dpdk_002 | error  | False     | 45   | 2017-09-19 16:39:27 | example_02  | {"manifest_format_version": "1", "pci_vendor_id": "0x19e5", "pci_device_id": "0xD503", "pci_subsystem_id": "-", "pci_subsystem_vendor_id": "-", "dcp_hash": "ced75657********60f212a9454f6c5ae33d50f0a248e99dbef638231b26960c", "shell_type": "0x101", "shell_version": "0x0013", "dcp_file_name": "ul_pr_top_routed.dcp", "hdk_version": "Vivado 2017.2", "date": "2017/09/19_13:51:41"} | register fpga image failed |
 +----------------------------------+----------+--------+-----------+------+---------------------+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------+
 </pre>
-如果用户希望删除不再使用的ID为 **ff\*\*\*\*\*\*\*\*5056b2015d5e13608c73c7** 的FPGA镜像，以及注册失败的ID为 **4010b39c5d4\*\*\*\*\*\*\*\*48e97411005ae** 的FPGA镜像，可以执行如下的fis命令：
+Perform the following commands to delete the FPGA image no longer used (ID: **ff\*\*\*\*\*\*\*\*5056b2015d5e13608c73c7**), and the FPGA image that fails to be registered (ID: **4010b39c5d4\*\*\*\*\*\*\*\*48e97411005ae**):
 
-- 删除不再使用的FPGA镜像。
+- Delete the FPGA image no longer used.
 <pre>
 [fisclient] > fis fpga-image-delete --fpga-image-id ff********5056b2015d5e13608c73c7 --force
 Success: 204 No Content
 </pre>
 
-- 删除状态为error的FPGA镜像。
+- Delete the FPGA image in the error state.
 <pre>
 [fisclient] > fis fpga-image-delete --fpga-image-id 4010b39c5d4********48e97411005ae --force
 Success: 204 No Content
 </pre>
 
-在上述命令中，**--fpga-image-id** 选项指定待删除的FPGA镜像的ID，**--force** 选项指定执行强制删除操作。如果命令的回显信息为 **Success: 204 No Content**，则表示fis删除子命令执行成功。然而，删除子命令执行成功并不代表FPGA镜像删除成功。用户需要执行查询操作，如果查找不到待删除的FPGA镜像的信息，则表示FPGA镜像删除成功。
+In these commands, **--fpga-image-id** specifies the ID of the FPGA image to be deleted, **--force** specifies a forcible deletion operation. If the command output is **Success: 204 No Content**, the fis deletion subcommand is executed successfully.<br/>
+However, the execution success of the deletion subcommand does not necessarily mean that the FPGA image is deleted successfully. You need to perform the query operation. If information about the FPGA image to be deleted is not displayed, the FPGA image has been deleted successfully.
 
-## 4.3 关联、解关联和查询关联 ##
-通过关联操作，用户可以将已成功注册的FPGA镜像提供给其他用户使用，包括如下两种场景：
+## 4.3 Associating and Disassociating FPGA Images, and Querying Associations ##
+By associating a registered FPGA image, you can share the FPGA image with other users in the following two scenarios:
 
-- 市场镜像场景：将已成功注册的FPGA镜像发布到云市场进行交易。
-- 共享镜像场景：将已成功注册的FPGA镜像共享给指定用户。
+- Marketing Scenario: Publishing the FPGA image in the cloud market for transaction
+- Sharing Scenario: Sharing the FPGA image with a specified user
 
-通过查询关联操作，用户可以查询其他用户提供的FPGA镜像。通过解关联操作，用户可以取消FPGA镜像的共享。<br/>
-本小节以共享镜像场景为例来说明关联、解关联和查询关联操作的使用。这些子命令的更多详细信息请参见[关联子命令](#54-关联子命令)、[解关联子命令](#55-解关联子命令)和[查询关联子命令](#56-查询关联子命令)。
+By querying associations, you can query the FPGA images provided by other users. By disassociating an FPGA image, you can stop sharing the FPGA image with other users. <br/>
+This section uses the FPGA image sharing scenario as an example to describe how to associate or disassociate an FPGA image, and query associations. For more details about these subcommands, see [Association Subcommand](#association-subcommand), [Disassociation Subcommand](#disassociation-subcommand) and [Association Query Subcommand](#association-query-subcommand).
 
-> 市场镜像的更多详细信息请参见[将FPGA镜像发布到云市场]()。
+> For more details about marketing scenario, see [Publishing the FPGA Image In the Cloud Market]().
 
-### 共享FPGA镜像 ###
-当用户A想要将自己拥有的一个已注册成功的FPGA镜像共享给用户B时，需要完成以下步骤。以下假设用户A想将ID为 **4010b39c5d4\*\*\*\*\*\*\*\*\*\*f2cf8070c7e** 的 **通用型架构** 的FPGA镜像共享给用户B。 
+### Sharing the FPGA Image ###
+If user A wants to share a self-owned registered FPGA image with user B, user A needs to perform the following steps. The following assumes that user A wants to share the **general-purpose architecture** FPGA image whose ID is **4010b39c5d4\*\*\*\*\*\*\*\*\*\*f2cf8070c7e** with user B.
 
-- 步骤1：从 **通用型架构** 的FPGA弹性云服务器创建一个ECS私有镜像，更多详细信息请参见[创建私有镜像]()。
-- 步骤2：获取创建的ECS私有镜像的镜像ID，更多详细信息请参见[获取镜像ID]()。以下假设创建的ECS私有镜像的镜像ID为 **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**。
-- 步骤3：关联待共享的FPGA镜像和创建的ECS私有镜像。
+- Step 1. Create a private ECS image from an **general-purpose architecture** FPGA Elastic Cloud Server. For more details, see [Creating a private image]().
+- Step 2. Obtain the image ID of the created private ECS image. For more details, see [Obtaining The Image ID](). The following assumes that the image ID of the created private ECS image is **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**.
+- Step 3. Associate the FPGA image to be shared with the created private ECS image.
 
-用户A需要登录到FPGA弹性云服务器中，运行 **fisclient** 程序，然后执行fis关联子命令来关联FPGA镜像和ECS私有镜像。
+User A needs to log in to the FPGA Elastic Cloud Server, run the **fisclient** program, and run a fis association subcommand to associate the FPGA image with the private ECS image.
 <pre>
 [fisclient] > fis fpga-image-relation-create --fpga-image-id 4010b39c5d4**********f2cf8070c7e --image-id 404223ca-8**b-4**2-a**e-d187****61bc
 Success: 204 No Content
 </pre>
-如果命令的回显信息为 **Success: 204 No Content**，则表示关联操作执行成功。
+If **Success: 204 No Content** is displayed, the association is successful.
+- Step 4. Share the created private ECS image with user B. For more details, see [Sharing the private image]().
 
-- 步骤4：将创建的ECS私有镜像共享给用户B，更多细节信息请参见[共享私有镜像]()。
+> A private image will become a **shared** one after the sharing and cannot be used for association. Therefore, associate a private image before sharing it.
 
-> ECS私有镜像在共享之后会变为 **共享镜像**，无法进行关联操作。因此，确保在共享镜像之前进行关联。
 
-### 查询共享的FPGA镜像 ###
-当用户B想要使用用户A共享的FPGA镜像时，需要完成以下步骤。
+### Querying the Shared FPGA Image ###
+If user B wants to use a registered FPGA image shared by user A, user B needs to perform the following steps.
 
-- 步骤1：接受用户A共享的ECS镜像，更多详细信息请参见[接受共享镜像]()。
-- 步骤2：从用户A处获取共享的FPGA镜像的类型。在本示例中，FPGA镜像的类型是 **通用型架构**。
-- 步骤3：使用共享的ECS镜像创建一个与FPGA镜像相同类型的FPGA弹性云服务器，更多详细信息请参见[使用共享镜像创建FACS]()。在本示例中，用户B需要创建一个 **通用型架构** 的FPGA弹性云服务器。
-> 确保创建的FPGA弹性云服务器的类型与共享的FPGA镜像的类型相同。
+- Step 1. Accept the ECS image shared by user A. For more details, see [Accepting the shared image]().
+- Step 2. Obtain the type of the FPGA image from user A. In this example, it is **general-purpose architecture**.
+- Step 3. Use the shared ECS image to create an FPGA Elastic Cloud Server with the same type as the FPGA image. For more details, see [Using a shared image to create an FPGA Elastic Cloud Server](). In this example, user B needs to create an FPGA Elastic Cloud Server of **general-purpose architecture**.
+> Ensure that the type of the created FPGA Elastic Cloud Server is the same with that of the shared FPGA image.
 
-- 步骤4：获取共享的ECS镜像的镜像ID，更多详细信息请参见[获取镜像ID]()。在本示例中，共享的ECS镜像的镜像ID是 **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**。
-- 步骤5：使用共享的ECS镜像的镜像ID作为参数来查询用户A共享的FPGA镜像。
+- Step 4. Obtain the image ID of the shared ECS image. For more details, see [Obtaining The Image ID](). In this example, it is **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**.
+- Step 5. Query the FPGA image shared by user A using the image ID of the shared ECS image.
 
-用户B需要登录到使用用户A共享的ECS镜像创建的FPGA弹性云服务器中，运行 **fisclient** 程序，然后执行fis查询关联子命令（将 **image-id** 参数设置为共享的ECS镜像的镜像ID）来查询用户A共享的FPGA镜像。
+User B needs to log in to the FPGA Elastic Cloud Server created from the ECS image shared by user A, run the **fisclient** program, and run a fis association query subcommand (set the **image-id** parameter to the image ID of the shared ECS image) to check for the FPGA image shared by user A.
 <pre>
 [fisclient] > fis fpga-image-relation-list --image-id 404223ca-8**b-4**2-a**e-d187****61bc
 Success: 200 OK
@@ -237,24 +233,24 @@ Success: 200 OK
 | 404223ca-8**b-4**2-a**e-d187****61bc | 4010b39c5d4**********f2cf8070c7e | name123 | active | True      | 39   | 2017-09-19 03:27:31 | desc123     |  {"manifest_format_version": "1", "pci_vendor_id": "0x19e5", "pci_device_id": "0xD512", "pci_subsystem_id": "-", "pci_subsystem_vendor_id": "-", "shell_type": "0x121", "shell_version": "0x0001", "hdk_version": "SDx 2017.1", "date": "2017/09/18_19:27:12"} |         |
 +--------------------------------------+----------------------------------+---------+--------+-----------+------+---------------------+-------------+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------+
 </pre>
-上述回显信息表示用户A共享的FPGA镜像的ID是 **4010b39c5d4\*\*\*\*\*\*\*\*\*\*f2cf8070c7e**。用户B可以使用该FPGA镜像ID进行后续的加载操作。
+The output shows that the ID of the FPGA image shared by user A shared is **4010b39c5d4\*\*\*\*\*\*\*\*\*\*f2cf8070c7e**. User B can use the ID for loading.
 
-### 取消FPGA镜像共享 ###
-当用户A想取消给用户B的FPGA镜像共享时，需要完成以下步骤。
+### Canceling the FPGA Image Sharing ###
+If user A wants to stop sharing the FPGA image with user B, user A needs to perform the following operations:
 
-- 步骤1：取消给用户B的ECS镜像共享，更多详细信息请参见[取消共享镜像的共享]()。
-- 步骤2：解关联共享的FPGA镜像和ECS镜像。
+- Step 1. Cancel the image sharing with user B. For more details, see [Canceling the Image Sharing]().
+- Step 2. Disassociate the shared FPGA image from the private ECS image.
 
-用户A需要登录到FPGA弹性云服务器中，运行 **fisclient** 程序，然后执行fis解关联子命令来解关联FPGA镜像和ECS镜像。
+User A needs to log in to the FPGA Elastic Cloud Server, run the **fisclient** program, and run a fis disassociation subcommand to disassociate the shared FPGA image from the private ECS image.
 <pre>
 [fisclient] > fis fpga-image-relation-delete --fpga-image-id 4010b39c5d4**********f2cf8070c7e --image-id 404223ca-8**b-4**2-a**e-d187****61bc
 Success: 204 No Content
 </pre>
-如果命令的回显信息为 **Success: 204 No Content**，则表示解关联操作执行成功。
+If **Success: 204 No Content** is displayed, the disassociation is successful.
 
-# 5 fis命令详解 #
-## 5.1 查看帮助信息 ##
-在fisclient命令行中，执行 **fis help** 命令查看fis命令的帮助信息，执行 **fis help subcommand** 命令查看fis子命令的帮助信息。
+# 5 fis Command Description #
+## 5.1 Viewing Help Information ##
+On the fisclient CLI, run the **fis help** command to view help information of fis commands and run the **fis help subcommand** command to view help information of fis subcommands.
 <pre>
 [fisclient] > fis help 
 usage: fis &lt;subcommand&gt; ...
@@ -276,54 +272,54 @@ positional arguments:
 See "fis help COMMAND" for help on a specific command.
 </pre>
 
-fis命令的格式为 **fis subcommand option**
+The format of a fis command is **fis subcommand option**.
 
-- 子命令 **subcommand** 指定执行的fis命令的功能。
-- 选项 **option** 特定于子命令，为子命令指定命令参数。
+- **subcommand** specifies the function of the command.
+- **option** is unique to the subcommand and specifies command parameters for the subcommand.
 
-fis命令包含如下6个子命令。
+fis commands include six subcommands.
 
-| 命令 | 说明 |
+| Command | Description |
 | ------- | ----------- |
-| **fpga-image-delete** | 删除子命令，用于删除FPGA镜像 |
-| **fpga-image-list** | 查询子命令，用于查询租户拥有的FPGA镜像详情列表信息 |
-| **fpga-image-relation-create** | 关联子命令，用于创建FPGA镜像与弹性云服务器镜像的关联关系 |
-| **fpga-image-relation-delete** | 解关联子命令，用于删除FPGA镜像与弹性云服务器镜像的关联关系 |
-| **fpga-image-relation-list** | 查询关联子命令，用于查询租户可见的FPGA镜像与弹性云服务器镜像的关联关系 |
-| **help** | 帮助子命令，用于显示fis命令或fis子命令的帮助信息 |
+| **fpga-image-delete** | Deletion subcommand, used to delete an FPGA image. |
+| **fpga-image-list** | Query subcommand, used to query FPGA images of a tenant. |
+| **fpga-image-relation-create** | Association subcommand, used to associate an FPGA image with an ECS image. |
+| **fpga-image-relation-delete** | Disassociation subcommand, used to disassociate an FPGA image from an ECS image. |
+| **fpga-image-relation-list** | Association query subcommand, used to query the associations between FPGA images and ECS images visible to a tenant. |
+| **help** | Help subcommand, used to display the help information of the fis command or fis subcommands. |
 
-> fis命令还包含一个注册子命令 **fpga-image-register**，在Linux操作系统的shell中调用，用于注册FPGA镜像。该子命令在用户执行 **AEI_Register.sh** 脚本时将自动调用。用户不需要单独执行该命令实现注册FPGA镜像。
+> The fis command also contains a subcommand **fpga-image-register**, which is invoked in the shell of the Linux to register an FPGA image. This subcommand is automatically invoked when you run the **AEI_Register.sh** script. You do not need to run this command to register an FPGA image.
 
 <a name="deletion-subcommand"></a>
-## 5.2 删除子命令 ##
-删除子命令为用户提供删除FPGA镜像管理模块中的相应FPGA镜像的功能。在成功执行删除操作后，针对被删除的FPGA镜像的加载、关联、删除等操作都将失败。
+## 5.2 Deletion Subcommand ##
+The deletion subcommand is used to delete an FPGA image from the FPGA image management module. After an FPGA image is deleted successfully, loading, association, deletion operations and so on cannot be performed on the FPGA image.
 
-### 命令格式 ###
+### Format ###
 **fis fpga-image-delete --fpga-image-id** *&lt;ID&gt;* **[--force]**
 
-### 参数说明 ###
-| 参数 | 说明 | 取值 | 备注 |
+### Parameters ###
+| Parameter | Description | Value | Remarks |
 | --------- | ----------- | ----- | ------- |
-| **--fpga-image-id** | （必选）待删除的FPGA镜像的ID。 | **fpga-image-id**参数是由英文小写字母a-f，数字0-9组成的32位字符串。 | 在查询子命令执行成功后，用户可以在回显信息中查找到相应的FPGA镜像ID。 |
-| **--force** | （可选）一个命令选项，不带参数，用于取消删除确认功能。 | - | 在默认情况下，fisclient为用户提供删除确认功能，在用户执行删除操作时会提示用户输入 **yes** 或 **no** 以确认是否进行删除操作：输入 **yes** 则执行当前的删除操作；输入 **no** 则取消当前的删除操作。 |
+| **--fpga-image-id** | Specifies the ID of the FPGA image to be deleted. This parameter is mandatory. | The value of **fpga-image-id** is a string of 32 characters, including lowercase letters a to f and digits 0 to 9. | You can check the ID of an FPGA image in the output of a query subcommand. |
+| **--force** | Forcibly deletes an FPGA without user confirmation. This parameter is optional. | - | By default, fisclient provides the deletion confirmation function. You need to enter **yes** or **no** to decide whether to perform the deletion: **yes** executes the deletion operation, while **no** cancels the deletion operation. |
 
-> **--force** 选项只是取消了删除确认功能，并不保证一定能够成功删除FPGA镜像。
+> **force** only cancels the deletion confirmation function, but does not ensure that the FPGA image can be deleted successfully.
 
-### 使用说明 ###
-当回显信息中包含 **Success: 204 No Content** 时，表示删除子命令执行成功。
+### Usage Guidelines ###
+If the command output is **Success: 204 No Content**, the deletion subcommand is executed successfully.
 <pre>
 Success: 204 No Content
 </pre>
-删除子命令执行成功并不代表FPGA镜像删除成功。用户需要进一步执行查询子命令，若查找不到待删除的FPGA镜像的信息，则表示FPGA镜像删除成功。
+However, the execution success of the deletion subcommand does not necessarily mean that the FPGA image is deleted successfully. You need to perform the query operation. If information about the FPGA image to be deleted is not displayed, the FPGA image has been deleted successfully.
 <br/><br/>
-当删除子命令执行失败时，回显信息中会包含相应的错误原因信息。
+If a deletion subcommand fails to be executed, the response information contains failure causes.
 
 - Example 1
 <pre>
 [fisclient] > fis fpga-image-delete --fpga-image-id 123456 --force 
 Error: parameter fpga_image_id (123456) is malformed
 </pre>
-错误信息表示 **fpga-image-id** 参数不符合相应的限制条件，不是由英文小写字母a-f和数字0-9组成的32位字符串。
+The error information shows that the value of **fpga-image-id** is not a string of 32 characters including lowercase letters a to f and digits 0 to 9.
 
 - Example 2
 <pre>
@@ -331,10 +327,10 @@ Error: parameter fpga_image_id (123456) is malformed
 Error: 400 Bad Request
 tenant [495440c1********8e9403e708ad4d9d] fpga image [000000005d44********44df075a003c] is protected 
 </pre>
-错误信息表示FPGA镜像已经和某个弹性云服务器镜像关联，处于“保护”状态，无法被删除。
+The error information shows that the FPGA image has been associated with an ECS image and cannot be deleted.
 
-### 示例 ###
-从FPGA镜像管理模块中删除ID为 **000000005d19076b015d30dc17ab02ab** 的FPGA镜像。
+### Example ###
+Delete the FPGA image whose ID is **000000005d19076b015d30dc17ab02ab** from the FPGA image management module.
 <pre>
 [fisclient] > fis fpga-image-delete --fpga-image-id 000000005d19********30dc17ab02ab 
 Deleted fpga-image cannot be restored! Are you absolutely sure? (yes/no): no 
@@ -344,22 +340,22 @@ Success: 204 No Content
 </pre>
 
 <a name="query-subcommand"></a>
-## 5.3 查询子命令 ##
-查询子命令以表格的形式呈现租户拥有的FPGA镜像的信息。同时，查询子命令提供分页查询功能。
+## 5.3 Query Subcommand ##
+The query subcommand displays the FPGA images of a tenant in a table. The subcommand also supports pagination query.
 
-### 命令格式 ###
+### Format ###
 **fis fpga-image-list** **[--page** *&lt;PAGE&gt;***] [--size** *&lt;SIZE&gt;***]**
 
-### 参数说明 ###
-| 参数 | 说明 | 取值 | 备注 |
+### Parameters ###
+| Parameter | Description | Value | Remarks |
 | --------- | ----------- | ----- | ------- |
-| **--page** | （可选）分页查询时的页编号。 | **page**参数是[1,65535)范围内的十进制整数，并且不能包含+号。 | 由用户自行指定。 |
-| **--size** | （可选）分页查询时的页大小。 | **size**参数是[1,100]范围内的十进制整数，并且不能包含+号。 | 由用户自行指定。 |
+| **--page** | Specifies the page number for pagination query. This parameter is optional. | The value of **page** is a decimal integer between [1,65535) and cannot contain +. | Specified by the user. |
+| **--size** | Specifies the size of a page for pagination query. This parameter is optional. | The value of **size** is a decimal integer between [1,100] and cannot contain +. | Specified by the user. |
 
-> **page** 参数和 **size** 参数必须同时存在或同时不存在，并且只有当两个参数同时存在时分页查询功能才能生效。
+> **page** and **size** must be used together and only when both parameters are set is pagination query available.
 
-### 使用说明 ###
-当回显信息中包含 **Success: 200 OK** 时，表示查询子命令执行成功，此时回显信息是一个包含下述列标题的表格。
+### Usage Guidelines ###
+If the command output is **Success: 200 OK**, the query subcommand is executed successfully. The response information is presented in a table with the following headers.
 <pre>
 +----+------+--------+-----------+------+-----------+-------------+----------+---------+
 | id | name | status | protected | size | createdAt | description | metadata | message |
@@ -367,37 +363,37 @@ Success: 204 No Content
 </pre>
 The following table describes the table headers.
 
-| 参数 | 说明 |
+| Parameter | Description |
 | --------- | ----------- |
-| **id** | FPGA镜像的ID |
-| **name** | FPGA镜像的名称 |
-| **status** | FPGA镜像的状态 |
-| **protected** | FPGA镜像是否处于“保护”状态 |
-| **size** | FPGA镜像的文件大小，单位为MB |
-| **createdAt** | FPGA镜像的创建时间（UTC） |
-| **description** | FPGA镜像的描述信息 |
-| **metadata** | FPGA镜像的元数据信息 |
-| **message** | FPGA镜像的附加消息 |
+| **id** | Specifies the FPGA image ID. |
+| **name** | Specifies the FPGA image name. |
+| **status** | Specifies the FPGA image status. |
+| **protected** | Specifies whether an FPGA image is protected. |
+| **size** | Specifies the size of the FPGA image, in MB. |
+| **createdAt** | Specifies the time (UTC) when the FPGA image was created. |
+| **description** | Describes the FPGA image. |
+| **metadata** | Specifies the FPGA image metadata. |
+| **message** | Provides supplementary information of the FPGA image. |
 
 <br/>
-当查询子命令执行失败时，回显信息中会包含相应的错误原因信息。
+If a query subcommand fails to be executed, the response information contains failure causes.
 
 - Example 1
 <pre>
 [fisclient] > fis fpga-image-list --page 1
 Error: argument --page and --size must exist or not exist at the same time
 </pre>
-错误信息表示用户只设置了 **page** 参数，而没有设置 **size** 参数。
+The error information shows that only **page** is set and **size** is not set.
 
 - Example 2
 <pre>
 [fisclient] > fis fpga-image-list --page 1 --size 101
 Error: parameter size (101) is malformed
 </pre>
-错误信息表示 **size** 参数不符合相应的限制条件，不是位于[1,100]范围内的十进制整数。
+The error information shows that the value of **size** is not within the range [1,100].
 
-### 示例 ###
-使用分页功能（页编号为1，页大小为2）查询租户拥有的FPGA镜像信息。
+### Example ###
+Use the pagination query function (the page number is 1 and the page size is 2) to query the FPGA images of the tenant.
 <pre>
 [fisclient] > fis fpga-image-list --page 1 --size 2
 Success: 200 OK
@@ -410,27 +406,27 @@ Success: 200 OK
 </pre>
 
 <a name="association-subcommand"></a>
-## 5.4 关联子命令 ##
-关联子命令为用户提供关联FPGA镜像与弹性云服务器镜像的功能。在建立关联关系后，FPGA镜像会被置于“保护”状态，无法被删除。
+## 5.4 Association Subcommand ##
+The association subcommand is used to associate an FPGA image with an ECS image. After the association is established, the FPGA image is in the **protected** state and cannot be deleted.
 
-### 命令格式 ###
+### Format ###
 **fis fpga-image-relation-create --fpga-image-id** *&lt;ID&gt;* **--image-id** *&lt;ID&gt;*
  
-### 参数说明 ###
-| 参数 | 说明 | 取值 | 备注 |
+### Parameters ###
+| Parameter | Description | Value | Remarks |
 | --------- | ----------- | ----- | ------- |
-| **--fpga-image-id** | （必选）待关联的FPGA镜像的ID。 | **fpga-image-id**参数是由英文小写字母a-f，数字0-9组成的32位字符串。 | 在查询子命令执行成功后，用户可以在回显信息中查找到相应的FPGA镜像ID。 |
-| **--image-id** | （必选）待关联的弹性云服务器镜像的ID。 | **image-id**参数遵循IMS（镜像服务）的镜像ID限制。 | 如何获取 **image-id** 参数请参见[获取镜像ID]() |
+| **--fpga-image-id** | Specifies the ID of the FPGA image to be associated. This parameter is mandatory. | The value of **fpga-image-id** is a string of 32 characters, including lowercase letters a to f and digits 0 to 9. | You can check the ID of an FPGA image in the output of a query subcommand. |
+| **--image-id** | Specifies the ID of the ECS image to be associated. This parameter is mandatory. | **image-id** complies with IMS image ID rules. | See [Obtaining The Image ID]() about how to get the **image-id** parameter. |
 
-> FPGA镜像管理模块在进行关联操作时，要求弹性云服务器镜像的类型是 **private**，即私有镜像。而私有镜像在发布到云市场或进行共享操作后，镜像类型会分别变为 **market** 和 **shared**，从而无法进行关联操作。用户需要将已发布到云市场的镜像下架，或将已共享的镜像取消共享，才能进行关联操作。
+> The ECS image to be associated must be a **private** one before the FPGA image management module performs an association. After being published to the image market or shared, a private image will become a **market** or **shared** one and cannot be associated. You need to remove the published image from the image market image or cancel the sharing before association.
 
-### 使用说明 ###
-当回显信息中包含 **Success: 204 No Content** 时，表示关联子命令执行成功。
+### Usage Guidelines ###
+If the command output is **Success: 204 No Content**, the association subcommand is executed successfully.
 <pre>
 Success: 204 No Content
 </pre>
 
-当关联子命令执行失败时，回显信息中会包含相应的错误原因信息。
+If an association subcommand fails to be executed, the response information contains failure causes.
 
 - Example 1
 <pre>
@@ -438,7 +434,7 @@ Success: 204 No Content
 Error: 400 Bad Request
 tenant [495440c1********8e9403e708ad4d9d] image [5633dfaf-7**e-4**4-9**8-6202****6f7b] type [shared] is not private
 </pre>
-错误信息表示用户指定的弹性云服务器镜像的类型是 **shared**，不是要求的 **private**，从而无法执行关联操作。
+The error information shows that the type of the specified ECS image is **shared**, so the ECS image cannot be associated. Only **private** images can be associated.
 
 - Example 2
 <pre>
@@ -446,43 +442,42 @@ tenant [495440c1********8e9403e708ad4d9d] image [5633dfaf-7**e-4**4-9**8-6202***
 Error: 400 Bad Request
 tenant [495440c1********8e9403e708ad4d9d] relate fpga image [4010a32c5f5b********5bd53ab4004b] and image [5633dfaf-7**e-4**4-9**8-6202****6f7b] failed: relation already exist or the related fpga image count of image reach the max limit 
 </pre>
-错误信息表示用户待创建的关联关系违反了FPGA镜像管理模块对关联关系的约束，从而无法执行关联操作。
+The error information shows that the association to be created by the user violates the constraint  of the FPGA image management module on the association, so the association can not be created.
 <br/>
-FPGA镜像管理模块对待创建的关联关系有如下的**约束**：
+The FPGA image management module has the following **constraints** on the association to be created:
 
- - FPGA镜像和弹性云服务器镜像之间 **不能** 重复创建关联关系。
- - 一个弹性云服务器镜像最多只允许关联 **10** 个FPGA镜像。
+ - The association between an FPGA image and an ECS image **cannot** be created repeatedly.
+ - A maximum of **10** FPGA images can be associated with an ECS image.
 
-
-### 示例 ###
-创建ID为 **000000005d19\*\*\*\*\*\*\*\*30dec20e02b3** 的FPGA镜像与ID为 **b79bbfe9-9\*\*a-4\*\*b-8\*\*f-9d61\*\*\*\*efa0** 的弹性云服务器镜像之间的关联关系。
+### Example ###
+Associate the FPGA image whose ID is **000000005d19\*\*\*\*\*\*\*\*30dec20e02b3** with the ECS image whose ID is **b79bbfe9-9\*\*a-4\*\*b-8\*\*f-9d61\*\*\*\*efa0**.
 <pre>
 [fisclient] > fis fpga-image-relation-create --fpga-image-id 000000005d19********30dec20e02b3 --image-id b79bbfe9-9**a-4**b-8**f-9d61****efa0
 Success: 204 No Content
 </pre>
 
 <a name="disassociation-subcommand"></a>
-## 5.5 解关联子命令 ##
-解关联子命令为用户提供删除FPGA镜像与弹性云服务器镜像之间的关联关系的功能。在删除关联关系后，如果FPGA镜像没有再与其他的弹性云服务器镜像关联，则不再处于“保护”状态，允许进行删除操作。
+## 5.5 Disassociation Subcommand ##
+The disassociation subcommand is used to disassociate an FPGA image from an ECS image. After disassociation, if the FPGA image is not associated with another ECS image, the FPGA image is not in the **protected** state and can be deleted.
 
-### 命令格式 ###
+### Format ###
 **fis fpga-image-relation-delete --fpga-image-id** *&lt;ID&gt;* **--image-id** *&lt;ID&gt;*
 
-### 参数说明 ###
-| 参数 | 说明 | 取值 | 备注 |
+### Parameters ###
+| Parameter | Description | Value | Remarks |
 | --------- | ----------- | ----- | ------- |
-| **--fpga-image-id** | （必选）待解关联的FPGA镜像的ID。 | **fpga-image-id**参数是由英文小写字母a-f，数字0-9组成的32位字符串。 | 在查询关联子命令执行成功后，用户可以在回显信息中查找到相应的FPGA镜像ID。 |
-| **--image-id** | （必选）待解关联的弹性云服务器镜像的ID。 | **image-id**参数遵循IMS（镜像服务）的镜像ID限制。 | 在查询关联子命令执行成功后，用户可以在回显信息中查找到相应的镜像ID。 |
+| **--fpga-image-id** | Specifies the ID of the FPGA image to be disassociated. This parameter is mandatory. | The value of **fpga-image-id** is a string of 32 characters, including lowercase letters a to f and digits 0 to 9. | You can check the ID of an FPGA image in the output of an association query subcommand. |
+| **--image-id** | Specifies the ID of the ECS image to be disassociated. This parameter is mandatory. | **image-id** complies with IMS image ID rules. | You can check the ID of an image in the output of an association query subcommand. |
 
-> FPGA镜像管理模块在进行解关联操作时，要求弹性云服务器镜像的类型是 **private**，即私有镜像。而私有镜像在发布到云市场或进行共享操作后，镜像类型会分别变为 **market** 和 **shared**，从而无法进行解关联操作。用户需要将已发布到云市场的镜像下架，或将已共享的镜像取消共享，才能进行解关联操作。
+> The ECS image to be disassociated must be a **private** one before the FPGA image management module performs a disassociation. After being published to the image market or shared, a private image will become a **market** or **shared** one and cannot be disassociated. You need to remove the published image from the image market image or cancel the sharing before disassociation.
 
-### 使用说明 ###
-当回显信息中包含 **204 No Content** 时，表示解关联子命令执行成功。
+### Usage Guidelines ###
+If the command output is Success: **204 No Content**, the disassociation subcommand is executed successfully.
 <pre>
 Success: 204 No Content
 </pre>
 
-当解关联子命令执行失败时，回显信息中会包含相应的错误原因信息。
+If a disassociation subcommand fails to be executed, the response information contains failure causes.
 
 - Example 1
 <pre>
@@ -490,7 +485,7 @@ Success: 204 No Content
 Error: 400 Bad Request 
 tenant [495440c1********8e9403e708ad4d9d] is not the owner of fpga image [4010a32b5f57********5ce866fc0004]
 </pre>
-错误信息表示用户不是待解关联的FPGA镜像的拥有者，无权执行解关联操作。
+The error information shows that the user is not the owner of the FPGA image to be disassociated and does not have the permission to disassociate the FPGA image.
 
 - Example 2
 <pre>
@@ -498,64 +493,63 @@ tenant [495440c1********8e9403e708ad4d9d] is not the owner of fpga image [4010a3
 Error: 400 Bad Request
 tenant [495440c1********8e9403e708ad4d9d] image [5633dfaf-7**e-4**4-9fa8-6202****6f7b] type [shared] is not private
 </pre>
-错误信息表示用户指定的弹性云服务器镜像的类型是 **shared**，不是要求的 **private**，从而无法执行解关联操作。
+The error information shows that the type of the specified ECS image is **shared**, so the ECS image cannot be disassociated. Only **private** images can be disassociated.
 
-### 示例 ###
-删除ID为 **000000005d19\*\*\*\*\*\*\*\*30dec20e02b3** 的FPGA镜像与ID为 **b79bbfe9-9\*\*a-4\*\*b-8\*\*f-9d61\*\*\*\*efa0** 的弹性云服务器镜像之间的关联关系。
+### Example ###
+Disassociate the FPGA image whose ID is **000000005d19\*\*\*\*\*\*\*\*30dec20e02b3** from the ECS image whose ID is **b79bbfe9-9\*\*a-4\*\*b-8\*\*f-9d61\*\*\*\*efa0**.
 <pre>
 [fisclient] > fis fpga-image-relation-delete --fpga-image-id 000000005d19********30dec20e02b3 --image-id b79bbfe9-9**a-4**b-8**f-9d61****efa0
 Success: 204 No Content
 </pre>
 
 <a name="association-query-subcommand"></a>
-## 5.6 查询关联子命令 ##
-查询关联子命令以表格的形式呈现租户可见的FPGA镜像与弹性云服务器镜像的关联关系信息。同时，查询关联子命令提供分页查询功能。
+## 5.6 Association Query Subcommand ##
+The association query subcommand lists the associations between FPGA images and ESC images that are visible to a tenant. The subcommand also supports pagination query.
 
-### 命令格式 ###
+### Format ###
 **fis fpga-image-relation-list [--fpga-image-id** *&lt;ID&gt;***]** **[--image-id** *&lt;ID&gt;***]** **[--page** *&lt;PAGE&gt;***] [--size** *&lt;SIZE&gt;***]**
 
-### 参数说明 ###
-| 参数 | 说明 | 取值 | 备注 |
+### Parameters ###
+| Parameter | Description | Value | Remarks |
 | --------- | ----------- | ----- | ------- |
-| **--fpga-image-id** | （可选）待查询关联的FPGA镜像的ID。 | **fpga-image-id**参数是由英文小写字母a-f，数字0-9组成的32位字符串。 | 在查询子命令执行成功后，用户可以在回显信息中查找到相应的FPGA镜像ID。 |
-| **--image-id** | （可选）待查询关联的弹性云服务器镜像的ID。 | **image-id**参数遵循IMS（镜像服务）的镜像ID限制。 | 如何获取 **image-id** 参数请参见[获取镜像ID]() |
-| **--page** | （可选）分页查询时的页编号。 | **page**参数是[1,65535)范围内的十进制整数，并且不能包含+号。 | 由用户自行指定。 |
-| **--size** | （可选）分页查询时的页大小。 | **size**参数是[1,100]范围内的十进制整数，并且不能包含+号。 | 由用户自行指定。 |
+| **--fpga-image-id** | Specifies the ID of the FPGA image whose association is to be queried. This parameter is optional. | The value of **fpga-image-id** is a string of 32 characters, including lowercase letters a to f and digits 0 to 9. | You can check the ID of an FPGA image in the output of a query subcommand. |
+| **--image-id** | Specifies the ID of the ECS image whose association is to be queried. This parameter is optional. | **image-id** complies with IMS image ID rules. | See [Obtain The Image ID]() about how to get the **image-id** parameter. |
+| **--page** | Specifies the page number for pagination query. This parameter is optional. | The value of **page** is a decimal integer between [1,65535) and cannot contain +. | Specified by the user. |
+| **--size** | Specifies the size of a page for pagination query. This parameter is optional. | The value of **size** is a decimal integer between [1,100] and cannot contain +. | Specified by the user. |
 
-> **page** 参数和 **size** 参数必须同时存在或同时不存在，并且只有当两个参数同时存在时分页查询功能才能生效。<br/>当同时指定 **fpga_image_id** 参数和 **image_id** 参数时，分页查询参数 **page** 和 **size** 将不起作用。
+> **page** and **size** must be used together and only when both parameters are set is pagination query available. <br/> When **fpga-image-id** and **image-id** are set, **page** and **size** are unavailable.
 
-
-### 使用说明 ###
-当回显信息中包含 **Success: 200 OK** 时，表示查询关联子命令执行成功。此时，回显信息是一个包含下述列标题的表格，表格的每一行表示一条关联关系。
+### Usage Guidelines ###
+If the command output is **Success: 200 OK**, the association query subcommand is executed successfully. In this case, the response information is a table containing the following column headers, and each row in the table indicates an association relationship.
 <pre>
 +----------+---------------+------+--------+-----------+------+-----------+-------------+----------+---------+
 | image_id | fpga_image_id | name | status | protected | size | createdAt | description | metadata | message |
 +----------+---------------+------+--------+-----------+------+-----------+-------------+----------+---------+
 </pre>
-列标题的含义如下表所示。
+The following table describes the table headers.
 
-| 参数 | 说明 |
+| Parameter | Description |
 | --------- | ----------- |
-| **image_id** | 弹性云服务器镜像的ID |
-| **fpga_image_id** | FPGA镜像的ID |
-| **name** | FPGA镜像的名称 |
-| **status** | FPGA镜像的状态 |
-| **protected** | FPGA镜像是否处于“保护”状态 |
-| **size** | FPGA镜像的文件大小，单位为MB |
-| **createdAt** | FPGA镜像的创建时间（UTC） |
-| **description** | FPGA镜像的描述信息 |
-| **metadata** | FPGA镜像的元数据信息 |
-| **message** | FPGA镜像的附加消息 |
+| **image_id** | Specifies the ECS image ID. |
+| **fpga_image_id** | Specifies the FPGA image ID. |
+| **name** | Specifies the FPGA image name. |
+| **status** | Specifies the FPGA image status. |
+| **protected** | Specifies whether an FPGA image is protected. |
+| **size** | Specifies the size of the FPGA image, in MB. |
+| **createdAt** | Specifies the time (UTC) when the FPGA image was created. |
+| **description** | Describes the FPGA image. |
+| **metadata** | Specifies the FPGA image metadata. |
+| **message** | Provides supplementary information of the FPGA image. |
 
 <br/>
-当查询子命令执行失败时，回显信息中会包含相应的错误原因信息。
+If a association query subcommand fails to be executed, the response information contains failure causes.
 
 - Example 1
 <pre>
 [fisclient] > fis fpga-image-relation-list --page 1
 Error: argument --page and --size must exist or not exist at the same time
 </pre>
-错误信息表示用户只设置了 **page** 参数，而没有设置 **size** 参数。
+The error information shows that only **page** is set and **size** is not set.
 
 - Example 2
 <pre>
@@ -563,10 +557,10 @@ Error: argument --page and --size must exist or not exist at the same time
 Error: 404 Not Found
 tenant [495440c1********8e9403e708ad4d9d] fpga image [4010a3ac5c5b********5b3524850023] doesn't exist
 </pre>
-错误信息表示用户指定的FPGA镜像不存在于FPGA镜像管理模块中，无法查询相应的关联关系。
+The error information shows that the specified FPGA image does not exist in the FPGA image management module, so its association cannot be queried.
 
-### 示例 ###
-使用分页功能（页编号为1，页大小为2），指定弹性云服务器镜像ID为 **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc** 查询租户可见的关联关系信息。
+### Example ###
+Use the pagination function (the page number is 1 and the page size is 2) to specify the ECS image ID to **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc** to query the associations visible to the tenant.
 <pre>
 [fisclient] > fis fpga-image-relation-list --image-id 404223ca-8**b-4**2-a**e-d187****61bc --page 1 --size 2
 Success: 200 OK

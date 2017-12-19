@@ -1,5 +1,5 @@
 # fisclient #
-[切换到英文版](https://github.com/Huawei/huaweicloud-fpga/blob/master/cli/fisclient/README.md)<br/>
+[Switch to the English version](https://github.com/Huawei/huaweicloud-fpga/blob/master/cli/fisclient/README.md)<br/><br/>
 **fisclient** 是FIS（FPGA镜像服务）的命令行客户端，它将用于FPGA镜像管理的命令集成到一个shell中。
 
 - [1 运行环境要求](#1-运行环境要求)

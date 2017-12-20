@@ -72,7 +72,7 @@ ro_reg_inst
     .din                ( reg_ver_time              )   
     );
 
-assign reg_ver_time = 32'h2017_1108;	
+assign reg_ver_time = 32'h2017_1208;	
 ro_reg_inst
     #(
     .ADDR_WIDTH (CPU_ADDR_WIDTH),

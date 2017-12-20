@@ -1,21 +1,20 @@
-FpgaCmdEntry Operation Instructions
+FPGA镜像加载工具使用说明
 ===================================
+FPGA镜像加载工具FpgaCmdEntry，是一款linux系统中的命令行工具。用户需要传入指定的操作码以及参数来实现相应的功能。
 
-FpgaCmdEntry is an FPGA image querying and loading tool. You need to specify parameters and variables to implement corresponding functions.
+使用命令为：**FpgaCmdEntry 操作码 -参数**
 
-The format of the command is **FpgaCmdEntry Operation code-Variable**.
+其中操作码具体指：DF（查询虚拟机FPGA设备）、LF（加载镜像到FPGA）、IF（查询FPGA卡镜像状态信息）、IL（查询虚拟点灯状态）、IV（查询工具版本号信息）。
 
-The operation codes include DF (querying VM FPGA devices), LF (loading an image to an FPGA card), IF (querying the FPGA card image status), IL (querying the virtual LED status), IV (querying tool version information).
-
-Querying VM FPGA Devices
+查询虚拟机FPGA设备方法
 ----------------------------
-###Function
+### 命令功能
 
-This command is used to query FPGA card information of a VM, including slot number, DBDF, vendor ID, and device ID.
+查询用户虚拟机上所有的FPGA卡信息（包含slot、DBDF、vendor id、device id）。
 
-###Format
+### 命令格式
 
-**FpgaCmdEntry DF -Variable**
+**FpgaCmdEntry DF -参数**
 
 **FpgaCmdEntry DF -D**
 
@@ -23,95 +22,94 @@ This command is used to query FPGA card information of a VM, including slot numb
 
 **FpgaCmdEntry DF -h**
 
-###Parameters
+### 参数说明
 
-| Parameter | Description                       |
+| 参数       | 参数说明                      |
 |-----------|-----------------------------------|
-|   -D      | Displays FPGA device information. |
-|   -?      | Displays help information.        |
-|   -h      | Displays help information.        |
+|   -D      | 显示FPGA设备信息。    |
+|   -?      | 显示帮助信息。        |
+|   -h      | 显示帮助信息。        |
 
-Loading an Image to an FPGA Card
+加载镜像到FPGA方法
 --------------------------------
-###Function
+### 命令功能
 
-This command is used to load an FPGA image to an FPGA card in a specified slot. You need FPGA slot numbers and FPGA image IDs.
+将指定编号的FPGA镜像加载到指定槽位的FPGA，用户需要传入槽位信息以及FPGA镜像编号信息。
 
-###Format
+### 命令格式
 
-**FpgaCmdEntry LF -Variable**
+**FpgaCmdEntry LF -参数**
 
-**FpgaCmdEntry LF -S FPGA card slot number -I FPGA image ID**
+**FpgaCmdEntry LF -S** *FPGA槽位号* **-I** *FPGA镜像编号*
 
 **FpgaCmdEntry LF -?**
 
 **FpgaCmdEntry LF -h**
 
-###Parameters
+### 参数说明
 
-| Parameter | Description                                                                                                                                  |
+| 参数       | 参数说明                                                                                                                                 |
 |-----------|--------------------------------------------------------------------------------------------------|
-| -S      | Specifies the slot number of an FPGA card. The value ranges from 0 to 7. You can run the **FpgaCmdEntry DF -D** command to obtain the number. |
-| -I      | Specifies the FPGA image ID.                                                                                                                 |
-| -?      | Displays help information.                                                                                                                   |
-| -h      | Displays help information.                                                                                                                   |
+| -S        | 被加载FPGA的槽位号，通过执行**FpgaCmdEntry DF -D**得到，范围0~7。 |
+| -I        | 用户的FPGA镜像编号。                                                                                                                 |
+| -?        | 显示帮助信息。                                                                                                                 |
+| -h        | 显示帮助信息。                                                                                                                |
 
-Querying the Status of an FPGA Card Image
+查询FPGA卡镜像状态方法
 -----------------------------------------
-###Function
+### 命令功能
 
-This command is used to query the loading status of an FPGA image. You need to
-specify slot information.
+查询指定槽位的FPGA镜像加载状态，用户需要传入槽位信息。
 
-###Format
+### 命令格式
 
-**FpgaCmdEntry IF -S FPGA card slot number**
+**FpgaCmdEntry IF -S** *FPGA槽位号*
 
 **FpgaCmdEntry IF -?**
 
 **FpgaCmdEntry IF -h**
 
-###Parameters
+### 参数说明
 
-| Parameter | Description                                                                                                                                  |
+| 参数       | 参数说明                                                                                                                                |
 |-----------|----------------------------------------------------------------------------------------------------------------------------------------------|
-|  -S       | Specifies the slot number of an FPGA card. The value ranges from 0 to 7. You can run the **FpgaCmdEntry DF -D** command to obtain the number. |
-|  -?       | Displays help information.                                                                                                                   |
-|  -h       | Displays help information.                                                                                                                   |
+|  -S       | 需要查询的FPGA的槽位号，通过执行**FpgaCmdEntry DF -D**得到，范围0~7。 |
+|  -?       | 显示帮助信息。                                                                                                                  |
+|  -h       | 显示帮助信息。                                                                                                                 |
 
-Querying the Virtual LED Status
+查询虚拟点灯状态方法
 -------------------------------
-###Function
+### 命令功能
 
-This command is used to query the LED status of an FPGA card. You need to specify slot information.
+查询指定槽位的FPGA点灯状态，用户需要传入槽位信息。
 
-###Format
+### 命令格式
 
-**FpgaCmdEntry IL -S FPGA card slot number**
+**FpgaCmdEntry IL -S** *FPGA槽位号*
 
 **FpgaCmdEntry IL -?**
 
 **FpgaCmdEntry IL -h**
 
-###Parameters
+### 参数说明
 
-| Parameter | Description                                                                                                                                  |
+| 参数      | 参数说明                                                                                                                                 |
 |-----------|----------------------------------------------------------------------------------------------------------------------------------------------|
-|   -S      | Specifies the slot number of an FPGA card. The value ranges from 0 to 7. You can run the **FpgaCmdEntry DF -D** command to obtain the number. |
-|   -?      | Displays help information.                                                                                                                   |
-|   -h      | Displays help information.                                                                                                                   |
+|   -S      | 需要查询的FPGA的槽位号，通过执行**FpgaCmdEntry DF -D**得到，范围0~7。  |
+|   -?      | 显示帮助信息。                                                                                                                   |
+|   -h      | 显示帮助信息。                                                                                                                  |
 
-Querying the Tool Version
+查询工具版本号方法
 -------------------------
-###Function
+### 命令功能
 
-This command is used to query the tool version.
+查询当前的工具的版本号。
 
-###Format
+### 命令格式
 
 **FpgaCmdEntry IV**
 
-###Description
+### 参数说明
 
 None
 

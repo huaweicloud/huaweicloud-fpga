@@ -1,25 +1,29 @@
-基于SDAccel工具开发流程
+基于SDAccel硬件开发流程
 =======================
 
-[基于SDAccel的操作流程](#了解基于sdaccel的操作流程)
+目录
+-------------------------
 
-[配置开发环境](#配置开发环境)
+[基于SDAccel的操作流程](#sec-1)
 
-[创建用户工程](#创建用户工程)
+[配置开发环境](#sec-2)
 
-[SDAccel开发](#sdaccel开发)
+[创建用户工程](#sec-3)
 
-[SDAccel仿真](#sdaccel仿真)
+[SDAccel开发](#sec-4)
 
-[配置工程](#配置工程)
+[SDAccel仿真](#sec-5)
 
-[启动版本编译](#启动版本编译)
+[配置工程](#sec-6)
+
+[启动版本编译](#sec-7)
+
+<a id="sec-1" name="sec-1"></a>
 
 基于SDAccel的操作流程
 -------------------------
 
 SDAccel平台的编译和执行流程基于已安装SDx工具的编译环境和支持硬件的执行环境。
-
 
 **说明:**
 
@@ -34,7 +38,7 @@ SDAccel平台提供两种方法以便用户创建工程。
 
 ### 用户操作流程
 
-用户操作的具体流程分两种：仿真流程和硬件测试流程
+用户操作的具体流程分两种：开发仿真操作流程和开发硬件操作流程
 
 #### 开发仿真操作流程
 
@@ -62,12 +66,13 @@ SDAccel平台提供两种方法以便用户创建工程。
 | 编写host代码      | 编写host代码                    | 执行硬件测试需要在执行环境对应目录上编写host代码               |
 | 拷贝xclbin到执行环境 | 从编译环境拷贝已编译的xclbin到执行环境对应目录下 | 从编译环境拷贝已编译的xclbin到执行环境对应目录下。             |
 | 运行程序          | 运行程序                        | 执行硬件测试。                                  |
+<a id="sec-2" name="sec-2"></a>
 配置开发环境
 ------------
 
 用户进入VM后，SDAccel默认存放在`/home/fp1`目录下。在进行SDAccel开发前，用户需要完成对硬件开发环境的配置。
 
-### 配置EDA工具模式。
+#### 配置EDA工具模式
 
 用户打开`/home/fp1/`路径下的`setup.cfg`文件，根据所要选用的FPGA开发工具，将`FPGA_DEVELOP_MODE`设置相应的工具。
 
@@ -75,34 +80,33 @@ SDAccel平台提供两种方法以便用户创建工程。
 
 `FPGA_DEVELOP_MODE="sdx"`
 
-
 **说明:**
-默认的开发工具设置为vivado，所以需要修改该配置项。
+因为默认的开发工具被设置为vivado，所以需要修改该配置项。
 
-### 设置EDA工具License。
+#### 设置EDA工具License
 
-将`setup.cfg`文件`中XILINX_LIC_SETUP`的值配置为License服务器的IP地址`2100@100.125.1.240:2100@100.125.1.251`。
+将`setup.cfg`文件中`XILINX_LIC_SETUP`的值配置为License服务器的IP地址，配置如下：
 
 `XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
 
-### 设置EDA工具版本号。
+#### 设置EDA工具版本号
 
 将`setup.cfg`文件中`VIVADO_VER_REQ`的值配置成所选工具的版本号。
 
-因使用SDAccel作为发开工具，请配置：
+如果以SDAccel作为开发工具，请配置参数`VIVADO_VER_REQ`如下：
 
 `VIVADO_VER_REQ="2017.1"`
 
 
 **说明:**
-默认的开发工具的版本号为2017.2，所以需要修改该配置项。
+因为默认的开发工具的版本号为2017.2，所以需要修改该配置项。
 
 华为提供的Xilinx软件License仅限root账号使用。
 
-配置开发环境。
--------
+#### 完成开发环境配置
 
 运行`setup.sh`脚本完成硬件开发环境的配置，执行以下命令运行`setup.sh`脚本。
+
 
 `cd /home/fp1`  
 `export HW_FPGA_DIR=$(pwd)`  
@@ -112,18 +116,21 @@ SDAccel平台提供两种方法以便用户创建工程。
 **说明:**
 用户可将SDAccel的所有文件拷贝至VM的任意路径下使用，下面均以SDAccel默认路径为例进行说明。
 
-
+<a id="sec-3" name="sec-3"></a>
 创建用户工程
 ------------
 
 用户的工程默认存放在`$HW_FPGA_DIR/hardware/sdacel_design/user`路径下，提供`create_prj.sh`帮助用户创建新工程。
 
+
 `cd $HW_FPGA_DIR/hardware/sdaccel_design/user`  
 `sh create_prj.sh <usr_prj_name> <kernel_mode>`
 
-**说明:**
-<usr_prj_name>为用户工程名称，由用户创建工程时指定，<kernel_mode>为用户工程类型，可选择`temp_cl，temp_c，temp_rtl`。详情参考`$HW_FPGA_DIR/hardware/sdacel_design/user/README.md`。
 
+**说明:**
+<usr_prj_name>为用户工程名称，由用户创建工程时指定，<kernel_mode>为用户工程类型，可选择`temp_cl，temp_c，temp_rtl`。详情请参考[相关文档](../hardware/sdaccel_design/user/README.md)。
+
+<a id="sec-4" name="sec-4"></a>
 SDAccel开发
 -----------
 1. SDAccel支持用户使用OpenCL/C/Verilog/VHDL语言进行kernel开发，用户源文件必须存放在用户工程目录`<usr_prj_name>`的`$HW_FPGA_DIR/hardware/sdaccel_design/user/<usr_prj_name>/src`目录下。
@@ -131,56 +138,65 @@ SDAccel开发
 3. 修改Makefile完成后，进入`$HW_FPGA_DIR/hardware/sdaccel_design/user/<usr_prj_name>/scripts/`目录执行`sh compile.sh hw`完成编译，生成主机程序可执行文件和xclbin文件。
 
 **说明:**
-`用户编写的kernel名`必须与kernel模块名称一致。
+用户编写的kernel名必须与kernel模块名称一致。  
+**每次编译会清除掉之前编译的内容，如有需要，请在新编译之前备份已编译的文件。**
 
+<a id="sec-5" name="sec-5"></a>
 SDAccel仿真
 -----------
 
 SDAccel支持cpu-emulation和hw-emulation两种仿真模式。
 
-### 编写主机程序和kernel代码。
+#### 编写主机程序和kernel代码
 
 `cd $HW_FPGA_DIR/hardware/sdaccel_design/user/<usr_prj_name>/src`
 
 编写代码必须放在src目录下。
 
-### 配置编译脚本。
+#### 配置编译脚本
 
 `cd $HW_FPGA_DIR/hardware/sdaccel_design/user/<usr_prj_name>/src`
 
 用户修改“Makefile”文件，配置host、kernel名称。
 
-### 执行仿真编译。
+#### 执行仿真编译
 
 `cd $HW_FPGA_DIR/hardware/sdaccel_design/user/<usr_prj_name>/scripts`  
 `sh compile.sh <emulation_mode>`
 
-### 执行仿真。
+#### 执行仿真
+
 
 `cd $HW_FPGA_DIR/hardware/sdaccel_design/user/<usr_prj_name>/scripts`  
 `sh run.sh emu ../prj/bin/<example_host> ../prj/bin/<xclbin>`
 
+
 **说明:**
 仿真具体使用方法请参考：`HW_FPGA_DIR/hardware/sdaccel_design/user/<usr_prj_name>/README.md`。
 
+<a id="sec-6" name="sec-6"></a>
 配置工程
 --------
 
 SDAccel提供一键式的版本构建解决方案，用户需要在`$HW_FPGA_DIR/hardware/SDAccel_design/user/<usr_prj_name>/src/`目录下完成对`Makefile`文件的修改，从而实现对工程的配置。
 
-### 配置内容包括
+#### 配置内容包括
 
 -   host名称
 
 -   kernel名称
 
+<a id="sec-7" name="sec-7"></a>
 启动版本编译
 ------------
 
 用户执行`compile.sh`脚本即可完成host编译、链接、生成可执行文件及kernel综合、布局布线和产生目标文件等流程。
 
-`cd $HW_FPGA_DIR/hardware/sdaccel_design/user/<usr_prj_name>/scripts/` 
+
+`cd $HW_FPGA_DIR/hardware/sdaccel_design/user/<usr_prj_name>/scripts/`  
 `sh compile.sh hw`
 
+
 **说明:**
-具体使用方法请参考：`HW_FPGA_DIR/hardware/sdaccel_design/user/<usr_prj_name>/README.md`。
+具体使用方法请参考：`HW_FPGA_DIR/hardware/sdaccel_design/user/<usr_prj_name>/README.md`。  
+**每次编译会清除掉之前编译的内容，如有需要，请在新编译之前备份已编译的文件。**

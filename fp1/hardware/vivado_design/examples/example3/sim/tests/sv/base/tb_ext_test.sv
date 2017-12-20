@@ -94,7 +94,6 @@ class tb_ext_test extends tb_test;
         REG_DATA_t ver_time, ver_type;
         REG_DATA_t oppos;
         REG_DATA_t wdata, rdata;
-        wdata = 'h5a5aa5a5;
         m_cfg = new();
         // ----------------------------------------
         // STEP1: Check version
@@ -129,6 +128,7 @@ class tb_ext_test extends tb_test;
         `tb_info(m_inst_name, {"\n----------------------------------------\n", 
                                " STEP2: Checking DUV Test Register\n", 
                                "----------------------------------------\n"})
+        wdata = 'h5a5aa5a5;
         m_tb_env.m_reg_gen.write(g_reg_oppos_data, wdata);
         #10ns;
         m_tb_env.m_reg_gen.read(g_reg_oppos_data, oppos);
@@ -136,13 +136,15 @@ class tb_ext_test extends tb_test;
 
         m_tb_env.m_reg_gen.read(g_reg_oppos_addr, rdata);
 
-        $sformat(info, {"+-------------------------------+\n", 
-                        "|    Test Register: %s        |\n", 
-                        "+-------------------------------+"}, check ? "PASS" : "FAIL");
-        if (!check) begin
-            $sformat(err_info, "\n\nDetail info: Write 0x%x but read 0x%x which should be 0x%x!\n",
-                     wdata, rdata, ~wdata);
-        end
+        // No not check test register
+        // $sformat(info, {"+-------------------------------+\n", 
+        //                 "|    Test Register: %s        |\n", 
+        //                 "+-------------------------------+"}, check ? "PASS" : "FAIL");
+        // if (!check) begin
+        //     $sformat(err_info, "\n\nDetail info: Write 0x%x but read 0x%x which should be 0x%x!\n",
+        //              wdata, oppos, ~wdata);
+        // end
+        info  = "+-------------------------------+";
         oppos = {~g_reg_oppos_data[17 : 2], ~g_reg_oppos_data[17 : 2]};
         check &= (oppos == rdata);
         begin

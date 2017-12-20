@@ -1,26 +1,27 @@
 使用基于vivado的Example
 =======================
 
-[使用example1](#使用example1)
+[使用example1](#a)
 
-[使用example2](#使用example2)
+[使用example2](#b)
 
-[使用example3](#使用example3)
+[使用example3](#c)
 
 **说明：**需要了解这三个example功能等信息的用户可查阅[示例应用指南](../hardware/vivado_design/examples/README.md)。
 
+<a name="a"></a>
 使用example1
 -------
 
 ### 功能描述
 
-Example1示例主要实现用户逻辑的版本号读取，数据取反、加法器和打印DFX信息功能。
+Example1示例主要实现用户逻辑的版本号读取、数据取反、加法器和打印DFX信息功能。
 
 ### 使用Vivado HDK
 
-用户申请FPGA镜像后，登录VM，HDK默认存放在/home/fp1目录下,HDK的使用步骤如下。
+用户申请FPGA镜像后，登录VM，HDK默认存放在/home/fp1目录下，HDK的使用步骤如下。
 
-#### 步骤1 设置EDA工具License。
+#### 步骤1 设置Vivado工具License。
 
 用户打开/home/fp1/路径下的`setup.cfg`文件，将文件中`XILINX_LIC_SETUP`的值配置为License服务器的IP地址`2100@100.125.1.240:2100@100.125.1.251`。
 
@@ -51,7 +52,7 @@ Example1示例主要实现用户逻辑的版本号读取，数据取反、加法
 `make TC=sv_demo_001`  
 
 ### 使用Vivado SDK
-**说明：** 先生成dcp文件，然后注册FPGA镜像（可参考根目录下面“注册FPGA镜像”章节），[加载镜像](../tools/fpga_tool/docs/load_an_fpga_image.md)、编译SDK（可参考根目录下面“编译SDK”章节）后，才能使用SDK。
+**说明：** 在生成dcp文件后，需要先完成[环境配置](./../../README.md#sec_3_1)，再完成[SDK的编译](./../../README.md#sec_4_1)，才能使用SDK。
 
 #### 步骤1 编译example1的SDK。
 
@@ -147,6 +148,7 @@ Example1示例主要实现用户逻辑的版本号读取，数据取反、加法
 		[0x0002462c]: 0x00000000  - rxm: reg_axi_rc_cnt
 	 -------- Dump logic regs end -------- 
 
+<a name="b"></b>
 使用example2
 ------------
 
@@ -158,7 +160,7 @@ Example2主要实现用户逻辑DMA环回通道和DDR读取功能。
 
 用户申请FPGA镜像后，登录VM，HDK默认存放在/home/fp1目录下,HDK的使用步骤如下。
 
-#### 步骤1 设置EDA工具License。
+#### 步骤1 设置Vivado工具License。
 
 用户打开/home/fp1/路径下的`setup.cfg`文件，将文件中`XILINX_LIC_SETUP`的值配置为License服务器的IP地址`2100@100.125.1.240:2100@100.125.1.251`。
 
@@ -188,6 +190,7 @@ Example2主要实现用户逻辑DMA环回通道和DDR读取功能。
 `make TC=sv_demo_001`
 
 ### 使用Vivado SDK
+**说明：** 在生成dcp文件后，需要先完成[环境配置](./../../README.md#sec_3_1)，再完成[SDK的编译](./../../README.md#sec_4_1)，才能使用SDK。
 
 #### example2 SDK测试环境配置
 
@@ -227,7 +230,7 @@ Example2主要实现用户逻辑DMA环回通道和DDR读取功能。
 | 参数     | 说明                                       |
 | ------ | ---------------------------------------- |
 | **-d** | 设置队列深度，有效值是1024、2048、4096、8192，默认值是8192。 |
-| **-p** | 指定VF设备号，默认为0。                                                 |
+| **-p** | 指定VF设备号，默认为0。                            |
 | **-q** | 指定队列发送：有效值为[0，7]，默认为0，可以通过逗号进行多选（如 -q 0,1,5）。 |
 | **-l** | 表示发送包的单包数据长度：有效值为[64，1048576]，默认值为64。    |
 | **-n** | 表示发送包的个数：有效值为[1，4294966271]，默认为128。      |
@@ -286,7 +289,7 @@ Example2主要实现用户逻辑DMA环回通道和DDR读取功能。
 	[root@CentOS7 bin]# ./ul_read_ddr_data -n 0 -a 0x1000
 	Value: 0x12345678
 
-
+<a name="c"></c>
 使用example3
 ------------
 
@@ -298,7 +301,7 @@ Example3主要实现用户逻辑FMMU（Fpga Mermory Manage Unit）功能。
 
 用户申请FPGA镜像后，登录VM，HDK默认存放在`/home/fp1`目录下，HDK的使用步骤如下。
 
-#### 步骤1 设置EDA工具License。
+#### 步骤1 设置Vivado工具License。
 
 用户打开/home/fp1/路径下的`setup.cfg`文件，将文件中XILINX_LIC_SETUP的值配置为License服务器的IP地址`2100@100.125.1.240:2100@100.125.1.251`。
 
@@ -332,6 +335,7 @@ Example3主要实现用户逻辑FMMU（Fpga Mermory Manage Unit）功能。
 ### 使用Vivado SDK
 
 #### Example3 SDK测试环境配置
+**说明：** 在生成dcp文件后，需要先完成[环境配置](./../../README.md#sec_3_1)，再完成[SDK的编译](./../../README.md#sec_4_1)，才能使用SDK。
 
 ##### 步骤1 编译example3的SDK。
 

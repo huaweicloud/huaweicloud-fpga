@@ -107,13 +107,13 @@ usr_prj0的prj文件夹层级结构如下：
 
 `usr_prj_cfg`内容介绍：
 
-| 内容                       | 关键字                      | 示例                                                                               |
-|:--------------------       | :---------------           |:------------------------------------------------------------                      |
-| 用户创建工程的名字           | USR_PRJ_NAME               | USR_PRJ_NAME=ul_pr_top                                                             |
-| 工程顶层的名字               | USR_TOP                   | USR_TOP=ul_pr_top                                                                  |
-| 用户指定的综合策略           | USR_SYN_STRATEGY          | USR_SYN_STRATEGY=AreaOptimized_high                                                |
-| 用户指定的实现策略           | USR_IMPL_STRATEGY         | USR_IMPL_STRATEGY=Explore                                                          |
-| 用户的自定义约束             | USR_CONSTRAINTS           | USR_CONSTRAINTS="set_multicycle_path -setup -from [get_pins cpu_data_out*/D] 3"    |
+| 内容        | 关键字               | 示例                                       |
+| :-------- | :---------------- | :--------------------------------------- |
+| 用户创建工程的名字 | USR_PRJ_NAME      | USR_PRJ_NAME=ul_pr_top                   |
+| 工程顶层的名字   | USR_TOP           | USR_TOP=ul_pr_top                        |
+| 用户指定的综合策略 | USR_SYN_STRATEGY  | USR_SYN_STRATEGY=AreaOptimized_high      |
+| 用户指定的实现策略 | USR_IMPL_STRATEGY | USR_IMPL_STRATEGY=Explore                |
+| 用户的自定义约束  | USR_CONSTRAINTS   | USR_CONSTRAINTS="set_multicycle_path -setup -from [get_pins cpu_data_out*/D] 3" |
 
 ---
 
@@ -135,16 +135,16 @@ usr_prj0的prj文件夹层级结构如下：
   $ sh build.sh -h
 ```
 
-| 参数                                               | 说明                   |
-|:------------------------------------------         |:-------------          |
-|  [-s] or [-S] or [-synth]                          | 单步执行综合           |
-|  [-i] or [-I] or [-impl]                           | 单步执行实现           |
-|  [-p] or [-P] or [-pr]                             | 单步执行pr校验         |
-|  [-b] or [-B] or [-bit]                            | 单步执行目标文件生成   |
-|  [-e] or [-E] or [-encrypt]                        | 综合不选择加密         |
-|  [-h] or [-H] or [-help]                           | build.sh帮助说明       |
-|  [-s_strategy_help]                                | 综合策略帮助说明       |
-|  [-i_strategy_help]                                | 实现策略帮助说明       |
+| 参数                         | 说明           |
+| :------------------------- | :----------- |
+| [-s] or [-S] or [-synth]   | 单步执行综合       |
+| [-i] or [-I] or [-impl]    | 单步执行实现       |
+| [-p] or [-P] or [-pr]      | 单步执行pr校验     |
+| [-b] or [-B] or [-bit]     | 单步执行目标文件生成   |
+| [-e] or [-E] or [-encrypt] | 综合不选择加密      |
+| [-h] or [-H] or [-help]    | build.sh帮助说明 |
+| [-s_strategy_help]         | 综合策略帮助说明     |
+| [-i_strategy_help]         | 实现策略帮助说明     |
 
 - 如果需要使用一键式工程构建，请使用如下用命令:
 
@@ -276,7 +276,7 @@ usr_prj0的prj文件夹层级结构如下：
 
 **重要说明**:
 
-- 执行AEI_Register.sh命令j完成`pr校验`、`bit文件生成`和`注册ID生成`3个步骤，因此该步骤耗时稍长。
+- 执行AEI_Register.sh命令完成`pr校验`、`bit文件生成`和`注册ID生成`3个步骤，因此该步骤耗时稍长。
 
 - 在AEI_Register.sh脚本执行过程中，用户需要根据提示信息输入AK、SK和密码。
 

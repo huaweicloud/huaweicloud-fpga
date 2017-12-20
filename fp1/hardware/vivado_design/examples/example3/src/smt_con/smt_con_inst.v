@@ -4,13 +4,13 @@
 //
 //     This program is free software; you can redistribute it and/or modify
 //     it under the terms of the Huawei Software License (the "License").
-//     A copy of the License is located in the "LICENSE" file accompanying 
+//     A copy of the License is located in the "LICENSE" file accompanying
 //     this file.
 //
 //     This program is distributed in the hope that it will be useful,
 //     but WITHOUT ANY WARRANTY; without even the implied warranty of
 //     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-//     Huawei Software License for more details. 
+//     Huawei Software License for more details.
 //------------------------------------------------------------------------------
 
 `resetall
@@ -174,8 +174,8 @@ wire [3:0]                kernel2ddr_dfifo_eop_cnt_en         ;
 wire [3:0]                ddr2tx_bvalid_cnt_en                ;               
 wire [3:0]                ddr2kernel_bvalid_cnt_en            ;               
 wire [3:0]                pkt_fifo_rdata_sop_cnt_en           ; 
-wire [31:0]               reg_cont_rd_err [DDR_NUM-1:0]       ; 
-wire [31:0]               reg_cont_rd_sta [DDR_NUM-1:0]       ; 
+wire [32*DDR_NUM-1:0]     reg_cont_rd_err                     ; 
+wire [32*DDR_NUM-1:0]     reg_cont_rd_sta                     ; 
 wire [DDR_NUM-1:0]        reg_cont_rcmd_en                    ; 
 wire [DDR_NUM-1:0]        reg_cont_rpkt_en                    ;
 
@@ -380,8 +380,8 @@ u_reg_smt_con
     .ddr2tx_bvalid_cnt_en           ( ddr2tx_bvalid_cnt_en         ),
     .ddr2kernel_bvalid_cnt_en       ( ddr2kernel_bvalid_cnt_en     ),
     .pkt_fifo_rdata_sop_cnt_en      ( pkt_fifo_rdata_sop_cnt_en    ),
-    .reg_cont_rcmd_en               ( reg_cont_rcmd_en[0]          ),
-    .reg_cont_rpkt_en               ( reg_cont_rpkt_en[0]          ),
+    .reg_cont_rcmd_en               ( reg_cont_rcmd_en             ),
+    .reg_cont_rpkt_en               ( reg_cont_rpkt_en             ),
 
     .reg_axi4_sl_tran_cnt_en        ( axi4_sl_tran_cnt_en[0]       ),
     .reg_axi4_sl_frm_cnt_en         ( axi4_sl_frm_cnt_en[0]        ),
@@ -397,10 +397,10 @@ u_reg_smt_con
     .ddr_dfifo_stat                 ( ddr_dfifo_stat               ),
     .sel_cfifo_stat                 ( sel_cfifo_stat               ),
     .fifo_state                     ( fifo_state                   ),
-    .reg_cont_rd_sta                ( reg_cont_rd_sta[0]           ),
+    .reg_cont_rd_sta                ( reg_cont_rd_sta              ),
 
     //err 
-    .reg_cont_rd_err                ( reg_cont_rd_err[0]           ),
+    .reg_cont_rd_err                ( reg_cont_rd_err              ),
 
     //with cpu
     .cnt_reg_clr                    ( cnt_reg_clr                  ),

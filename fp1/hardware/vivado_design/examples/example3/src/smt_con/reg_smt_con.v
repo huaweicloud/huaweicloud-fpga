@@ -4,13 +4,13 @@
 //
 //     This program is free software; you can redistribute it and/or modify
 //     it under the terms of the Huawei Software License (the "License").
-//     A copy of the License is located in the "LICENSE" file accompanying 
+//     A copy of the License is located in the "LICENSE" file accompanying
 //     this file.
 //
 //     This program is distributed in the hope that it will be useful,
 //     but WITHOUT ANY WARRANTY; without even the implied warranty of
 //     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-//     Huawei Software License for more details. 
+//     Huawei Software License for more details.
 //------------------------------------------------------------------------------
 
 `resetall
@@ -37,8 +37,8 @@ module reg_smt_con #
                  input wire [31:0]               ddr_dfifo_stat              ,
                  input wire [31:0]               sel_cfifo_stat              ,
                  input wire [55:0]               fifo_state                  ,
-                 input wire [31:0]               reg_cont_rd_sta             ,
-                 input wire [31:0]               reg_cont_rd_err             ,
+                 input wire [32*MAX_DDR_NUM-1:0] reg_cont_rd_sta             ,
+                 input wire [32*MAX_DDR_NUM-1:0] reg_cont_rd_err             ,
                  //cnt
                  input wire [3:0]                axi4_s2m_rsp_ok_cnt_en      ,               
                  input wire [3:0]                axi4_s2m_rsp_exok_cnt_en    ,               
@@ -52,8 +52,8 @@ module reg_smt_con #
                  input wire [3:0]                ddr2kernel_bvalid_cnt_en    ,               
                  input wire [3:0]                pkt_fifo_rdata_sop_cnt_en   ,
 
-                 input wire                      reg_cont_rcmd_en            , 
-                 input wire                      reg_cont_rpkt_en            ,
+                 input wire [MAX_DDR_NUM-1:0]    reg_cont_rcmd_en            , 
+                 input wire [MAX_DDR_NUM-1:0]    reg_cont_rpkt_en            ,
 
                  input wire                      reg_axi4_sl_tran_cnt_en     , 
                  input wire                      reg_axi4_sl_frm_cnt_en      , 
@@ -84,6 +84,9 @@ reg        [31:0]           cpu_data_out_cnt_pf      ;
 wire       [31:0]           cpu_data_pf_out000       ;
 //err
 wire       [31:0]           cpu_data_pf_out080       ;
+wire       [31:0]           cpu_data_pf_out081       ;
+wire       [31:0]           cpu_data_pf_out082       ;
+wire       [31:0]           cpu_data_pf_out083       ;
 //sta
 wire       [31:0]           cpu_data_pf_out100       ;
 wire       [31:0]           cpu_data_pf_out101       ;
@@ -96,6 +99,9 @@ wire       [31:0]           cpu_data_pf_out107       ;
 wire       [31:0]           cpu_data_pf_out108       ;
 wire       [31:0]           cpu_data_pf_out109       ;
 wire       [31:0]           cpu_data_pf_out10a       ;
+wire       [31:0]           cpu_data_pf_out10b       ;
+wire       [31:0]           cpu_data_pf_out10c       ;
+wire       [31:0]           cpu_data_pf_out10d       ;
 
 //cnt
 wire       [31:0]           cpu_data_pf_out180       ;
@@ -147,6 +153,12 @@ wire       [31:0]           cpu_data_pf_out1ad       ;
 wire       [31:0]           cpu_data_pf_out1ae       ;
 wire       [31:0]           cpu_data_pf_out1af       ;
 wire       [31:0]           cpu_data_pf_out1b0       ;
+wire       [31:0]           cpu_data_pf_out1b1       ;
+wire       [31:0]           cpu_data_pf_out1b2       ;
+wire       [31:0]           cpu_data_pf_out1b3       ;
+wire       [31:0]           cpu_data_pf_out1b4       ;
+wire       [31:0]           cpu_data_pf_out1b5       ;
+wire       [31:0]           cpu_data_pf_out1b6       ;
 
 //********************************************************************************************************************
 //    cfg
@@ -177,7 +189,7 @@ err_wc_reg_inst
         .ADDR_WIDTH(24),
         .VLD_WIDTH(32)
          )
-    inst_reg_bd_sta_err                                      
+    inst_reg_bd0_sta_err                                      
      (
      .clk                ( clk_sys                  ),       
      .reset              ( rst                      ),       
@@ -187,8 +199,63 @@ err_wc_reg_inst
      .cpu_addr           ( cpu_addr                 ),       
      .cpu_wr             ( cpu_wr                   ),       
      .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h080}),      
-     .err_flag_in        ( reg_cont_rd_err           )        
+     .err_flag_in        ( reg_cont_rd_err[32*1-1:0])        
      );
+
+err_wc_reg_inst
+        #(
+        .ADDR_WIDTH(24),
+        .VLD_WIDTH(32)
+         )
+    inst_reg_bd1_sta_err                                      
+     (
+     .clk                ( clk_sys                  ),       
+     .reset              ( rst                      ),       
+
+     .cpu_data_out       ( cpu_data_pf_out081       ),       
+     .cpu_data_in        ( cpu_data_in              ),       
+     .cpu_addr           ( cpu_addr                 ),       
+     .cpu_wr             ( cpu_wr                   ),       
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h081}),      
+     .err_flag_in        ( reg_cont_rd_err[32*2-1:32*1])        
+     );
+
+err_wc_reg_inst
+        #(
+        .ADDR_WIDTH(24),
+        .VLD_WIDTH(32)
+         )
+    inst_reg_bd2_sta_err                                      
+     (
+     .clk                ( clk_sys                  ),       
+     .reset              ( rst                      ),       
+
+     .cpu_data_out       ( cpu_data_pf_out082       ),       
+     .cpu_data_in        ( cpu_data_in              ),       
+     .cpu_addr           ( cpu_addr                 ),       
+     .cpu_wr             ( cpu_wr                   ),       
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h082}),      
+     .err_flag_in        ( reg_cont_rd_err[32*3-1:32*2])    
+     );
+
+err_wc_reg_inst
+        #(
+        .ADDR_WIDTH(24),
+        .VLD_WIDTH(32)
+         )
+    inst_reg_bd3_sta_err                                      
+     (
+     .clk                ( clk_sys                  ),       
+     .reset              ( rst                      ),       
+
+     .cpu_data_out       ( cpu_data_pf_out083       ),       
+     .cpu_data_in        ( cpu_data_in              ),       
+     .cpu_addr           ( cpu_addr                 ),       
+     .cpu_wr             ( cpu_wr                   ),       
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h083}),      
+     .err_flag_in        ( reg_cont_rd_err[32*4-1:32*3])        
+     );
+
 
 //********************************************************************************************************************
 //    sta
@@ -224,25 +291,11 @@ ro_reg_inst
         .ADDR_WIDTH(24),
         .VLD_WIDTH(32)                                    
          )
-     inst_reg_cont_rd_sta                                     
+     inst_reg_cont_rd_sta3                                    
      (
      .cpu_data_out       ( cpu_data_pf_out102       ),   
      .cpu_addr           ( cpu_addr                 ),   
      .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h102}),   
-     .din                ( reg_cont_rd_sta           )    
-     );
-
-
-ro_reg_inst
-        #(
-        .ADDR_WIDTH(24),
-        .VLD_WIDTH(32)                                    
-         )
-     inst_reg_cont_rd_sta3                                    
-     (
-     .cpu_data_out       ( cpu_data_pf_out103       ),   
-     .cpu_addr           ( cpu_addr                 ),   
-     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h103}),   
      .din                ( tx2ddr_cfifo_stat           )    
      );
 
@@ -253,9 +306,9 @@ ro_reg_inst
          )
      inst_reg_cont_rd_sta4                                    
      (
-     .cpu_data_out       ( cpu_data_pf_out104       ),   
+     .cpu_data_out       ( cpu_data_pf_out103      ),   
      .cpu_addr           ( cpu_addr                 ),   
-     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h104}),   
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h103}),   
      .din                ( tx2ddr_dfifo_stat           )    
      );
 
@@ -266,9 +319,9 @@ ro_reg_inst
          )
      inst_reg_cont_rd_sta5                                    
      (
-     .cpu_data_out       ( cpu_data_pf_out105       ),   
+     .cpu_data_out       ( cpu_data_pf_out104       ),   
      .cpu_addr           ( cpu_addr                 ),   
-     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h105}),   
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h104}),   
      .din                ( kernel2ddr_cfifo_stat           )    
      );
 
@@ -279,9 +332,9 @@ ro_reg_inst
          )
      inst_reg_cont_rd_sta6                                    
      (
-     .cpu_data_out       ( cpu_data_pf_out106       ),   
+     .cpu_data_out       ( cpu_data_pf_out105      ),   
      .cpu_addr           ( cpu_addr                 ),   
-     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h106}),   
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h105}),   
      .din                ( kernel2ddr_dfifo_stat           )    
      );
 
@@ -292,9 +345,9 @@ ro_reg_inst
          )
      inst_reg_cont_rd_sta7                                    
      (
-     .cpu_data_out       ( cpu_data_pf_out107       ),   
+     .cpu_data_out       ( cpu_data_pf_out106       ),   
      .cpu_addr           ( cpu_addr                 ),   
-     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h107}),   
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h106}),   
      .din                ( ddr_cfifo_stat           )    
      );
 
@@ -305,9 +358,9 @@ ro_reg_inst
          )
      inst_reg_cont_rd_sta8                                     
      (
-     .cpu_data_out       ( cpu_data_pf_out108       ),   
+     .cpu_data_out       ( cpu_data_pf_out107      ),   
      .cpu_addr           ( cpu_addr                 ),   
-     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h108}),   
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h107}),   
      .din                ( ddr_dfifo_stat           )    
      );
 
@@ -318,9 +371,9 @@ ro_reg_inst
          )
      inst_reg_cont_rd_sta9                                     
      (
-     .cpu_data_out       ( cpu_data_pf_out109       ),   
+     .cpu_data_out       ( cpu_data_pf_out108       ),   
      .cpu_addr           ( cpu_addr                 ),   
-     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h109}),   
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h108}),   
      .din                ( sel_cfifo_stat           )    
      );
 
@@ -331,11 +384,64 @@ ro_reg_inst
          )
      inst_reg_axi4_sl_fsm_state                                     
      (
-     .cpu_data_out       ( cpu_data_pf_out10a       ),   
+     .cpu_data_out       ( cpu_data_pf_out109      ),   
      .cpu_addr           ( cpu_addr                 ),   
-     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h10A}),   
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h109}),   
      .din                ( reg_axi4_sl_fsm_state           )    
      );
+
+ro_reg_inst
+        #(
+        .ADDR_WIDTH(24),
+        .VLD_WIDTH(32)                                    
+         )
+     inst_reg_cont0_rd_sta                                     
+     (
+     .cpu_data_out       ( cpu_data_pf_out10a       ),   
+     .cpu_addr           ( cpu_addr                 ),   
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h10a}),   
+     .din                ( reg_cont_rd_sta[32*1-1:32*0]  )    
+     );
+
+ro_reg_inst
+        #(
+        .ADDR_WIDTH(24),
+        .VLD_WIDTH(32)                                    
+         )
+     inst_reg_cont1_rd_sta                                     
+     (
+     .cpu_data_out       ( cpu_data_pf_out10b      ),   
+     .cpu_addr           ( cpu_addr                 ),   
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h10b}),   
+     .din                ( reg_cont_rd_sta[32*2-1:32*1]  )    
+     );
+
+ro_reg_inst
+        #(
+        .ADDR_WIDTH(24),
+        .VLD_WIDTH(32)                                    
+         )
+     inst_reg_cont2_rd_sta                                     
+     (
+     .cpu_data_out       ( cpu_data_pf_out10c       ),   
+     .cpu_addr           ( cpu_addr                 ),   
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h10c}),   
+     .din                ( reg_cont_rd_sta[32*3-1:32*2]  )    
+     );
+
+ro_reg_inst
+        #(
+        .ADDR_WIDTH(24),
+        .VLD_WIDTH(32)                                    
+         )
+     inst_reg_cont3_rd_sta                                     
+     (
+     .cpu_data_out       ( cpu_data_pf_out10d      ),   
+     .cpu_addr           ( cpu_addr                 ),   
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h10d}),   
+     .din                ( reg_cont_rd_sta[32*4-1:32*3]  )    
+     );
+
 //********************************************************************************************************************
 //    cnt
 //********************************************************************************************************************
@@ -1003,14 +1109,14 @@ cnt32_reg_inst
          #(
          .ADDR_WIDTH(24)                                        
           )
-inst_reg_cont_rcmd_en
+inst_reg_cont0_rcmd_en
      (
      .clks               ( clk_sys                  ),     
      .reset              ( rst                      ),     
      .cpu_data_out       ( cpu_data_pf_out1ac       ),     
      .cpu_addr           ( cpu_addr                 ),     
      .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1ac}),     
-     .cnt_reg_inc        (  reg_cont_rcmd_en       ),     
+     .cnt_reg_inc        (  reg_cont_rcmd_en[0]       ),     
      .cnt_reg_clr        ( cnt_reg_clr              )      
      );
 
@@ -1018,14 +1124,104 @@ cnt32_reg_inst
          #(
          .ADDR_WIDTH(24)                                        
           )
-inst_reg_cont_rpkt_en
+inst_reg_cont1_rcmd_en
      (
      .clks               ( clk_sys                  ),     
      .reset              ( rst                      ),     
      .cpu_data_out       ( cpu_data_pf_out1ad       ),     
      .cpu_addr           ( cpu_addr                 ),     
      .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1ad}),     
-     .cnt_reg_inc        (  reg_cont_rpkt_en       ),     
+     .cnt_reg_inc        (  reg_cont_rcmd_en[1]     ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_reg_cont2_rcmd_en
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_pf_out1ae       ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1ae}),     
+     .cnt_reg_inc        (  reg_cont_rcmd_en[2]       ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_reg_cont3_rcmd_en
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_pf_out1af       ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1af}),     
+     .cnt_reg_inc        (  reg_cont_rcmd_en[3]     ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_reg_cont0_rpkt_en
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_pf_out1b0       ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1b0}),     
+     .cnt_reg_inc        (  reg_cont_rpkt_en[0]     ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_reg_cont1_rpkt_en
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_pf_out1b1       ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1b1}),     
+     .cnt_reg_inc        (  reg_cont_rpkt_en[1]     ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_reg_cont2_rpkt_en
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_pf_out1b2       ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1b2}),     
+     .cnt_reg_inc        (  reg_cont_rpkt_en[2]     ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_reg_cont3_rpkt_en
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_pf_out1b3       ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1b3}),     
+     .cnt_reg_inc        (  reg_cont_rpkt_en[3]     ),     
      .cnt_reg_clr        ( cnt_reg_clr              )      
      );
 
@@ -1037,13 +1233,12 @@ inst_axi4_sl_tran_cnt_en
      (
      .clks               ( clk_sys                  ),     
      .reset              ( rst                      ),     
-     .cpu_data_out       ( cpu_data_pf_out1ae       ),     
+     .cpu_data_out       ( cpu_data_pf_out1b4       ),     
      .cpu_addr           ( cpu_addr                 ),     
-     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1ae}),     
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1b4}),     
      .cnt_reg_inc        (  reg_axi4_sl_tran_cnt_en       ),     
      .cnt_reg_clr        ( cnt_reg_clr              )      
      );
-
 cnt32_reg_inst
          #(
          .ADDR_WIDTH(24)                                        
@@ -1052,9 +1247,9 @@ inst_axi4_sl_frm_cnt_en
      (
      .clks               ( clk_sys                  ),     
      .reset              ( rst                      ),     
-     .cpu_data_out       ( cpu_data_pf_out1af       ),     
+     .cpu_data_out       ( cpu_data_pf_out1b5       ),     
      .cpu_addr           ( cpu_addr                 ),     
-     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1af}),     
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1b5}),     
      .cnt_reg_inc        (  reg_axi4_sl_frm_cnt_en       ),     
      .cnt_reg_clr        ( cnt_reg_clr              )      
      );
@@ -1067,12 +1262,17 @@ inst_reg_axi4_sl_wr_cnt_en
      (
      .clks               ( clk_sys                  ),     
      .reset              ( rst                      ),     
-     .cpu_data_out       ( cpu_data_pf_out1b0       ),     
+     .cpu_data_out       ( cpu_data_pf_out1b6       ),     
      .cpu_addr           ( cpu_addr                 ),     
-     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1b0}),     
+     .its_addr           ( {REG_MMU_CONNECT_ID,3'd0,9'h1b6}),     
      .cnt_reg_inc        (  reg_axi4_sl_wr_cnt_en       ),     
      .cnt_reg_clr        ( cnt_reg_clr              )      
-     );     
+     );  
+     
+     
+     
+     
+        
 //********************************************************************************************************************
 always @ (posedge clk_sys or posedge rst)
 begin
@@ -1095,6 +1295,9 @@ begin
     else begin
         casez(cpu_addr[6:0])
            7'h00: cpu_data_out_err_pf <= cpu_data_pf_out080;
+           7'h01: cpu_data_out_err_pf <= cpu_data_pf_out081;
+           7'h02: cpu_data_out_err_pf <= cpu_data_pf_out082;
+           7'h03: cpu_data_out_err_pf <= cpu_data_pf_out083;
          default: cpu_data_out_err_pf <= 32'd0;
         endcase
     end
@@ -1179,6 +1382,12 @@ begin
            7'h2e: cpu_data_out_cnt_pf <= cpu_data_pf_out1ae;
            7'h2f: cpu_data_out_cnt_pf <= cpu_data_pf_out1af;
            7'h30: cpu_data_out_cnt_pf <= cpu_data_pf_out1b0;
+           7'h31: cpu_data_out_cnt_pf <= cpu_data_pf_out1b1;
+           7'h32: cpu_data_out_cnt_pf <= cpu_data_pf_out1b2;
+           7'h33: cpu_data_out_cnt_pf <= cpu_data_pf_out1b3;
+           7'h34: cpu_data_out_cnt_pf <= cpu_data_pf_out1b4;
+           7'h35: cpu_data_out_cnt_pf <= cpu_data_pf_out1b5;
+           7'h36: cpu_data_out_cnt_pf <= cpu_data_pf_out1b6;
          default: cpu_data_out_cnt_pf <= 32'd0;
        endcase
     end

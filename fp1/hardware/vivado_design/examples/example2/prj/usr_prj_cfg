@@ -77,7 +77,7 @@ USR_SYN_STRATEGY=DEFAULT
 ## for more details about strategy  Arguments,please use "sh fpga_design_run.sh -i_strategy_help" in ../../../lib/scripts/                                       
 #######################################################################################################################
 
-USR_IMPL_STRATEGY=Explore
+USR_IMPL_STRATEGY=DEFAULT
 
 #######################################################################################################################
 ## The user-defined constraints.

@@ -77,8 +77,7 @@ SDAccel HDK主要完成SDAccel开发流程的编译和仿真部分，需要在SD
 
 6. 硬件测试。
 
-  按照步骤4选择hw模式编译并生成xclbin文件，然后注册镜像，加载镜像，按照下节SDAccel SDK流程在执行环境上进行硬件测试。
-  注册镜像，加载镜像请参考[注册FPGA镜像.md](./注册FPGA镜像.md)。
+  按照步骤4选择hw模式编译并生成xclbin文件，然后完成[环境配置](./../../README.md#sec_3_1)和[SDK的编译](./../../README.md#sec_4_1)，按照下节SDAccel SDK流程在执行环境上进行硬件测试。
 
 ----结束
 
@@ -127,14 +126,14 @@ SDAccel的SDK平台主要实现对硬件的测试，需要在执行环境下编�
 
 5.  硬件测试。
 
-  执行run.sh完成硬件测试。
+  执行run.sh完成硬件测试，具体步骤如下：
 
   	cd $SW_FPGA_DIR/software/app/sdaccel_app/mmult_hls
   	sh run.sh mmult bin_dir/bin_mmult_hw.xclbin
 
   #####说明:
 
-  run.sh具体使用参见$SW_FPGA_DIR/software/app/sdaccel_app/mmult_hls/READ.md。  
+  run.sh具体使用请执行sh run.sh -h查看。  
   *bin_dir*为SDAccel HDK流程**hw模式**编译生成的xclbin文件所在目录。
 
 ----结束

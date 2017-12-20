@@ -4,13 +4,13 @@
 //
 //     This program is free software; you can redistribute it and/or modify
 //     it under the terms of the Huawei Software License (the "License").
-//     A copy of the License is located in the "LICENSE" file accompanying 
+//     A copy of the License is located in the "LICENSE" file accompanying
 //     this file.
 //
 //     This program is distributed in the hope that it will be useful,
 //     but WITHOUT ANY WARRANTY; without even the implied warranty of
 //     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-//     Huawei Software License for more details. 
+//     Huawei Software License for more details.
 //------------------------------------------------------------------------------
 
 `resetall
@@ -134,10 +134,7 @@ assign rdata_rev = {20'd0,rlast,7'd0};
 
 always @( posedge aclk )
 begin
-    if ( (rvalid == 1'b1) & (rready == 1'b1)) begin
-        pkt_back_wdata <= {rdata_rev,rdata[511:0]};
-    end
-    else;
+     pkt_back_wdata <= {rdata_rev,rdata[511:0]};
 end
     
 always@(posedge aclk or posedge areset)

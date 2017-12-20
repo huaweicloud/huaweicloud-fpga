@@ -1,0 +1,27 @@
+Huawei Software License 
+1.	Definitions
+1.1	¡°Licensor¡± means the copyright owner or entity authorized by the copyright owner that is granting the License. 
+1.2	¡°Software¡± means any original work of authorship and modification of or derivative work thereof under Huawei Software License (this License). 
+1.3	¡°Affiliate¡± means with respect to a person, corporation, partnership, or other entity that controls, is controlled by or is under common control with such Party, but only for so long as such control continues to exist. The word ¡°control¡± (including, with correlative meaning, the terms ¡°controlled by¡± or ¡°under common control with¡±) means the actual power, either directly or indirectly through one or more intermediaries, to direct the management and policies of such entity, whether by the ownership of at least fifty percent (50%) of the voting stock of such entity, or by contract or otherwise.  
+
+2.	Grant of License
+2.1	Copyright License.  Subject to the terms and conditions of this License, each Licensor hereby grants to You a perpetual, worldwide, non-exclusive, no-charge, royalty-free, irrevocable copyright license to reproduce, prepare, publicly display, publicly perform, sublicense, and distribute the Software in Source or Object form.
+2.2	Patent License.  Subject to the terms and conditions of this License, each Licensor grants to you a perpetual, worldwide, non-exclusive, royalty-free patent license to make, have made, use, sell, offer for sale, import, and otherwise transfer the Software, where such license applies only to the patent claims licensable by Licensor that would be infringed by Licensor¡¯s Software (or portion thereof) alone and excepting any combination with any other materials or techniques.
+Notwithstanding the patent license above, if you institute patent litigation (including a cross-claim or counterclaim in a lawsuit) against any Licensor alleging the Software constitutes direct or contributory patent infringement, then any patent license granted to you under this License shall terminate immediately.
+
+3.	Limitation and Redistribution
+3.1	Use Limitation.  The Software only may be used or intended for use with web services, computing platforms or applications provided by Huawei Technologies Co.,Ltd. and/or its affiliates. 
+3.2	Redistribution. You may reproduce and/or distribute copies of the Software provided that: (i) you do so under this license and you shall include a complete copy of this License with your distribution; (ii) any copyright, patent, trademark, or attribution notices that are included in the Software should be retained without modification. 
+Notwithstanding the terms of this license, If you want to make any modification of or derivative works of the Software under a different license, you shall meet the conditions as follows: (i) this License still applies to the software itself or any parts of it;(ii) you shall include a complete copy of this license and any copyright, patent, trademark, or attribution notices that are included in the Software with your distribution; (iii) you shall include Use Limitation in Section 3.1 in your license without any encumbrances and you identify where your license applies in the modification of or derivative works of the Software in notice. 
+
+4.	Trademarks.  Except as expressly licensed in Section 2, no license is granted to you by Licensor or its affiliates to use its trademarks, domain names or other proprietary marks, except as necessary to reproduce the notices described in this License or an license agreement of such use is acquired from Licensor¡¯s or its affiliates. 
+
+5.	Termination.  This license will terminate immediately if you violate any terms and conditions thereof. Upon termination, you shall stop using the Software. 
+
+6.	Disclaimer of Warranty. THE SOFTWARE IS PROVIDED BY HUAWEI ON AN "AS IS" BASIS. HUAWEI MAKES NO WARRANTY, EITHER EXPRESSED OR IMPLIED, WITH RESPECT TO THE SOFTWARE OR THE APPLICATIONS YOU DEVELOPED, INCLUDING AND WITHOUT LIMITATION ANY IMPLIED WARRANTIES OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT. YOU ARE SOLELY RESPONSIBLE FOR THE USE OF SOFTWARE AND ANY DAMAGES OR LIBILITTIES ARSING FROM OR IN RELATION TO THE USE OF SOFTWARE OR ANY APPLICATIONS YOU DEVELOPED BY USING OF THE SOFTWARE.
+
+7.	Limitation of Liability. IN NO EVENT AND HOWEVER CAUSED, WHETHER UNDER THEORY OF CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY OR OTHERWISE SHALL HUAWEI OR ITS AFFLIATES BE LIABLE FOR ANY DIRECT OR INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) ARISING OUT OF OR RELATED TO THE LICENSE AND THE USE OF SOFTWARE, , EVEN IF HUAWEI HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
+
+
+8.	Governing Law. This Agreement shall be governed by and construed in accordance with the laws of China, without reference to the principles of conflicts of laws. Any provision of this Agreement which is prohibited or unenforceable in any jurisdiction shall be ineffective to the extent of such prohibition or unenforceability without affecting, impairing or invalidating the remaining provisions hereof. Any dispute arising out of or relating to this Agreement shall be submitted to Shenzhen Longgang District People¡¯s court and parties waive all objections to that jurisdiction and venue.
+

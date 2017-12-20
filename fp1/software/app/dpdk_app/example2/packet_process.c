@@ -35,6 +35,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include <sys/sysinfo.h>
+#include <sys/time.h>
 #include <rte_config.h>
 #include <rte_eal.h>
 #include <rte_memzone.h>
@@ -51,7 +52,10 @@
 #include "run_business_rxtx.h"
 #include "securec.h"
 
-#define APP_VERSION "application LOG-Heterogeneous computing V100R001C10B060"
+#define APP_VERSION "application LOG-Heterogeneous computing V100R001C10B061"
+/* Seconds wait before DPDK memory init, 
+    for that IP may have some job to do for the former task */
+#define WAIT_TIME_BEFORE_DPDK_INIT 1
 
 /* SHELL logic limitation: depth for each queue can only be 1024/2048/4096/8192 */
 static uint16_t g_s_queue_desc_nb_valid_values[] = {
@@ -99,6 +103,7 @@ int main(int argc, char* argv[]) {
     uint8_t  dev_count = 0;
     uint8_t port_idx = 0;
     char dev_name[256] = {0};
+    static struct timespec ts;
 
     set_default_args();
         
@@ -139,7 +144,10 @@ int main(int argc, char* argv[]) {
             g_business_args.port_used * g_business_args.queue_used*2, (cpu_nb-1));
         return -1;
     }
-        
+
+    ts.tv_sec = WAIT_TIME_BEFORE_DPDK_INIT;
+    ts.tv_nsec = 0;
+    (void)nanosleep(&ts, NULL);
     status = rte_eal_init(argc_dpdk, argv_dpdk);
     if (0 > status) {
         printf("%s:%d: rte_eal_init failed: %d\r\n", __FUNCTION__, __LINE__, status);
@@ -392,7 +400,7 @@ static void help() {
         "\t-h: print help\n"
         "-----------------------------------------------------------------------------------\r\n",
         APP_VERSION, 
-        PACKET_LEN_MAX, UINT32_MAX-1024, UINT16_MAX-1024, SHELL_LOGIC_PAGE_SIZE);
+        PACKET_LEN_MAX, UINT32_MAX-1024, UINT16_MAX-1024);
 }
 
 

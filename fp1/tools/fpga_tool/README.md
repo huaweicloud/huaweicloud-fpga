@@ -1,15 +1,15 @@
 
-#Contents
+# 目录
 
-1. [FPGA Tools](#about_tool)
-2. [Compiling and Installing the Tool](#tool_setup)
-3. [Using the Tool](#tool_usage)
-4. [Example: Loading an FPGA Image](#load_fpga)
-5. [Uninstalling the Tool](#tool_unistall)
+1. [FPGA镜像加载工具](#about_tool)
+2. [工具的编译和安装](#tool_setup)
+3. [工具的使用](#tool_usage)
+4. [工具使用实例：加载FPGA镜像](#load_fpga)
+5. [工具的卸载](#tool_unistall)
 
 <a name="about_tool"></a>
-#FPGA Tools
-FpgaCmdEntry is a part of the FPGA development suite and implements FPGA image loading, loading status query, and device information query functions. The following shows the directory structure of FPGA tools:
+# FPGA镜像加载工具
+FPGA镜像加载工具是作为FPGA开发套件的一部分，工具 **FpgaCmdEntry** 实现了FPGA镜像加载、加载状态查询、设备信息查询和虚拟点灯状态查询的功能。FPGA工具目录结构如下：
 
 	linux-htucef:/home/huaweicloud-fpga/fp1/tools/fpga_tool # ll
 	total 20
@@ -21,37 +21,35 @@ FpgaCmdEntry is a part of the FPGA development suite and implements FPGA image l
 
 
 
-[Folder *src*](./src/) stores the source code of the FPGA tool.
+[*文件夹src*](./src/) 用于存放FPGA镜像加载工具的源码
 
-[Folder *build*](./build/) stores script files for tool compilation, installation, and uninstallation.
+[*文件夹build*](./build/) 用于存放工具编译、安装和卸载的脚本文件
 
-[Folder *docs*](./docs/) stores tool description documents.
+[*文件夹docs*](./docs/) 用于存放工具相关的说明文档
 
-[*LICENSE.txt*](./LICENSE.txt) License file
+[*LICENSE.txt*](./LICENSE.txt) 为许可文件
 
-[*README.md*](./README.md) Loading tool documentation
+[*README.md*](./README.md) 是加载工具说明文档
 
 
-**Note:**
+> 在使用本工具前，请按照编译和安装指导完成工具的编译和安装。
 
-1. Before using this tool, compile and install it by following the compilation and installation guide.
-2. After the installation is complete, implement the loading and query functions by following the instructions in the operation guide.
+> 安装完成后，请按照操作指导中列出的指令来实现加载、查询等功能。
 
 <a name="tool_setup"></a>
-#Compiling and Installing the Tool
-Take the following steps:
+# 工具的编译和安装
+工具的编译和安装步骤如下：
 
-Step 1: Before the compilation and installation, run the `gcc --version` command to check whether the GCC is installed(The FPGA tool compilation depends on the GCC).
+步骤1：FPGA镜像加载工具的编译依赖于GCC，编译安装前使用命令`gcc --version`确认GCC是否已安装。
 	
 	linux-htucef:/ # gcc --version
 	gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-16)
 	Copyright (C) 2015 Free Software Foundation, Inc.
 	This is free software; see the source for copying conditions.  There is NO
 	warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+步骤2：工具的安装需要root权限，请在编译和安装前确认是否已获取此权限。
 
-Step 2: Before the compilation and installation, check that the root permission is obtained.
-
-Step 3: Go to **[fp1](../../)** and run the `bash fpga_tool_setup.sh` command to compile and install the tool.
+步骤3：进入[fp1](../../)目录，执行命令`bash fpga_tool_setup.sh`完成工具的编译和安装。
 	
 	linux-htucef:/home/huaweicloud-fpga/fp1 # bash fpga_tool_setup.sh 
 	FPGA_TOOL SETUP MESSAGE:Done setting environment variables.
@@ -68,24 +66,24 @@ Step 3: Go to **[fp1](../../)** and run the `bash fpga_tool_setup.sh` command to
 	FPGA_TOOL SETUP MESSAGE: Setup fpga_tool success.
 
 <a name="tool_usage"></a>
-#Using the Tool
-After the compilation and installation, you can use the FPGA tool to query the device information, load an image, and query the loading status in any directory.
+# 工具的使用
+FPGA镜像加载工具编译和安装完成后，可在任一目录下调用工具进行设备信息查询、镜像加载、加载状态查询等。
 
-[FPGA Tools Operation Instructions](./docs/load_tool_operation_instuctions.md)
+[FPGA加载工具使用说明](./docs/load_tool_operation_instuctions.md)
 
 <a name="load_fpga"></a>
-#Example: Loading an FPGA Image
-After the compilation and installation, you can use the FPGA tool to query the device information, load an image, and query the loading status in any directory.
+# 工具使用实例：加载FPGA镜像
+在注册好一个FPGA镜像后，就可以使用工具来进行镜像加载了。
 
-[Loading an FPGA Image](./docs/load_an_fpga_image.md)
+[加载FPGA镜像](./docs/load_an_fpga_image.md)
 
 <a name="tool_unistall"></a>
-#Uninstalling the Tool
-Take the following steps:
+# 工具的卸载
+工具的卸载步骤如下：
 
-Step 1: Before the uninstallation, check that the root permission is obtained.
+步骤1：工具的卸载需要root权限，请在卸载前确认是否已获取此权限。
 
-Step 2: Go to [**fp1**](../../) and run the `bash fpga_tool_unistall.sh` command to uninstall the tool.
+步骤2：进入[fp1](../../)目录，执行命令`bash fpga_tool_unistall.sh`完成工具的卸载。
 
 	linux-htucef:/home/huaweicloud-fpga/fp1 # bash fpga_tool_unistall.sh 
 	Entering /home/huaweicloud-fpga/fp1/tools/fpga_tool/build/../src

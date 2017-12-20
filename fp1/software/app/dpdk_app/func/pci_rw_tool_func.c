@@ -180,7 +180,6 @@ int pci_barx_init_env(int vf_idx, int bar_idx) {
     	return -ENODEV;
     }
 
-    printf("to operate device %s\r\n", acc_pci_bdf);
     (void)snprintf_s(pci_barx_res_dev, PATH_MAX, PATH_MAX-1, "%s/%s/resource%d", PCI_RES_DEV_PRE, acc_pci_bdf, bar_idx);
     
     g_pci_barx_res_fd[bar_idx] = open(pci_barx_res_dev, O_RDWR);

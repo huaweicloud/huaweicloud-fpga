@@ -44,7 +44,7 @@
 ### 示例构建说明
 
 进入prj目录，执行构建脚本`build.sh`，等待构建完成。
-执行构建的方法见[Example1构建指南](./prj/readme.md)。
+执行构建的方法见[Example1构建指南](./prj/README.md)。
 
 构建结果存储在`/prj/build/checkpoints/to_facs`目录下。
 
@@ -57,7 +57,7 @@
 
 ### 示例仿真说明
 
-执行仿真的方法见[Example1仿真用户指南](./sim/readme.md)。
+执行仿真的方法见[Example1仿真用户指南](./sim/README.md)。
 
 ### 示例测试说明
 

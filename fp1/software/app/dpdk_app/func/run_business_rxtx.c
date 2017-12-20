@@ -204,7 +204,7 @@ int mbufs_pool_init(pst_mbufs_pool p_mbufs_pool, pstBusinessThreadArgs p_busines
 
             uint64_t overflow_protect = 1;
 
-            (void)memset(extend_data_tx, 0, sizeof(acc_second_bd));
+            (void)memset_s(extend_data_tx, sizeof(acc_second_bd), 0, sizeof(acc_second_bd));
 
             /* For FMMU, send data to FPGA_DDR_MODULE_NUM DDRs to balance the load,
                calucate the FPGA DDR addr with DDR idx, queue idx and mbuf idx */

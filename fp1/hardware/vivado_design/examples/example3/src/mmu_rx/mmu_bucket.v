@@ -4,13 +4,13 @@
 //
 //     This program is free software; you can redistribute it and/or modify
 //     it under the terms of the Huawei Software License (the "License").
-//     A copy of the License is located in the "LICENSE" file accompanying 
+//     A copy of the License is located in the "LICENSE" file accompanying
 //     this file.
 //
 //     This program is distributed in the hope that it will be useful,
 //     but WITHOUT ANY WARRANTY; without even the implied warranty of
 //     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-//     Huawei Software License for more details. 
+//     Huawei Software License for more details.
 //------------------------------------------------------------------------------
 `resetall
 `timescale 1ns/100ps
@@ -131,7 +131,7 @@ end
                             instance 
 \******************************************************************************/
 
-bucket #
+bucket_proc #
 (
  .FIFO_DEPTH                 ( 10'h3ff                   ),
  .DEPTH_WIDTH                ( 10                        ),
@@ -140,7 +140,7 @@ bucket #
  .MAX_FRM_CNT                ( 10'd64                    ),
  .REV_LEN                    ( 10'd128                   )
 ) 
-u_bucket
+u_bucket_proc
 (
     .clk                     ( clk_sys                   ), 
     .reset                   ( reset                       ), 

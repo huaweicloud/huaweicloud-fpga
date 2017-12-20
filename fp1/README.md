@@ -11,14 +11,15 @@
    * [4.1 配置License和配置环境变量的方法](#sec-4-1)
    * [4.2 设计和仿真](#sec-4-2)
    * [4.3 编写与调试用户应用](#sec-4-3)
-   * [4.4 加载与运行](#sec-4-4)
+   * [4.4 上传与注册](#sec-4-4)
+   * [4.4 加载与运行](#sec-4-5)
 
 </div>
 
 <a id="sec-1" name="sec-1"></a>
 ## fp1开发套件
 
---- 
+---
 
 **fp1**是一款基于HWS的开源的云化的FPGA硬件与软件开发工具套件。该套件不仅能够帮助用户更完成设计、仿真、实现以及联合运行，而且还为用户提供专业的设计以及验证组件，帮助开发者更高效的实现FPGA的开发。
 
@@ -120,13 +121,14 @@ HDK的运行流程分为：基于vivado的流程，和基于sdaccel的流程。
 1.配置License与环境变量；
 2.设计与仿真；
 3.应用的设计与调试；
-4.加载与运行。
+4.注册；
+5.加载与运行。
 
 <a id="sec-4-1" name="sec-4-1"></a>
 
-### 配置License和配置环境变量的方法
+###  配置License和配置环境变量的方法
 
-- 打开setup.cfg文件:
+- 进入fp1文件夹，打开setup.cfg文件:
 
 ```bash
   $ vim setup.cfg
@@ -191,12 +193,21 @@ Vivado开发模式采用DPDK的架构完成fpga与处理器的数据交互，详
 - SDx开发模式
 
 SDx开发模式采用Xilinx的SDAccel架构完成fpga与处理器的数据交互，详细编写以及调试用户应用的方法请参考[基于SDAccel的用户应用开发说明](./software/app/sdaccel_app/README.md)。
-如果用户需要修改HAL，请参考[SDAccel模式HAL开发说明](./software/userspace/sdaccel/README.md)完成。
+如果用户需要修改硬件抽象层（Hardware Abstraction Layer，缩写HAL），请参考[SDAccel模式HAL开发说明](./software/userspace/sdaccel/README.md)完成。
+
+**说明：**
+HAL是软件层的例行程序包，用于模拟特定系统平台的细节使程序可以直接访问硬件的资源。
 
 <a id="sec-4-4" name="sec-4-4"></a>
 
+### 上传与注册
+
+用户可以依据fpga云服务提供的API以及上传和注册工具，完成bin文件的上传和注册ID的生成，详细注册方法请参考文档[usr_prj0构建指南](./hardware/vivado_design/user/usr_prj0/prj/README.md)中的“AEI_Register.cfg文件配置说明”和“AEI_Register.sh命令的使用说明”章节。
+
+<a id="sec-4-5" name="sec-4-5"></a>
+
 ### 加载与运行
 
-用户可以依据fpga云服务提供的API以及上传时产生的AEI完成fpga的加载，详细加载方式请参考相关文档。
+用户可以依据fpga云服务提供的API以及上传时产生的注册ID，完成bin文件的加载，详细加载方式请参考相关文档。
 
-运行方式与**编写与调试用户应用**的方法类似，请用户参考[编写与调试用户应用](#sec-4-3)。
+运行方式与**编写与调试用户应用**的方法类似，请用户参考本文档[编写与调试用户应用](#sec-4-3)章节。

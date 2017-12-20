@@ -28,7 +28,6 @@
 
 #include "FPGA_Shell.h"
 
-
 UINT8* trim_str( UINT8 *pstr, UINT32 lens)
 {
 	
@@ -296,7 +295,6 @@ int FPGA_get_load_info()
 	UINT32 nTemp = 0;
 	
 	
-	
 	nRet = FPGA_exec_shell_and_get_result(FPGA_CMD_ENTRY, &pBuf, &lens);
 	if(0 != nRet)
 	{
@@ -340,8 +338,21 @@ int FPGA_get_load_info()
 		}
 		return -1;
 	}
+	
 	memset(Value1, 0, 128);
-	pStart=trim_str(pStart,pEnd - pStart);
+	
+	pStart=trim_str(pStart, pEnd - pStart);
+	if(pEnd - pStart <= 0 || pEnd - pStart >= 128)
+	{
+		std::cout<<"ERROR:Get  LoadStatusName value failed.\n";
+		if(NULL != pBuf)
+		{
+			free(pBuf);
+			pBuf = NULL;
+		}
+		return -1;
+	}
+	
 	memcpy( Value1, pStart, pEnd - pStart );
 	
 	
@@ -421,11 +432,24 @@ int FPGA_get_load_info()
 		}
 		return -1;
 	}
+	
 	memset(Value2, 0, 128);
-	
+
 	pStart=trim_str(pStart,pEnd - pStart);
-	memcpy( Value2, pStart, pEnd - pStart );
 	
+	if(pEnd - pStart <= 0 || pEnd - pStart >= 128)
+	{
+		std::cout<<"ERROR:Get  LoadErrName value failed.\n";
+		if(NULL != pBuf)
+		{
+			free(pBuf);
+			pBuf = NULL;
+		}
+		return -1;
+	}
+	
+	memcpy( Value2, pStart, pEnd - pStart );
+
 	if(strncmp(Value2, "OK", 2))
 	{
 		std::cout<<"ERROR: the LoadErr is "<<Value2<<std::endl;

@@ -108,9 +108,7 @@ wire                              chn_id                  ;
 wire                              chn_seq_empty           ;
 
 wire      [1:0]                   pkt_back_full           ;       
-reg       [1:0]                   pkt_back_full_1dly      ;    
 reg       [1:0]                   pkt_back_wen            ;
-reg       [1:0]                   pkt_back_wen_pre        ;
 reg       [539:0]                 pkt_back_wdata_pre      ; 
 reg       [539:0]                 pkt_back_wdata          ; 
 wire      [27:0]                  rdata_rev               ;    
@@ -134,6 +132,9 @@ wire                              knl_raddr_time_out      ;
 wire                              mmu_raddr_time_out      ;
 wire      [15:0]                  reg_tmout_us_cfg        ;   
 reg                               ddr_rready_pre          ;                       
+reg                               ddr_rlast_1dly          ;
+reg                               ddr_rvalid_1dly         ;
+reg                               ddr_rready_1dly         ;
 
 genvar i ;
 genvar j ;
@@ -263,10 +264,23 @@ begin
     if ( areset == 1'b1 ) begin
         ddr_rready_pre <= 1'b0;
         ddr_rready     <= 1'b0;
+        ddr_rready_1dly <= 1'b0;
     end
     else begin
         ddr_rready_pre <= ~(|pkt_back_full);
         ddr_rready     <= ddr_rready_pre;
+        ddr_rready_1dly <= ddr_rready;
+    end
+end
+always @( posedge aclk or posedge areset )
+begin
+    if ( areset == 1'b1 ) begin
+        ddr_rvalid_1dly <= 1'b0;
+        ddr_rlast_1dly  <= 1'b0;
+    end
+    else begin
+        ddr_rvalid_1dly <= ddr_rvalid;
+        ddr_rlast_1dly  <= ddr_rlast;
     end
 end
 
@@ -282,15 +296,6 @@ assign rready_tmp = {mmu_rready,knl_rready};
 
 generate
     for (i = 0; i<2; i=i+1 ) begin : GEN_PKT_BACK_WEN
-    always@(posedge aclk or posedge areset)
-    begin
-        if(areset == 1'd1)begin
-            pkt_back_wen_pre[i] <= 1'b0;
-        end
-        else begin
-            pkt_back_wen_pre[i] <= ddr_rvalid&ddr_rready;
-        end
-    end
     
     
     always@(posedge aclk or posedge areset)
@@ -299,7 +304,7 @@ generate
             pkt_back_wen[i] <= 1'b0;
         end
         else if (chn_id == i) begin
-            pkt_back_wen[i] <= pkt_back_wen_pre[i];
+            pkt_back_wen[i] <= (ddr_rvalid_1dly | ddr_rlast_1dly) & ddr_rready_1dly;
         end
         else begin
             pkt_back_wen[i] <= 1'b0;

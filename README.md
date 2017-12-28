@@ -79,7 +79,7 @@ http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0069154765.html
 ### 步骤1 FPGA镜像管理工具的编译和安装
 FPGA镜像管理工具fisclient是一款跨平台命令行工具，用于FPGA镜像管理，而镜像管理是进行FPGA镜像加载前的必须步骤。通过fisclient，用户可以实现FPGA镜像的注册、删除、查询详情列表等操作。此外，fisclient还提供了FPGA镜像（AEI，Accelerated Engine Image）和弹性云服务器镜像之间的关联关系的管理功能。用户在创建AEI和弹性云服务器镜像之间的关联关系后，可以将弹性云服务器镜像发布到云市场或共享给其他用户。
 
-管理工具的编译和安装请参考[fisclient README](./cli/fisclient/README.md)安装部分。
+管理工具的编译和安装请参考[fisclient README](./cli/fisclient/README_CN.md)安装部分。
 ### 步骤2 注册FPGA镜像
 用户使用AEI_Register.sh工具向FPGA镜像管理模块注册FPGA镜像。完成注册后，用户会获得一个FPGA镜像ID，可用于查询FPGA镜像的注册操作是否成功，以及后续的FPGA镜像加载、删除、关联等操作。注册的详细步骤请参考以下资源。
 
@@ -89,7 +89,7 @@ FPGA镜像管理工具fisclient是一款跨平台命令行工具，用于FPGA镜
 完成文件配置后，用户通过在Linux操作系统的shell中执行fisclient命令进入fisclient登录界面，根据提示信息输入华为云账户密码，通过校验后进入fisclient命令行。在fisclient命令行中，用户可以执行相应的命令进行FPGA镜像的查询、删除和关联等操作。
 如何使用工具进行FPGA镜像查询请参考以下资源。
 
-[fisclient README](./cli/fisclient/README.md)
+[fisclient README](./cli/fisclient/README_CN.md)
 
 ### 步骤4 FPGA镜像加载工具的编译和安装	
 FPGA镜像加载工具FpgaCmdEntry是一款Linux环境下的命令行工具，工具具备FPGA信息查询、镜像加载、加载状态查询和虚拟点灯查询功能，是使用FPGA开发套件进行软件开发的必要工具。
@@ -147,7 +147,7 @@ FPGA开发套件提供了硬件开发和软件开发的完整示例，用户可�
 选择通用型架构时，编译步骤见以下资源：[基于SDAccel工具的SDK配置及编译](./fp1/docs/基于sdaccel工具的SDK配置及编译.md)。
 
 <a name="sec_4_2"></a>
-##4.2 使用基于vivado的example
+## 4.2 使用基于vivado的example
 在高性能服务器架构下，华为FPGA云加速服务为用户提供了三种example。example1主要实现用户逻辑的版本号读取，数据取反测试寄存器和加法器的功能；example2主要实现用户逻辑DMA（Direct Memory Access）环回通道和DDR（DDR SDRAM）读取功能；example3主要实现用户逻辑FMMU（Fpga Mermory Manage Unit）功能。基于vivado的example操作流程如下图所示。
 
 ![](./fp1/docs/media/vivado_example.jpg)
@@ -155,7 +155,7 @@ FPGA开发套件提供了硬件开发和软件开发的完整示例，用户可�
 基于vivado的example详细说明请见[使用基于vivado的Example](./fp1/docs/使用基于vivado的Example.md)。
 
 <a name="sec_4_3"></a>
-##4.3 使用基于SDAccel的example
+## 4.3 使用基于SDAccel的example
 在通用型服务器架构下，华为FPGA云加速服务提供了三种example。example1是一个矢量相加的实例，采用opencl c实现逻辑算法；example2是一个矩阵乘法实例，基于c实现逻辑算法；example3是一个矢量相加的实例，采用rtl来实现其逻辑功能。基于SDAccel的example操作流程如下图所示。
 
 ![](./fp1/docs/media/SDAccel_example.jpg)

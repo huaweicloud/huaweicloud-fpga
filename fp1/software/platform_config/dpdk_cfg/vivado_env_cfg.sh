@@ -34,6 +34,7 @@ echo 'depmod -a'
 depmod -a
 echo 'cp dpdk_nic_bind.py to /usr/bin '
 cp -rf $igb_uio_path/dpdk*/tools/dpdk_nic_bind.py /usr/bin/
+chmod +x /usr/bin/dpdk_nic_bind.py
 echo 'cp fpga-server-guest to /etc/rc.d/init.d'
 cp -rf $script_path/fpga-server-guest /etc/rc.d/init.d/
 

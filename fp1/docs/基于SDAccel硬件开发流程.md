@@ -70,11 +70,11 @@ SDAccel平台提供两种方法以便用户创建工程。
 配置开发环境
 ------------
 
-用户进入VM后，SDAccel默认存放在`/home/fp1`目录下。在进行SDAccel开发前，用户需要完成对硬件开发环境的配置。
+用户进入VM后，SDAccel默认存放在`huaweicloud-fpga/fp1`目录下。在进行SDAccel开发前，用户需要完成对硬件开发环境的配置。
 
 #### 配置EDA工具模式
 
-用户打开`/home/fp1/`路径下的`setup.cfg`文件，根据所要选用的FPGA开发工具，将`FPGA_DEVELOP_MODE`设置相应的工具。
+用户打开`huaweicloud-fpga/fp1/`路径下的`setup.cfg`文件，根据所要选用的FPGA开发工具，将`FPGA_DEVELOP_MODE`设置相应的工具。
 
 因使用SDAccel作为开发工具，请配置：
 
@@ -105,10 +105,8 @@ SDAccel平台提供两种方法以便用户创建工程。
 
 #### 完成开发环境配置
 
-运行`setup.sh`脚本完成硬件开发环境的配置，执行以下命令运行`setup.sh`脚本。
+进入“huaweicloud-fpga/fp1”目录，运行“setup.sh”脚本完成硬件开发环境的配置，执行以下命令运行“setup.sh”脚本。
 
-
-`cd /home/fp1`  
 `export HW_FPGA_DIR=$(pwd)`  
 `source $HW_FPGA_DIR/setup.sh`
 

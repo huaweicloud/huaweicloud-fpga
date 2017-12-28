@@ -51,11 +51,11 @@
 配置开发环境
 --------
 
-用户进入VM后，FPGA HDK默认存放在/home/fp1目录下。在进行FPGA开发前，用户需要完成对硬件开发环境的配置。
+用户进入VM后，FPGA HDK默认存放在huaweicloud-fpga/fp1目录下。在进行FPGA开发前，用户需要完成对硬件开发环境的配置。
 
 ### 步骤一 设置Vivado工具License。
 
-用户打开/home/fp1/路径下的`setup.cfg`文件，将文件中`XILINX_LIC_SETUP`的值配置为License服务器的IP地址`2100@100.125.1.240:2100@100.125.1.251`。
+用户打开huaweicloud-fpga/fp1/路径下的`setup.cfg`文件，将文件中`XILINX_LIC_SETUP`的值配置为License服务器的IP地址`2100@100.125.1.240:2100@100.125.1.251`。
 
 `XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
 
@@ -63,9 +63,8 @@
 
 ### 步骤二 配置开发环境。
 
-运行“setup.sh”脚本完成硬件开发环境的配置，执行以下命令运行“setup.sh”脚本。
+进入“huaweicloud-fpga/fp1”目录，运行“setup.sh”脚本完成硬件开发环境的配置，执行以下命令运行“setup.sh”脚本。
 
-`cd /home/fp1`  
 `export HW_FPGA_DIR=$(pwd)`  
 `source $HW_FPGA_DIR/setup.sh`
 
@@ -163,4 +162,4 @@ FPGA HDK提供一键式的FPGA版本构建解决方案，用户需要在`$HW_FPG
 `cd $HW_FPGA_DIR/hardware/vivado_design/user/<usr_prj_name>/prj`  
 `sh ./build.sh`
 
-如需完成源文件加密、和产生目标文件的流程，请参见：`/home/fp1/hardware/vivado_design/lib/template/prj/README.md`
+如需完成源文件加密、和产生目标文件的流程，请参见：`huaweicloud-fpga/fp1/hardware/vivado_design/lib/template/prj/README.md`

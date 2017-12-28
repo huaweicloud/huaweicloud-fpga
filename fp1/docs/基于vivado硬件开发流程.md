@@ -59,7 +59,7 @@
 
 `XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
 
-**说明：**华为提供的Xilinx软件License仅限root账号使用。
+> 华为提供的Xilinx软件License仅限root账号使用。
 
 ### 步骤二 配置开发环境。
 
@@ -69,7 +69,7 @@
 `source $HW_FPGA_DIR/setup.sh`
 
 
-**说明：**用户可将HDK的所有文件拷贝至VM的任意路径下使用，下面均以HDK默认路径为例进行说明。
+> 用户可将HDK的所有文件拷贝至VM的任意路径下使用，下面均以HDK默认路径为例进行说明。
 
 <a name="c"></c>
 创建用户工程
@@ -79,14 +79,15 @@
 
 `cd $HW_FPGA_DIR/hardware/vivado_design/user`  
 `sh create_prj.sh <usr_prj_name>`
+
 <a name="d"></d>
 FPGA开发
 --------
 
-FPGA
-HDK支持用户使用Verilog/VHDL语言进行FPGA开发，用户编写的源文件必须存放在用户工程目录<usr_prj_name>的src文件夹下。
+FPGA HDK支持用户使用Verilog/VHDL语言进行FPGA开发，用户编写的源文件必须存放在用户工程目录<usr_prj_name>的src文件夹下。
 
 `cd $HW_FPGA_DIR/hardware/vivado_design/user/<usr_prj_name>/src`
+
 <a name="e"></e>
 FPGA仿真
 --------
@@ -128,7 +129,7 @@ FPGA HDK提供了一套基于SystemVerilog-2012语法标准的通用FPGA仿真�
 `make TC=<TC_NAME>`
 
 
-**说明：**FPGA仿真具体使用方法请参考`$HW_FPGA_DIR/hardware/vivado_design/lib/sim/doc/quick_start.md`文档。
+> FPGA仿真具体使用方法请参考`$HW_FPGA_DIR/hardware/vivado_design/lib/sim/doc/quick_start.md`文档。
 
 <a name="f"></f>
 配置工程
@@ -151,7 +152,7 @@ FPGA HDK提供一键式的FPGA版本构建解决方案，用户需要在`$HW_FPG
 -   用户逻辑约束
 
 
-**说明：**具体配置方法请参考`usr_prj_cfg`文件中的注释说明。
+> 具体配置方法请参考`usr_prj_cfg`文件中的注释说明。
 
 <a name="g"></g>
 启动版本编译

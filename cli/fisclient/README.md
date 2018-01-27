@@ -32,46 +32,25 @@ For other environments, availability is not guaranteed.
 You should first make sure that you have logged in to the Elastic Cloud Server as **root** before installation.
 
 ### Step 1. Bound the Elastic IP ###
-See [Bound the Elastic IP]() for how to bind Elastic IP to the Elastic Cloud Server. Only after bind Elastic IP to the Elastic Cloud Server, can you get **pip** and **fisclient** via Elastic IP during the installation.
+See [Bound the Elastic IP]() for how to bind Elastic IP to the Elastic Cloud Server.
 
-### Step 2. Install the pip ###
-Run the "**easy_install pip**" command to install the pip.
-<pre>
-[root@ ~]# easy_install pip
-</pre>
+### Step 2. Upgrade the setuptools ###
+Run the "**python -m easy_install setuptools==19.6.2**" command to upgrade the setuptools.
+
+> Ensure that there is not any file named **setup.cfg** in the current directory.<br/>
 
 ### Step 3. Install the fisclient ###
-- Download the **fisclient** source package (in [FPGA Development Suite](https://github.com/Huawei/huaweicloud-fpga)) using **git**.
-<pre>
-[root@ ~]# git clone https://github.com/Huawei/huaweicloud-fpga.git
-</pre>
+- Run the "**git clone https://github.com/Huawei/huaweicloud-fpga.git**" command to download the **fisclient** source package.
 
-> If you have downloaded the **FPGA Development Suite**, skip this step. If you need to download the **FPGA Development Suite**, please use **git** to download, and ensure that there is not any file or directory named **huaweicloud-fpga** in the current directory.<br/>
+> Ensure that there is not any file or directory named **huaweicloud-fpga** in the current directory.<br/>
 
-- Switch to the **huaweicloud-fpga/cli/fisclient** directory of the **FPGA Development Suite**.
-<pre>
-[root@ ~]# cd huaweicloud-fpga/cli/fisclient
-</pre>
+- Run the "**cd huaweicloud-fpga/cli/fisclient**" command to switch to the **huaweicloud-fpga/cli/fisclient** directory.
+
 > Ensure that you are in the **huaweicloud-fpga/cli/fisclient** directory during the subsequent installation of **fisclient**.
 
-- Install the dependency packages.
+- Run the "**python setup.py install**" command to install the **fisclient**.
 
-Run the "**pip install pbr==1.8.1**" command followed by the "**pip install -r requirements.txt**" command to install the dependency package of the fisclient.
-<pre>
-[root@ fisclient]# pip install pbr==1.8.1
-[root@ fisclient]# pip install -r requirements.txt
-</pre>
-- Install the fisclient.
-
-Run the "**python setup.py install**" command to install the fisclient.
-<pre>
-[root@ fisclient]# python setup.py install
-</pre>
-- Copy the config file **cfg.file** to the **/etc** directory.
-<pre>
-[root@ fisclient]# cp cfg.file /etc
-</pre>
-See [configuring /etc/cfg.file]() for how to configure the **/etc/cfg.file** file.
+- Run the "**cp cfg.file /etc**" command to copy the config file **cfg.file** to the **/etc** directory. See [configuring /etc/cfg.file]() for how to configure the **/etc/cfg.file** file.
 
 # 3 Introduction #
 After [configuring /etc/resolv.conf]() and [configuring /etc/cfg.file](), run the **fisclient** command on the Linux shell to go to the fisclient login screen and enter the **huaweicloud account password** when prompted. On the fisclient CLI, you can run corresponding commands to query, delete, associate, disassociate FPGA images and query associations.

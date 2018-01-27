@@ -13,6 +13,49 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
-setup(setup_requires=['pbr>=1.8'], pbr=True)
+requires = [
+    'keystoneauth1==2.18.0',
+    'stevedore==1.19.1',
+    'positional==1.1.1',
+    'requests==2.13.0',
+    'warlock==1.2.0',
+    'jsonschema==2.5.1',
+    'vcversioner==2.16.0.0',
+    'functools32==3.2.3-2',
+    'jsonpatch==1.14',
+    'jsonpointer==1.10',
+    'oslo.utils==3.18.0',
+    'netifaces==0.10.4',
+    'netaddr==0.7.18',
+    'debtcollector==1.10.0',
+    'wrapt==1.10.6',
+    'monotonic==1.1',
+    'iso8601==0.1.11',
+    'funcsigs==1.0.2',
+    'oslo.i18n==3.4.0',
+    'pyparsing==2.2.0',
+    'Babel==2.3.4',
+    'pytz==2017.2',
+    'prettytable==0.7.2',
+    'six==1.9.0',
+    'pbr==1.8.1'
+]
+
+setup(
+    name='fisclient',
+    version='1.0.1',
+    description='FIS API Client',
+    license='Apache License, Version 2.0',
+    packages=find_packages(),
+    setup_requires=['setuptools==19.6.2'],
+    install_requires=requires,
+    entry_points={
+        'console_scripts': [
+            'fisclient=fisclient.wrapshell:main',
+            'fis=fisclient.cmdshell:main',
+            'fischeck=fisclient.fischeck:main'
+        ]
+    }
+)

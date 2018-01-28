@@ -33,10 +33,10 @@ requires = [
     'wrapt==1.10.6',
     'monotonic==1.1',
     'iso8601==0.1.11',
-    'funcsigs==1.0.2',
+    'funcsigs==0.4',
     'oslo.i18n==3.4.0',
     'pyparsing==2.2.0',
-    'Babel==2.3.4',
+    'Babel==1.3',
     'pytz==2017.2',
     'prettytable==0.7.2',
     'six==1.9.0',
@@ -45,11 +45,10 @@ requires = [
 
 setup(
     name='fisclient',
-    version='1.0.1',
+    version='1.0.2',
     description='FIS API Client',
     license='Apache License, Version 2.0',
     packages=find_packages(),
-    setup_requires=['setuptools==19.6.2'],
     install_requires=requires,
     entry_points={
         'console_scripts': [

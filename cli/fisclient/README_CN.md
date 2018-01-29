@@ -34,12 +34,7 @@
 ## 步骤1 绑定弹性IP ##
 如何为弹性云服务器绑定弹性IP请参见[绑定弹性IP]()。
 
-## 步骤2 升级setuptools ##
-安装 **fisclient** 需要使用 **19.6.2** 版本的 **setuptools** 工具，请运行 **python -m easy_install setuptools==19.6.2** 命令完成安装升级。
-
-> 在升级setuptools工具时，请确保当前目录下没有以 **setup.cfg** 命名的文件。<br/>
-
-## 步骤3 安装fisclient ##
+## 步骤2 下载源码包 ##
 - 执行 **git clone https://github.com/Huawei/huaweicloud-fpga.git** 命令下载 **fisclient** 源码包（位于[FPGA开发套件](https://github.com/Huawei/huaweicloud-fpga)中）。
 
 > 下载 **fisclient** 源码包时，请确保当前目录下没有以 **huaweicloud-fpga** 命名的文件或目录。<br/>
@@ -48,6 +43,7 @@
 
 > 在 **fisclient** 工具的后续安装过程中，用户需要一直位于 **huaweicloud-fpga/cli/fisclient** 目录下。
 
+## 步骤3 安装 ##
 - 执行 **python setup.py install** 命令安装fisclient工具。
 
 > 安装过程中会下载并安装 **fisclient** 工具的依赖包，请耐心等待。

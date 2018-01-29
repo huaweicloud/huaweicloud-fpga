@@ -34,12 +34,7 @@ You should first make sure that you have logged in to the Elastic Cloud Server a
 ### Step 1. Bound the Elastic IP ###
 See [Bound the Elastic IP]() for how to bind Elastic IP to the Elastic Cloud Server.
 
-### Step 2. Upgrade the setuptools ###
-Run the "**python -m easy_install setuptools==19.6.2**" command to upgrade the setuptools.
-
-> Ensure that there is not any file named **setup.cfg** in the current directory.<br/>
-
-### Step 3. Install the fisclient ###
+### Step 2. Download the source package ###
 - Run the "**git clone https://github.com/Huawei/huaweicloud-fpga.git**" command to download the **fisclient** source package.
 
 > Ensure that there is not any file or directory named **huaweicloud-fpga** in the current directory.<br/>
@@ -48,6 +43,7 @@ Run the "**python -m easy_install setuptools==19.6.2**" command to upgrade the s
 
 > Ensure that you are in the **huaweicloud-fpga/cli/fisclient** directory during the subsequent installation of **fisclient**.
 
+### Step 3. Install the fisclient ###
 - Run the "**python setup.py install**" command to install the **fisclient**.
 
 - Run the "**cp cfg.file /etc**" command to copy the config file **cfg.file** to the **/etc** directory. See [configuring /etc/cfg.file]() for how to configure the **/etc/cfg.file** file.

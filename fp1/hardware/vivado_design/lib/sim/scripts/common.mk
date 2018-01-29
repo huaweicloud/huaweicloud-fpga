@@ -19,6 +19,10 @@ TEST_DIR = $(USER_DIR)/sim/tests
 QUIET = 0
 # Backgroud compile and running switch
 BACKGROUD = 0
+# Test Type
+TYPE = sv
+# BASE Testname
+BASE = tb_reg_test
 
 .PHONY: all
 
@@ -60,6 +64,11 @@ cov:
 lib:
 	$(SCRIPT_DIR)/simlib.sh $(TOOL)
 
+.PHONY: create
+
+create:
+	$(SCRIPT_DIR)/create.sh -$(TYPE) -b $(BASE)
+
 .PHONY: list
 
 list:
@@ -88,6 +97,7 @@ help :
 	@echo "|   clean    : Remove simulation files and directories.                  |";
 	@echo "|   distclean: Remove simulation files, directories and precompiled libs.|";
 	@echo "|   lib      : Precompile simulation library by specified simulator.     |";
+	@echo "|   create   : Create testcase by user option.                           |";
 	@echo "|   list     : Show all available testcase.                              |";
 	@echo "|   help     : Show help information.                                    |";
 	@echo "|                                                                        |";
@@ -101,6 +111,13 @@ help :
 	@echo "|  vivado, vcs and questa                                                |";
 	@echo "|  default is vivado                                                     |";
 	@echo "|  target cov is only available when TOOL is vcs or questa               |";
+	@echo "|                                                                        |";
+	@echo "|                                                                        |";
+	@echo "| Option for target create                                               |";
+	@echo "|  create TC=xxx TYPE=sv/c BASE=yyy                                      |";
+	@echo "|  Only available for target 'create'                                    |";
+	@echo "|  TYPE can be 'sv' or 'c'                                               |";
+	@echo "|  BASE is the basetest for testcase                                     |";
 	@echo "|                                                                        |";
 	@echo "+------------------------------------------------------------------------+";
 

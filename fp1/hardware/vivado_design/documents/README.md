@@ -1,70 +1,69 @@
-# 目录结构
+# Directory Structure
 
-Documents文件夹下，总共包含如下文档：
+[切换到中文版](./README_CN.md)
+
+The **Documents** folder contains the following documents:
 
 * [documents](#documents_dir)/
-  - example1.jpg 示例1的逻辑结构框图；
-  - example2.jpg 示例2的逻辑结构框图；
-  - example3.jpg 示例3的逻辑结构框图；
-  - interface_signal.md 静态逻辑和动态逻辑之间接口信号说明；  
-  - Pcie_Memory_Map.md Pcie 存储空间划分说明；  
-  - requirements for tools and license.md 工具及license要求说明；  
-  - SH_UL_interface.jpg 静态逻辑和动态逻辑之间接口示图；  
-  - README.md（本文档） 
+  - **example1.jpg**: shows the logic structure of example 1.
+  - **example2.jpg**: shows the logic structure of example 2.
+  - **example3.jpg**: shows the logic structure of example 3.
+  - **interface_signal.md**: describes the signals of interfaces between static logic and dynamic logic.  
+  - **Pcie_Memory_Map.md**: describes PCIe storage space partition.  
+  - **requirements for tools and license.md**: describes the requirement for tools and license.  
+  - **SH_UL_interface.jpg**: shows the interfaces between static logic and dynamic logic.  
+  - **README.md** (this document) 
 
-# 目录说明
+# Contents Description
 
-* example1
+* example1.jpg 
+  - In the **example1.jpg**, **UL_VER** instantiates CBB **ro_reg_inst**. The version number obtained by the `application` is the release time of example 1.
+  - **UL_TYPE** instantiates CBB **ro_reg_inst** and obtains the version information of this example, for example, `32'h00d10001`.
+  - **DATA_TEST** instantiates CBB **ts_reg_inst**, which implements the `input data inversion` function.
+  - **ADDR_TEST** instantiates CBB **ts_addr_reg_inst**, which implements the `inversion of the last operation address`.
+  - **ADDER** instantiates `two CBB rw_reg_inst blocks` as the addend and augend, and then instantiates one `CBB ro_reg_inst` to read the addition result.
+  - VLED is accessed under `PF` and static logic provides pins for dynamic logic. Users read and write the VLED and ensure that `UL` works properly.VLED instantiates a group of CBB **rw_reg_inst** blocks, which link the output result to VLED.
+  - Input signals of DDR user interfaces are instantiated in `unused_ddr_a_b_d_inst.h` and `unused_ddr_c_inst.h `, and the value of the signals is **0**.
+  - **DEBUG_BRIDGE** and **ILA0** are instantiated for debugging. `Eight` ILA debugging signals are available.
 
-  ![example1.jpg ](./example1.jpg)
+* example2.jpg 
+  - In the **example2.jpg**, **UL_VER** instantiates CBB **ro_reg_inst**. The version number obtained by the `application` is the release time of example 2.
+  - **UL_TYPE** instantiates CBB **ro_reg_inst** and obtains the information of this example, for example, `32'h00d20001`.
+  - **DATA_TEST** instantiates CBB **ts_reg_inst**, which implements the `input data inversion` function.
+  - **ADDR_TEST** instantiates CBB **ts_addr_reg_inst**, which implements the `inversion of the last operation address`.
+  - **DMA_UL** sends a read packet request to the host, and then sends the received packets back to the host. In this way, the `DMA data loopback` of the `x86- > host- > user logic- > host- > x86` path is implemented.
+  - **DDR_WR_RD** implements read/write access to the data channels of `four DDRs`.
+  - VLED is accessed under `PF` and static logic provides pins for dynamic logic. Users read and write the VLED and ensure that `UL` works properly.
+  - VLED instantiates a group of CBB **rw_reg_inst** blocks, which link the output result to VLED.
+  - **ADDER** is an adder which sums up the input data.
+  - **DEBUG_BRIDGE** and **ILA0** are instantiated for debugging. `Eight` ILA debugging signals are available.
 
-  - example1的框图中，UL_VER的功能是例化ro_reg_inst CBB，通过`app`读取到的版本号是example1发布的时间信息。
-  - UL_TYPE的功能是例化ro_reg_inst CBB，通过读该寄存器可获得当前example的信息`32'h00d10001`。
-  - DATA_TEST的功能是例化ts_reg_inst CBB，实现对`写入数据取反`功能。
-  - ADDR_TEST的功能是例化ts_addr_reg_inst CBB，实现对最近一次操作`地址的取反`功能。
-  - ADDER例化`两个rw_reg_inst CBB`分别为加法器的加数和被加数，再例化`一个ro_reg_inst CBB`实现加法器的结果读取。
-  - VLED在`PF`下面访问，由静态提供管脚给动态用户使用，用户可以读写VLED，确保`UL`部分工作正常。VLED例化一组rw_reg_inst CBB将输出结果链接到VLED。
-  - 所有的DDR部分用户接口输入信号全部例化`unused_ddr_a_b_d_inst.h`和`unused_ddr_c_inst.h `连接成0。
-  - 例化DEBUG_BRIDGE和ILA0，供用户调试使用，ILA的调试信号开放`八根`。
+* example3.jpg 
+  - In the **example3.jpg**, **UL_VER** instantiates CBB **ro_reg_inst**. The version number obtained by the `application` is the release time of example 3.
+  - **UL_TYPE** instantiates CBB **ro_reg_inst** and obtains the information of this example, for example, `32'h00d30001`.
+  - **DATA_TEST** instantiates CBB **ts_reg_inst**, which implements the `input data inversion` function.
+  - **ADDR_TEST** instantiates CBB **ts_addr_reg_inst**, which implements the `inversion of the last operation address`.
+  - **MMU_UL** sends a read data request to the host, writes the received data to DDRs, reads the processed write data in DDRs, and sends the processed data to the host.
+  - **KERNEL_UL** reads the data written by **MMU_UL** in DDRs, processes the data, and writes the data to DDRs. Then **MMU_UL** obtains the data.
+  - VLED is accessed under `PF` and static logic provides pins for dynamic logic. Users read and write the VLED and ensure that `UL` works properly.
+  - VLED instantiates a group of CBB **rw_reg_inst** blocks, which link the output result to VLED.
+  - **ADDER** is an adder which sums up the input data.
+  - **DEBUG_BRIDGE** and **ILA0** are instantiated for debugging. `Eight` ILA debugging signals are available.
 
-* example2
-
-  ![example2.jpg ](./example2.jpg)
-
-  - example2的框图中，UL_VER的功能是例化ro_reg_inst CBB，版本号是通过`app`读取到的example2发布的时间信息。
-  - UL_TYPE的功能是例化ro_reg_inst CBB，通过读该寄存器可获得当前example的信息是`32'h00d20001`。
-  - DATA_TEST的功能是例化ts_reg_inst CBB，实现对`写入数据取反`功能。
-  - ADDR_TEST的功能是例化ts_addr_reg_inst CBB，实现对最近一次操作`地址的取反`功能。
-  - DMA_UL的功能是向host发起读报文请求再将收到的报文送回到host，实现数据`x86->host->用户逻辑->host->x86`路径的`dma数据环回`。
-  - DDR_WR_RD实现对`4组`DDR的数据通道的读写访问功能。
-  - VLED在`PF`下面访问，由静态提供管脚给动态用户使用，用户可以读写VLED，确保`UL`部分工作正常。
-  - VLED例化一组rw_reg_instCBB将输出结果连接到VLED。
-  - ADDER是加法器，实现对输入数据求和。
-  - 例化DEBUG_BRIDGE和ILA0，供用户调试使用，ILA的调试信号开放`八根`。
-
-* example3
-
-  ![example3.jpg ](./example3.jpg)
-
-  - example3的框图中，UL_VER的功能是例化ro_reg_inst CBB，版本号是通过`app`读取到的example3发布的时间信息。
-  - UL_TYPE的功能是例化ro_reg_inst CBB，通过读该寄存器可获得当前example的信息是`32'h00d30001`。
-  - DATA_TEST的功能是例化ts_reg_inst CBB，实现对`写入数据取反`功能。
-  - ADDR_TEST的功能是例化ts_addr_reg_inst CBB，实现对最近一次操作`地址的取反`功能。
-  - MMU_UL的功能有两个，其一是向host发起读数据请求再将收到的数据写入DDR，其二是读取用户写入DDR处理后的数据并送往host。
-  - KERNEL_UL的功能是读取MMU_UL写入DDR的数据，处理完成后再写入DDR，等待MMU_UL取走这些数据。
-  - VLED在`PF`下面访问，由静态提供管脚给动态用户使用，用户可以读写VLED，确保`UL`部分工作正常。
-  - VLED例化一组rw_reg_instCBB将输出结果连接到VLED。
-  - ADDER是加法器，实现对输入数据求和。
-  - 例化DEBUG_BRIDGE和ILA0，供用户调试使用，ILA的调试信号开放`八根`。
 * interface_signal.md
-  - 描述了用户逻辑和静态逻辑之间的所有接口信号。 
+  - This document describes all signals of the interfaces between user logic and static logic. 
+
 * requirements for tools and license.md  
-  - 描述了fpga_design正常运行的工具及`license`要求说明；
+  - This document describes the tools for running fpga_design and `license` requirements.
+
 * pcie_memory_map.md  
-  - 主要描述`pcie`的存储空间划分。
+  - This document describes the storage space partition of `PCIe`.
+
 * sh_ul_interface.jpg   
-  - 用结构框图的方式，主要描述静态逻辑和用户设计的动态逻辑之间可用的`接口类型和接口位宽`信息;
-  - SH部分为逻辑接口的静态部分，用户只需要知道其组成即可;
-  - UL部分为逻辑接口的动态部分，用户可以在这部分实现自己的个性化需求。
+  - This image describes available types and bit widths of the interfaces between static logic and dynamic logic designed by users.
+  - SH is the static part of logic interfaces. You only need to know about the composition of this part.
+  - UL is the dynamic part of logic interfaces. You can customize this part.
+
 * README.md
-  - 即本文档，用于介绍其他文档。
+  - This document describes other documents.
+

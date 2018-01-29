@@ -1,5 +1,7 @@
 ### *`This action must performed on VM as root privilege`* ###
 
+[切换到中文版](./README_CN.md)
+
 *`Files list`*
 
 * `dpdk-16.04.tar.bz2`: DPDK source code  

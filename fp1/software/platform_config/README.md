@@ -1,6 +1,9 @@
- # 目录结构说明
+ Directory Structure Descriptions
+
+ [切换到中文版](./README_CN.md)
 
 * sda_cfg  
-该目录用于存放sda驱动及用户态库配置脚本。  
+  This directory stores configuration scripts of the SDA driver and user-state library.  
 * dpdk_cfg  
-该目录用于存放dpdk驱动配置脚本。
+  This directory stores configuration scripts of the DPDK driver.
+

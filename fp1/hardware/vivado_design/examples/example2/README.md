@@ -1,14 +1,16 @@
-# Example2用户指南
+# Example 2 User Guide
 
 ---
 
-## 示例介绍
+[切换到中文版](./README_CN.md)
 
-本文档主要介绍华为fpga云服务示例2的主要组成部分和使用方法；该示例主要实现`dma数据环回`的功能，并利用该示例熟悉云上的开发、仿真和测试流程。
+## About This Example
 
-## 目录结构
+This document describes the components and usage of example 2 provided by Huawei FPGA Accelerated Cloud (FAC) services. This example implements the `DMA data loopback` function. From this example, you can learn about the development, simulation, and test processes on the cloud.
 
-示例放置在`$WORK_DIR/hardware/vivado_design/examples/`。目录包含如下文件和文件夹：
+## Directory Structure
+
+The example is stored in `$WORK_DIR/hardware/vivado_design/examples/`.The directory contains the following files and folders:
 
 - **example2/**
   - prj
@@ -17,48 +19,49 @@
   - src_encrypt
   - README.md  
 
-## 文件及文件夹说明
+## File and Folder Descriptions
 
 - prj
 
-该目录存放vivado工程构建的信息，包括用户自定义配置文件和执行构建脚本及构建工程后用于生成AEI的tar包等。
+This directory stores Vivado project building information, including user-defined configuration files, building scripts, and the TAR package for generating AEIs after project building.
 
 - sim
 
-该目录存放示例对应的**仿真平台**。
+This directory stores the **simulation platform** corresponding to this example.
 
 - src
 
-该目录存放示例的**源码**。
+This directory stores the **source code** of this example.
 
 - src_encrypt
 
-该目录存放示例的源码经过vivado**加密**后的代码，该代码主要用于工程构建。
+This directory stores the source code **encrypted** by Vivado and is used for project building.
 
 - README.md
-即本文档，用于介绍其他文档。
+  This document describes other documents.
 
-## 使用说明
+## Operation Instructions
 
-### 示例构建说明
+### Example Building
 
-进入prj目录，执行构建脚本`build.sh`，等待构建完成。
-执行构建的方法见[Example2构建指南](./prj/README.md)。
+Go to the **prj** directory, run the `build.sh` script, and wait until the building is completed.
+For details, see [Example 2 Building Guide](./prj/README.md).
 
-构建结果存储在`/prj/build/checkpoints/to_facs`目录下。
+The building result is stored in the `/prj/build/checkpoints/to_facs` directory.
 
-构建命令如下：
+The building commands are as follows:
 
 ```bash
   $ cd $WORK_DIR/hardware/vivado_design/examples/example2/prj
   $ sh build.sh
 ```
 
-### 示例仿真说明
+### Example Simulation
 
-执行仿真的方法见[Example2仿真用户指南](./sim/README.md)。
+For details, see [Example 2 Simulation Guide](./sim/README.md).
 
-### 示例测试说明
+### Example Testing
 
-1.进入`$WORK_DIR/software/app/dpdk_app/example2`目录,执行make。
-2.编译完成后用户可以参见[应用程序使用说明](../../../../software/app/dpdk_app/README.md)进行示例测试。
+1. Go to the `$WORK_DIR/software/app/dpdk_app/example2` directory and run the **make** command.
+2. After the compilation is completed, perform example tests by referring to [Application Operation Instructions](../../../../software/app/dpdk_app/README.md).
+

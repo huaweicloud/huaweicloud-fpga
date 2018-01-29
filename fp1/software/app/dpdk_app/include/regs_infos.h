@@ -118,7 +118,6 @@
 #define	REG_PF_ETH_LOOP_CFG							(REG_PF_ETH_BASE + 0x01 * 4)
 #define REG_PF_ETH_PORT_CFG	   						(REG_PF_ETH_BASE + 0x02 * 4)   /* Port configuration reg */
 
-//#define	REG_PF_ISO_BASE								(0x220000)
 #define	REG_PF_ISO_BASE								(0x30000)
 #define	REG_PF_IOS_ENABLE							(REG_PF_ISO_BASE + 0x00 * 4)
 

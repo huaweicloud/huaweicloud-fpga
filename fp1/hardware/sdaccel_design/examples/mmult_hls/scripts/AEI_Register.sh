@@ -4,8 +4,8 @@
 #      Copyright 2017 Huawei Technologies Co., Ltd. All Rights Reserved.
 # 
 #      This program is free software; you can redistribute it and/or modify
-#      it under the terms of the Huawei Software License (the "License").
-#      A copy of the License is located in the "LICENSE" file accompanying 
+#      it under the terms of the Huawei Software License (the "License").	
+#      A copy of the License is located in the "LICENSE" file accompanying 	
 #      this file.
 # 
 #      This program is distributed in the hope that it will be useful,
@@ -115,6 +115,25 @@ else
     echo "Unknown Mode:$mode"
     exit -1
 fi
+########################################################
+#judge the .s3cfg file
+########################################################
+if [ -f ~/.s3cfg ];then
+    host_base=`cat  ~/.s3cfg| grep "host_base"`
+    if [ -z "$host_base" ];then
+        echo "ERROR:the ~/.s3cfg file's configuration is wrong "
+        exit -1
+    fi
+    bucket_location=`cat  ~/.s3cfg| grep "bucket_location"`
+    if [ -z "$bucket_location" ];then
+        echo "ERROR:the ~/.s3cfg file's configuration is wrong "
+        exit -1
+    fi
+else
+    echo "ERROR:the ~/.s3cfg does not exist"
+    exit -1
+fi
+
 #echo $metadata
 #####################################################################################################################
 #verifying the fis register arguments
@@ -141,17 +160,17 @@ else
         #echo -e "\nINFO: check bucket validity..."
         bucket_error=`s3cmd --ssl --no-check-certificate --access_key="$ACCESS_KEY" --secret_key="$SECRET_KEY" --host-bucket="" du "s3://$bucketName" 2>&1`
         err_code=$?
-
-	if [ $err_code -eq 0 ];then
+        if [ $err_code == 0 ];then
             echo -e "\nVerifying the access_key,secret_key successfully"
             break
-        elif [ $err_code -eq 12 ];then
-            echo -e "\nERROR:The bucket which named $bucketName is not exist!"
+        elif [ $err_code == 12 ];then
+            echo -e "\nThe bucket which named $bucketName is not exist!"
             exit -1
         elif [[ $bucket_error =~ .*(AccessDenied).* ]];then
-	    echo $bucket_error        
-   	    exit -1
+            echo $bucket_error
+            exit -1
         elif [ $i_times -ne 0  ];then
+            echo $bucket_error
             echo
             continue
         else

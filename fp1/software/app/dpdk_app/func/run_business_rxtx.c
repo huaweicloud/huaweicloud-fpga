@@ -73,8 +73,8 @@ static int run_business_rx_thread_route(void* arg);
  *  Inside logic, there has registers to enable this function. There is also a warning register corresponding to 
  *  this function, this register will alarm if CRC check error. This function is closed by default. If you want enable
  *  it, you should do the following for the logic at the host:
- *  1¡¢ Set CRC register which address is 0x4000e to 1 ( 0 by defalut).
- *  2¡¢ If bit[25] of warning register is 1, it indicates CRC error.
+ *  1. Set CRC register which address is 0x4000e to 1 ( 0 by defalut).
+ *  2. If bit[25] of warning register is 1, it indicates CRC error.
  *  This function will reduce the performance of logic which only used in debug mode.
 */
 
@@ -89,7 +89,7 @@ typedef struct _st_mbufs_pool_ {
     uint16_t    head;        
     uint16_t    tail;        
 
-    uint16_t    data_mbuf_len;
+    uint32_t    data_mbuf_len;
     uint32_t port_id;
     uint32_t queue_idx;
     struct rte_mempool* bd_mp;
@@ -197,19 +197,18 @@ int mbufs_pool_init(pst_mbufs_pool p_mbufs_pool, pstBusinessThreadArgs p_busines
             data_tx[data_pos_idx] = data_tx_value;
             data_rx[data_pos_idx] = 0xFF;
         }
-        /* data type of data_tx_value is uint8_t£¬when increased to 255, it will overflow to 0 */
+        /* data type of data_tx_value is uint8_t, when increased to 255, it will overflow to 0 */
         data_tx_value++;
         if (ENABLE == p_business_thread_args->p_business_args->fmmu_enable) {
             acc_second_bd *extend_data_tx = (acc_second_bd *)data_tx;
 
             uint64_t overflow_protect = 1;
-
             (void)memset_s(extend_data_tx, sizeof(acc_second_bd), 0, sizeof(acc_second_bd));
 
             /* For FMMU, send data to FPGA_DDR_MODULE_NUM DDRs to balance the load,
                calucate the FPGA DDR addr with DDR idx, queue idx and mbuf idx */
             extend_data_tx->src_fpga_phy_addr = FPGA_DDR_BASE + 
-                (mbuf_idx % FPGA_DDR_MODULE_NUM) * (FPGA_DDR_ALL_SIZE/FPGA_DDR_MODULE_NUM) + 
+                (mbuf_idx % FPGA_DDR_MODULE_NUM) * (FPGA_DDR_ALL_SIZE(overflow_protect)/FPGA_DDR_MODULE_NUM) + 
                 (p_mbufs_pool->queue_idx) * MBUFS_NB_IN_POOL * secondary_data_size +
                 (mbuf_idx / FPGA_DDR_MODULE_NUM * secondary_data_size);
     
@@ -327,11 +326,9 @@ int run_business_thread(pstBusinessThreadArgs p_business_thread_args) {
     }
 
     if (0 == p_business_thread_args->p_business_args->not_rx_thread) {
-        /*printf("rte_eal_wait_lcore rx for lcore %u\r\n", cpu_rx);*/
         (void)rte_eal_wait_lcore(cpu_rx);
     }
     if (0 == p_business_thread_args->p_business_args->not_tx_thread) {
-        /*printf("rte_eal_wait_lcore tx for lcore %u\r\n", cpu_tx);*/
         (void)rte_eal_wait_lcore(cpu_tx);
     }
     real_tx_nb = p_business_thread_args->real_tx_nb;
@@ -363,7 +360,13 @@ int run_business_tx(uint16_t port_id, uint16_t queue_idx,
     uint16_t    remain_tx_nb = require_tx_nb;
     uint16_t    has_tx_nb = 0;
     uint32_t    continue_tx_zero_nb = 0;
-    static struct timespec ts;        
+    static struct timespec ts;   
+
+    if (NULL == tx_mbufs || NULL == real_tx_nb) {
+        printf("\033[1;31;40mrun_business_tx input parameter null\033[0m\r\n");
+        return -1;
+    }
+    
     ts.tv_sec = 0;        
     ts.tv_nsec = 100000;
     *real_tx_nb = 0;
@@ -413,7 +416,13 @@ int run_business_rx(uint16_t port_id, uint16_t queue_idx,
     uint16_t    remain_rx_nb = require_rx_nb;
     uint16_t    has_rx_nb = 0;
     uint32_t    continue_rx_zero_nb = 0;
-    static struct timespec ts;        
+    static struct timespec ts;    
+
+    if (NULL == rx_mbufs || NULL == real_rx_nb) {
+        printf("\033[1;31;40mrun_business_rx input parameter null\033[0m\r\n");
+        return -1;
+    }
+    
     ts.tv_sec = 0;        
     ts.tv_nsec = 100000;
     *real_rx_nb = 0;

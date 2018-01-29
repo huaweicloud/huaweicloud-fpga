@@ -1,5 +1,8 @@
-# 目录结构
-constrants文件夹主要存放用户逻辑ddra/ddrb/ddrd的管脚约束信息；
+# Directory Structure
+
+[切换到中文版](./README_CN.md)
+
+The **constraints** folder stores the DDRA/DDRB/DDRD pin constraint information of the user logic.
 * [lib/constrants](#lib/constrants_dir)/
   - ddra_pin_x8.xdc
   - ddrb_pin_x8.xdc
@@ -7,18 +10,19 @@ constrants文件夹主要存放用户逻辑ddra/ddrb/ddrd的管脚约束信息�
   - pr_pblock.xdc
   - README.md
 
- # 目录说明 
+ # Directory Descriptions 
 * ddra_pin_x8.xdc  
-  本文档承载用户逻辑`ddra管脚约束信息`;  
+  This document records the `DDRA pin constraint information` of the user logic.  
 
 * ddrb_pin_x8.xdc  
-  本文档承载用户逻辑`ddrb管脚约束信息`;  
+  This document records the `DDRB pin constraint information` of the user logic.  
 
 * ddrd_pin_x8.xdc  
-  本文档承载用户逻辑`ddrd管脚约束信息`;  
+  This document records the `DDRD pin constraint information` of the user logic.  
 
 * pr_pblock.xdc  
-  本文档承载`pblock约束信息`;  
-  
+  This document records the `pblock constraint information`.  
+
 * README.md
-  本文档，用于介绍其他文档。
+  This document describes other documents.
+

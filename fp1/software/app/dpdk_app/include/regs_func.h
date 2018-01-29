@@ -35,22 +35,19 @@
 #include <errno.h>
 #include "regs_infos.h"
 
-#define DDR_ADDRESS 0x8000000   //128M
+#define DDR_ADDRESS 0x8000000   /*128M*/
 
 typedef struct {
-        unsigned int cmd;
-        unsigned int addr;
-        unsigned int write_data;
-        unsigned int read_data;
-    }DDR_ADDR;
-
+    unsigned int cmd;
+    unsigned int addr;
+    unsigned int write_data;
+    unsigned int read_data;
+}DDR_ADDR;
 
 int print_demo1_version();
-
 int print_oppos_data();
 int set_oppos_data(unsigned int value);
-
-int print_add_result_data() ;
+int print_add_result_data();
 int set_add_data(unsigned int data0, unsigned int data1);
 int set_ddr_data(unsigned int num, unsigned int addr, unsigned int value);
 int print_ddr_data(unsigned int num, unsigned int addr);

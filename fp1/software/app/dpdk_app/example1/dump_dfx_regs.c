@@ -106,14 +106,13 @@ static int parse_arg(int argc, char* argv[])
     char* arg_val = NULL;
     int     ch;
 
-    while ((ch=getopt(argc, argv, STR_PARSE_ARG)) != -1) 
-    {
+    while ((ch=getopt(argc, argv, STR_PARSE_ARG)) != -1) {
         switch (ch) {
             case 'p': {
                 assert(NULL != optarg);
                 arg_val = optarg;
                 g_port_id = strtoul(arg_val, NULL, 0);
-		printf("g_port_id is %d\n", g_port_id);
+		        printf("g_port_id is %d\n", g_port_id);
                 break;
             }
             case 'h':

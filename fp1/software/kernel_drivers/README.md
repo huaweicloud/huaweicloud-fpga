@@ -1,5 +1,8 @@
-# 本目录放置内核态驱动源码。
+# This directory stores the source code of kernel-mode driver
+
+[切换到中文版](./README_CN.md)
 
 * xdma_driver
 
-虚拟机上xdma驱动源码
+The driver source code of XDMA on VM.
+

@@ -52,7 +52,7 @@
 #include "run_business_rxtx.h"
 #include "securec.h"
 
-#define APP_VERSION "application LOG-Heterogeneous computing V100R001C10B061"
+#define APP_VERSION "application LOG-Heterogeneous computing V100R001C10B065"
 /* Seconds wait before DPDK memory init, 
     for that IP may have some job to do for the former task */
 #define WAIT_TIME_BEFORE_DPDK_INIT 1
@@ -204,7 +204,7 @@ static void dev_info_dump(struct rte_eth_dev_info* dev_info) {
 #define STR_PARSE_ARG   "d:p:q:l:n:x:fh"
 static int parse_arg(int argc, char* argv[]) {
     char*   arg_val = NULL;
-    int     ch = 0;;
+    int     ch = 0;
     unsigned long int value = 0;
     while ((ch=getopt(argc, argv, STR_PARSE_ARG)) != -1) {
         switch (ch) {
@@ -217,9 +217,6 @@ static int parse_arg(int argc, char* argv[]) {
                     goto parse_error;
                 } else {
                     g_business_args.queue_desc_nb = value;
-                }
-                if (g_business_args.queue_desc_nb != value) {
-                    goto parse_error;
                 }
                 break;
             }
@@ -253,9 +250,6 @@ static int parse_arg(int argc, char* argv[]) {
                 } else {
                     g_business_args.packet_len = value;
                 }
-                if (g_business_args.packet_len != value) {
-                    goto parse_error;
-                }
                 break;
             }
             case 'n': {
@@ -268,9 +262,6 @@ static int parse_arg(int argc, char* argv[]) {
                 } else {
                     g_business_args.packet_num = value;
                 }
-                if (g_business_args.packet_num != value) {
-                    goto parse_error;
-                }
                 break;
             }
             case 'x': {
@@ -282,9 +273,6 @@ static int parse_arg(int argc, char* argv[]) {
                     goto parse_error;
                 } else {
                     g_business_args.loop_time = value;
-                }
-                if (g_business_args.loop_time != value) {
-                    goto parse_error;
                 }
                 break;
             }

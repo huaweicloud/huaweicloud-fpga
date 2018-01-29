@@ -87,7 +87,7 @@ USR_CONSTRAINTS="
 #set_multicycle_path -setup -from [get_pins cpu_data_out*/D] 3
 #set_multicycle_path -hold  -from [get_pins cpu_data_out*/D] 2 
 "
- 
+
  
 
 

@@ -1,31 +1,32 @@
-# usr_template构建指南
+# usr_template Building Guide
 
 ---
+[切换到中文版](./README_CN.md)
 
 <div id="table-of-contents">
-<h2>目录</h2>
+<h2>Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. <b>目录结构</b></a></li>
-<li><a href="#sec-2">2. <b>文件及文件夹说明</b></a></li>
-<li><a href="#sec-3">3. <b>构建说明</b></a>
+<li><a href="#sec-1">1. <b>Directory Structure</b></a></li>
+<li><a href="#sec-2">2. <b>File and Folder Descriptions</b></a></li>
+<li><a href="#sec-3">3. <b>Building Descriptions</b></a>
 <ul>
-<li><a href="#sec-3-1">3.1. <b>usr_prj_cfg 配置说明</b></a></li>
+<li><a href="#sec-3-1">3.1. <b>usr_prj_cfg Configuration Descriptions</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-2">3.2. <b>build.sh使用说明</b></a></li>
+<li><a href="#sec-3-2">3.2. <b>build.sh Operation Instructions</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-3">3.3. <b>schedule_task.sh使用说明</b></a></li>
+<li><a href="#sec-3-3">3.3. <b>schedule_task.sh Operation Instructions</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-4">3.4. <b>AEI_Register.cfg文件配置说明</b></a></li>
+<li><a href="#sec-3-4">3.4. <b>AEI_Register.cfg Configuration Descriptions</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-5">3.5. <b>AEI_Register.sh文件配置说明</b></a></li>
+<li><a href="#sec-3-5">3.5. <b>AEI_Register.sh Configuration Descriptions</b></a></li>
 </ul>
 </li>
-<li><a href="#sec-4">4. <b>其他</b></a></li>
+<li><a href="#sec-4">4. <b>Others</b></a></li>
 </ul>
 </li>
 </div>
@@ -33,15 +34,15 @@
 
 <a id="sec-1" name="sec-1"></a>
 
-## 目录结构
+## Directory Structure
 
-usr_template的prj文件夹层级结构如下：
+The structure of the prj folder of usr_template is as follows：
 
 - **prj/**
   - [build/](#sec-2-1)
   - [constraints/](#sec-2-2)
   - [build.sh](#sec-2-3)
-  - README.md （本文档）
+  - README.md （This document）
   - [schedule_task.sh](#sec-2-4)
   - [usr_prj_cfg](#sec-2-5)
   - [AEI_Register.cfg](#sec-2-6)
@@ -49,179 +50,182 @@ usr_template的prj文件夹层级结构如下：
 
 <a id="sec-2" name="sec-2"></a>
 
-## 文件及文件夹说明
+## File and Folder Descriptions
 
 <a id="sec-2-1" name="sec-2-1"></a>
 
 - build  
-  该目录主要用于存放示例构建信息。
+  This directory stores example building information.
 
 <a id="sec-2-2" name="sec-2-2"></a>
 
 - constraints  
-  该目录主要用于存放usr_template的自定义约束信息，来源于`usr_prj_cfg` 中的 USR_CONSTRAINTS。
+  This directory stores the user-defined constraint information of usrtemplate, which derives from USRCONSTRAINTS in`usr_prj_cfg` .
 
 <a id="sec-2-3" name="sec-2-3"></a>
 
 - build.sh  
-  该文件主要用于构建工程，用户`修改完usr_prj_cfg`后，执行该文件即可实现工程构建，详细使用说明请见[build.sh使用说明](#sec-3-2)。
+  This file is used to build a project. After users modify 'usr_prj_cfg', they can run the file to build a project. For details, see[build.sh Operation Instructions](#sec-3-2)。
 
 <a id="sec-2-4" name="sec-2-4"></a>
 
 - schedule_task.sh  
-  该文件主要用于完成工程的延时以及定时构建，详细使用说明请见[schedule_task.sh使用说明](#sec-3-3)。
+  This file is used for project delay and scheduled building. For details, see[schedule_task.sh Operation instructions](#sec-3-3)。
 
 <a id="sec-2-5" name="sec-2-5"></a>
 
 - usr_prj_cfg  
-  该文件主要用于配置usr_template工程的自定义信息，详细使用说明请见[usr_prj_cfg使用说明](#sec-3-1)。
+  This file is used to configure user-defined information about the usr_template project. For details, see [usr_prj_cfg Operation Instructions](#sec-3-1)。
 
 <a id="sec-2-6" name="sec-2-6"></a>
 
 - AEI_Register.cfg  
-  该文件主要用于配置编译生成的bit文件对应的上传模式和创建OBS桶名，详细使用说明请见[AEI_Register.cfg使用说明](#sec-3-4)。
+   This file is used to configure the upload mode of the bit file generated during compilation and the name of the OBS bucket. For details, see[AEI_Register.cfg Operation Instructions](#sec-3-4)。
 
 <a id="sec-2-7" name="sec-2-7"></a>
 
 - AEI_Register.sh  
-  该命令主要用于完成pr校验、bit文件生成、上传等步骤，执行该文件即可实现将bit文件上传至OBS桶，并获取注册ID，详细使用说明请见[AEI_Register.sh使用说明](#sec-3-5)。
+  This command is used to complete the PR verification and generate and upload the bit file. Run this file to upload the bit file to the OBS bucket and obtain the registration ID. For details, see[AEI_Register.sh Operation Instructions](#sec-3-5)。
 
 <a id="sec-3" name="sec-3"></a>
 
-## 构建说明
+## Building Descriptions
 
 <a id="sec-3-1" name="sec-3-1"></a>
 
-### usr_prj_cfg 配置说明
+### usr_prj_cfg Configuration Descriptions
 
-- 该文件主要用于配置用户工程的自定义信息。
+- The file is used to configure user-defined information of a user project.
 
-- usr_prj_cfg 文件在`$WORK_DIR/hardware/vivado_design/user/usr_template/prj/`目录（后续所有操作均在此目录执行）。
+- The usr_prj_cfg file is saved in the
+  `$WORK_DIR/hardware/vivado_design/user/usr_template/prj/`directory. (All subsequent operations are performed in this directory.)
 
-如需编辑usr_prj_cfg文件，请使用以下命令：
+To edit the usrprjcfg file, run the following command:
 
 ```bash
   $ cd $WORK_DIR/hardware/vivado_design/user/usr_template/prj/
   $ vim ./usr_prj_cfg
 ```
 
-`usr_prj_cfg`内容介绍：
+`usr_prj_cfg`content introduction:
 
-| 内容                       | 关键字                      | 示例                                                                               |
-|:--------------------       | :---------------           |:------------------------------------------------------------                      |
-| 用户创建工程的名字           | USR_PRJ_NAME               | USR_PRJ_NAME=ul_pr_top                                                             |
-| 工程顶层的名字               | USR_TOP                   | USR_TOP=ul_pr_top                                                                  |
-| 用户指定的综合策略           | USR_SYN_STRATEGY          | USR_SYN_STRATEGY=AreaOptimized_high                                                |
-| 用户指定的实现策略           | USR_IMPL_STRATEGY         | USR_IMPL_STRATEGY=Explore                                                          |
-| 用户的自定义约束             | USR_CONSTRAINTS           | USR_CONSTRAINTS="set_multicycle_path -setup -from [get_pins cpu_data_out*/D] 3"    |
+| Content        | Keyword               | Example                                       |
+| :-------- | :---------------- | :--------------------------------------- |
+| Name of the project created by the user | USR_PRJ_NAME      | USR_PRJ_NAME=ul_pr_top                   |
+| Top-Layer name of the project    | USR_TOP           | USR_TOP=ul_pr_top                        |
+| Synthesis policy designated by the user | USR_SYN_STRATEGY  | USR_SYN_STRATEGY=AreaOptimized_high      |
+| Implementation policy designated by the user | USR_IMPL_STRATEGY | USR_IMPL_STRATEGY=Explore                |
+| User-defined constraints  | USR_CONSTRAINTS   | USR_CONSTRAINTS="set_multicycle_path -setup -from [get_pins cpu_data_out*/D] 3" |
 
 ---
 
-用户需根据自己的设计按照上表中`示例`一栏对自定义工程的usr_prj_cfg进行配置：
+Configure usr_prj_cfg of the user-defined project according to the example in the preceding table:
 
-- USR_PRJ_NAME=`此处为用户创建工程工程的名字`，如 ul_pr_top 或 usr_prjxx_top；
-- USR_TOP=`此处为工程顶层的名字` ，如 ul_pr_top 或 usr_prjxx_top；
-- USR_SYN_STRATEGY=`此处为综合策略` ，如 AreaOptimized_high等 ，用户自己指定，一般默认为DEFAULT；
-- USR_IMPL_STRATEGY=`此处为实现策略` ，如 Explore 等 ，用户自己指定，一般默认为DEFAULT；
-- USR_CONSTRAINTS=`此处为自定义约束`，一般为默认状态，不更改。
+- USR_PRJ_NAME=`Name of the project created by the user`，for example, ul_pr_top or usr_prjxx_top;
+- USR_TOP=`Top-Layer name of the project` ，for example,  ul_pr_top or usr_prjxx_top；
+- USR_SYN_STRATEGY=`Synthesis policy` ,for example, AreaOptimized_high. It is user-defined. The default value is **DEFAULT**.
+- USR_IMPL_STRATEGY=`implementation policy`, for example, Explore. It is user-defined. The default value is **DEFAULT**.
+- USR_CONSTRAINTS=`user-defined constraints`. Generally, it is in the default state and does not need to be changed.
 
 <a id="sec-3-2" name="sec-3-2"></a>
 
-### build.sh使用说明
+### build.sh Operation Instructions
 
-`build.sh`脚本主要完成工程构建。不仅支持一键式构建也支持分部构建，更多工程构建详细的说明可使用`-h`命令获得，命令如下：
+The `build.sh`script is used to build a project. The script supports both one-click building and branch building. For details, run the `-h` command. The command is as follows:
 
 ```bash
   $ sh build.sh -h
 ```
 
-| 参数                                               | 说明                   |
-|:------------------------------------------         |:-------------          |
-|  [-s] or [-S] or [-synth]                          | 单步执行综合           |
-|  [-i] or [-I] or [-impl]                           | 单步执行实现           |
-|  [-p] or [-P] or [-pr]                             | 单步执行pr校验         |
-|  [-b] or [-B] or [-bit]                            | 单步执行目标文件生成   |
-|  [-e] or [-E] or [-encrypt]                        | 综合不选择加密         |
-|  [-h] or [-H] or [-help]                           | build.sh帮助说明       |
-|  [-s_strategy_help]                                | 综合策略帮助说明       |
-|  [-i_strategy_help]                                | 实现策略帮助说明       |
+| Parameter                         | Description           |
+| :------------------------- | :----------- |
+| [-s] or [-S] or [-synth]   | Run the synthesis policy in a single step.       |
+| [-i] or [-I] or [-impl]    | Run the implementation policy in a single step.       |
+| [-p] or [-P] or [-pr]      | Run the PR verification in a single step.     |
+| [-b] or [-B] or [-bit]     | Run the target file generation in a single step   |
+| [-e] or [-E] or [-encrypt] | No encryption for the synthesis policy.      |
+| [-h] or [-H] or [-help]    | Help for build.sh |
+| [-s_strategy_help]         | Help for synthesis policy     |
+| [-i_strategy_help]         | Help for implementation policy     |
 
-- 如果需要使用一键式工程构建，请使用如下用命令:
+- To use one-click project building, run the following command:
 
 ```bash
   $ sh build.sh
 ```
 
-  该命令将一键式完成**综合**、**布局布线**2个步骤，`所有步骤都successfully`，整个工程执行PASS；  
-  `注：**pr校验**和**bit文件生成**2个步骤是在AEI上传注册中实现的（详细内容参见本文：[AEI_Register.cfg使用说明](#sec-3-4)）；  
-  **pr校验**和**bit文件生成**这2个步骤也可以通过单步执行的方式实现（参见[build.sh使用说明](#sec-3-2)单步执行的说明）。
+  This command is used to complete the synthesis policy and placing and routing in one-click mode. The whole project runs PASS only if all steps are implemented successfully. 
+ Notes
+PR verification and bit file generation  are implemented in AEI_Register.sh.
+（For details, see [AEI_Register.cfg Operation Instructions](#sec-3-4)）;  
+  PR verification  and bit file generation  can also be implemented in a single step. For details, see single step descriptions in [build.sh Operation Instructions](#sec-3-2).
 
 ---
 
-`build.sh`还可用于单步执行某一项编译任务。
+`build.sh`can also be used to implement a compilation task in a single step.
 
-- 单步执行**综合**参考命令如下：
+- Run the  synthesis command in a single step:
 
 ```bash
   $ sh build.sh -s
 ```
 
-单步执行综合打印提示出现`“ synth_design completed successfully.”`表示综合成功；
+If`“ synth_design completed successfully.”`is displayed when you run the synthesis in a single step, it indicates that the synthesis is successful.
 
 ---
 
-- 单步执行**实现**参考命令如下：
+- Run the ** synthesis** command in a single step:
 
 ```bash
   $ sh build.sh -i
 ```
 
-单步执行布局布线打印提示出现`“route_design completed successfully”`表示布局布线成功；
+If`“route_design completed successfully”`is displayed when you run the synthesis in a single step, it indicates that the synthesis is successful.
 
 ---
 
-- 单步执行**pr校验**参考命令如下：
+- Run the PR verification command in a single step:
 
 ```bash
   $ sh build.sh -pr
 ```
 
-单步执行pr校验打印提示出现`“PR_VERIFY: check points /home/.../usr_prjxx/prj/build/checkpoints/to_facs/usr_prjxx_routed.dcp and /home/.../lib/checkpoints/SH_UL_BB_routed.dcp are compatible”`表示PR校验成功；
+If `“PR_VERIFY: check points /home/.../usr_prjxx/prj/build/checkpoints/to_facs/usr_prjxx_routed.dcp and /home/.../lib/checkpoints/SH_UL_BB_routed.dcp are compatible”`is displayed when you run the PR verification in a single step, the PR verification is successful.
 
 ---
 
-- 单步执行**bit文件生成**参考命令如下：
+- Run the bit file generation command in a single step:
 
 ```bash
   $ sh build.sh -b
 ```
 
-单步执行bit文件生成打印提示出现`“Bitgen Completed Successfully.”`表示bit文件生成成功。
+If `“Bitgen Completed Successfully.”`is displayed when you run the bit file generation in a single step, the bit file generation is generated successfully.
 
 ---
 
-用户查看执行过程打印，能读到vivado工具执行每一步的结果是否seccussfully，也能看到最终执行结果是否PASS。
+When users view the execution progress printing, they can read whether the execution result of each step in the Vivado tool is successful and whether the final result is PASS.
 
 ---
 
 <a id="sec-3-3" name="sec-3-3"></a>
 
-### schedule_task.sh使用说明
+### schedule_task.sh Operation Instructions
 
-`schedule_task.sh`脚本主要完成可配置时间的定时构建，更多详细的说明可使用`-h`命令获得，命令如下：
+The `schedule_task.sh`script is used to complete the scheduled building for the configurable time. For details, run the -h command as follows:
 
 ```bash
   $ sh schedule_task.sh -h
 ```
 
-`schedule_task.sh`有两个参数，分别为：`hour和minutes`；
-同时，`schedule_task.sh`支持两种执行方式：
+`schedule_task.sh`has two parameters:`hour和minutes`；
+In addition, `schedule_task.sh`supports two execution modes:
 
-- 方式1：延时执行
+- Mode1:Delay Execution
 
-  使用`schedule_task.sh *h`或`schedule_task.sh *m`命令表示在若干小时或若干分钟后执行工程编译，`*`表示用户设定的数值，也可以使用`schedule_task.sh *h *m`的方式执行，表示在若干小时若干分钟后执行；
+  Run the`schedule_task.sh *h`or`schedule_task.sh *m`command to execute the project compilation in certain hours or minutes. * indicates the value set by the user. You can also run`schedule_task.sh *h *m`which indicates that the project is executed in certain hours and minutes.
 
-  如果不写单位默认单位为 s（秒），m 表示分钟, h 表示小时，d表示天，详细使用方式例如：
+  If the unit is not specified, the default unit is s (seconds). Other units include: m (minutes), h (hours), and d (days). For details, see the following example:
 
 ```bash
   $ sh ./schedule_task.sh 1m      # after 1 minute run
@@ -230,11 +234,11 @@ usr_template的prj文件夹层级结构如下：
 
 ---
 
-- 方式2：定时执行
+- Mode 2: Scheduled Execution
 
-  使用`schedule_task.sh hour:minute`命令，直接跟随执行时刻，表示在用户指定的时间点执行工程构建。
+  Run the `schedule_task.sh hour:minute`command to build the project at the specified time.
 
-   如果不写时间默认为立即执行，详细使用方式例如：
+   If the time is not specified, the task is executed immediately. For details, see the following example:
 
 ```bash
   $ sh ./schedule_task.sh 11:50   # run project at 11:50
@@ -243,50 +247,51 @@ usr_template的prj文件夹层级结构如下：
 
 <a id="sec-3-4" name="sec-3-4"></a>
 
-### AEI_Register.cfg文件配置说明
+### AEI_Register.cfg File Configuration Descriptions
 
-该文件主要用于配置bit文件对应的上传模式和自定义创建OBS桶名，如需修改该配置，可以按照如下方式打开`AEI_Register.cfg`:
+This file is used to configure the upload mode of the bit file and the name of the user-defined OBS bucket. If you need to modify the file name, run the following command to open
+`AEI_Register.cfg`:
 
 ```bash
   $ vim ./AEI_Register.cfg
 ```
 
-详细配置参数如下：
+Configuration parameters are as follows:
 
 ```bash
-  MODE=DPDK                     # 上传模式，可以为'DPDK'或'OCL'，分别对应不同的开发模式
-  OBS_BUCKETNAME="obs-fpga"     # 存储桶名称
+  MODE=DPDK                     # There are two upload modes: DPDK and OCL.
+  OBS_BUCKETNAME="obs-fpga"     # Bucket name
 ```
 
 <a id="sec-3-5" name="sec-3-5"></a>
 
-### AEI_Register.sh命令的使用说明
+### AEI_Register.sh Command Operation Instructions
 
-该命令主要完成pr校验、bit文件生成、上传等步骤，执行该文件即可实现将bit文件上传至OBS桶，并获取注册ID。
-执行AEI_Register.sh脚本的命令格式如下：
+This command is used to verify the PR, generate and upload the bit file to the OBS bucket, and obtain the registration ID.
+The format of the command for running the AEI_Register.sh script is as follows:
 
 ```bash
   $ sh AEI_Register.sh -n [AEI_name] -d [AEI_Description]
 
-  # -n选项指定待注册的FPGA镜像（AEI）名称。
-  # AEI_name是由英文大小写字母、数字、下划线、中划线组成的字符串，长度为1到64位，用户自行设计即可。
-  # -d选项指定待注册的FPGA镜像（AEI）描述信息。
-  # AEI_Description由中文汉字、中文句号逗号、英文大小写字母、数字、中划线、下划线、英文句号逗号、空格组成的字符串，长度为0到255位，用户自行设计即可。
+  # -n specifies the AEI name of the FPGA image to be registered.
+  # AEI_name is a string of 1 to 64 characters consisting of uppercase and lowercase letters, digits, underscores (_), and hyphens (-).
+  # -d specifies the AEI descriptions of the FPGA image to be registered.
+  # AEI_Description consists of 0 to 255 characters, including uppercase and lowercase letters, digits, hyphens (-), underscores (), periods (.), commas (,), and spaces.
 ```
 
-**重要说明**:
+**Notes**:
 
-- 执行AEI_Register.sh命令j完成`pr校验`、`bit文件生成`和`注册ID生成`3个步骤，因此该步骤耗时稍长。
+- Running the AEI_Register.sh command requires completing the PR verification,bit file generation, and registration ID generation It takes some time to finish these three steps.
 
-- 在AEI_Register.sh脚本执行过程中，用户需要根据提示信息输入AK、SK和密码。
+- During the execution of the AEI_Register.sh script, enter the AK, SK, and password as prompted.
 
-- AK、SK的获取方法：打开创建访问密钥页面`http://support.hwclouds.com/devg-obs_c++_sdk_doc_zh/zh-cn_topic_0040689446.html`，根据页面上的指导访问密钥AK(Access Key)和SK(Secret Key)，妥善保存并用于注册。
+- To obtain the Access Key (AK) and Secret Key (SK), take the following steps: Open the Create Access Key page `http://support.hwclouds.com/devg-obs_c++_sdk_doc_zh/zh-cn_topic_0040689446.html`, access the AK and SK according to the instructions on the page, and store them properly for registration.
 
-  1.在出现“Input access_key:”信息时，`输入获取的AK`。
-  2.在出现“Input secret_key:”信息时，`输入获取的SK`。
-  3.在出现“Input passwd:”信息时，`输入华为云账户的密码`。
+  1.Enter the AK obtained upon the display of`Input access_key:`。
+  2.Enter the SK obtained upon the display of `Input secret_key:`。
+  3.Enter the HWS account password upon the display of `Input passwd:`。
 
-- 在AEI_Register.sh脚本执行成功后，会产生如下的回显信息。
+- The AEI_Register.sh script is executed successfully if the following output is displayed:
 
 ```bash
 #############################################################
@@ -297,11 +302,10 @@ id: 0000********5568015e3c87835c0326
 status: saving
 ```
 
-- 出现`Success: 200 OK`信息表示AEI_Register.sh脚本执行成功，bit文件已上传至OBS桶。
-- `status: saving`信息表示用户注册的二进制文件当前正处于保存状态。
+-`Success: 200 OK`indicates that the AEI_Register.sh script is executed successfully and the bit file is uploaded to the OBS bucket.
 
 <a id="sec-4" name="sec-4"></a>
 
-## 其他
+## Others
 
-完成构建后，会产生的`vivado.log`、`"$USR_TOP"_terminal_run.log`等文件。如果构建失败，用户可根据这些日志定位构建失败的原因。
+After the building is complete, files such as `vivado.log`、`"$USR_TOP"_terminal_run.log`re generated. If the building fails, users can locate the cause of the failure based on the logs.

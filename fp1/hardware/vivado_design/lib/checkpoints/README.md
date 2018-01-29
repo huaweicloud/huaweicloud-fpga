@@ -1,16 +1,21 @@
-# 目录结构
+# Directory Structure
+
+[切换到中文版](./README_CN.md)
+
 * [lib/chekpoints](#lib/chekpoints_dir)/  
   - SH_UL_BB_routed.dcp 
   - SH_UL_BB_routed.md5
 
-# 目录说明
+# Directory Descriptions
 * SH_UL_BB_routed.dcp     
-  该文件为SHELL静态逻辑实现网表；
+  This is a netlist file for shell static logic.
 * SH_UL_BB_routed.md5 SH_UL_BB_routed.dcp    
-  该文件承载的是md5校验值；如果：
-  - `md5sum SH_UL_BB_routed.dcp ==  SH_UL_BB_routed.md5，则表示SH_UL_BB_routed.dcp文件正常`；
-  - `md5sum SH_UL_BB_routed.dcp !=  SH_UL_BB_routed.md5，则表示SH_UL_BB_routed.dcp文件异常`；
+  The file records the MD5 check value. If:
+  - `md5sum SH_UL_BB_routed.dcp ==  SH_UL_BB_routed.md5, this indicates that the SH_UL_BB_routed.dcp file is in the normal state`;
+  - `md5sum SH_UL_BB_routed.dcp !=  SH_UL_BB_routed.md5, this indicates that the SH_UL_BB_routed.dcp file is in the abnormal state`.
 
-# 使用指导
-* 当SH_UL_BB_routed.dcp文件`异常`时，则`不能用于工程编译`；
-* 当SH_UL_BB_routed.dcp文件`异常`时，则`需要更新文件并重新校验`。
+# Operation Instructions
+* If the **SH_UL_BB_routed.dcp** file is in the `abnormal` state, it `cannot be used for project compilation`.
+* If the **SH_UL_BB_routed.dcp** file is in the `abnormal` state, it `needs to be updated and re-verified`.
+
+

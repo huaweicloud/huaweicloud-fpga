@@ -1,43 +1,43 @@
-# 仿真公共文件夹说明
+# Descriptions on Simulation Common Folders
 
----
+[切换到中文版](./README_CN.md)
 
 <div id="table-of-contents">
-<h2>目录</h2>
+<h2>Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. <b>简介</b></a></li>
-<li><a href="#sec-2">2. <b>目录结构</b></a><ul>
-<li><a href="#sec-2-1">2.1. <b>sim目录</b></a></li>
-<li><a href="#sec-2-2">2.2. <b>bench目录</b></a></li>
-<li><a href="#sec-2-3">2.3. <b>common目录</b></a></li>
-<li><a href="#sec-2-4">2.4. <b>stim目录</b></a></li>
-<li><a href="#sec-2-5">2.5. <b>bfm目录</b></a></li>
-<li><a href="#sec-2-6">2.6. <b>rm目录</b></a></li>
-<li><a href="#sec-2-7">2.7. <b>test目录</b></a></li>
-<li><a href="#sec-2-8">2.8. <b>vip目录</b></a></li>
-<li><a href="#sec-2-9">2.9. <b>xxx_vip目录</b></a></li>
-<li><a href="#sec-2-10">2.10. <b>precompiled目录</b></a></li>
-<li><a href="#sec-2-11">2.11. <b>vcs_lib目录</b></a></li>
-<li><a href="#sec-2-12">2.12. <b>questa_lib目录</b></a></li>
-<li><a href="#sec-2-13">2.13. <b>scripts目录</b></a></li>
-<li><a href="#sec-2-14">2.14. <b>doc目录</b></a></li>
+<li><a href="#sec-1">1. <b>Introduction</b></a></li>
+<li><a href="#sec-2">2. <b>Directory Structure</b></a><ul>
+<li><a href="#sec-2-1">2.1. <b>sim Directory</b></a></li>
+<li><a href="#sec-2-2">2.2. <b>bench Directory</b></a></li>
+<li><a href="#sec-2-3">2.3. <b>common Directory</b></a></li>
+<li><a href="#sec-2-4">2.4. <b>stim Directory</b></a></li>
+<li><a href="#sec-2-5">2.5. <b>bfm Directory</b></a></li>
+<li><a href="#sec-2-6">2.6. <b>rm Directory</b></a></li>
+<li><a href="#sec-2-7">2.7. <b>test Directory</b></a></li>
+<li><a href="#sec-2-8">2.8. <b>vip Directory</b></a></li>
+<li><a href="#sec-2-9">2.9. <b>xxx_vip Directory</b></a></li>
+<li><a href="#sec-2-10">2.10. <b>precompiled Directory</b></a></li>
+<li><a href="#sec-2-11">2.11. <b>vcs_lib Directory</b></a></li>
+<li><a href="#sec-2-12">2.12. <b>questa_lib Directory</b></a></li>
+<li><a href="#sec-2-13">2.13. <b>scripts Directory</b></a></li>
+<li><a href="#sec-2-14">2.14. <b>doc Directory</b></a></li>
 </ul>
 </li>
-<li><a href="#sec-3">3. <b>仿真说明</b></a></li>
+<li><a href="#sec-3">3. <b>Simulation Descriptions</b></a></li>
 </ul>
 </div>
 </div>
 
 <a id="sec-1" name="sec-1"></a>
 
-## 简介
+## Introduction
 
-该文件夹主要存储仿真**公共文件**，包含公用仿真库文件、仿真平台公共部分、用户VIP、公用脚本等文件。
+This folder stores simulation common files, including common simulation library files, common parts of the simulation platform, verification IPs, and common scripts.
 
 <a id="sec-2" name="sec-2"></a>
 
-## 目录结构
+## Directory Structure
 
 - [sim/](#sec-2-1)
   - [bench/](#sec-2-2)
@@ -54,98 +54,99 @@
   - [scripts/](#sec-2-13)
   - [doc/](#sec-2-14)
 
-## 目录说明
+## Directory Descriptions
 
 ---
 
 <a id="sec-2-1" name="sec-2-1"></a>
 
-### sim目录
+### sim Directory
 
-仿真公共目录，包含仿真平台代码、脚本、预编译库以及VIP。
+The simulation common directory includes simulation platform code, scripts, precoding library, and verification IPs.
 
 <a id="sec-2-2" name="sec-2-2"></a>
 
-### bench目录
+### bench Directory
 
-仿真平台根目录。
+Indicates the root directory of the simulation platform.
 
 <a id="sec-2-3" name="sec-2-3"></a>
 
-### common目录
+### common Directory
 
-仿真平台公用文件目录（主要包含公用头文件，端口定义等等）。
+Indicates the common file directory of the simulation platform (including common header files and port definitions).
 
 <a id="sec-2-4" name="sec-2-4"></a>
 
-### stim目录
+### stim Directory
 
-仿真平台激励目录（包含激励数据以及激励产生组件）。
+Indicates the incentive directory of the simulation platform (including incentive data and incentive generation components).
 
 <a id="sec-2-5" name="sec-2-5"></a>
 
-### bfm目录
+### bfm Directory
 
-仿真平台 BFM目录（包含AXI Master、AXI Slave以及AXI-Lite接口的BFM）。
+Indicates the BFM directory of the simulation platform (including BFM directories of the AXI Master, AXI Slave, and AXI-Lite interfaces).
 
 <a id="sec-2-6" name="sec-2-6"></a>
 
-### rm目录
+### rm Directory
 
-仿真平台 RM目录（包含RM以及记分牌）。
+Indicates the RM directory of the simulation platform (including RM and scorecard).
 
 <a id="sec-2-7" name="sec-2-7"></a>
 
-### test目录
+### test Directory
 
-仿真平台 Env以及基础测试用例目录。
+Indicates the directory of the simulation platform Env and basic test cases.
 
 <a id="sec-2-8" name="sec-2-8"></a>
 
-### vip目录
+### vip Directory
 
-验证IP，包含平台的所有验证IP。
+Verifies IPs, including all the verification IPs of the platform.
 
 <a id="sec-2-9" name="sec-2-9"></a>
 
-### xxx_vip目录
+### xxx_vip Directory
 
-VIP目录，按照VIP分开存放。
+Verification IP directories are stored separately based on verificaiton IPs.
 
 <a id="sec-2-10" name="sec-2-10"></a>
 
-### precompiled目录
+### precompiled Directory
 
-预编译库路径，包括预编译的Xilinx通用仿真模型（主要用于提高编译速度）。
+Indicates the pre-compiled library path and includes the pre-compiled Xilinx general simulation model (used to improve the compilation speed).
 
 <a id="sec-2-11" name="sec-2-11"></a>
 
-### vcs_lib目录
+### vcs_lib Directory
 
-VCS预编译库。
+Indicates the pre-compiled library of the VCS.
 
 <a id="sec-2-12" name="sec-2-12"></a>
 
-### questa_lib目录
+### questa_lib Directory
 
-Questasim预编译库。
+Indicates the pre-compiled library of the QuestaSim.
 
 <a id="sec-2-13" name="sec-2-13"></a>
 
-### scripts目录
+### scripts Directory
 
-仿真脚本目录，包含仿真脚本。
+Indicates the simulation script directory and contains simulation scripts.
 
 <a id="sec-2-14" name="sec-2-14"></a>
 
-### doc目录
+### doc Directory
 
-仿真文档文件夹，包含仿真平台的说明以及设计文档。
+Indicates the simulation document folder and contains simulation platform descriptions and design documents.
 
 ---
 
 <a id="sec-3" name="sec-3"></a>
 
-## 仿真说明
+## Simulation Descriptions
 
-仿真平台详细说明请参考[仿真平台快速指南](./doc/quick_start.md)以及[仿真平台用户指导](./doc/user_guide.md)。
+For details about the simulation platform, see the [Simulation Platform Quick Start Guide](./doc/quick_start.md) and the [Simulation Platform User Guide](./doc/user_guide.md).
+

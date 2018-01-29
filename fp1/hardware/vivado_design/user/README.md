@@ -1,30 +1,32 @@
-# 用户目录使用说明
+# User Directory Operation Instructions
 
-## 目录结构
+[切换到中文版](./README_CN.md)
+
+## Directory Structure
 
 - **user/**
   - create_prj.sh
   - usr_prj0
   - README.md
 
-## 目录说明
+## Directory Descriptions
 
 - create_prj.sh
-  - 该文件承载的是用户创建工程的执行代码，`create_prj.sh`是用户创建工程时，执行命令的重要组成部分;
-  - 执行如下命令，实现一键式将`工程目录模板`复制到`$WORK_DIR/hardware/vivado_design/usr/`：
+  - The file bears the execution code for creating a project. `create_prj.sh` is an important part of the command executed when a user creates a project.
+  - Run the following command to copy the `project directory templates` to `$WORK_DIR/hardware/vivado_design/usr/` in one click.
 
     ```bash
-    # usr_prjxx为用户工程的名称
+    # usr_prjxx is the name of the user project.
     $ sh create_prj.sh usr_prjxx
     ```
 
-  - 执行如下命令：
+  - Run the following command:
 
     ```bash
     $ sh create_prj.sh -h
     ```
 
-    命令详细参数请参考命令的的帮助：
+    For details about the command parameters, see the help information of the command.
 
     ```bash
     ---------------------------------------------------------------------
@@ -40,118 +42,121 @@
 
 - usr_prj0
 
-  该文件夹是执行命令 `sh create_prj.sh usr_prj0`产生一个用户工程 `usr_prj0`的示例。
+  This folder is an instance of generating user project `usr_prj0` by running the `sh create_prj.sh usr_prj0` command.
 
 - README.md
 
-  即本文档，用于介绍其他文档。
+  This document describes other documents.
 
-## 用户工程创建方法
+## Creating a User Project
 
-用户工程创建方法有两种：
+There are two methods for creating a user project:
 
-- 复制实例工程，通过更改参数，添加功能模块实现用户需求；
-- 自己创建工程，上传用户自己设计的代码，添加在编译环境中，实现用户需求。
+- Copy an example project, modify parameters, and add functional modules to meet user requirements.
+- Create a new project and add user-developed code to the compiling environment to meet user requirements.
 
-前者可快速实现一个用户工程，后者需要用户自己编写代码创建工程。
+The first method allows a user project to be quickly implemented, and the second method requires users to compile code.
 
-### 快速实现一个用户工程
+### Implementing a User Project Quickly
 
-#### 配置License及工具信息
+#### Configuring License and Tool Information
 
-- 打开setup.cfg文件:
+- Open the **setup.cfg** file:
 
 ```bash
   $ vim setup.cfg
 ```
 
-- 配置FPGA_DEVELOP_MODE：
+- Configure **FPGA_DEVELOP_MODE**:
 
-  如果使用SDAccel开发的话，请配置成：FPGA_DEVELOP_MODE="sdx"。
-  如果使用vivado开发的话，请配置成：FPGA_DEVELOP_MODE="vivado"。
-  默认配置为vivado。
+  If SDAccel is used, configure it to **FPGA_DEVELOP_MODE="sdx".**
+  If Vivado is used, configure it to **FPGA_DEVELOP_MODE="vivado"**.
+  **FPGA_DEVELOP_MODE="vivado"** is the default configuration.
 
-- 配置软件License：
+- Configure the software license:
 
-  从华为官网获取XILINX License；配置示例如：
+  Obtain the XILINX License from Huawei official website. The following is a configuration example:
 
 ```bash
-  "XILINX_LIC_SETUP="2100@100.xxx.yyy.zzz:2100@100.xxx.yyy.zzz"(100.xxx.yyy.zzz表示license的ip地址).
+  "XILINX_LIC_SETUP="2100@100.xxx.yyy.zzz:2100@100.xxx.yyy.zzz"(100.xxx.yyy.zzz is the IP address of the license.)
 ```
 
-- 配置VIVADO_VER_REQ：
+- Configure **VIVADO_VER_REQ**:
 
-  如果使用SDAccel开发的话，请配置成：VIVADO_VER_REQ="2017.1"。
-  如果使用vivado开发的话，请配置成：VIVADO_VER_REQ="2017.2"。
-  默认配置为2017.2。
-  
+  If SDAccel is used, configure it to **VIVADO_VER_REQ="2017.1"**.
+  If Vivado is used, configure it to **VIVADO_VER_REQ="2017.2"**.
+  **VIVADO_VER_REQ="2017.2"** is the default configuration.
+
 ---
 
-#### 配置环境变量
+#### Configuring Environment Variables
 
   ```bash
   $ source $WORK_DIR/setup.sh
   ```
 
-每次执行<kbd>source setup.sh</kbd>命令时，HDK会执行以下三个步骤的检测：
+Each time the <kbd>source setup.sh</kbd> command is executed, the HDK takes the following steps:
 
-1. 逐一检测所有工具的License是否已配置以及工具是否已安装（工程的初始状态是未安装的）；
-2. 逐一告知工具是否已安装成功；
-3. 打印出所有已安装的工具版本信息。
+1. Check whether the license files of all tools are configured and whether the tools are installed. (By default, the tools and license are not installed.)
+2. Notify users whether the tools are installed.
+3. Print the version information about all installed tools.
 
-**注意**：如果是第一次安装本工程或者是完成版本升级，首次设置环境变量，HDK除了进行以上三步检测外还会执行以下步骤：
+**Note** 
 
-1. 预编译VCSMX仿真库（如果存在VCSMX工具）；
-2. 预编译Questasim仿真库（如果存在Questasim工具）；
-3. 调用Vivado工具生成IP以及DDR仿真模型；
-4. 下载OBS桶中的dcp文件和压缩包，该过程大约需要3~5分钟，请耐心等待。
+If the project is installed for the first time or the version is upgraded, in addition to the preceding three steps, the HDK takes the following steps:
+
+1. Pre-compile the VCSMX simulation library (if the VCSMX tool exists).
+2. Pre-compile the QuestaSim simulation library (if the QuestaSim tool exists).
+3. Use the Vivado tool to generate an IP and a DDR simulation model.
+4. Download the .dcp file and compressed package from the OBS bucket. This process takes about 3 to 5 minutes.
 
 ---
 
-#### 复制工程目录模板
+#### Copying a Project Directory Template
 
-  在`$WORK_DIR/hardware/vivado_design/user`下输入：
+  Enter the following command in `$WORK_DIR/hardware/vivado_design/user`:
 
   ````bash
-  # usr_prjxx为用户工程的名称
+  # usr_prjxx is the name of the user project.
   $ sh create_prj.sh usr_prjxx
   ````
 
-  实现一键式复制template工程文件夹及文件至`$WORK_DIR/hardware/vivado_design/usr/usr_prjxx`;
+ The template project folder and files can be copied to `$WORK_DIR/hardware/vivado_design/usr/usr_prjxx` in one-click mode.
 
 ---
 
-#### 配置usr_prj_cfg
+#### Configuring usr_prj_cfg
 
-- 该文件主要用于配置用户工程的自定义信息。
-- 在`$WORK_DIR/hardware/vivado_design/user/usr_prjxx/prj/`打开`usr_prj_cfg`文件，命令如下:
+The file is used to configure user-defined information of a user project.
+Run the following command to open the `usr_prj_cfg` file in `$WORK_DIR/hardware/vivado_design/user/usr_prjxx/prj/`:
 
 ```bash
   $ vim $WORK_DIR/hardware/vivado_design/user/usr_prjxx/prj/usr_prj_cfg
 ```
 
-详细配置信息请参考`$WORK_DIR/hardware/vivado_design/user/usr_prjxx/README.md`。
+For details, see `$WORK_DIR/hardware/vivado_design/user/usr_prjxx/README.md`.
 
-#### 添加模块
+#### Adding a Block
 
-- 打开 `vivado_design/lib/common/`，该路径下存放了fifo 和 ram 的通用 CBB，点击打开可以看到代码，查找RAM相关的或fifo相关的设计文件;
-- 平台提供的CBB的相关信息可以参阅`vivado_design/lib/common/README.md`，查看模块功能；
-- 选择所需模块，复制并添加到自己的工程`vivado_design/user/usr_prjxx/src`下，修改参数以满足需求；
+- Open `vivado_design/lib/common/`. The common CBBs of FIFO and RAM are available in the path. You can open the CBBs to view the code and search for RAM files or FIFO design files.
+  For details about CBBs provided by the platform and their functions, see `vivado_design/lib/common/README.md`.
+- Select the required block, copy and add it to `vivado_design/user/usr_prjxx/src`, and modify parameters as required.
 
-#### 通过脚本build.sh完成构建
+#### Completing Building Through the build.sh Script
 
-该命令用于编译一键执行快速创建的工程，**实现综合**、**布局布线**、**pr校验**、和**bit文件生成**，完成RTL构建的完整流程。
-如用户工程进行过一键执行RTL构建，该命令还可用于单步执行某一项编译任务。
+This command is used to compile a project created in one-click, implementing synthesis, placing and routing, PR verification, and bit file generation , and RTL building.
+If the RTL building in one-click mode has been done for a user project, this command can also be used for single-step execution of a compilation task.
 
-详细配置信息请参考[usr_prj0构建指南](./usr_prj0/README.md)。
+For details, see [usr_prj0 Building Guide](./usr_prj0/README.md).
 
-#### bit文件上传
+#### Uploading a bit File
 
-RTL构建结束，生成的二进制文件存放在目录`$WORK_DIR/hardware/vivado_design/user/usr_prjxx/prj/build/checkpoints/to_facs`。文件夹中包含以下文件：
+After the RTL building, the generated binary files are stored in the `$WORK_DIR/hardware/vivado_design/user/usr_prjxx/prj/build/checkpoints/to_facs` directory. The folder contains the following files:
 
 - usr_prjxx_partial.bin
 - usr_prjxx_partial.bit
 - usr_prjxx_routed.dcp
 
-最终通过调用系统命令`AEI_Register.sh`完成上传，系统会将需要的的加载文件`usr_prjxx_routed.dcp 和 usr_prjxx_partial.bin` 上传到存储桶并返回AEI，由系统完成加载。
-命令详细使用方法见[usr_prj0构建指南](./usr_prj0/README.md)。
+Finally, run the `AEI_Register.sh` command to upload files. The system uploads the required loading files `usr_prjxx_routed.dcp and usr_prjxx_partial.bin` to the storage bucket, returns the AEI, and then loads the files.
+For details, see [usr_prj0 Building Guide](./usr_prj0/README.md).
+

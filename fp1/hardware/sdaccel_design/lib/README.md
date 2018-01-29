@@ -1,14 +1,18 @@
-# 目录说明
-此目录存放硬件平台信息以及通用
+# Directory Descriptions
 
-# 目录结构
+[切换到中文版](./README_CN.md)
+
+This directory stores hardware platform information.
+
+# Directory Structure
  platform
 --------------------------------------------------------
-此目录存放硬件平台相关文件，用户在编译kernel目标文件时需要指定硬件平台的相关目标。
+This directory stores hardware platform files. When compiling kernel target files, you need to specify the object of the hardware platform.
  template
 --------------------------------------------------------
-此目录存放工程实例模板
+This directory stores project example templates.
  scripts
 ---------------------------------------------------------
-此目录存放工程处理脚本
-	
+This directory stores project processing scripts.
+​	
+

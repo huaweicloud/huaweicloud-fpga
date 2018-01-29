@@ -1,10 +1,12 @@
-# 示例应用指南
+# Example Application Guide
 
 ---
 
-## 目录说明
+[切换到中文版](./README_CN.md)
 
-本文件目录包括的文件夹和文件如下：
+## Directory Descriptions
+
+This directory contains the following folders and files:
 
 - **example/**
   - example1
@@ -12,20 +14,21 @@
   - example3
   - README.md
 
-## 示例说明
+## Example Descriptions
 
 - example1
 
-存放示例1，该示例主要实现用户逻辑的`版本号读取，输入数据取反测试和加法器`的功能，用户可以参考部分华为已有的设计组件，利用该示例用户可以熟悉云上的整个开发仿真验证测试流程。详细说明请见[Example1用户指南](./example1/README.md)。
+This example implements user logic `version reading, data inversion, and addition` functions. You can refer to existing Huawei design components and use this example to learn about the development, simulation, verification, and test processes on the cloud. For details, see [Example 1 User Guide](./example1/README.md).
 
 - example2
 
-存放示例2，该示例主要实现用户逻辑的`版本号读取，4组ddr的读写访问和dma数据环回`功能，用户可以参考所有涉及的接口和交互流程，快速的实现自己的加速设计。详细说明请见[Example2用户指南](./example2/README.md)。
+This example implements user logic `version reading, 4 DDR read/write access, and DMA data loopback` functions. You can quickly implement the acceleration design by referring to involved interfaces and interaction processes. For details, see [Example 2 User Guide](./example2/README.md).
 
 - example3
 
-存放示例3，该示例主要实现用户逻辑的`版本号读取，x86和用户逻辑通过ddr交互数据`功能，用户可以参考所有涉及的接口和交互流程，快速的实现自己的加速设计。详细说明请见[Example3用户指南](./example3/README.md)。
+This example implements user logic `version reading and 4 DDR read/write control` functions. You can quickly implement the acceleration design by referring to involved interfaces and interaction processes. For details, see [Example 3 User Guide](./example3/README.md).
 
 - README.md
 
-即本文档，用于介绍其他文档。
+This document describes other documents.
+

@@ -134,7 +134,6 @@ int find_special_device_dbdf(char* str_vendor_id, char* str_device_id, unsigned 
             continue;
         }
         
-        /*printf("vendor_id_value=%s, device_id_value=%s\r\n", vendor_id_value, device_id_value);*/
         if ((0==strcmp(vendor_id_value, str_vendor_id)) && (0==strcmp(device_id_value, str_device_id))) {  
             if (cur_idx == idx) {
                 (void)strcpy_s(bdf, PATH_MAX, dir_entry->d_name);

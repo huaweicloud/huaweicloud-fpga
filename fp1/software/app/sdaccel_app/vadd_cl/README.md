@@ -1,6 +1,8 @@
 Vector Addition Example
 ===============================
 
+[切换到中文版](./README_CN.md)
+
 This is a simple example of vector addition.
 
 Files in the Example

@@ -42,17 +42,17 @@
 static int parse_arg(int argc, char* argv[]);
 static void help();
 
-static uint32_t      g_port_id = 0;
+static unsigned int g_port_id = 0;
 
 int main(int argc, char* argv[]) {
-    int ret = 0;
+	int ret = 0;
     
-    if (0 != parse_arg(argc, argv)) {
-        return -EINVAL;
-    }
+	if (0 != parse_arg(argc, argv)) {
+		return -EINVAL;
+	}
     
-    ret = pci_bar2_init_env(g_port_id);
-    if (ret != 0) {
+	ret = pci_bar2_init_env(g_port_id);
+	if (ret != 0) {
         printf("%s: pci_bar2_init_env failed(%d)\r\n", __FUNCTION__, ret);
         return ret;
 	}

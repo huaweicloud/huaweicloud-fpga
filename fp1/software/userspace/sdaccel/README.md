@@ -1,16 +1,20 @@
-# 目录说明
-此目录存放 opencl 开发实例编译运行过程中依赖的HAL相关源码
+# Directory Descriptions
 
-# 目录结构
+[切换到中文版](./README_CN.md)
+
+This directory stores HAL source code on which the compilation and running of the OpenCL development instance depend.
+
+# Directory Structure
 * driver
 
-	此目录存放opencl编译过程中依赖的HAL源码
+This directory stores HAL source code on which the OpenCL compilation depends.
 
 * lib
-	- runtime/platforms/hal
+  - runtime/platforms/hal
 
-		此目录存放opencl实例运行过程中所依赖的底层动态库。此目录结构固定不可随意改动
+This directory stores the bottom-layer dynamic libraries on which the running of OpenCL instance depends. The structure of this directory cannot be changed without permissions.
 
-* 注
+Note
 
-	编译HAL前需确保SDx软件附带xcpp工具可用
+Before compiling the HAL, ensure that the XCPP tool in SDx software is available.
+

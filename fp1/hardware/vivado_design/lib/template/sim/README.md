@@ -1,43 +1,45 @@
-# usr_template仿真用户指南
+# usr_template Simulation User Guide
+
+[切换到中文版](./README_CN.md)
 
 <div id="table-of-contents">
-<h2>目录</h2>
+<h2>Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. <b>执行usr_template的编译与仿真</b></a>
+<li><a href="#sec-1">1. <b>Executing the Compilation and Simulation of usr_template</b></a>
 <ul>
-<li><a href="#sec-1-1">1.1. <b>编译</b></a></li>
+<li><a href="#sec-1-1">1.1. <b>Compiling</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-1-2">1.2. <b>执行仿真</b></a></li>
+<li><a href="#sec-1-2">1.2. <b>Executing Simulation</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-1-3">1.3. <b>调试</b></a></li>
+<li><a href="#sec-1-3">1.3. <b>Debugging</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-1-4">1.4. <b>一键式执行</b></a></li>
+<li><a href="#sec-1-4">1.4. <b>One-Click Execution</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-1-5">1.5. <b>清理</b></a></li>
+<li><a href="#sec-1-5">1.5. <b>Clearing</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-1-6">1.6. <b>查看日志</b></a></li>
-</ul>
-</li>
-<li><a href="#sec-2">2. <b>用户自定义测试</b></a>
-<ul>
-<li><a href="#sec-2-1">2.1. <b>编写用户自定义组件</b></a>
-</ul>
-<ul>
-<li><a href="#sec-2-2">2.2. <b>编写用户测试用例</b></a>
-<ul>
-<li><a href="#sec-2-2-1">2.2.1. 编写基础测试用例</a></li>
-</ul>
-<ul>
-<li><a href="#sec-2-2-2">2.2.2. 编写用户测试配置</a></li>
+<li><a href="#sec-1-6">1.6. <b>Viewing Logs</b></a></li>
 </ul>
 </li>
-<li><a href="#sec-2-2">2.3. <b>执行用户测试用例</b></a>
+<li><a href="#sec-2">2. <b>User-defined Tests</b></a>
+<ul>
+<li><a href="#sec-2-1">2.1. <b>Compiling User-defined Components</b></a>
+</ul>
+<ul>
+<li><a href="#sec-2-2">2.2. <b>Compiling User Test Cases</b></a>
+<ul>
+<li><a href="#sec-2-2-1">2.2.1. Compiling Basic Test Cases</a></li>
+</ul>
+<ul>
+<li><a href="#sec-2-2-2">2.2.2. Compiling User Test Configurations</a></li>
+</ul>
+</li>
+<li><a href="#sec-2-2">2.3. <b>Executing User Test Cases</b></a>
 </ul>
 </li>
 </div>
@@ -45,9 +47,9 @@
 
 <a id="sec-1" name="sec-1"></a>
 
-## **执行usr_template的编译与仿真**
+## **Executing the Compilation and Simulation of usr_template**
 
-usr_template的编译、运行以及调试均通过Makefile实现。在编译、仿真以及调试测试用例前请先切换至**仿真根目录**。可通过以下命令切换至仿真根目录（如无特殊说明后续所有操作请在**仿真根目录**执行）：
+The compilation, running, and debugging of usr_template are implemented through Makefile. Before compiling, simulating, and debugging test cases, switch to the simulation root directory. Run the following command to switch to the simulation root directory. (Unless otherwise specified, perform the following operations in the simulation root directory.)
 
 ```bash
     $ cd $WORK_DIR/hardware/vivado_desgin/user/usr_template/sim
@@ -55,15 +57,15 @@ usr_template的编译、运行以及调试均通过Makefile实现。在编译、
 
 <a id="sec-1-1" name="sec-1-1"></a>
 
-### **编译**
+### **Compiling**
 
-编译用户工程的命令为`make comp`，以下为编译usr_template的命令：
+Run the `make comp` command to compile a user project. The following is the command for compiling usr_template:
 
 ```bash
     $ make comp
 ```
 
-默认采用vivado作为仿真器，如果用户需要使用vcs仿真器或questasim仿真器，可使用如下命令：[1][1]
+By default, Vivado is used as the simulator. To use the VCS simulator or QuestaSim simulator, run the following command: [1][1]
 
 ```bash
     $ make comp TOOL=vcs # Compile Using vcsmx
@@ -71,19 +73,19 @@ usr_template的编译、运行以及调试均通过Makefile实现。在编译、
     $ make comp TOOL=vivado # Compile Using vivado(Same as do not specify the simulation tools)
 ```
 
-**make的详细参数请参考**[user_guide](../../../lib/sim/doc/user_guide.md)。
+**For details about make parameters**, see [user_guide] (../../../lib/sim/doc/user_guide.md).
 
 <a id="sec-1-2" name="sec-1-2"></a>
 
-### **执行仿真**
+### **Executing Simulation**
 
-执行用户工程仿真的命令为`make run`，需要指定测试用例名，以下为执行usr_template的**sv_demo_001**测试用例的命令：
+Run the `make run` command to execute the user project simulation. Specify the name of the test case. The following command is used to execute the **sv_demo_001** test case of usr_template:
 
 ```bash
     $ make run TC=sv_demo_001
 ```
 
-默认采用vivado作为仿真器，如果用户需要使用vcs仿真器或questasim仿真器，可使用如下命令：
+By default, Vivado is used as the simulator. To use the VCS simulator or QuestaSim simulator, run the following command:
 
 ```bash
     $ make run TOOL=vcs TC=sv_demo_001 # Compile Using vcsmx
@@ -93,15 +95,15 @@ usr_template的编译、运行以及调试均通过Makefile实现。在编译、
 
 <a id="sec-1-3" name="sec-1-3"></a>
 
-### **调试**
+### **Debugging**
 
-调试用户工程的命令为`make wave`，需要指定测试用例名，以下为调试usr_template的**sv_demo_001**测试用例的命令：
+Run the `make wave` command to debug a user project. Specify the name of the test case. The following command is used to debug the **sv_demo_001** test case of usr_template:
 
 ```bash
     $ make wave TC=sv_demo_001
 ```
 
-默认采用vivado进行调试，如果用户需要使用dve或questasim进行调试，可使用如下命令：
+By default, Vivado is used for debugging. If you need to use DVE or QuestaSim, run the following command:
 
 ```bash
     $ make wave TOOL=vcs TC=sv_demo_001 # Compile Using vcsmx
@@ -111,27 +113,27 @@ usr_template的编译、运行以及调试均通过Makefile实现。在编译、
 
 <a id="sec-1-4" name="sec-1-4"></a>
 
-### **一键式执行**
+### **One-Click Execution**
 
-仿真支持一键式运行，即一键式自动完成编译以及运行，可使用如下命令：
+The simulation supports one-click compilation and running. Run the following command:
 
 ```bash
     $ make TOOL=vcs TC=sv_demo_001
 ```
 
-如果用户使用Vivado仿真器执行测试用例`sv_demo_001`，则可省略`make`命令后的参数，例如：
+If users use the Vivado simulator to execute the test case `sv_demo_001`, the parameters after the `make` command can be omitted. For example:
 
 ```bash
     $ make
 ```
 
-一键式执行也支持vcs与questasim仿真器，详细使用方式请参考以上章节。
+The one-click execution also supports VCS and QuestaSim simulators. For details, see the preceding sections.
 
 <a id="sec-1-5" name="sec-1-5"></a>
 
-### **清理**
+### **Clearing**
 
-重新执行测试用例时，用户可将之前编译或者仿真的结果删除，清除操作命令如下：
+When executing test cases again, users can delete the previous compilation or simulation results. The command is as follows:
 
 ```bash
     $ make clean
@@ -139,15 +141,15 @@ usr_template的编译、运行以及调试均通过Makefile实现。在编译、
 
 <a id="sec-1-6" name="sec-1-6"></a>
 
-### **查看日志**
+### **Viewing Logs**
 
-如果仿真编译出现错误，可查看report目录下的**log_comp.log**文件。编译中出现的错误会在日志中以`ERROR`关键字进行标注，命令如下：
+If errors occur during the simulation compilation, you can view the **log_comp.log** file in the report directory. Errors occurred during the compilation are marked with the keyword `ERROR` in the log. The command is as follows:
 
 ```bash
     $ vi ./report/log_comp.log
 ```
 
-如果编译成功而执行报错，可进入到相应的测试用例目录下，通过**log_simulation.log**可查看仿真运行的日志。仿真过程中的错误会以`[ERROR]:`关键字进行标注，命令如下：
+If the compilation is successful but execution errors occur, you can enter the corresponding test case directory and run the **log_simulation.log** command to view the simulation running logs. Errors occurred during the simulation process are marked with the keyword `[ERROR]:`. The command is as follows:
 
 ```bash
     $ vi ./report/sv_demo_001/log_simulation.log
@@ -155,20 +157,20 @@ usr_template的编译、运行以及调试均通过Makefile实现。在编译、
 
 <a id="sec-2" name="sec-2"></a>
 
-## **用户自定义测试**
+## **User-defined Tests**
 
 <a id="sec-2-1" name="sec-2-1"></a>
 
-### **编写用户自定义组件**
+### **Compiling User-defined Components**
 
-用户不仅可以自行编写测试用例与测试配置，还可以自行编写部分仿真平台组件。目前可编辑的组件有`参考模型`、`CPU模型`、`激励`以及`激励配置`等，用户自定义组件建议放在`./common`目录中。
-自定义组件详细信息请参考[仿真平台快速指导](../../../lib/sim/doc/quick_start.md)。
+Users can compile test cases, test configurations, and some simulation platform components. Currently, the following components can be edited: `reference model`, `CPU model`, `incentive`, and `incentive configuration`. You are advised to save user-defined components in the `./common` directory.
+For details about user-defined components, see the [Simulation Platform Quick Guide](../../../lib/sim/doc/quick_start.md).
 
 <a id="sec-2-2" name="sec-2-2"></a>
 
-### **编写用户测试用例**
+### **Compiling User Test Cases**
 
-整个用户仿真文件夹目录如下：
+The directory of the user simulation folder is as follows:
 
 ```bash
     sim/
@@ -187,7 +189,7 @@ usr_template的编译、运行以及调试均通过Makefile实现。在编译、
     |-- Makefile
 ```
 
-首先用户需要建立用户自己的测试用例，测试用例的名称与用户建立的文件夹相同。用户可复制example中的已有测试用例，也可以自行创建。
+Users need to create test cases by themselves. The name of the test case must be the same as the name of the folder created by the user. Users can copy existing test cases in the example or create new ones.
 
 ```bash
     $ mkdir ./tests/sv/xxx_test                          # Create Testcase Directory
@@ -195,14 +197,14 @@ usr_template的编译、运行以及调试均通过Makefile实现。在编译、
     $ cp -r ./tests/sv/sv_demo_001/* ./tests/sv/xxx_test # Copy Example to Own Testcase
 ```
 
-其中用户测试用例可分为两部分，即**基础测试用例**以及**用户测试配置**。基础测试用例采用systemverilog语言编写，主要完成测试用例的主体流程；而用户测试配置是用户的配置文件，主要决定测试用例中需要的激励、配置等数据。
+User test cases are divided into two parts: ** basic test cases ** and ** user test configuration **. The former is compiled using the SystemVerilog language and are used to complete the main process of test cases, and the latter is the configuration file of the user, which determines the data such as the incentive and configuration required in the test case.
 
 <a id="sec-2-2-1" name="sec-2-2-1"></a>
 
-#### **编写基础测试用例**
+#### **Compiling Basic Test Cases**
 
-如用户无需修改测试流程，仅需要修改激励的内容，可略过此章。
-基础测试用例建议放在`./tests/sv/base`目录中并且命名为`xxx_test.sv`。基础测试用例可参考以下方式编写：
+Skip this section if you need to modify only the incentive content without modifying the test process.
+It is recommended that basic test cases be stored in the `./tests/sv/base` directory and named `xxx_test.sv`. Basic test cases can be compiled in the following way:
 
 ```verilog
     class xxx_test extends tb_test;
@@ -253,31 +255,31 @@ usr_template的编译、运行以及调试均通过Makefile实现。在编译、
     endclass : xxx_test
 ```
 
-如果用户有自定义组件，则基础测试用例也需做出适量修改，详细信息可参考[仿真平台快速指导](../../../lib/sim/doc/quick_start.md)。
+For user-defined components, users need to modify basic test cases. For details, see [Simulation Platform Quick Guide](../../../lib/sim/doc/quick_start.md).
 
 <a id="sec-2-2-2" name="sec-2-2-2"></a>
 
-#### **编写用户测试配置**
+#### **Compiling User Test Configurations**
 
-用户测试配置主要用于确定测试用例中的激励、配置的数据的内容，采用配置文件的方法编写。用户配置文件建议放在`./tests/sv/xxx_test`目录中并且命名为`test.cfg`。配置文件语法格式如下：
+User test configurations are used to determine the incentive and configuration data in the test cases, and are compiled by using the parameters in configuration files. It is recommended that user configuration files be stored in the `./tests/sv/xxx_test` directory and named `test.cfg`. The format is as follows:
 
 ```bash
-    // 可使用'//'或者'#'作为注释，注释不会被传入Testbench
+    // Use '//' or '#' to for comment, which will not be sent to Testbench.
 
-    // 参数传递语法格式为+xxx_name=yyyyy，其中xxx_name为参数的名字，yyyyy为参数内容（*注意：'='两端都不能有空格*）
-    // 参数内容可以为10进制数字（123、456）、16进制数字（'hxxx）、字符串（abcd、"xxyyzz"）以及序列
-    // 序列为多个参数的组合，中间使用','或者'；'进行分割，例如123,456,'h678,aaa
+    // The format of the parameter transfer is +xxx_name=yyyyy, where xxx_name is the parameter name, and yyyyy is the parameter content (*Note: There are no spaces at either end of ‘=’.*)
+    // The parameter content can be a decimal number (123, 456), a hexadecimal number ('hxxx), a string (abcd, "xxyyzz"), and a sequence.
+    // If the sequence is a combination of multiple parameters, separate them with a comma or 'semicolon'. (For example, 123,456,'h678,aaa)
 
-    # TEST_NAME表示测试用例对应的基础test
+    # TEST_NAME indicates the basic test corresponding to the basic test cases.
     +TEST_NAME=tb_reg_test
 
-    # DUMP_FSDB表示是否DUMP VERDI波形
+    # DUMP_FSDB indicates whether the DUMP VERDI waveform is used.
     +DUM_FSDB=0
 
     ...
 ```
 
-配置文件中包含诸多配置项，其中每个配置项的名称定义在用户cfg中，例如：
+A configuration file contains many configuration items. The name of each item is defined in the user cfg. For example:
 
 ```verilog
     class tb_reg_cfg;
@@ -287,7 +289,7 @@ usr_template的编译、运行以及调试均通过Makefile实现。在编译、
         int name;
 
         function new();
-            // get_string第一个参数为参数在配置文件中的名称，第二个参数为默认值
+            // The first parameter of get_string is the name of the parameter in the configuration file, and the second parameter is the default value.
             name   = config_opt::get_string("NAME","noname");
             adder0 = config_opt::get_int("ADDER0", 'd0     );
             adder1 = config_opt::get_int("ADDER1", 'd0     );
@@ -296,7 +298,7 @@ usr_template的编译、运行以及调试均通过Makefile实现。在编译、
     endclass : tb_reg_cfg
 ```
 
-配置文件中对应的配置项如下：
+The configuration items in the configuration file are as follows:
 
 ```bash
     +NAME=TEST_NAME
@@ -306,9 +308,9 @@ usr_template的编译、运行以及调试均通过Makefile实现。在编译、
 
 <a id="sec-2-3" name="sec-2-3"></a>
 
-### **执行用户测试用例**
+### **Executing User Test Cases**
 
-如果需要编译、执行测试用例`xxx_test`，可通过如下命令执行：
+To compile and execute the test case `xxx_test`, run the following command:
 
 ```bash
     $ make TC=xxx_test              # Run testcase xxx_test，Compile Using vivado
@@ -316,4 +318,5 @@ usr_template的编译、运行以及调试均通过Makefile实现。在编译、
     $ make TC=xxx_test TOOL=questa  # Run testcase xxx_test，Compile Using questasim
 ```
 
-[1]:"VCS以及Questasim工具用户需自行安装"
+[1]: "Users need to install VCS and QuestaSim tools by themselves."
+

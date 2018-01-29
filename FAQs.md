@@ -39,7 +39,7 @@ FPGA开发人员可以使用Marketplace将他们的AEI文件共享或出售给�
 ## FPGA
 **Q: Huawei Cloud FPGA使用的FPGA型号是什么?**
 
-目前Huawei Cloud FPGA使用的FGPA是Xilinx公司的Ultra Scale+系列xcvu9p-flgb2104-2-i-es1板卡。
+目前Huawei Cloud FPGA使用的FGPA是Xilinx公司的Ultra Scale+系列xcvu9p-flgb2104-2-i板卡。
 
 
 ## FPGA Shell
@@ -86,3 +86,13 @@ Shell是HDK提供的静态逻辑部分，包括PCIe、DDR4等外围接口设计�
   每条队列约2G，1M大小时默认配置的8192个huagepage，即16G连续物理内存仅支持同时3条队列运行。  
 -  对于第二种情况： 
   重启虚拟机并在启动之后配置24576个hugepage，命令`sysctl -w vm.nr_hugepages=24576`，再次尝试发包即可。 
+
+**Q：使用Vivado软件工具后产生的license缓存文件有安全风险，应该如何处理？**
+
+Xilinx的FPGA设计工具Vivado，使用时会检查license，并在
+`/tmp/FLEXnet/` 
+`/usr/local/share/macrovision/storage/`
+`/usr/local/share/macrovision/storage/FLEXnet`
+三个目录下产生缓存文件。由于这些缓存文件具有全局可写权限，所以其数据可以被系统中的任何用户修改和破坏，可能对系统造成危害。
+
+**处理方式**：这些文件仅在Vivado软件检查license时使用，并且每次使用都会重新生成，所以建议用户每次使用Vivado工具后，手动或编写脚本删除这3个目录下的所有文件，删除这些文件不会对下一次使用Vivado软件造成影响。

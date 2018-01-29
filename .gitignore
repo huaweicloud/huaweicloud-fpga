@@ -19,3 +19,4 @@ fp1/hardware/vivado_design/examples/example3/sim/work
 fp1/.find_tmp
 fp1/hardware/vivado_design/lib/sim/libs/
 fp1/hardware/vivado_design/lib/checkpoints/SH_*
+*.dcp

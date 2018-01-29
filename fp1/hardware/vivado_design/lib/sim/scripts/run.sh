@@ -46,7 +46,7 @@ log_sim="$USER_DIR/sim/report/$TC/log_simulation.log"
 
 sim_dir="$USER_DIR/sim/work"
 
-tc_cfg_file="$USER_DIR/sim/tests/sv/$TC/test.cfg"
+tc_cfg_file="test.cfg"
 
 fin_tc_cfg_file="$sim_dir/$TC/test.cfg"
 
@@ -79,7 +79,11 @@ if [ ! -d $USER_DIR/sim/wave ] ; then
 fi
 
 # Copy all files from testcase dir to work dir
-cp -rf $USER_DIR/sim/tests/sv/$TC/* $sim_dir/$TC/
+for item in $(find  $USER_DIR/sim/tests -type d -name $TC) ; do
+    cp -rf $item/* $sim_dir/$TC/
+    tc_cfg_file="$item/test.cfg"
+    echo tc_cfg_file=$tc_cfg_file
+done
 
 # Check whether tc config file exists
 if [ -f "$fin_tc_cfg_file" ] ; then

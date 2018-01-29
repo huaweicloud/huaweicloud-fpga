@@ -42,16 +42,16 @@
 static int parse_arg(int argc, char* argv[]);
 static void help();
 
-static uint32_t      g_port_id = 0;
+static unsigned int g_port_id = 0;
 
 int main(int argc, char* argv[]) {
 	int ret = 0;
 
-    if (0 != parse_arg(argc, argv)) {
-        return -EINVAL;
-    }
+	if (0 != parse_arg(argc, argv)) {
+		return -EINVAL;
+	}
     
-    ret = pci_bar2_init_env(g_port_id);
+	ret = pci_bar2_init_env(g_port_id);
 	if (ret != 0) {
 		printf("%s: pci_bar2_init_env failed(%d)\r\n", __FUNCTION__, ret);
 		return ret;
@@ -65,11 +65,10 @@ int main(int argc, char* argv[]) {
 }
 
 static int parse_arg(int argc, char* argv[]) {
-        char* arg_val = NULL;
-        int     ch;
+    char* arg_val = NULL;
+    int     ch;
         
-	while ((ch=getopt(argc, argv, STR_PARSE_ARG)) != -1) 
-        {
+	while ((ch=getopt(argc, argv, STR_PARSE_ARG)) != -1) {
         switch (ch) {
             case 'p': {
                 assert(NULL != optarg);
@@ -82,8 +81,8 @@ static int parse_arg(int argc, char* argv[]) {
             default:
                 goto parse_error;
                 
-            }
         }
+	}
        
 	return 0;
     

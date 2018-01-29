@@ -1,5 +1,7 @@
-基于SDAccel硬件开发流程
+基于SDAccel硬件开发实现流程
 =======================
+
+[Switch to the English version](./Implementation Process of SDAccel-based Hardware Development.md)
 
 目录
 -------------------------
@@ -42,11 +44,11 @@ SDAccel平台提供两种方法以便用户创建工程。
 
 #### 开发仿真操作流程
 
-![](media/hdk_st.jpg)
+![](media/hdk_st_cn.jpg)
 
 #### 开发硬件操作流程
 
-![](media/SDAccel_example.jpg)
+![](media/SDAccel_example_cn.jpg)
 
 #### 用户操作流程各个步骤说明如下表所示：
 
@@ -105,8 +107,10 @@ SDAccel平台提供两种方法以便用户创建工程。
 
 #### 完成开发环境配置
 
-进入“huaweicloud-fpga/fp1”目录，运行“setup.sh”脚本完成硬件开发环境的配置，执行以下命令运行“setup.sh”脚本。
+运行`setup.sh`脚本完成硬件开发环境的配置，执行以下命令运行`setup.sh`脚本。
 
+
+`cd huaweicloud-fpga/fp1`  
 `export HW_FPGA_DIR=$(pwd)`  
 `source $HW_FPGA_DIR/setup.sh`
 
@@ -126,7 +130,7 @@ SDAccel平台提供两种方法以便用户创建工程。
 
 
 **说明:**
-<usr_prj_name>为用户工程名称，由用户创建工程时指定，<kernel_mode>为用户工程类型，可选择`temp_cl，temp_c，temp_rtl`。详情请参考[相关文档](../hardware/sdaccel_design/user/README.md)。
+<usr_prj_name>为用户工程名称，由用户创建工程时指定，<kernel_mode>为用户工程类型，可选择`temp_cl，temp_c，temp_rtl`。详情请参考[相关文档](../hardware/sdaccel_design/user/README_CN.md)。
 
 <a id="sec-4" name="sec-4"></a>
 SDAccel开发

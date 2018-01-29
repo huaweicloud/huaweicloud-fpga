@@ -332,6 +332,22 @@ elif [ $simulator == "questa" ] ; then
     echo "-sv" >> $ip_file_list
 fi
 
+# Precompile c lib
+vivado_c_lib=""
+for item in $(find $USER_DIR/sim/tests/c -type f -name "Makefile") ; do 
+    echo $item
+    c_dir=$(dirname $item)
+    cd $c_dir
+    make clean;make all
+    cd -
+    c_lib_dir="$USER_DIR/sim/work/xsim.dir/xsc/"
+    if [ ! -d $c_lib_dir ] ; then
+        mkdir -p $c_lib_dir
+    fi
+    mv -f "$USER_DIR/sim/work/lib_test.so" $c_lib_dir
+    vivado_c_lib=" --sv_lib lib_test "
+done
+
 declare -a ip_list=(`cat $ddr4_ip_file_list`)
 for item in ${ip_list[@]}; do
     if [ $simulator == "vivado" ] ; then
@@ -534,7 +550,7 @@ else
     fi
 
     # Elebrate
-    xelab $common_opt $xelab_opt -L $work $compiled_work xil_defultlib.tb_top xil_defultlib.glbl -log $log_elab
+    xelab $common_opt $xelab_opt $vivado_c_lib -L $work $compiled_work xil_defultlib.tb_top xil_defultlib.glbl -log $log_elab
 fi
 
 if [ $comp_verdi -eq 1 ] ; then

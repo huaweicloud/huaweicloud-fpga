@@ -1,6 +1,8 @@
 Matrix Multiplication Example with C Kernel
 ================================
 
+[切换到中文版](./README_CN.md)
+
 This is an implementation of performing matrix multiplication of two 16x16 matrices and getting the result back in 16x16 matrix. 
 The main algorithm characteristics of this application are:
 
@@ -12,7 +14,7 @@ Application host code
 
 Compilation File
 --------------------------------
-* Makefile : Makefile for compiling application
+* Makefile: Makefile for compiling application
 
 Note
 --------------------------------

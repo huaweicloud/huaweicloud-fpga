@@ -14,69 +14,75 @@
 //------------------------------------------------------------------------------
 
 
-`ifdef C_TEST_ENABLE
-`ifndef _TB_ENV_SV_
-`define _TB_ENV_SV_
+`ifndef _TB_C_TEST_SV_
+`define _TB_C_TEST_SV_
 
-// ./test/tb_env.sv
-`include "tb_env.sv"
+// ./tb_pkg.svh
+`include "tb_pkg.svh"
 
-// ./test/test_top.sv
-`include "test_top.sv"
+// ./common/common_reg.svh
+`include "common_reg.svh"
 
-class tb_test;
+import "DPI-C" context task tb_c_test_main(output int unsigned exit_code);
 
-    // Test name
-    protected string         m_test_name;
+class tb_c_test extends tb_test;
 
-    bit                      m_test_valid = test_top::register(this);
+    // Register tb_reg_test into test_top
 
-    // Testbench
-    static protected tb_env  m_tb_env;
+    `tb_register_test(tb_c_test)
 
-    protected axi_stims      m_axi_stim;
-    protected cpu_model_cb   m_cpu_cb;
+    function new(string name = "tb_c_test");
+        super.new(name);
+    endfunction : new
 
-    protected axi_rm         m_axi_rm;
+    task start();
+        super.start();
+    endtask : start
 
-    extern function new(string name = "tb_test");
+    task write_req();
+        forever begin
+            longint unsigned addr;
+            int unsigned     data;
+            g_tb_reg_wr_req.get(addr);
+            if (g_tb_regs.exists(addr)) begin
+                data = g_tb_regs[addr];
+            end else begin
+                data = 'd0;
+            end
+            m_tb_env.m_reg_gen.write(addr, data);
+        end
+    endtask : write_req
 
-    extern function void build();
-    extern function void connect();
-    extern function void start_of_simulation();
+    task read_req();
+        forever begin
+            longint unsigned addr;
+            int unsigned     data;
+            g_tb_reg_rd_req.get(addr);
+            m_tb_env.m_reg_gen.read(addr, data);
+            g_tb_regs[addr] = data;
+            g_tb_reg_rd_rsp.put();
+        end
+    endtask : read_req
 
-    extern task reset();
-    extern task configure();
-    extern task start();
-    extern task run();
-    extern task stop();
+    task run();
+        int unsigned exit_code;
+        fork
+            tb_c_test_main(exit_code);
+            write_req();
+            read_req();
+        join_any
+        disable fork;
+        if (exit_code) begin
+            $display("\nTestcase FAILED!\n");
+        end else begin
+            $display("\nTestcase PASSED!\n");
+        end
+    endtask : run
 
-    extern function void end_of_simulation();
-    extern function void report();
+    task stop();
+        super.stop();
+    endtask : stop
 
-endclass : tb_test
+endclass : tb_c_test
 
-function tb_test::new(string name = "tb_test");
-    m_inst_name = name;
-endfunction ：new
-
-function void tb_test::build();
-    m_tb_env  = new("m_tb_env"  );
-    m_cpu_cb  = new("m_cpu_cb"  );
-    m_axi_stim= new("m_axi_stim");
-    m_axi_rm  = new("m_axi_rm"  );
-endfunction : build
-
-function void tb_test::connect();
-    m_cpu_cb.m_rm = m_axi_rm;
-    // Register Axi stims to generator
-    m_tb_env.m_axi_gen.reg_stims(m_axi_stim);
-    // Append Cpu callback to cpu model
-    m_tb_env.m_cpu_model.append_callback(m_cpu_cb);
-endfunction : connect
-
-function void tb_test::start_of_simulation();
-endfunction : connect
-
-`endif // _TB_TEST_SV_
-`endif
+`endif // _TB_C_TEST_SV_

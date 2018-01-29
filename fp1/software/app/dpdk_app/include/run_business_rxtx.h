@@ -69,17 +69,17 @@
 
 /* FMMU -- FPGA DDR spec*/
 #define FPGA_DDR_BASE       (0x0)
-#define FPGA_DDR_ALL_SIZE   ((overflow_protect + 1024*1024*1024 - overflow_protect) * 64)
+#define FPGA_DDR_ALL_SIZE(overflow_protect)   ((overflow_protect + 1024*1024*1024 - overflow_protect) * 64)
 #define FPGA_DDR_PART_SIZE  ((8*1024*1024*1024))
 
 #define FPGA_DDR_MODULE_NUM (4)                 
 #define FPGA_DDR_STATUS_OK  (0x180)
 
 /* align with byte */
-#define SIZE_ALIGNED_BYTES(size, align)                         \
-        do {                                                    \
-            size = ((size + (align - 1)) / (align)) * align;    \
-        } while(0)
+#define SIZE_ALIGNED_BYTES(size, align)                     \
+    do {                                                    \
+        size = ((size + (align - 1)) / (align)) * align;    \
+    } while(0)
 
 typedef enum _stENABLE_FLAG_ {
     DISABLE  = 0,

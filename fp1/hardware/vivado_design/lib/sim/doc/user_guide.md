@@ -1,143 +1,143 @@
-# 仿真平台用户指导
+# Simulation Platform User Guide
+
+[切换到中文版](./user_guide_cn.md)
 
 <div id="table-of-contents">
-<h2>目录</h2>
+<h2>Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. <b>简介</b></a></li>
-<li><a href="#sec-2">2. <b>仿真平台总体介绍</b></a>
+<li><a href="#sec-1">1 <b>About This Document</b></a></li>
+<li><a href="#sec-2">2 <b>Simulation Platform Overview</b></a>
 <ul>
-<li><a href="#sec-2-1">2.1. <b>FACS仿真平台简介</b></a></li>
-<li><a href="#sec-2-2">2.2. <b>仿真平台目录结构</b></a>
+<li><a href="#sec-2-1">2.1 <b>FACS Simulation Platform</b></a></li>
+<li><a href="#sec-2-2">2.2 <b>Directory Structure of the Simulation Platform</b></a>
 <ul>
-<li><a href="#sec-2-2-1">2.2.1. <b>仿真目录、文件详细说明</b></a></li>
+<li><a href="#sec-2-2-1">2.2.1 <b>Simulation Directory and File Description</b></a></li>
 </ul>
 </li>
-<li><a href="#sec-2-3">2.3. <b>验证特性</b></a></li>
-<li><a href="#sec-2-4">2.4. <b>验证组件总览</b></a></li>
-<li><a href="#sec-2-5">2.5. <b>数据结构</b></a></li>
-<li><a href="#sec-2-6">2.6. <b>总线功能模型</b></a>
+<li><a href="#sec-2-3">2.3 <b>Verification Features</b></a></li>
+<li><a href="#sec-2-4">2.4 <b>Verification Components</b></a></li>
+<li><a href="#sec-2-5">2.5 <b>Data Structure</b></a></li>
+<li><a href="#sec-2-6">2.6 <b>Bus Functional Model</b></a>
 <ul>
-<li><a href="#sec-2-6-1">2.6.1. <b>总线功能模型的功能</b></a></li>
-<li><a href="#sec-2-6-2">2.6.2. <b>总线功能模型的设计</b></a></li>
+<li><a href="#sec-2-6-1">2.6.1 <b>Function</b></a></li>
+<li><a href="#sec-2-6-2">2.6.2 <b>Design</b></a></li>
 </ul>
 </li>
-<li><a href="#sec-2-7">2.7. <b>激励组件介绍</b></a>
+<li><a href="#sec-2-7">2.7 <b>Incentive Components</b></a>
 <ul>
-<li><a href="#sec-2-7-1">2.7.1. <b>激励组件的功能</b></a></li>
-<li><a href="#sec-2-7-2">2.7.2. <b>激励组件的设计</b></a></li>
+<li><a href="#sec-2-7-1">2.7.1 <b>Function</b></a></li>
+<li><a href="#sec-2-7-2">2.7.2 <b>Design</b></a></li>
 </ul>
 </li>
-<li><a href="#sec-2-8">2.8. <b>检查器简介</b></a>
+<li><a href="#sec-2-8">2.8 <b>Checker</b></a>
 <ul>
-<li><a href="#sec-2-8-1">2.8.1. <b>检查器的功能</b></a></li>
-<li><a href="#sec-2-8-2">2.8.2. <b>检查器的设计</b></a></li>
+<li><a href="#sec-2-8-1">2.8.1 <b>Function</b></a></li>
+<li><a href="#sec-2-8-2">2.8.2 <b>Design</b></a></li>
 </ul>
 </li>
-<li><a href="#sec-2-9">2.9. <b>测试环境的简介</b></a></li>
+<li><a href="#sec-2-9">2.9 <b>Test Environment</b></a></li>
 </ul>
 </li>
-<li><a href="#sec-3">3. <b>仿真平台理念</b></a>
+<li><a href="#sec-3">3 <b>Simulation Platform Concept</b></a>
 <ul>
-<li><a href="#sec-3-1">3.1. <b>仿真平台分层</b></a></li>
+<li><a href="#sec-3-1">3.1 <b>Layer</b></a></li>
 </ul>
 </li>
-<li><a href="#sec-4">4. <b>仿真平台的应用</b></a>
+<li><a href="#sec-4">4 <b>Simulation Platform Application</b></a>
 <ul>
-<li><a href="#sec-4-1">4.1. <b>仿真平台使用流程</b></a>
+<li><a href="#sec-4-1">4.1 <b>Usage Process of the Simulation Platform</b></a>
 </li>
-<li><a href="#sec-4-2">4.2. <b>仿真平台脚本</b></a>
+<li><a href="#sec-4-2">4.2 <b>Script</b></a>
 <ul>
-<li><a href="#sec-4-2-1">4.2.1. <b>Makefile文件介绍</b></a></li>
-<li><a href="#sec-4-2-2">4.2.2. <b>Makefile使用</b></a></li>
+<li><a href="#sec-4-2-1">4.2.1 <b>Makefile Description</b></a></li>
+<li><a href="#sec-4-2-2">4.2.2 <b>Makefile Usage</b></a></li>
 </ul>
 </li>
-<li><a href="#sec-4-3">4.3. <b>仿真平台用户接口<b></a>
+<li><a href="#sec-4-3">4.3 <b>Simulation Platform Interfaces<b></a>
 <ul>
 <li><a href="#sec-4-3-1">4.3.1. <b>axi_stims.sv<b></a></li>
 <li><a href="#sec-4-3-2">4.3.2. <b>cpu_model_cb<b></a></li>
 </ul>
 </li>
-<li><a href="#sec-4-4">4.4. <b>仿真平台用户配置</b></a>
+<li><a href="#sec-4-4">4.4 <b>Simulation Platform Configurations<b></a>
 <ul>
-<li><a href="#sec-4-4-1">4.4.1. <b>配置文件格式</b></a></li>
-<li><a href="#sec-4-4-2">4.4.2. <b>增加配置项</b></a></li>
+<li><a href="#sec-4-4-1">4.4.1 <b>Configuration File Format</b></a></li>
+<li><a href="#sec-4-4-2">4.4.2 <b>Adding Configuration Items</b></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#sec-5">5. <b>示例</b></a>
+<li><a href="#sec-5">5 <b>Examples</b></a>
 <ul>
-<li><a href="#sec-5-1">5.1. <b>示例1</b></a>
+<li><a href="#sec-5-1">5.1 <b>Example 1</b></a>
 <ul>
-<li><a href="#sec-5-1-1">5.1.1. <b>示例1简介</b></a></li>
-<li><a href="#sec-5-1-2">5.1.2. <b>示例1说明</b></a></li>
-<li><a href="#sec-5-1-3">5.1.3. <b>示例1使用方法</b></a></li>
+<li><a href="#sec-5-1-1">5.1.1 <b>Example 1 Overview</b></a></li>
+<li><a href="#sec-5-1-2">5.1.2 <b>Example 1 Description</b></a></li>
+<li><a href="#sec-5-1-3">5.1.3 <b>Example 1 Operation Instructions</b></a></li>
 </ul>
 </li>
-<li><a href="#sec-5-1">5.2. <b>示例2</b></a>
+<li><a href="#sec-5-1">5.2 <b>Example 2</b></a>
 <ul>
-<li><a href="#sec-5-1-1">5.2.1. <b>示例2简介</b></a></li>
-<li><a href="#sec-5-1-2">5.2.2. <b>示例2说明</b></a></li>
-<li><a href="#sec-5-1-3">5.2.3. <b>示例2使用方法</b></a></li>
+<li><a href="#sec-5-1-1">5.2.1 <b>Example 2 Overview</b></a></li>
+<li><a href="#sec-5-1-2">5.2.2 <b>Example 2 Description</b></a></li>
+<li><a href="#sec-5-1-3">5.2.3 <b>Example 2 Operation Instructions</b></a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#sec-6">6. <b>附录</b></a></li>
+<li><a href="#sec-6">6 <b>Appendix</b></a></li>
 </ul>
 </div>
 </div>
 
 <a id="sec-1" name="sec-1"></a>
 
-## **简介**
+## **About This Document**
 
 ---
 
-本文主要内容为如何使用**FACS仿真平台**进行逻辑的验证。本文包括如下内容：
+This document describes how to verify the logic by using the **FPGA Accelerated Cloud Server (FACS) simulation platform**. This document covers:
 
-- 对Testbench的简单描述
-  - Testbench支持的特性
-  - 如何使用Testbench
-- Testbench的理念
-- 如何向Testbench中添加组件
-- 如何创建测试用例
-- 通过示例说明如何使用Testbench
+- Description of the Testbench
+  - Features of the Testbench
+  - Usage of the Testbench
+- Testbench concept
+- The method of adding components to the Testbench
+- The method of creating test cases
+- Testbench Usage through examples
 
 <a id="sec-2" name="sec-2"></a>
 
-## **仿真平台整体介绍**
+## **Simulation Platform Overview**
 
 ---
 
-本章内容主要包括**FACS仿真平台**的简介、FACS仿真平台支持的特性以及FACS仿真平台的基本架构介绍。
-
-**FACS仿真平台**在下文中将使用缩略语**Testbench**、**TB**或者**仿真平台**进行描述。
+This section introduces and describes the features and basic architecture of the **FACS simulation platform**(**Testbench**, **TB**, or the **simulation platform** for short).
 
 <a id="sec-2-1" name="sec-2-1"></a>
 
-### **FACS仿真平台简介**
+### **FACS Simulation Platform**
 
 ---
 
-Testbench是为了完成对DUV的验证而搭建的仿真验证环境。FACS仿真平台是一款能够方便用户在FACS环境下进行验证工作的Testbench。
-FACS Testbench由多个验证组件组成，每个验证组件都是一个经过封装的对某个接口协议、功能或验证环境的集合。
-所有的验证组件具有统一的架构，并且分别完成不同的工作。这些组件组合在一起共同构成了整个Testbench。
+The Testbench is a simulation and verification environment built to verify the DUV. The FACS simulation platform is a Testbench that allows users to perform verification in the FACS environment.
+The FACS Testbench consists of multiple verification components. Each component is an encapsulated collection of an interface protocol, functions, or verification environment.
+All verification components have a unified architecture, but work differently. These components combine together to form the entire Testbench.
 
-由于Testbench是用户对DUT进行仿真的主体，所以一个完整的Testbench应该具有如下特性：
+The Testbench is the main body for DUT simulation. Therefore, a complete Testbench should support:
 
-- 用户自定义激励的产生与发送
-- DUT接口时序的模拟
-- 能够对DUT的结果进行检查
+- Generation and sending of user-defined incentives
+- Simulation of the DUT interface timing
+- Check of the DUT result
 
-FACS仿真平台为通用仿真平台，不仅具用普通Testbench的全部特性，还在此基础上为用户提供了完善的全流程验证能力、解耦的架构以及丰富的验证IP库。仿真平台结构如下图所示:
+The FACS simulation platform is a general-purpose simulation platform, which contains all features of a common Testbench, supports verification throughout the process, and provides a decoupled architecture and a host of verification IP library for users. The following figure shows the simulation platform structure.
 
-<img src="./images/testbench.png" alt="仿真平台组件框图">
+<img src="./images/testbench.png" alt="Simulation platform structure">
 
 <a id="sec-2-2" name="sec-2-2"></a>
 
-### **仿真平台目录结构**
+### **Directory Structure of the Simulation Platform**
 
 ---
 
@@ -179,238 +179,239 @@ FACS仿真平台为通用仿真平台，不仅具用普通Testbench的全部特�
 
 <a id="sec-2-2-1" name="sec-2-2-1"></a>
 
-#### **仿真目录、文件详细说明**
+#### **Simulation Directory and File Description**
 
 ---
 
 <a id="sec-2-2-1-1" name="sec-2-2-1-1"></a>
 
-##### hardware目录
+##### hardware
 
-硬件目录，包含全部的FPGA设计、验证文档，代码以及工程文件等。
+This is the hardware directory, which stores all FPGA designs, verification documents, code, and project files.
 
 <a id="sec-2-2-1-2" name="sec-2-2-1-2"></a>
 
-##### vivado_design目录
+##### vivado_design
 
-使用Vivado进行开发、仿真以及实现的目录，包含基于vivado开发模式的的FPGA设计、验证文档，代码以及工程文件等。
+This is the directory for Vivado development, simulation, and implementation. This directory stores the Vivado-based FPGA designs, verification documents, code, and project files.
 
 <a id="sec-2-2-1-3" name="sec-2-2-1-3"></a>
 
-##### lib目录
+##### lib
 
-公共部分目录，正常情况下用户无需修改。
+This is the common library directory. You do not need to modify the contents in this directory.
 
 <a id="sec-2-2-1-4" name="sec-2-2-1-4"></a>
 
-##### sim目录
+##### sim
 
-仿真目录，包含仿真平台代码、脚本、预编译库以及VIP。
+This is the simulation directory, which stores simulation platform code, scripts, precompiled libraries, and VIPs.
 
 <a id="sec-2-2-1-5" name="sec-2-2-1-5"></a>
 
-##### bench目录
+##### bench
 
-Testbench目录。
+This is the Testbench directory.
 
 <a id="sec-2-2-1-6" name="sec-2-2-1-6"></a>
 
-##### common目录
+##### common
 
-Testbench公用文件目录（主要包含公用头文件，端口定义等等）。
+This is the common file directory, which stores common header files and interface definitions.
 
 <a id="sec-2-2-1-7" name="sec-2-2-1-7"></a>
 
-##### stim目录
+##### stim
 
-Testbench激励目录（包含激励数据以及激励产生组件）。
+This is the Testbench incentive directory, which stores incentive data and incentive-generating components.
 
 <a id="sec-2-2-1-8" name="sec-2-2-1-8"></a>
 
-##### bfm目录
+##### bfm
 
-Testbench BFM目录（包含AXI Master、AXI Slave以及AXI-Lite接口的BFM）。
+This is the Testbench BFM directory, which stores BFM directories of the AXI Master, AXI Slave, and AXI-Lite interfaces.
 
 <a id="sec-2-2-1-9" name="sec-2-2-1-9"></a>
 
-##### rm目录
+##### rm
 
-Testbench RM目录（包含RM以及记分牌）。
+This is the Testbench RM directory, which stores the RM and scoreboard.
 
 <a id="sec-2-2-1-10" name="sec-2-2-1-10"></a>
 
-##### test目录
+##### test
 
-Testbench Env以及基础test目录。
+This is the directory for Testbench environment and basic tests.
 
 <a id="sec-2-2-1-11" name="sec-2-2-1-11"></a>
 
-##### vip目录
+##### vip
 
-验证IP，包含平台的所有验证IP。
+This is the verification IP directory, which stores all verification IPs of the platform.
 
 <a id="sec-2-2-1-12" name="sec-2-2-1-12"></a>
 
-##### xxx_vip目录
+##### xxx_vip
 
-VIP目录，按照VIP分开存放。
+These are VIP directories, which are stored separately based on VIPs.
 
 <a id="sec-2-2-1-13" name="sec-2-2-1-13"></a>
 
-##### precompiled目录
+##### precompiled
 
-预编译库路径，包括预编译的Xilinx通用仿真模型（主要用于提高编译速度）。
+This is the precompiled library directory, which stores the precompiled general-purpose simulation model of Xilinx. This model improves the compilation speed.
 
 <a id="sec-2-2-1-14" name="sec-2-2-1-14"></a>
 
-##### vcs_lib目录
+##### vcs_lib
 
-VCS预编译库。
+This is the precompiled library of the VCS.
 
 <a id="sec-2-2-1-15" name="sec-2-2-1-15"></a>
 
-##### questa_lib目录
+##### questa_lib
 
-Questasim预编译库。
+This is the precompiled library of the QuestaSim.
 
 <a id="sec-2-2-1-16" name="sec-2-2-1-16"></a>
 
-##### scripts目录
+##### scripts
 
-仿真脚本目录，包含仿真脚本。
+This is the simulation script directory, which stores simulation scripts.
 
 <a id="sec-2-2-1-17" name="sec-2-2-1-17"></a>
 
-##### doc目录
+##### doc
 
-仿真文档文件夹，包含仿真平台的说明以及设计文档。
+This is the simulation document folder, which stores simulation platform description and designs.
 
 <a id="sec-2-2-1-18" name="sec-2-2-1-18"></a>
 
-##### user目录
+##### user
 
-用户部分目录，用户所有的改动以及中间文件都保存在此文件夹。
+This is the user folder, which stores all user changes and intermediate files.
 
 <a id="sec-2-2-1-19" name="sec-2-2-1-19"></a>
 
-##### user_xxx目录
+##### user_xxx
 
-用户部分目录，用户按照项目存放。
+These are user directories, which are stored separately based on projects.
 
 <a id="sec-2-2-1-20" name="sec-2-2-1-20"></a>
 
-##### libs目录
+##### libs
 
-用户仿真库目录，包含用户需要用到的库文件或用户编译好的IP。
+This is the user simulation library directory, which stores the library files required by users or IPs compiled by users.
 
 <a id="sec-2-2-1-21" name="sec-2-2-1-21"></a>
 
-##### tests目录
+##### tests
 
-测试用例文件夹，包含全部C以及SV的测试用例。
+This is the test case folder, which stores all C and SV test cases.
 
 <a id="sec-2-2-1-22" name="sec-2-2-1-22"></a>
 
-##### sv目录
+##### sv
 
-基于Systemverilog语言的Testcase目录。
+This is the SystemVerilog-based test case directory.
 
 <a id="sec-2-2-1-23" name="sec-2-2-1-23"></a>
 
-##### test_common目录
+##### test_common
 
-测试用例通用文件目录（主要包含基础testcase或用例相关通用文件）。
+This is the directory of test case common files. This directory stores basic test cases or their common files.
 
 <a id="sec-2-2-1-24" name="sec-2-2-1-24"></a>
 
-##### xxx_test目录
+##### xxx_test
 
-用户Testcase，可包含脚本、配置文件以及sv文件。
+This is the user test case directory, which stores scripts, configuration files, and .sv files.
 
 <a id="sec-2-2-1-25" name="sec-2-2-1-25"></a>
 
-##### c目录
+##### c
 
-基于C语言的Testcase目录。
+This is the C-based test case directory.
 
 <a id="sec-2-2-1-26" name="sec-2-2-1-26"></a>
 
-##### work目录
+##### work
 
-用户工作路径，包含用户仿真编译的结果。
+This is the user work directory, which stores the compilation results of the user simulation.
 
 <a id="sec-2-2-1-27" name="sec-2-2-1-27"></a>
 
-##### report目录
+##### report
 
-用户log目录，存储用户编译、仿真产生的全部log文件。
+This is the user log directory, which stores all log files generated during user compilation and simulation.
 
 <a id="sec-2-2-1-28" name="sec-2-2-1-28"></a>
 
-##### wave目录
+##### wave
 
-用户波形目录，存储用户仿真产生的全部波形文件。
+This is the user wave directory, which stores all wave files generated during user simulation.
 
 <a id="sec-2-2-1-29" name="sec-2-2-1-29"></a>
 
 ##### Makefile
 
-用户Makefile。
+This is the user Makefile directory.
 
 <a id="sec-2-2-1-30" name="sec-2-2-1-30"></a>
 
-##### example目录
+##### example
 
-用户示例目录，包含全部用户示例代码、脚本以及文档。
+This is the user example directory, which stores all user example code, scripts, and documents.
 
 <a id="sec-2-3" name="sec-2-3"></a>
 
-### **验证特性**
+### **Verification Features**
 
 ---
 
-- Testbench采用systemverilog-2012标准语法编写
-- 支持代码覆盖率的收集以及报告的生成
-  - 收集代码覆盖率的文件可由用户自定义
-- 支持axi4/axi4-lite部分验证特性
-  - 支持AXI4接口的burstlen从1到255
-  - 支持AXI4接口AW以及AR通道的outstanding特性
-  - 支持burst长度与实际长度的一致性检查
-  - 支持基于AXI4/AXI4-lite标准协议的部分覆盖率收集
-  - 支持基于AXI4/AXI4-lite标准协议的部分断言检查
-- 支持用户通过配置文件自定义激励
-  - 支持用户自定义激励
-  - 支持用户自己实现激励产生以及发送部分
-- 支持用户自定义callback方法
-  - 支持用户自定义callback task/function，为用户提供了实现自定义功能而无需修改testbench的方法
-- 支持testbench与testcase分离
-  - 支持testbench与testcase分离，为用户提供了自行设计、实现testcase而无需修改testbench的方法
-- 提供简易Scoreboard
-  - 支持基本的报文比对，报文比对基于stream_id以及fsn
-- 支持功能覆盖率的收集以及报告的生成
-  - 支持基于AXI4/AXI4-Lite的部分功能覆盖率
-  - 支持的功能覆盖率包括burst_len, burst_size, burst_mode, strobe等
-- 支持接口的断言
-  - 支持基于AXI4/AXI4-Lite接口的部分断言
-  - 断言主要覆盖X/Z状态的检查
-- 支持调试工具
-  - 支持使用Verdi/DVE进行调试
-  - 支持使用Questasim进行调试
-  - 支持使用Vivado进行调试
-- 支持预编译Xilinx仿真库
-  - 支持预编译Xilinx的仿真库（包含unisims、unimacro以及secureip等）以提高仿真编译的速度- 建议的环境以及操作系统:
-  - Linux centos 7.3
+- Standard SystemVerilog 2012 syntax
+- Code coverage collection and report generation
+  - Customizable code coverage collection files
+- AXI4 and AXI4-Lite verification features
+  - AXI4 interface **burstlen** from **1** to **255**
+  - **outstanding** feature of the AXI4 AW and AR channels
+  - Consistency check of the **burst** length and the actual length
+  - Coverage collection based on the AXI4 and AXI4-Lite protocols
+  - Assertion check based on the AXI4 and AXI4-Lite protocols
+- Customizable incentives based on configuration files
+  - Customizable incentives
+  - Generating and sending incentives by users
+- Customizable callback methods
+  - Customizable callback task/function (Modifying Testbench is not needed.)
+- Separated Testbench and test cases
+  - Designing and implementing test cases without modifying the Testbench
+- Simple scoreboard
+  - Basic packet comparison based on **stream_id** and **fsn**
+- Function coverage collection and report generation
+  - Function coverage based on the AXI4 and AXI4-Lite interfaces
+  - **burst_len**, **burst_size**, **burst_mode**, and **strobe** function coverage
+- Interface assertion
+  - Assertion based on the AXI4 and AXI4-Lite interfaces
+  - Assertion covering the X/Z status check
+- Debugging tools
+  - Verdi and DVE
+  - QuestaSim
+  - Vivado
+- Precompiled simulation libraries of Xilinx
+  - Precompiled **unisims**, **unimacro**, and **secureip** (This improves the compilation speed of the user simulation.)
+- Recommended environment and operating systems
+  - Linux CentOS 7.3
   - Xilinx 2017.2 Vivado
   - Synopsys VCSMX 2017-03-SP1
-  - Mentor Questasim 10.6b
+  - Mentor QuestaSim 10.6b
 
 <a id="sec-2-4" name="sec-2-4"></a>
 
-### **验证组件总览**
+### **Verification Components**
 
 ---
 
-为了实现仿真平台的验证特性，验证组件分为以下几类：（以下缩略语分别对应**数据结构**、**总线功能模型**、**激励**、**检查器**以及**仿真环境**）
+To implement the verification features of the simulation platform, the verification components are classified into the following types: (The following acronyms and abbreviations correspond to the **data structure**, **bus functional model**, **incentive**, **checker**, and **simulation environment** respectively.)
 
 - [Data](##sec-2-5)
 - [BFM](##sec-2-6)
@@ -420,272 +421,272 @@ Questasim预编译库。
 
 <a id="sec-2-5" name="sec-2-5"></a>
 
-### 数据结构
+### Data Structure
 
 ---
 
-激励基础数据格式即对数据格式进行封装与抽象，使Testbench中的数据传递从简单的信号传递转换为事务传递。
+The incentive basic data format is the encapsulation and abstraction of the data format. In this way, the transmitted data in the Testbench is transformed from signals to transactions.
 
 <a id="sec-2-6" name="sec-2-6"></a>
 
-### 总线功能模型的介绍
+### Bus Functional Model
 
 ---
 
-总线功能模型即Bus Functional Model （BFM），主要负责把激励数据传递给DUV，同时，要从DUV接收响应数据以检查结果的正确性。
+The bus functional model (BFM) transmits incentive data to the DUV. In addition, the BFM receives response data from the DUV to check the correctness of the result.
 
 <a id="sec-2-6-1" name="sec-2-6-1"></a>
 
-#### 总线功能模型的功能
+#### Function
 
 ---
 
-BFM在Testbench与DUV之间起桥梁的作用，是实现Testbench分层化的重要组件。BFM把高层的数据转换成带有时序的接口码流，发给DUV；
-或者把DUV输出的时序序列转换成高层可以处理的数据，传给高层TestBench。
-正是BFM才使得Testbench可以使用非时序设计，从而实现了高层事务与底层时序的分层。
+The BFM functions as a bridge between the Testbench and DUV to implement Testbench layering. The BFM converts the upper-layer data into the interface code stream with timing and sends the code stream to the DUV.
+The BFM also converts the timing sequence from the DUV into the data that can be processed by the upper layer, and transmits the data to the TestBench.
+The BFM allows the Testbench to use non-timing designs so that upper-layer transactions and bottom-layer timing are layered.
 
 <a id="sec-2-6-2" name="sec-2-6-2"></a>
 
-#### 总线功能模型的设计
+#### Design
 
 ---
 
-BFM专注于时序与非时序的转换，通常不涉及事务级的处理。BFM需要能够主动发起各种接口时序，以检查DUV对各种操作时序序列的支持能力；
-也需要能够发起各种接口异常操作时序，以检查DUV对各种异常操作时序序列的容错能力。
+The BFM focuses on the conversion between timings and non-timings and does not process transactions. The BFM needs to proactively initiate interface timings to check whether the DUV supports various operation timing sequences.
+In addition, the BFM needs to proactively initiate timing sequences of various interface abnormal operations to check the error tolerance capability of the DUV for those sequences.
 
-由于FACS内部通道为PCIE，所以，需要模拟RC的行为与DUT完成交互。BFM并不仅仅时时序模型，还包括CPU模型。
+The internal channel of the FACS is PCIe. Therefore, the RC behavior needs to be simulated to interact with the DUT. The BFM is not only a timing model but also a CPU model.
 
-CPU模型主要用于模拟CPU与`SHELL`的行为，与`UL`按照预定义规则完成交互。CPU模型可分为两部分：**CPU模型**以及**CPU模型回调**。如下图所示：
+The CPU model simulates the behavior of the CPU and `Shell` and interacts with the `UL` based on predefined rules. The CPU model consists of the **CPU model** and **CPU model callback**. The following figure shows the CPU model structure.
 
-<img src="./images/model.png" alt="CPU模型组件框图">
+<img src="./images/model.png" alt="CPU model structure">
 
-其中CPU模型中不包含任何交互相关的实现，仅提供接口与其他组件连接，全部的交互方法由CPU模型回调实现。该回调可有用户自定义，从而实现了用户定义的交互模型。
+The CPU model does not contain any interaction implementations and only provides interfaces to connect to other components. The interaction methods are implemented by the CPU model callback. This callback can be customized by users to implement the user-defined interaction model.
 
 <a id="sec-2-7" name="sec-2-7"></a>
 
-### 激励组件介绍
+### Incentive Components
 
 ---
 
-激励组件用于按照用户定义产生激励。
+The incentive components generate incentives based on user definitions.
 
 <a id="sec-2-7-1" name="sec-2-7-1"></a>
 
-#### 激励的功能
+#### Function
 
 ---
 
-激励是用户数据的产生源头，而有激励产生的数据最终将通过BFM发送给DUV，同时激励也是Testbench分层化的重要组件。
+Incentives are the source of user data. The data generated by incentives is sent to the DUV through the BFM. In addition, incentives are significant for Testbench layering.
 
 <a id="sec-2-7-2" name="sec-2-7-2"></a>
 
-#### 激励的设计
+#### Design
 
 ---
 
-激励通常包含data以及generator两部分。通常情况下为了方便用户自定义激励，通常采用三种方法实现激励的产生：
+Incentives usually consist of data and generators. You can customize and generate incentives in three methods.
 
-1. 用户自行实现generator产生激励
-2. 通过配置文件的方式传递数据，用户无需修改generator
-3. 将激励的产生方法与generator分离，用户自行实现激励产生方法，无需修改generator
+1. Implement a generator to generate incentives.
+2. When data is transmitted by configuration files, you do not need to modify a generator.
+3. Separate incentive generation from the generator and implement your own incentive generation method without modifying a generator.
 
-FACS仿真平台采用**方法2**与**方法3**相结合的方式实现激励。用户激励分为三部分，即**激励产生方法**、**激励生成器**以及**激励配置**。如下图所示：
+The FACS simulation platform combines **method 2** and **method 3** to implement incentives. User incentives are divided into three components: **incentive generation method**, **incentive generator**, and **incentive configuration**. The following figure shows the incentive components structure.
 
-<img src="./images/stim.png" alt="激励组件框图">
+<img src="./images/model.png" alt="Incentive components structure">
 
-其中**激励生成器**本身比不包含激励的产生方法，仅提供激励与总线功能模型之间交互的接口。激励的产生以及发送方法均定义在**激励产生方法**中。激励生成器会在启动后自动调用与其绑定的激励产生方法组件中的相关接口来产生并发送激励。激励生成器中产生与发送激励的方法受**激励配置**约束。
+The **incentive generator** only provides an interaction interface between incentives and the BFM and does not contain any incentive generation methods. The generation and sending methods of incentives are defined in the **incentive generation method**. After being enabled, the incentive generator automatically invokes the interface of its incentive generation method to generate and send incentives. The methods for generating and sending incentives in the incentive generator are subject to the **incentive configuration**.
 
-如果需要自己定义激励的产生方法，仅需修改**激励产生方法**与**激励配置**。
+To define an incentive generation method, modify the **incentive generation method** and **incentive configuration**.
 
 <a id="sec-2-8" name="sec-2-8"></a>
 
-### 检查器的简介
+### Checker
 
 ---
 
-Checker即核查器，负责检查DUV的正确性。通常情况下Checker有两种实现方式：
+A checker checks the correctness of the DUV and can be implemented in either of the following methods:
 
-1. 规则检查法
-2. 参考模型法
+1. Check based on rules
+2. Check based on reference models
 
 <a id="sec-2-8-1" name="sec-2-8-1"></a>
 
-#### 检查器的功能
+#### Function
 
-Checker是Testbench的终点，通过Checker可以实现对DUV时序、功能、性能、可靠性以及可测试性的检验，是Testbench中不可或缺的部分。
+A checker is located at the ending point of the Testbench and checks the timing, functions, performance, reliability, and testability of the DUV.
 
-- 基于规则的检查
+- Check based on rules
 
-通常情况下，基于规则的检查主要功能为用户配置核查规则，核查器读取并解析规则，然后按照规则对输出数据进行比对。
+After rules are configured by users, the checker reads and parses the rules, and then compares the output data based on the rules.
 
-- 基于参考模型的检查
+- Check based on reference models
 
-通过模拟一个和DUT功能完全相同的模型，自动预期数据并和输出自动比对。
+The checker simulates a model with the same functions as the DUT, expects the output data, and compares it with the actual output data.
 
-仿真平台支持以上两种比对方式。
+The simulation platform supports the preceding comparison methods.
 
 <a id="sec-2-8-2" name="sec-2-8-2"></a>
 
-#### 检查器的设计
+#### Design
 
-通常Checker会综合使用规则以及参考模型校验两种方式；参考模型校验通常用于检测DUV的功能、可测试性，而性能、时序等部分通常采用规则校验。
-Checker一般包含三部分：参考模型、记分牌以及其他核查器。
+A checker checks the functions and testability of the DUV based on rules, and checks the performance and timing of the DUV based on reference models.
+A checker consists of three components: reference models, a scoreboard, and other checkers.
 
 <a id="sec-2-9" name="sec-2-9"></a>
 
-### 测试环境的简介
+### Test Environment
 
 ---
 
-Environment是Testbench的顶层，它负责将Testbench中的各个组件实例化并连接起来。能够有效地实现Testbench的重用以及方便对组件的管理。在仿真平台中，通常的测试环境可分为如下两部分即测试用例与测试环境。
+The test environment lies at the top layer of the Testbench, and instantiates and connects Testbench components, effectively reusing and managing the Testbench. On the simulation platform, the test environment consists of test cases and test environments.
 
-测试环境是对Testbench中的各个组件的封装与组合，每一个测试环境对应着一种或多种测试场景。而测试用例则代表测试用户执行测试的全部元素集合。
+A test environment is an encapsulation and combination of Testbench components. Each test environment corresponds to one or more test scenarios. A test case is a collection of all elements for users to perform a test.
 
-FACS仿真平台将测试用例分为测试顶层以及测试用例，再测试顶层中实例化所有测试用例，然后通有用户选择执行某个测试用例，从而实现了测试用例与仿真平台的分层，详细结果如下图所示：
+The FACS simulation platform divides test cases to a top layer and test cases, initiates the test cases at the top layer, and then executes a selected test case. In this way, the test cases and simulation platform are layered. The following figure shows the detailed result.
 
-<img src="./images/test.png" alt="测试环境框图">
+<img src="./images/test.png" alt="Test Environment">
 
-测试用例被实例化在测试顶层中，有测试顶层选择执行用户指定的测试用例。
+Test cases are instantiated at the top layer, which executes test cases specified by users.
 
 <a id="sec-3" name="sec-3"></a>
 
-## **仿真平台理念**
+## **Simulation Platform Principles**
 
 ---
 
 <a id="sec-3-1" name="sec-3-1"></a>
 
-### **仿真平台分层**
+### **Layer**
 
-按照功能Testbench仿真平台通常分为两层：Testbench层与Testcase层。
-对于Testbench层而言，该层是仿真平台，包含全部的仿真组件，通常情况下用户无需修改。
-而Testcase则是用户用于覆盖自己测试点的集合，是用户主要需要设计、编写的部分。
-所以通常Testbench会采用TB与TC分离的方式进行设计：
-激励生成器、BFM等组件属于TB层，用户无需修改；而Testcase属于TC层，用户可自行设计修改。
+The Testbench simulation platform is divided into the Testbench layer and test case layer based on functions.
+The Testbench layer functions as the simulation platform, which contains all simulation components. You do not need to modify this part.
+The test case layer is a collection for users to cover their test points. You need to design and compile this part.
+Therefore, the Testbench is designed by separating TC from TB.
+The incentive generator and BFM components belong to the TB layer and do not need to be modified. Test cases belong to the TC layer and can be modified.
 
-用户如何修改激励？
-通过将激励生成器与激励产生方法分离的方式 ，即用户在Testcase中配置激励的产生方法并关联到Testbench中的激励生成器，从而实现激励的产生。
+Modifying Incentives
+To generate incentives, separate the incentive generator from the incentive generation method, configure the incentive generation method in a test case, and then associate the method with the incentive generator in the Testbench.
 
-用户如何自定义RM？
-RM完全由用户编写并实例化在Testcase中，通过预定义接口和Testbench中的各个组件相连。
+Customizing the RM
+Compile and instantiate the RM in a test case, and then connect the RM to components in the Testbench through a predefined interface.
 
-用户如何自定义其他Testbench中的组件功能？
-用户通过callback的方式在不修改Testbench的情况下修改TB中的组件功能。
+Customizing the Functions of Other Components in the Testbench
+By using the callback function, you can modify TB component functions without modifying the Testbench.
 
 <a id="sec-4" name="sec-4"></a>
 
-## **仿真平台的应用**
+## **Simulation Platform Application**
 
 ---
 
 <a id="sec-4-1" name="sec-4-1"></a>
 
-### **仿真平台使用流程**
+### **Usage Process of the Simulation Platform**
 
-1. 创建用户工程目录；
-2. 将`example/user`文件夹`sim`目录下的所有文件以及文件夹复制到用户目录下（如已存在可略过此步骤）；
-3. 修改`sim/scripts`目录下的`project_settings.cfg`文件，配置用户自己的库文件以及路径、仿真宏以及参数等；
-4. 进入`sim/common`目录，编写用户自定义激励或回调；
-5. 进入`test/sv`或`test/c`子目录下，编写基础测试用例；
-6. 编写基于测试用例的配置文件（主要包括基础test_case名、寄存器的配置、激励的配置等）；
-7. 通过sim目录下的Makefile完成编译、仿真以及调试。
+1. Create a project directory.
+2. Copy all the files and folders in the `sim` directory of the `example/user` folder to the user directory (If the files and folders already exist, skip this step.).
+3. Modify the `project_settings.cfg` file in the `sim/scripts` directory, and configure your library files and path, simulation macro, and parameters.
+4. Go to the `sim/common` directory and compile user-defined incentives or the callback.
+5. Go to the `test/sv` or `test/c` directory and compile basic test cases.
+6. Compile configuration files based on test cases, including the configurations of basic test case names, registers, and incentives.
+7. Perform compilation, simulation, and debugging by using the Makefile in the **sim** directory.
 
 <a id="sec-4-2" name="sec-4-2"></a>
 
-### **仿真平台脚本**
+### **Scripts**
 
 ---
 
-仿真平台的脚本包含两部分，即**公用部分**以及**用户部分**。公用部分为公共脚本文件，是仿真平台的基础脚本，与用户工程无关，用户无需修改；用户部分脚本与用户工程或实现相关，用户需要按照自己的需求对这些脚本进行适配修改。
+The simulation platform scripts consist of **common** and **user** parts. The common scripts are basic files on the simulation platform and are irrelevant to user projects. You do not need to modify this part. The user scripts are used for user projects or project implementation. You need to modify this part as required.
 
-仿真平台脚本包括：
+The simulation platform scripts are as follows:
 
-- 公共脚本：编译、执行、查看波形以及相关脚本。
-- 用户脚本：project_setting.cfg、[Makefile](4-2-1)，也可放置用户自己的脚本。
+- Common scripts: compilation, execution, and wave viewing scripts.
+- User scripts: **project_setting.cfg**, [Makefile](4-2-1), and user-defined scripts.
 
 <a id="sec-4-2-1" name="sec-4-2-1"></a>
 
-#### Makefile文件目标介绍
+#### Makefile Parameters
 
-Makefile为用户执行<kbd>make</kbd>操作的规则文件。用户通过该文件完成编译、仿真以及调试等操作，详细目标如下表所示：
+The Makefile is a rule file for users to perform the <kbd>make</kbd> command. By using this file, you can perform compilation, simulation, and debugging operations. The following table lists the detailed parameters.
 
-|  目标     | 说明  |
-| ---       | ---   |
-|  clean    | 清理，删除所有编译以及仿真过程中产生的文件（包含波形、log等）       |
-| distclean | 清理环境（不仅会清理所有编译以及仿真过程中产生的文件，还会清除掉仿真库）       |
-|  comp     | 编译，完成testbench、DUT的编译以及最终的elaborate，需要带参数，参数为仿真工具      |
-|    run    | 执行仿真，需要带参数，参数为测试用例名（测试用例名需要和test_case的文件夹名相同）和仿真工具        |
-|   wave    | 调试、查看波形，需要带参数，参数为测试用例名以及仿真工具        |
-|    cov    | 生成覆盖率报告（覆盖率收集可配），需要带参数，参数为测试用例名以及仿真工具（vivado不支持）        |
-|    lib    | 预编译全部仿真库（需要在编译前执行，可在设置环境变量时自动执行），需要带参数，参数为仿真工具        |
-|    list   | 列出所有可用testcase        |
-|    help   | 列出帮助信息                |
+| Parameter     | Description                              |
+| ------------- | ---------------------------------------- |
+| **clean**     | Deletes all files (including wave files and logs) generated during compilation and simulation. |
+| **distclean** | Cleans up the environment. This parameter deletes all files generated during the compilation and simulation and the simulation library. |
+| **comp**      | Compiles the Testbench and DUT, and executes elaboration. A parameter *simulation tool* is required after this parameter. |
+| **run**       | Executes the simulation. Parameters *test case name* (must be the same as the name of the test case folder) and *simulation tool* are required after this parameter. |
+| **wave**      | Debugs and views waves. Parameters *test case name* and *simulation tool* are required after this parameter. |
+| **cov**       | Generates a coverage rate report (not supported by the Vivado). The coverage collection is configurable. Parameters *test case name* and *simulation tool* are required after this parameter. |
+| **lib**       | Precompiles all simulation libraries. This parameter needs to be executed before compilation and can be automatically executed during environment variables configuration. A parameter *simulation tool* is required after this parameter. |
+| **list**      | Lists all available test cases.          |
+| **help**      | Lists help information.                  |
 
-*全部目标对应的仿真工具默认为vivado，如果不指定，默认采用vivado进行编译、仿真*
-*仿真工具可以为vivado、questa以及vcs*
+* By default, the Vivado is used for compilation and simulation.
+  *You can specify other simulation tools such as QuestaSim or VSC.*
 
 <a id="sec-4-2-2" name="sec-4-2-2"></a>
 
-#### Makefile使用方法
+#### Makefile Usage
 
-- **编译**：编译详细命令如下：
+- **Compilation**
 
-    |  命令     | 说明  |
-    | ---       | ---   |
-    | <kbd>make comp</kbd>             | 使用默认仿真工具编译仿真平台（默认使用vivado进行仿真） |
-    | <kbd>make comp TOOL=vcs</kbd>    | 使用VCSMX对仿真平台进行编译                            |
-    | <kbd>make comp TOOL=questa</kbd> | 使用Questasim对仿真平台进行编译                        |
-    | <kbd>make comp TOOL=vivado</kbd> | 使用Vivado对仿真平台进行仿真                           |
+    | Command                          | Description                              |
+    | -------------------------------- | ---------------------------------------- |
+    | <kbd>make comp</kbd>             | Uses the default simulation tool (Vivado) to compile the simulation platform. |
+    | <kbd>make comp TOOL=vcs</kbd>    | Uses VCSMX to compile the simulation platform. |
+    | <kbd>make comp TOOL=questa</kbd> | Uses QuestaSim to compile the simulation platform. |
+    | <kbd>make comp TOOL=vivado</kbd> | Uses Vivado to compile the simulation platform. |
 
-    *如果仿真平台编译失败，则仿真不会继续运行*
+    *If the simulation platform fails to be compiled, the simulation will not continue.*
 
-- **执行**：详细执行命令如下：
+- **Execution**
 
-    |  命令     | 说明  |
-    | ---       | ---   |
-    | <kbd>make run</kbd>                    | 使用默认仿真工具（vivado）执行默认测试用例（sv_demo_001） |
-    | <kbd>make run TC=xxx</kbd>             | 使用默认仿真工具（vivado）执行测试用例xxx |
-    | <kbd>make run TC=xxx TOOL=vcs</kbd>    | 使用VCSMX执行测试用例xxx                  |
-    | <kbd>make run TC=xxx TOOL=questa</kbd> | 使用Questasim执行测试用例xxx              |
-    | <kbd>make run TC=xxx TOOL=vivado</kbd> | 使用Vivado执行测试用例xxx                 |
+    | Command                                | Description                              |
+    | -------------------------------------- | ---------------------------------------- |
+    | <kbd>make run</kbd>                    | Uses the default simulation tool (Vivado) to execute the default test case (sv_demo_001). |
+    | <kbd>make run TC=xxx</kbd>             | Uses the default simulation tool (Vivado) to execute the test case xxx. |
+    | <kbd>make run TC=xxx TOOL=vcs</kbd>    | Uses VCSMX to execute the test case xxx. |
+    | <kbd>make run TC=xxx TOOL=questa</kbd> | Uses QuestaSim to execute the test case xxx. |
+    | <kbd>make run TC=xxx TOOL=vivado</kbd> | Uses Vivado to execute the test case xxx. |
 
-- **查看波形**
+- **Wave**
 
-    |  命令     | 说明  |
-    | ---       | ---   |
-    | <kbd>make wave</kbd>                    | 使用默认仿真工具（vivado）打开默认测试用例（sv_demo_001）的波形 |
-    | <kbd>make wave TC=xxx</kbd>             | 使用默认仿真工具（vivado）打开测试用例xxx的波形 |
-    | <kbd>make wave TC=xxx TOOL=vcs</kbd>    | 使用VCSMX打开测试用例xxx的波形                  |
-    | <kbd>make wave TC=xxx TOOL=questa</kbd> | 使用Questasim打开测试用例xxx的波形              |
-    | <kbd>make wave TC=xxx TOOL=vivado</kbd> | 使用Vivado打开测试用例xxx的波形                 |
+    | Command                                 | Description                              |
+    | --------------------------------------- | ---------------------------------------- |
+    | <kbd>make wave</kbd>                    | Uses the default simulation tool (Vivado) to view the wave of the default test case (sv_demo_001). |
+    | <kbd>make wave TC=xxx</kbd>             | Uses the default simulation tool (Vivado) to view the wave of the test case xxx. |
+    | <kbd>make wave TC=xxx TOOL=vcs</kbd>    | Uses VCSMX to view the wave of the test case xxx. |
+    | <kbd>make wave TC=xxx TOOL=questa</kbd> | Uses QuestaSim to view the wave of the test case xxx. |
+    | <kbd>make wave TC=xxx TOOL=vivado</kbd> | Uses Vivado to view the wave of the test case xxx. |
 
-- **一键式编译执行**
+- **One-click compilation and execution**
 
-    |  命令     | 说明  |
-    | ---       | ---   |
-    | <kbd>make</kbd>                    | 使用默认仿真工具（vivado）编译执行默认测试用例（sv_demo_001） |
-    | <kbd>make TC=xxx</kbd>             | 使用默认仿真工具（vivado）编译执行测试用例xxx |
-    | <kbd>make TC=xxx TOOL=vcs</kbd>    | 使用VCSMX编译执行测试用例xxx                  |
-    | <kbd>make TC=xxx TOOL=questa</kbd> | 使用Questasim编译执行测试用例xxx              |
-    | <kbd>make TC=xxx TOOL=vivado</kbd> | 使用Vivado编译执行测试用例xxx                 |
+    | Command                            | Description                              |
+    | ---------------------------------- | ---------------------------------------- |
+    | <kbd>make</kbd>                    | Uses the default simulation tool (vivado) to compile and execute the default test case (sv_demo_001). |
+    | <kbd>make TC=xxx</kbd>             | Uses the default simulation tool (vivado) to compile and execute the test case xxx. |
+    | <kbd>make TC=xxx TOOL=vcs</kbd>    | Uses VCSMX to compile and execute the test case xxx. |
+    | <kbd>make TC=xxx TOOL=questa</kbd> | Uses QuestaSim to compile and execute the test case xxx. |
+    | <kbd>make TC=xxx TOOL=vivado</kbd> | Uses Vivado to compile and execute the test case xxx. |
 
-- **生成覆盖率报告**
+- **Coverage report generation**
 
-    |  命令     | 说明  |
-    | ---       | ---   |
-    | <kbd>make cov TOOL=vcs</kbd>    | 使用VCSMX生成合并覆盖率并生成报告     |
-    | <kbd>make cov TOOL=questa</kbd> | 使用Questasim生成合并覆盖率并生成报告 |
+    | Command                         | Description                              |
+    | ------------------------------- | ---------------------------------------- |
+    | <kbd>make cov TOOL=vcs</kbd>    | Uses VCSMX to generate coverages and combine them to generate a report. |
+    | <kbd>make cov TOOL=questa</kbd> | Uses QuestaSim to generate coverages and combine them to generate a report. |
 
 <a id="sec-4-3" name="sec-4-3"></a>
 
-### **仿真平台用户接口**
+### **Simulation Platform Interfaces**
 
-仿真平台为用户提供了接口，供用户重载。如果有复杂激励、参考模型的需求，用户需要自定义这些组件。这些组件中，仿真平台为用户提供了接口，以便于实现弟子能够以需求，目前可支持用户自定义的组件如下：
+The simulation platform provides interfaces for users to reload. You need to customize complex incentives and reference models. The simulation platform provides interfaces for users to customize following components:
 
 - [axi_stims.sv](#sec-4-3-1)
-- [CPU模型](#sec-4-3-2)
-- [配置](#sec-5-3)
-- [参考模型](#sec-5-4)
+- [CPU Model](#sec-4-3-2)
+- [Configuration](#sec-5-3)
+- [Reference Models](#sec-5-4)
 
 ---
 
@@ -695,124 +696,124 @@ Makefile为用户执行<kbd>make</kbd>操作的规则文件。用户通过该文
 
 ---
 
-该组件为AXI基础激励组件，主要负责按照用户的配置以及约束产生激励，用户自定义激励需继承自此组件。详细结构请参考[激励组件介绍](#sec-2-7)。
+This component is the basic AXI incentive component responsible for generating incentives based on users' configurations and constraints. User-defined incentives must be inherited from this component. For details about the structure, see [Incentive Components](#sec-2-7).
 
 <a id="sec-4-3-1-1" name="sec-4-3-1-1"></a>
 
-##### axi_stims接口简介
+##### axi_stims Interface Description
 
-- **变量定义**
+- **Variable definition**
 
-    | 参数 | 说明 |
-    | ---  | ---  |
-    | m_req_mlbx | 激励request邮箱，将产生的req放入该邮箱，req会被自动发送到下级模块（可用于实现axi/axis/axil接口write以及read的request） |
-    | m_rsp_mlbx | 激励response邮箱，下级模块的响应会存储在该邮箱中（可用于存储axi/axis/axil接口read的响应） |
+    | Parameter  | Description                              |
+    | ---------- | ---------------------------------------- |
+    | m_req_mlbx | Incentive request mailbox. The requests generated are stored in this mailbox and automatically sent to lower-level modules. This mailbox supports the read and write requests of the AXI, AXI-S, and AXI-Lite interfaces. |
+    | m_rsp_mlbx | Incentive response mailbox. The responses of lower-level modules are stored in this mailbox. This mailbox supports the read responses of the AXI, AXI-S, and AXI-Lite interfaces. |
 
 - <kbd>new</kbd>
 
-    **功能:** 构造函数，完成组件的创建以及内部变量的初始化，组件使用前必须先调用该接口完成构造。如用户自定义激励组件，则需在组件中显式通过super.new()来调用父类的new方法。
+    ** Function:** construction function. This interface is used to create a component and initialize internal variables. Before using the component, invoke this interface to construct the component. For example, to customize an incentive component, you need to explicitly use super.new() in the component to invoke the new method of the parent class.
 
-    **返回值:** 无。
+    **Return value:** None
 
-    | 参数 | 说明 |
-    | ---  | ---  |
-    | name | 激励组件的名字（只影响打印） |
+    | Parameter | Description                              |
+    | --------- | ---------------------------------------- |
+    | name      | Name of the incentive component (only for printing). |
 
 - <kbd>reg_generator</kbd>
 
-    **功能:** 注册激励发生器，完成激励与激励发生器的关联，非虚方法，用户无需重载。用户无需调用此方法，该方法由generator的reg_stims自动调用。
+    ** Function:** incentive generator registration. This interface is used to associate incentives with incentive generators. It is a non-virtual method, and users do not need to reload it. Users do not need to invoke this method. This method is automatically invoked by reg_stims of the generator.
 
-    **类型:** 函数。
+    **Type:** Function
 
-    **返回值:** 无。
+    **Return value:** None
 
-    | 参数          | 说明                 |
-    | ---           | ---                  |
-    | generator     | 激励发生器句柄       |
+    | Parameter | Description                 |
+    | --------- | --------------------------- |
+    | generator | Incentive generator handle. |
 
 - <kbd>body</kbd>
 
-    **功能:** 激励主体。用户自定义激励的产生、发送实现主体。
+    ** Function:** incentive body. This interface is used to generate and send user-defined incentives.
 
-    **参数:** 无。
+    **Parameter:** None
 
-    **类型:** 任务。
+    **Type:** Task
 
-    **返回值:** 无。
+    **Return value:** None
 
 - <kbd>gen_pkt</kbd>
 
-    **功能:** 激励的产生方法。用户自定义激励的产生的主体，如需修改激励产生方法，请重载该函数。
+    **Function:** method of generating incentives. This interface is used to generate user-defined incentives. To modify the method of generating incentives, reload this function.
 
-    **参数:** 无。
+    **Parameter:** None
 
-    **类型:** 任务。
+    **Type:** Task
 
-    **返回值:** 无。
+    **Return value:** None
 
 - <kbd>send_pkt</kbd>
 
-    **功能:** 激励的发送方法。用户自定义激励的产生的主体，如需修改激励产生方法，请重载该函数。
+    **Function:** method of sending incentives. This interface is used to generate user-defined incentives. To modify the method of generating incentives, reload this function.
 
-    **参数:** 无。
+    **Parameter:** None
 
-    **类型:** 任务。
+    **Type:** Task
 
-    **返回值:** 无。
+    **Return value:** None
 
 - <kbd>start</kbd>
 
-    **功能:** 激励的启动方法，无参数用户无需重载。
+    **Function:** method of starting incentives. No parameter is required, and users do not need to reload it.
 
-    **参数:** 无。
+    **Parameter:** None
 
-    **类型:** 任务。
+    **Type:** Task
 
-    **返回值:** 无。
+    **Return value:** None
 
 - <kbd>stop</kbd>
 
-    **功能:** 激励的停止方法，无参数用户无需重载。通常情况下激励会在发送完成时自动停止，如果用户需要激励发送完成前就停止，请调用该接口。
+    **Function:** method of stopping incentives. No parameter is required, and users do not need to reload it. Generally, an incentive will be automatically stopped when it is sent. To stop the incentive before it is sent, invoke this interface.
 
-    **参数:** 无。
+    **Parameter:** None
 
-    **类型:** 任务。
+    **Type:** Task
 
-    **返回值:** 无。
+    **Return value:** None
 
 - <kbd>wait_done</kbd>
 
-    **功能:** 激励的等待完成方法无参数用户无需重载。该方法将会一直阻塞直到所有激励发送完毕。
+    **Function:** method of waiting for incentives to be sent. No parameter is required, and users do not need to reload it. The method will be blocked until all incentives are sent.
 
-    **参数:** 无。
+    **Parameter:** None
 
-    **类型:** 任务。
+    **Type:** Task
 
-    **返回值:** 无。
+    **Return value:** None
 
 
-##### axi_stims使用方法
+##### axi_stims Usage
 
-用户如果需要自定义激励方法，第一，可以按照自己的需求修改`user_stim.sv`文件。
+To customize an incentive method, you can modify the `user_stim.sv` file as required.
 
-修改user_stim.sv有以下几个建议或要求：
+Suggestions or requirements for the modification:
 
-- `user_stim.sv`必须继承自`axi_stims`类；
+- `user_stim.sv` must be inherited from `axi_stims`.
 
-- 如果需要自定义激励的产生方法，请重载任务`gen_pkt`；
+- To customize the method of generating incentives, reload the task `gen_pkt`.
 
-- 如果需要自定义激励的发送方法，请重载任务`send_pkt`；
+- To customize the method of sending incentives, reload the task `send_pkt`.
 
-例如：
+For example:
 
 ```verilog
     class user_stims extends axi_stims;
         ...
         // Stim constraint
         constraint axi_data_user_constraint {
-        // 如果不使用VIVADO作为仿真器，在下面编写用户自己的的激励产生方式
-        // 如果使用VIVADO作为仿真器，则此段代码可删除
-        // Vivado仿真器不支持constraint
+        // If the Vivado is not used as the simulator, compile your own incentive generating mode.
+        // If the Vivado is used as the simulator, the code can be deleted.
+        // Vivado simulator does not support constraint.
         `ifndef VIVADO
             m_item.id    == 'd0;
             m_item.addr inside {[m_cfg.axi_addr_min : m_cfg.axi_addr_max]};
@@ -835,7 +836,7 @@ Makefile为用户执行<kbd>make</kbd>操作的规则文件。用户通过该文
         `else
             // If using vivado simulator, use std::randomize instead to avoid the
             // core dump
-            // I was no idea about why randomize can not be success when using vivado simulator, so I had to commont all randomize.
+            // I was no idea about why randomize cannot be success when using vivado simulator, so I had to comment all randomize.
             id     = 'd0;
             result = 'd1;
             addr  += 'h1000;
@@ -869,30 +870,30 @@ Makefile为用户执行<kbd>make</kbd>操作的规则文件。用户通过该文
     endclass : user_stims
 ```
 
-完成修改后，用户还需在测试用例中实例化自定义激励并将自定义的激励与激励生成器绑定起来，如下段代码所示：
+After the modification, you need to instantiate user-defined incentives in test cases and bind the user-defined incentives to the incentive generator, as shown in the following code:
 
 ```verilog
     ...
-    // 实例化用户自定义组件
+    // Instantiating user-defined components
     function void build();
         ...
-        m_user_stim     = new("m_user_stim"); // 实例化用户激励
+        m_user_stim     = new("m_user_stim"); // Instantiating user incentives
         ...
         super.build();
     endfunction : build
-    // 连接用户自定义组件
+    // Connecting user-defined components
     function void connect();
         super.connect();
         ...
-        // 绑定用户激励与激励生成器
+        // Associating user incentives with incentive generators
         m_tb_env.m_axi_gen.reg_stims(m_user_stim);
         ...
     endfunction : connect
 ```
 
-最后，用户可在完成激励实例化与绑定后通过激励组件方法<kbd>start</kbd>启动激励发送，并通过<kbd>stop</kbd>方法手动停止激励发送或通过<kbd>wait_done</kbd>方法等待激励发送完成后自动停止。
+After completing the incentive instantiation and association, you can enable the incentive sending by using the incentive component method <kbd>start</kbd>, manually stop the incentive sending by using <kbd>stop</kbd>, or wait until the incentives are sent and stopped automatically by using <kbd>wait_done</kbd>.
 
-例如：
+For example:
 
 ```verilog
     task run();
@@ -905,7 +906,7 @@ Makefile为用户执行<kbd>make</kbd>操作的规则文件。用户通过该文
     endtask : run
 ```
 
-其他详细的方法请参考[axi_stims接口简介](#sec-4-3-1-1)。
+For details, see [axi_stims Interface Description](#sec-4-3-1-1).
 
 <a id="sec-4-3-2" name="sec-4-3-2"></a>
 
@@ -915,140 +916,140 @@ Makefile为用户执行<kbd>make</kbd>操作的规则文件。用户通过该文
 
 <a id="sec-4-3-2-1" name="sec-4-3-2-1"></a>
 
-##### cpu_model_cb接口简介
+##### cpu_model_cb Interface Description
 
-- **变量定义**
+- **Variable definition**
 
-    | 参数 | 说明 |
-    | ---  | ---  |
-    | m_req_mlbx  | 激励request邮箱，将产生的req放入该邮箱，req会被自动发送到下级模块（可用于实现axi/axis/axil接口write以及read的request） |
-    | m_rsp_mlbx  | 激励response邮箱，下级模块的响应会存储在该邮箱中（可用于存储axi/axis/axil接口read的响应） |
-    | m_data      | 数据缓存，用于缓存激励发送的数据 |
-    | m_bd        | BD队列，用于缓存产生的BD         |
-    | m_axismc_mlbx | AXI4-Stream Master命令接口邮箱，用于缓存CPU模型发送给DUT的BD |
-    | m_axismd_mlbx | AXI4-Stream Master数据接口邮箱，用于缓存CPU模型返回DUT的读数据 |
-    | m_axissc_mlbx | AXI4-Stream Slave命令接口邮箱，用于缓存CPU模型发送给DUT的读请求 |
-    | m_axissc_mlbx | AXI4-Stream Slave数据接口邮箱，用于缓存CPU模型发送给DUT的读数据 |
+    | Parameter     | Description                              |
+    | ------------- | ---------------------------------------- |
+    | m_req_mlbx    | Incentive request mailbox. The request generated will be placed into the mailbox and automatically sent to lower-level modules. This mailbox supports the read and write requests of the AXI, AXI-S, and AXI-Lite interfaces. |
+    | m_rsp_mlbx    | Incentive response mailbox. The responses of lower-level modules are stored in this mailbox. This mailbox supports the read responses of the AXI, AXI-S, and AXI-Lite interfaces. |
+    | m_data        | Data cache, which is used to cache the data of sent incentives. |
+    | m_bd          | BD queue, which is used to cache the generated buffer descriptors (BDs). |
+    | m_axismc_mlbx | AXI4-Stream Master command interface mailbox, which is used to cache the BDs sent from the CPU model to the DUT. |
+    | m_axismd_mlbx | AXI4-Stream Master data interface mailbox, which is used to cache the read data returned by the DUT to the CPU model. |
+    | m_axissc_mlbx | AXI4-Stream Slave command interface mailbox, which is used to cache the read requests sent from the CPU model to the DUT. |
+    | m_axissc_mlbx | AXI4-Stream Slave data interface mailbox, which is used to cache the read data sent from the CPU model to the DUT. |
 
 - <kbd>new</kbd>
 
-    **功能:** 构造函数，完成组件的创建以及内部变量的初始化，组件使用前必须先调用该接口完成构造。如用户自定义激励组件，则需在组件中显式通过super.new()来调用父类的new方法。
+    **Function:** construction function. This interface is used to create a component and initialize internal variables. Before using the component, invoke this interface to construct the component. For example, to customize an incentive component, you need to explicitly use **super.new()** in the component to invoke the **new** method of the parent class.
 
-    **返回值:** 无。
+    **Return value:** None
 
-    | 参数 | 说明 |
-    | ---  | ---  |
-    | name | 激励组件的名字（只影响打印） |
+    | Parameter | Description                              |
+    | --------- | ---------------------------------------- |
+    | name      | Name of the incentive component (only for printing). |
 
 - <kbd>set_reqmlbx</kbd>
 
-    **功能:** 绑定请求端口，完成激励与CPU模型的关联，非虚方法，用户无需重载。用户需要在激励发送前完成该绑定。
+    **Function:** binds the request port to associate incentives with CPU models. It is a non-virtual method, and users do not need to reload it. Users need to bind the request port before sending incentives.
 
-    **类型:** 函数。
+    **Type:** Function
 
-    **返回值:** 无。
+    **Return value:** None
 
-    | 参数          | 说明                 |
-    | ---           | ---                  |
-    | req_mlbx      | 激励请求端口句柄     |
+    | Parameter | Description                    |
+    | --------- | ------------------------------ |
+    | req_mlbx  | Incentive request port handle. |
 
 - <kbd>request_process</kbd>
 
-    **功能:** 主要负责CPU模型对激励的处理，即收到激励发送的数据后，按照规则产生BD、将数据存入本地虚拟memory中，再将数据发送给`RM`，完成预期。
+    **Function:** processes incentives. After receiving the data sent by incentives, the task generates BDs according to the rules, stores data to the local virtual memory, sends data to the `RM`, and generates the expected data processing result.
 
-    **参数:** 无。
+    **Parameter:** None
 
-    **类型:** 任务。
+    **Type:** Task
 
-    **返回值:** 无。
+    **Return value:** None
 
 - <kbd>response_process</kbd>
 
-    **功能:** 主要负责完成CPU模型对请求的相应返回，即收到`UL`发送的读请求后，按照BD中的指示从本地虚拟memory中读取数据，再将数据发送给`UL`。
+    **Function:** returns requests. After receiving the read request sent by the `UL`, the task reads data from the local virtual memory according to the instructions in the BD, and then returns data to the `UL`.
 
-    **参数:** 无。
+    **Parameter:** None
 
-    **类型:** 任务。
+    **Type:** Task
 
-    **返回值:** 无。
+    **Return value:** None
 
 - <kbd>user_process</kbd>
 
-    **功能:** 主要负责完成CPU模型对`UL`发送数据的处理，即收到`UL`发送的写数据和BD后，将数据与BD拼接在一起，再将数据发送给`RM`，完成预期。
+    **Function:** processes data sent by the `UL`. After receiving the write data and BDs from the `UL`, the task combines data with BDs, and then sends data to the `RM`.
 
-    **参数:** 无。
+    **Parameter:** None
 
-    **类型:** 任务。
+    **Type:** Task
 
-    **返回值:** 无。
+    **Return value:** None
 
-##### cpu_model_cb使用方法
+##### cpu_model_cb Usage
 
-首先，用户需要按照自己的需求对`user_model_cb.svh`文件中的三个主任务进行重载，以实现自己的功能。
+First, you can reload three tasks in the `user_model_cb.svh` file as required to implement the functions.
 
-例如：
+For example:
 
 ```verilog
     class user_model_cb extends cpu_model_cb;
         ...
-        // 该方法主要完成CPU模型对激励的处理
+        / / This method processes incentives.
         task request_process();
             ...
         endtask : request_process
-        // 该方法主要完成CPU模型根据请求返回响应
+        / / This method returns requests.
         task cpu_model_cb::response_process();
             ...
         endtask : response_process
-        // 该方法主要完成CPU模型的其他处理
+        / / This method processes other tasks.
         task cpu_model_cb::user_process();
             ...
         endtask : user_process
     endclass : user_model_cb
 ```
 
-其次，修改用户CPU模型回调完成后，还需要将自己编写的CPU模型回调绑定到CPU模型上，实现最终的CPU模型自定义。这部分实现需要在基础测试用例中实现。例如：
+After modifying the model callback, associate the callback compiled by yourself with the CPU model. This step needs to be performed in basic test cases. For example:
 
 ```verilog
     ...
-    // 实例化用户自定义组件
+    // Instantiating user-defined components
     function void build();
         ...
-        m_user_cb       = new("m_user_cb"  ); // 实例化用户回调
+        m_user_cb       = new("m_user_cb"  ); // Instantiating user callback
         ...
         super.build();
     endfunction : build
-    // 连接用户自定义组件
+    // Connecting user-defined components
     function void connect();
         super.connect();
         ...
-        // 添加用户回调到组件
+        / / Adding user callback to components
         m_tb_env.m_cpu_model.append_callback(m_user_cb);
     endfunction : connect
 ```
 
 <a id="sec-4-4" name="sec-4-4"></a>
 
-### **仿真平台用户配置**
+### **Simulation Platform Configurations**
 
 ---
 
 <a id="sec-4-4-1" name="sec-4-4-1"></a>
 
-#### 配置文件格式
+#### Configuration File Format
 
-用户通过配置文件向Testbench传递数据，配置文件语法如下：
+Users transmit data to the Testbench through the configuration file. The format of the file is as follows:
 
 ```bash
-    // 可使用'//'或者'#'作为注释，注释不会被传入Testbench
+    // Use '//' or '#' for comments, which will not be sent to Testbench.
 
-    // 参数传递语法格式为+xxx_name=yyyyy，其中xxx_name为参数的名字，yyyyy为参数内容（*注意：'='两端都不能有空格*）
-    // 参数内容可以为10进制数字（123、456）、16进制数字（'hxxx）、字符串（abcd、"xxyyzz"）以及序列
-    // 序列为多个参数的组合，中间使用','或者'；'进行分割，例如123,456,'h678,aaa
+    // The format of the parameter transmission is +xxx_name=yyyyy, where xxx_name is the parameter name, and yyyyy is the parameter content. (*Note: The two ends of '=' cannot have spaces.*)
+    // The parameter content can be a decimal number (123, 456), a hexadecimal number ('hxxx), a string (abcd, "xxyyzz"), or a sequence.
+    // If the sequence is a combination of multiple parameters, separate them with a comma ',' or 'semicolon'. (for example, 123,456,'h678,aaa)
 
-    # TEST_NAME表示测试用例对应的基础test
+    # TEST_NAME indicates the basic test corresponding to the test case.
     +TEST_NAME=tb_reg_test
 
-    # DUMP_FSDB表示是否DUMP VERDI波形
+    # DUMP_FSDB indicates whether the VERDI wave needs to be dumped.
     +DUM_FSDB=0
 
     ...
@@ -1056,9 +1057,9 @@ Makefile为用户执行<kbd>make</kbd>操作的规则文件。用户通过该文
 
 <a id="sec-4-4-2" name="sec-4-4-2"></a>
 
-#### 增加配置项
+#### Adding Configuration Items
 
-配置文件中包含诸多配置项，其中每个配置项的名称定义在用户cfg中，例如：
+A configuration file contains many configuration items. The name of each item is defined in the user cfg. For example:
 
 ```verilog
     class tb_reg_cfg;
@@ -1066,7 +1067,7 @@ Makefile为用户执行<kbd>make</kbd>操作的规则文件。用户通过该文
         int adder1;
         int name;
         function new();
-            // get_string第一个参数为参数在配置文件中的名称，第二个参数为默认值
+            // The first parameter of get_string is the name of the parameter in the configuration file, and the second parameter is the default value.
             name   = config_opt::get_string("NAME","noname");
             adder0 = config_opt::get_int("ADDER0", 'd0     );
             adder1 = config_opt::get_int("ADDER1", 'd0     );
@@ -1074,7 +1075,7 @@ Makefile为用户执行<kbd>make</kbd>操作的规则文件。用户通过该文
     endclass : tb_reg_cfg
 ```
 
-配置文件中配置如下：
+The configuration in the file is as follows:
 
 ```bash
     +NAME=TEST_NAME
@@ -1084,34 +1085,34 @@ Makefile为用户执行<kbd>make</kbd>操作的规则文件。用户通过该文
 
 <a id="sec-5" name="sec-5"></a>
 
-## **示例**
+## **Examples**
 
 ---
 
 <a id="sec-5-1" name="sec-5-1"></a>
 
-### 示例1
+### Example 1
 
 ---
 
 <a id="sec-5-1-1" name="sec-5-1-1"></a>
 
-#### 示例1总体介绍
+#### Example 1 Overview
 
-Example1主要实现用户逻辑的版本号读取，输入数据取反测试和加法器的功能，用户可以参考部分华为已有的设计组件，利用该示例用户可以熟悉云上的整个开发仿真验证测试流程。
+This example implements user logic version reading, data inversion, and addition functions. You can refer to existing Huawei design components and use this example to learn about the development, simulation, verification, and test processes on the cloud.
 
 <a id="sec-5-1-2" name="sec-5-1-2"></a>
 
-#### 示例1结构介绍
+#### Example 1 Architecture
 
 <a id="sec-5-1-3" name="sec-5-1-3"></a>
 
-#### 示例1使用方法
+#### Example 1 Operation Instructions
 
-##### 1.  一键式运行仿真
+##### 1. Running Simulation in One-Click
 
-用户可通过在sim目录下直接执行make命令使用vivado编译并运行sv_demo_001测试用例，详细命令请见[一键式编译执行](#4.2.2.4)。
-例如：
+You can run the **make** command in the **sim** directory and use the Vivado to compile and run the sv_demo_001 test case. For details, see [Compiling and Executing in One-Click](#4.2.2.4).
+For example:
 
 ``` bash
   $ cd xxxx/sim
@@ -1119,67 +1120,69 @@ Example1主要实现用户逻辑的版本号读取，输入数据取反测试和
   $ make TC=sv_demo_001
 ```
 
-##### 2.  编写测试用例
+##### 2. Compiling Test Cases
 
-用户可在xxx/sim/tests下的sv或c子目录中新建文件夹，创建自己的测试用例。如果用户需要创建基于C的测试用例，请将测试用例放到子目录c下面，否则放到sv下面。
-每个测试用例需要制定一个配置文件，详细配置文件的语法请参考[配置文件格式](#sec-4-4-1)。
-每个测试用例中用户需要显示制定基础测试用例的名称，以便于平台执行。
-默认基础测试用例名称为tb_reg_test，该测试用例主要完成寄存器的读写。
+You can create a folder in the sv or c subdirectory of **xxx/sim/tests** to create a test case. Store the test case in the c subdirectory only when you need to create a C-based test case.
+Each test case requires a configuration file. For details about the format of the file, see [Configuration File Format](#sec-4-4-1).
+In each test case, display the name of the basic test case for platform execution.
+The default name of the basic test case is tb_reg_test. This test case is used to read and write a register.
 
-##### 3.  默认测试用例功能
+##### 3. Functions of the Default Test Case
 
-默认测试用例功能如下：
+The default test case has the following functions:
 
-- 读取逻辑版本号以及类型
-- 检查版本与类型是否正确
-- 核查数据以及地址取反寄存器
-- 从配置文件中读取两个数值并配置给逻辑
-- 检查加法结果是否正确
+- Read the logic version number and type.
+- Check whether the version and type are correct.
+- Check data and the address inversion register.
+- Read two values from the configuration file and configure them for the logic.
+- Check the addition result.
 
-##### 4.  查看日志
+##### 4. Viewing Logs
 
-FACS会存储所有仿真平台编译以及仿真过程中的全部日志，日志详细功能如下：
+The FACS stores all the logs generated during the compilation and simulation processes of the simulation platform. The detailed functions of the logs are as follows:
 
-| 日志目录 | 日志名称 | 日志描述 |
-| ---            | ---                | ---                 |
-| sim/report     | log_comp.log       | 仿真平台预编译日志  |
-| sim/report     | log_elab.log       | 仿真平台链接日志    |
-| sim/report/xxx | log_simulation.log | 测试用例xxx运行日志 |
+| Directory      | Log Name           | Description                              |
+| -------------- | ------------------ | ---------------------------------------- |
+| sim/report     | log_comp.log       | Pre-compilation logs of the simulation platform |
+| sim/report     | log_elab.log       | Link logs of the simulation platform     |
+| sim/report/xxx | log_simulation.log | Operation logs of test case xxx          |
 
-*如果仿真平台存在编译错误，请检查预编译或链接日志；如果编译成功而运行失败，则检查log_simulation.log。* **测试用例如果执行成功，则会在日志结尾打印PASS；反之则会打印FAIL**
+*If a compilation error occurs on the simulation platform, check the pre-compilation logs or link logs. If the compilation is successful but the running fails, check the log_simulation.log.* **If the test case is executed successfully, PASS will be displayed at the end of the log. If not successful, FAIL will be displayed.**
 
-详细使用方式请参考[仿真平台快速指南](./quick_start.md)。
+For details, see [Simulation Platform Quick Start Guide](./quick_start.md).
 
 <a id="sec-5-2" name="sec-5-2"></a>
 
-### 示例2
+### Example 2
 
 ---
 
 <a id="sec-5-2-1" name="sec-5-2-1"></a>
 
-#### 示例2总体介绍
+#### Example 2 Overview
 
-Example2主要实现用户逻辑的版本号读取、输入数据取反测试、DDR访问以及DMA功能，用户可以参考部分华为已有的设计组件，利用该示例用户可以熟悉云上的整个开发仿真验证测试流程。
+This example implements user logic version reading, data inversion, and addition functions. You can refer to existing Huawei design components and use this example to learn about the development, simulation, verification, and test processes on the cloud.
 
-示例2中包含两个测试用例，`sv_demo_001`以及`sv_demo_002`。其中用例`sv_demo_001`主要覆盖用户DDR的读写访问，而`sv_demo_002`则主要完成用户DMA数据流的处理。
+Example 2 consists of two test cases: `sv_demo_001` and `sv_demo_002`. The test case `sv_demo_001` covers the read and write access of user DDRs, while the `sv_demo_002` processes the user DMA data stream.
 
-- `sv_demo_001`：分别对三片`UL`外挂DDR进行读写访问，先写后读，写入数据为`32bit`随机数，写入地址随机（会覆盖到DDR的rank0以及rank1）。如果回读数据与写入不一致，则上报错误；否则通过。
+- `sv_demo_001`: Read and write the three external DDRs of the `ULs` (write before read). The write data is a `32bit` random number, and the write address is random (covering the rank 0 and rank 1 of DDRs). If the read data is inconsistent with the write data, an error will be reported. If consistent, **PASS** will be displayed.
 
-- `sv_demo_002`：激励通过CPU模型向`UL`发送BD，`UL`接收到BD后向CPU模型发起读数据请求，然后CPU模型收到请求后向`UL`返回数据。当`UL`接收到报文后会将报文直接写入CPU模型，此时，CPU模型会将收到的数据与预期进行比对，如果比对错误不一致，则上报错误；否则通过。
+- `sv_demo_002`: The incentive sends BDs to `UL` through the CPU model. After receiving BDs, the `UL` initiates a read data request to the CPU model, and then the CPU model returns the data to the `UL` after receiving the request. After receiving packets, the `UL` writes the packets into the CPU model. Then, the CPU model compares the received data with the expected result. If the result is inconsistent, an error will be reported. If consistent, **PASS** will be displayed.
 
 <a id="sec-5-2-2" name="sec-5-2-2"></a>
 
-#### 示例2结构介绍
+#### Example 2 Architecture Overview
 
 <a id="sec-5-2-3" name="sec-5-2-3"></a>
 
-#### 示例2使用方法
+#### Example 2 Operation Instructions
 
-使用方法同[示例1使用方法](sec-5-1-3)，此处略。
+The usage method of example 2 is the same as that of example 1. For details, see [Example 1 Operation Instructions](sec-5-1-3).
 
 <a id="sec-6" name="sec-6"></a>
 
-略
+N/A
 
-## **附录**
+## **Appendix**
+
+

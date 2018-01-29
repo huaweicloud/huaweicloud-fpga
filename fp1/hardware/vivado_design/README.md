@@ -1,8 +1,9 @@
-# Vivado Desgin说明
+﻿# Vivado Design Descriptions
 
 ---
+[切换到中文版](./README_CN.md)
 
-## 目录结构
+## Directory Structure
 
 - **vivado_design/**
   - documents
@@ -11,22 +12,23 @@
   - user/
   - README.md
 
-## 子目录说明
+## Subdirectory Descriptions
 - documents  
-  该目录主要存放了基于vivado工具的3个examples的.jpg`结构图`、实例的`接口信号介绍`文件、`PCIE接口BAR空间映射`的介绍文件、`必须的工具和license`介绍、静态逻辑和动态`逻辑的.jpg接口关系图`。
-   
+  This directory stores the .jpg` structure` of three Vivado-based examples, `interface signal introduction` files of examples, introduction files of `PCIe interface BAR space mapping`, `mandatory tools and license` introduction, and `.jpg interface relationship diagram` of the static and dynamic logics.
+
 - examples  
 
-  该目录主要用于存放示例工程，包含`example1`、`example2`和`example3`三个工程，用户可以通过对这三个工程的学习和实际操作，深入了解平台的功能，详细说明请参考[示例应用指南](./examples/README.md)。
+  This directory stores instance projects, including `example 1`, `example 2`, and `example 3` projects. Users will be familiar with the functions of the platform by learning and performing operations of these projects. For details, see [Instance Application Guide](./examples/README.md).
 
 - lib
 
-  该目录主要用于平台提供的`各种公共文件`，详细说明请参考[公用文件使用说明](./lib/README.md)。
+  This directory stores `common files` provided by the platform. For details, see [Common File Operation Instructions](./lib/README.md).
 
 - user
 
-  该目录主要用于存放用户`自定义工程`信息及代码，详细说明请参考[用户目录使用说明](./user/README.md)。
+  This directory stores information and code of `user-defined projects`. For details, see [User Directory Operation Instructions](./user/README.md).
 
 - README.md
 
-  即本文档，用于介绍其他文档。
+  This document describes other documents.
+

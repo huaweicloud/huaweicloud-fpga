@@ -58,11 +58,9 @@ DDR_ADDR ddrs[4] = {
 #define VAL_DISABLE_ISO_EN      (0x00000000)
 
 int print_demo1_version() {
-    /*unsigned int addr[] = {REG_PF_DEMO1_VERSION};*/
     unsigned int addr[] = {REG_PF_DEMO1_VERSION_NEW};
     unsigned int val[] = {0};
-    
-    /*uio_read_regs(addr, sizeof(addr)/sizeof(unsigned int), val);*/
+
     (void)pci_bar2_read_regs(addr, sizeof(addr)/sizeof(unsigned int), val);
 
     printf("version: 0x%08x\r\n", val[0]);
@@ -70,11 +68,9 @@ int print_demo1_version() {
 }
 
 int print_oppos_data() {
-    /*unsigned int addr[] = {REG_PF_OPPOS_DATA};*/
     unsigned int addr[] = {REG_PF_OPPOS_DATA_NEW};
     unsigned int val[] = {0};
     
-    /*uio_read_regs(addr, sizeof(addr)/sizeof(unsigned int), val);*/
     (void)pci_bar2_read_regs(addr, sizeof(addr)/sizeof(unsigned int), val);
 
     printf("oppos: 0x%08x\r\n", val[0]);
@@ -82,21 +78,17 @@ int print_oppos_data() {
 }
 
 int set_oppos_data(unsigned int value) {
-    /*unsigned int addr[] = {REG_PF_OPPOS_DATA};*/
     unsigned int addr[] = {REG_PF_OPPOS_DATA_NEW};
     unsigned int val[] = {value};
     
-    /*uio_write_regs(addr, val, sizeof(addr)/sizeof(unsigned int));*/
     (void)pci_bar2_write_regs(addr, val, sizeof(addr)/sizeof(unsigned int));
     return 0;
 }
 
 int print_add_result_data() {
-    /*unsigned int addr[] = {REG_PF_DEMO1_SUM_RDATA};*/
     unsigned int addr[] = {REG_PF_DEMO1_SUM_RDATA_NEW};
     unsigned int val[] = {0};
     
-    /*uio_read_regs(addr, sizeof(addr)/sizeof(unsigned int), val);*/
     (void)pci_bar2_read_regs(addr, sizeof(addr)/sizeof(unsigned int), val);
         
     printf("add result: 0x%08x\r\n", val[0]);
@@ -104,11 +96,9 @@ int print_add_result_data() {
 }
 
 int set_add_data(unsigned int data0, unsigned int data1) {
-    /*unsigned int addr[] = {REG_PF_DEMO1_ADDER_CFG_WDATA0, REG_PF_DEMO1_ADDER_CFG_WDATA1};*/
     unsigned int addr[] = {REG_PF_DEMO1_ADDER_CFG_WDATA0_NEW, REG_PF_DEMO1_ADDER_CFG_WDATA1_NEW};
     unsigned int val[] = {data0, data1};
     
-    /*uio_write_regs(addr, val, sizeof(addr)/sizeof(unsigned int));*/
     (void)pci_bar2_write_regs(addr, val, sizeof(addr)/sizeof(unsigned int));
 
     return 0;

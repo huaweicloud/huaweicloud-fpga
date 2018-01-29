@@ -1,12 +1,16 @@
-# 使用说明
-* 本目录下Makefile，用于编译host主机程序和kernel程序，用户可以根据自己的需求进行修改。
-*  如果使用本Makefile 用户需要自己手动修改其中一下变量
-	
-	`HOST_EXE=XXX`
+# Operation Instructions
 
-	host目标程序名称，例如`HOST_EXE=vadd`
-	
+[切换到中文版](./README_CN.md)
+
+* Makefile in this directory is used to compile the host program and kernel program. Users can modify Makefile as required.
+* If Makefile is used, manually modify the variables.
+
+  `HOST_EXE=XXX`
+
+Indicates the host target program name, for example, `HOST_EXE=vadd`
+​	
 	`KERNEL_NAME=XXX`
 
-	kernel目标文件名称，必须与kernel名称一致
-	例如`KERNEL_NAME = krnl_vadd`
+Indicates the kernel target file name, which must be the same as the kernel name.
+For example, `KERNEL_NAME = krnl_vadd`
+

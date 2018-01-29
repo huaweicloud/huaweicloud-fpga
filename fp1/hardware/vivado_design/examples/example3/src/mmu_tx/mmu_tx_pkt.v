@@ -977,4 +977,4 @@ u_seq_fifo (
         .fifo_stat         (                       ) 
         );
 
-endmodule
+endmodule 

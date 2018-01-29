@@ -1,10 +1,13 @@
- # 目录结构说明
+ Directory Structure Descriptions
+
+[切换到中文版](./README_CN.md)
 
 * app  
-该目录用于存放用户示例的应用程序及运行应用程序的说明，用户可以参考示例程序构建自己的应用。  
+  This directory stores sample application programs for users and the descriptions of running these programs. Users can create their applications by referring to sample application programs.  
 * kernel_drivers  
-该目录用于存放内核态的驱动代码及使用说明。  
+  This directory stores the kernel-mode driver code and usage descriptions.  
 * userspace  
-该目录用于存放用户态的驱动源代码及使用说明。  
+  This directory stores the user-mode driver code and usage descriptions.  
 * platform_config  
-该目录用于存放dpdk和sdaccel环境配置脚本。
+  This directory stores configuration scripts of the DPDK and SDAccel.
+

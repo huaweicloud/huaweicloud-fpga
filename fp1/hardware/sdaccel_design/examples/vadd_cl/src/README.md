@@ -1,5 +1,6 @@
 ## Vector Addition Example
 ===============================
+[切换到中文版](./README_CN.md)
 
 This is a simple example of vector addition.
 The purpose of this code is to introduce the user to application development
@@ -18,8 +19,7 @@ The purpose of this code is to introduce the user to application development
 ## Compilation File
 Makefile: Makefile for compiling  application.
 if you want compile the program by yourself, please use
-	
+​	
 	make help
-		
-
+​		
 

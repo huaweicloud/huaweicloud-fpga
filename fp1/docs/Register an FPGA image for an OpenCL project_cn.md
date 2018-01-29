@@ -1,6 +1,8 @@
 注册
 ----
 
+[Switch to the English version](./Register an FPGA image for an OpenCL project.md)
+
 用户使用AEI_Register.sh工具向FPGA镜像管理模块注册FPGA镜像。完成注册后，用户会获得一个FPGA镜像ID，可用于查询FPGA镜像的注册操作是否成功，以及后续的FPGA镜像加载、删除、关联等操作。
 
 ### 准备操作
@@ -9,30 +11,19 @@
 
 #### 切换到工程的脚本目录。
 
--   对于高性能型(DPDK)，需要切换到工程中的“prj”目录。
+需要切换到工程中的“scripts”目录。
 
-例如，对于example工程，该目录为“`/home/fp1/hardware/vivado_design/examples/example1/prj`”。
-
--   对于通用型(OpenCL)，需要切换到工程中的“scripts”目录。
-
-例如，对于example工程，该目录为“`/home/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts`”。
+例如，对于example工程，该目录为“`huaweicloud-fpga/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts`”。
 
 #### 构建工程（若已完成工程的构建，则不需要再重复构建）。
 
--   对于高性能型(DPDK)，执行`sh build.sh`命令构建工程。
+执行`sh compile.sh hw`命令构建工程。
 
--   对于通用型(OpenCL)，执行`sh compile.sh hw`命令构建工程。
-
-     编辑工程脚本目录下的`AEI_Register.cfg`文件。将文件中的**OBS_BUCKETNAME**选项的内容配置为在配置章节中创建的OBS桶名，**MODE**选项使用默认值，无需重新配置。
+编辑工程脚本目录下的`AEI_Register.cfg`文件。将文件中的**OBS_BUCKETNAME**选项的内容配置为在配置章节中创建的OBS桶名，**MODE**选项使用默认值，无需重新配置。
 
 **说明：**配置章节可参考根目录下面README.md中1.2.2 修改配置文件和配置镜像章节。
 
--   对于高性能型(DPDK)，配置后的信息如下回显所示。
-
-    MODE=DPDK  
-    OBS_BUCKETNAME=obs-fpga
-
--   对于通用型(OpenCL)，配置后的信息如下回显所示。
+配置后的信息如下回显所示。
 
     MODE=OCL  
     OBS_BUCKETNAME=obs-fpga
@@ -89,15 +80,15 @@ verifying the access_key,secret_key successfully
 verifying the password and /etc/cfg.file successfully  
 INFO: OCL Running  
 upload:
-'/home/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
+'huaweicloud-fpga/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
 -\> 's3://obs-fpga/bin_mmult_hw.xclbin'[part 1 of 3, 15MB] [1 of 1]  
 15728640 of 15728640100% in0s17.53 MB/sdone  
 upload:
-'/home/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
+'huaweicloud-fpga/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
 -\> 's3://obs-fpga/bin_mmult_hw.xclbin'[part 2 of 3, 15MB] [1 of 1]  
 15728640 of 15728640100% in0s17.15 MB/sdone  
 upload:
-'/home/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
+'huaweicloud-fpga/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
 -\> 's3://obs-fpga/bin_mmult_hw.xclbin'[part 3 of 3, 13MB] [1 of 1]  
 14380204 of 14380204100% in0s18.29 MB/sdone  
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#  

@@ -1,6 +1,8 @@
 Vector Addition Example 
 ============================================
 
+[切换到中文版](./README_CN.md)
+
 This is a simple example of vector addition. The kernel is used RTL
 The prupose of this
  code is to introduce the user to application development

@@ -1,2 +1,7 @@
-# 目录说明
-此目录存放Linux下xdma驱动源码，必须在root全下下执行。
+# Directory Descriptions
+
+[切换到中文版](./README_CN.md)
+
+This directory stores the XDMA driver source code of Linux. The code must be run with the root right.
+
+

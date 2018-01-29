@@ -1,139 +1,139 @@
-# 仿真平台快速指南
+﻿# Simulation Platform Quick Start Guide
 
----
+[切换到中文版](./quick_start_cn.md)
 
-这是一个FACS仿真平台的快速入门教程。在此教程中我们首先将对仿真平台进行简单介绍，然后说明如何运行现有示例，最后告诉用户如何编写自己的仿真组件、测试用例完成仿真。
+This document is a quick start guide to the FACS simulation platform. The beginning part is a brief introduction to the platform. Then, the document shows how to run existing examples. Finally, users are instructed on how to compile their own simulation components and test cases for simulation.
 
 <div id="table-of-contents">
-<h2>目录</h2>
+<h2>Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#sec-1">1. <b>仿真平台简介</b></a></li>
-<li><a href="#sec-2">2. <b>设置仿真环境</b></a></li>
-<li><a href="#sec-3">3. <b>对示例进行仿真</b></a>
+<li><a href="#sec-1">1. <b>Simulation Platform</b></a></li>
+<li><a href="#sec-2">2. <b>Configuring the Simulation Environment</b></a></li>
+<li><a href="#sec-3">3. <b>Simulating Examples</b></a>
 <ul>
-<li><a href="#sec-3-1">3.1. <b>编译仿真示例</b></a></li>
+<li><a href="#sec-3-1">3.1. <b>Compiling Simulation Examples</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-2">3.2. <b>运行仿真示例</b></a></li>
+<li><a href="#sec-3-2">3.2. <b>Running Simulation Examples</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-3">3.3. <b>调试仿真示例</b></a></li>
+<li><a href="#sec-3-3">3.3. <b>Debugging Simulation Examples</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-4">3.4. <b>一键式仿真示例</b></a></li>
+<li><a href="#sec-3-4">3.4. <b>Simulating Examples in One-click</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-5">3.5. <b>清除仿真结果</b></a></li>
+<li><a href="#sec-3-5">3.5. <b>Clearing Simulation Results</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-6">3.6. <b>查看仿真日志</b></a></li>
-</ul>
-</li>
-<li><a href="#sec-4">4. <b>用户自定义仿真</b></a>
-<ul>
-<li><a href="#sec-4-1">4.1. <b>编写用户测试用例</b></a>
-<ul>
-<li><a href="#sec-4-1-1">4.1.1. 创建用户工程</a></li>
-</ul>
-<ul>
-<li><a href="#sec-4-1-2">4.1.2. 创建用户测试用例</a></li>
-</ul>
-<ul>
-<li><a href="#sec-4-1-3">4.1.3. 修改仿真配置</a></li>
-</ul>
-<ul>
-<li><a href="#sec-4-1-4">4.1.4. 编写基础测试用例</a></li>
-</ul>
-<ul>
-<li><a href="#sec-4-1-5">4.1.5. 编写用户测试配置</a></li>
+<li><a href="#sec-3-6">3.6. <b>Viewing Simulation Logs</b></a></li>
 </ul>
 </li>
-<li><a href="#sec-4-2">4.2. <b>对用户测试用例进行仿真</b></a>
+<li><a href="#sec-4">4. <b>User-Defined Simulation</b></a>
+<ul>
+<li><a href="#sec-4-1">4.1. <b>Compiling User Test Cases</b></a>
+<ul>
+<li><a href="#sec-4-1-1">4.1.1. Creating a User Project</a></li>
+</ul>
+<ul>
+<li><a href="#sec-4-1-2">4.1.2. Creating User Test Cases</a></li>
+</ul>
+<ul>
+<li><a href="#sec-4-1-3">4.1.3. Modifying Simulation Configuration</a></li>
+</ul>
+<ul>
+<li><a href="#sec-4-1-4">4.1.4. Compiling Basic Test Cases</a></li>
+</ul>
+<ul>
+<li><a href="#sec-4-1-5">4.1.5. Compiling User Test Configuration Files</a></li>
 </ul>
 </li>
-<li><a href="#sec-5">5. <b>用户自定义组件</b></a>
-<ul>
-<li><a href="#sec-5-1">5.1. <b>编写用户自定义激励</b></a>
-<ul>
-<li><a href="#sec-5-1-1">5.1.1. 创建用户激励</a></li>
-</ul>
-<ul>
-<li><a href="#sec-5-1-2">5.1.2. 修改用户激励</a></li>
-</ul>
-<ul>
-<li><a href="#sec-5-1-3">5.1.3. 绑定用户激励</a></li>
-</ul>
-<ul>
-<li><a href="#sec-5-1-4">5.1.4. 启动用户激励</a></li>
+<li><a href="#sec-4-2">4.2. <b>Simulating User Test Cases</b></a>
 </ul>
 </li>
-<li><a href="#sec-5-2">5.2. <b>编写用户自定义配置</b></a>
+<li><a href="#sec-5">5. <b>User-Defined Components</b></a>
 <ul>
-<li><a href="#sec-5-2-1">5.2.1. 编写自定义激励配置</a></li>
+<li><a href="#sec-5-1">5.1. <b>Compiling User-Defined Incentives</b></a>
+<ul>
+<li><a href="#sec-5-1-1">5.1.1. Creating User Incentives</a></li>
 </ul>
 <ul>
-<li><a href="#sec-5-2-2">5.2.2. 编写自定义平台配置</a></li>
+<li><a href="#sec-5-1-2">5.1.2. Modifying User Incentives</a></li>
+</ul>
+<ul>
+<li><a href="#sec-5-1-3">5.1.3. Associating User Incentives</a></li>
+</ul>
+<ul>
+<li><a href="#sec-5-1-4">5.1.4. Starting User Incentives</a></li>
 </ul>
 </li>
-<li><a href="#sec-5-3">5.3. <b>编写用户CPU模型回调</b></a>
+<li><a href="#sec-5-2">5.2. <b>User-Defined Configuration</b></a>
 <ul>
-<li><a href="#sec-5-3-1">5.3.1. 创建用户CPU模型回调</a></li>
-</ul>
-<ul>
-<li><a href="#sec-5-3-2">5.3.2. 修改用户CPU模型回调</a></li>
+<li><a href="#sec-5-2-1">5.2.1. Configuring User-Defined Incentives</a></li>
 </ul>
 <ul>
-<li><a href="#sec-5-3-3">5.3.3. 绑定用户CPU模型回调</a></li>
+<li><a href="#sec-5-2-2">5.2.2. Configuring User-Defined Platform</a></li>
 </ul>
 </li>
-<li><a href="#sec-5-4">5.4. <b>编写用户参考模型</b></a>
-</li>
-<li><a href="#sec-5-5">5.5. <b>在测试用例中创建连接用户自定义组件</b></a></li>
+<li><a href="#sec-5-3">5.3. <b>Compiling User CPU Model Callback</b></a>
+<ul>
+<li><a href="#sec-5-3-1">5.3.1. Creating User CPU Model Callback</a></li>
+</ul>
+<ul>
+<li><a href="#sec-5-3-2">5.3.2. Modifying User CPU Model Callback</a></li>
+</ul>
+<ul>
+<li><a href="#sec-5-3-3">5.3.3. Associating User CPU Model Callback</a></li>
 </ul>
 </li>
-<li><a href="#sec-6">6. <b>VIP集成</b></a></li>
+<li><a href="#sec-5-4">5.4. <b>Compiling User Reference Models</b></a>
+</li>
+<li><a href="#sec-5-5">5.5. <b>Creating and Connecting User-Defined Components in Test Cases</b></a></li>
+</ul>
+</li>
+<li><a href="#sec-6">6. <b>VIP Integration</b></a></li>
 </div>
 </div>
 
 <a id="sec-1" name="sec-1"></a>
 
-## **仿真平台简介**
+## **Simulation Platform Overview**
 
 ---
 
-FACS仿真平台可以实现C/Systemverilog混合语言的协同仿真。它提完整的分离的仿真平台与测试用例，用户可方便的通过对测试用例的设计实现仿真而无需修改仿真平台。
+The FACS simulation platform implements collaborative simulation of C/SystemVerilog hybrid languages. It provides a complete and separated simulation platform and test cases. You can implement simulation without modifying the simulation platform by designing test cases.
 
-FACS仿真平台基于符合IEEE-1800(2012)规范的systemverilog语言开发，不使用任何验证方法学，使得仿真平台在Vivado、VCS以及Questasim仿真器下均可执行。
+The FACS simulation platform is developed based on the SystemVerilog language compliant with IEEE-1800 (2012) and does not use any verification methods. This enables the simulation platform to be executed under a Vivado, VCS, and QuestaSim simulator.
 
-仿真平台结构如下图所示:
+The following figure shows the simulation platform structure.
 
-<img src="./images/testbench.png" alt="仿真平台组件框图">
+<img src="./images/testbench.png" alt="Simulation platform structure">
 
-其中。本架构具有如下有点：
+The architecture:
 
-- 用户可方便的完成自己的测试用例而无需关注、修改仿真平台
+- Allows you to complete test cases without modifying the simulation platform.
 
-- 用户可方便的将VIP集成到仿真平台中
+- Allows you to easily integrate VIPs into the simulation platform.
 
-- 一次编译多次执行，提高仿真的效率
+- Achieves multiple executions with one compilation.
 
-- 多语言激励支持将在极大限度上提高用户编写激励的效率
+- Improves the incentive compilation efficiency by supporting incentives in multiple languages.
 
-- 预编译库以及优化的仿真参数将为用户提供更高速的仿真体验
+- Provides higher speed simulation experience through pre-compiled libraries and optimized simulation parameters.
 
-- 仿真平台优秀的代码兼容性使得仿真不再受工具限制
+- Resolves the tool restriction issue through the excellent code compatibility of the simulation platform.
 
 <a id="sec-2" name="sec-2"></a>
 
-## **设置仿真环境**
+## **Configuring the Simulation Environment**
 
 ---
 
-每次开启新的终端运行FACS仿真平台时都需要设置环境变量，设置方法分为以下几步。
+Set environment variables each time a terminal is started to run the FACS simulation platform. The configuration methods are as follows:
 
-如果是第一次使用，需要先修改配置文件完成license的设置，需要修改`setup.cfg`中**XILINX_LIC_SETUP**字段的内容。
-如有多个License，请使用":"进行分隔。
+If you are using the platform for the first time, modify the configuration file to complete the license setting by changing the **XILINX_LIC_SETUP** field in the `setup.cfg` file. 
+If there are multiple licenses, use ":" to separate them.
 
 ```bash
   $ cd /home/fpga_design
@@ -148,7 +148,7 @@ FACS仿真平台基于符合IEEE-1800(2012)规范的systemverilog语言开发，
   # }}}
 ```
 
-环境变量采用如下方式进行设置：
+Environment variables are configured as follows:
 
 ```bash
   $ source ./setup.sh
@@ -160,11 +160,11 @@ FACS仿真平台基于符合IEEE-1800(2012)规范的systemverilog语言开发，
   ...
 ```
 
-环境变量的设置可能需要一段时间，请耐心等待。关于环境变量设置的详细操作与步骤请参考[fp1开发套件说明](../../../../../README.md)。
+The setting may take some time. For details, see [fp1 Development Suite Description](../../../../../README.md).
 
-仿真环境设置完成后，会自动在环境变量中配置好工程的根目录，即`fpga_design`文件夹的目录，环境变量为`WORK_DIR`。
+After the setting, the root directory of the project is automatically configured in the environment variable. This root directory is the directory of the `fpga_design` folder. The environment variable is `WORK_DIR`.
 
-用户可通过如下命令查看环境变量：
+Run the following command to view environment variables:
 
 ```bash
   $ echo $WORK_DIR
@@ -172,51 +172,51 @@ FACS仿真平台基于符合IEEE-1800(2012)规范的systemverilog语言开发，
 
 <a id="sec-3" name="sec-3"></a>
 
-## **对示例进行仿真**
+## **Simulating Examples**
 
 ---
 
-FACS仿真平台提供了丰富的示例以帮助用户更好的理解如何仿真。仿真平台的编译、执行以及调试操作均通过Makefile的目标完成。如需执行仿真有两种方式:
+The FACS simulation platform provides a host of examples to help users better understand how to perform simulation. The compilation, execution, and debugging of the simulation platform are implemented through the **Makefile**. To execute the simulation, use either of the following methods:
 
-- 标准make方法：即编译、执行以及调试仿真示例前用户首先需要将当前目录切换到示例所在的仿真根目录，再执行`make`命令完成操作。仿真根目录如下表所示：
+- Standard make method: Before compiling, executing, and debugging a simulation example, switch to the simulation root directory where the example is stored, and then run the `make` command. The following table describes the simulation root directories.
 
-    | 示例名   | 目录                                                    |
-    | ----     | ---                                                     |
+    | Example  | Directory                                |
+    | -------- | ---------------------------------------- |
     | example1 | `$WORK_DIR/hardware/vivado_design/example/example1/sim` |
     | example2 | `$WORK_DIR/hardware/vivado_design/example/example2/sim` |
 
-    用户可采用如下命令切换到示例对应的仿真根目录：
+    You can run the following command to switch to the simulation root directory:
 
     ```bash
       $ export EXAMPLE_DIR=$WORK_DIR/hardware/vivado_desgin/examples/examplex
       $ cd $EXAMPLE_DIR/sim
     ```
-    其中`examplex`表示示例名，可以为`example1`或`example2`。
+    `examplex` indicates the example name, which can be `example 1` or `example 2`.
 
-- 指定目录make方法：即编译、执行以及调试仿真示例时用户直接通过`make -C`命令指定Makefile的目录完成操作。
+- Designated directory method: While compiling, executing, and debugging a simulation example, you can run the `make -C` command to designate a **Makefile** directory.
 
-    用户可采用如下命令完成制定目录的`make`操作：
+    You can run the following command to perform the `make` operation in the designated directory:
 
     ```bash
       $ export EXAMPLE_DIR=$WORK_DIR/hardware/vivado_desgin/examples/examplex
-      $ make -C $EXAMPLE_DIR/sim XXX # XXX为Makefile目标
+      $ make -C $EXAMPLE_DIR/sim XXX # XXX is the Makefile target.
     ```
 
-其他详细的`Makefile`相关参数以及目标请参考[仿真平台用户指导](./user_guide.md)。
+For details about `Makefile` parameters and targets, see [Simulation Platform User Guide](./user_guide.md).
 
 <a id="sec-3-1" name="sec-3-1"></a>
 
-### **编译仿真示例**
+### **Compiling Simulation Examples**
 
 ---
 
-编译Example的命令为`make comp`，缺省编译命令如下：
+Run the `make comp` command to compile an example. The following is the default command:
 
 ```bash
   $ make comp
 ```
 
-默认采用vivado作为仿真器，如果用户需要使用vcs仿真器或questasim仿真器，可使用如下命令：
+By default, Vivado is used as the simulator. To use the VCS simulator or QuestaSim simulator, run the following command:
 
 ```bash
   $ make comp TOOL=vcs    # Compile Using vcsmx
@@ -226,17 +226,17 @@ FACS仿真平台提供了丰富的示例以帮助用户更好的理解如何仿�
 
 <a id="sec-3-2" name="sec-3-2"></a>
 
-### **运行仿真示例**
+### **Running Simulation Examples**
 
-执行Example仿真的命令为`make run`，需要指定测试用例名，以下为执行**sv_demo_001**测试用例的命令（由于sv_demo_001为缺省测试用例名，所以如果执行该用例可省略用例名）：
+The command for running example simulation is `make run`. You need to specify the name of the test case. The following is the command for executing the test case **sv_demo_001**. (sv_demo_001 is the default name of the test case. Therefore, you can omit this name for running this test case.)
 
 ```bash
   $ make run TC=sv_demo_001
 ```
 
-`TC`后参数为需要执行的测试用例名称，需要和`$EXAMPLE_DIR/sim/tests/sv/`目录中的测试用例的文件夹名称一致。
+The parameter after `TC` is the name of the test case to be executed. It must be the same as the folder name of the test case in the `$EXAMPLE_DIR/sim/tests/sv/` directory.
 
-默认采用vivado作为仿真器，如果用户需要使用vcs仿真器或questasim仿真器，可使用如下命令：
+By default, Vivado is used as the simulator. To use the VCS simulator or QuestaSim simulator, run the following command:
 
 ```bash
   $ make run TOOL=vcs TC=sv_demo_001 # Compile Using vcsmx
@@ -246,15 +246,15 @@ FACS仿真平台提供了丰富的示例以帮助用户更好的理解如何仿�
 
 <a id="sec-3-3" name="sec-3-3"></a>
 
-### **调试仿真示例**
+### **Debugging Simulation Examples**
 
-调试Example的命令为`make wave`，参数与执行类似，需要指定测试用例名，以下为调试**sv_demo_001**测试用例的命令：
+Run the `make wave` command to debug an example. Parameters are similar to the parameters used for executing an example. Specify the name of the test case. The following command is used to debug the **sv_demo_001** test case:
 
 ```bash
   $ make wave TC=sv_demo_001
 ```
 
-默认采用vivado进行调试，如果用户需要使用dve或questasim进行调试，可使用如下命令：
+By default, Vivado is used for debugging. If you need to use DVE or QuestaSim, run the following command:
 
 ```bash
   $ make wave TOOL=vcs TC=sv_demo_001    # Compile Using vcsmx
@@ -264,27 +264,27 @@ FACS仿真平台提供了丰富的示例以帮助用户更好的理解如何仿�
 
 <a id="sec-3-4" name="sec-3-4"></a>
 
-### **一键式仿真示例**
+### **One-click Simulation Examples**
 
-Example支持一键式运行，即一键式自动完成编译以及运行，可使用如下命令：（all为缺省目标，可以省略）
+Examples support one-click compilation and running. Run the following command (The value **all** can be omitted.):
 
 ```bash
   $ make all
 ```
 
-一键式运行也支持vcs与questasim，详细使用方式请参考以上章节。
+VCS and QuestaSim also supports one-click running. For details, see descriptions in this section.
 
 <a id="sec-3-5" name="sec-3-5"></a>
 
-### **清除仿真结果**
+### **Clearing Simulation Results**
 
-测试用例编译或者执行时，会在`work`目录中产生一些仿真中间文件，建议每次编译前先将这些文件清空，可采用如下命令进行清除：
+During the compilation or execution of test cases, some simulation intermediate files are generated in the `work` directory. You are advised to clear these files before each compilation by running the following command:
 
 ```bash
   $ make clean
 ```
 
-用户如果在清除仿真中间文件时还需需要清除**预编译库文件**，可执行以下命令：
+If you need to clear **pre-compiled library files** when clearing simulation intermediate files, run the following command:
 
 ```bash
   $ make distclean
@@ -292,15 +292,15 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 
 <a id="sec-3-6" name="sec-3-6"></a>
 
-### **查看仿真日志**
+### **Viewing Simulation Logs**
 
-如果仿真编译失败，可查看`report`目录下的编译的log文件**log_comp.log**：
+If the compilation of the simulation fails, check the **log_comp.log** file in the `report` directory.
 
 ```bash
   $ vi ./report/log_comp.log
 ```
 
-如果编译成功而执行仿真时报错，可进入到相应的测试用例目录下，通过查看仿真运行的log文件**log_simulation.log**定位：*（test_xxx表示用户需要查看的测试用例名）*
+If the compilation is successful but an error is reported during the simulation, go to the corresponding test case directory and view **log_simulation.log** to locate the fault. * (test_xxx indicates the name of the test case to be viewed by the user.) *
 
 ```bash
   $ vi ./report/test_xxx/log_simulation.log
@@ -308,35 +308,35 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 
 <a id="sec-4" name="sec-4"></a>
 
-## **用户自定义仿真**
+## **User-Defined Simulation**
 
 ---
 
-用户不仅可以执行示例，也可以自行编写、编译、运行以及调试自己的测试用例。
+You can execute examples, or compile, run, and debug your own test cases.
 
 <a id="sec-4-1" name="sec-4-1"></a>
 
-### **编写用户测试用例**
+### **Compiling User Test Cases**
 
 ---
 
-用户如果需要编写自己的测试用例需要以下几步：
+To compile your own test cases, perform the following steps:
 
-- 1 [创建用户工程](#sec-4-1-1)*（如果已有工程请忽略这一步）*
+- 1 [Creating a User Project](#sec-4-1-1)*(Ignore this step if the project already exists.) *
 
-- 2 [创建用户测试用例](#sec-4-1-2)
+- 2 [Creating User Test Cases](#sec-4-1-2)
 
-- 3 [修改仿真配置](#sec-4-1-3)
+- 3 [Modifying Simulation Configuration](#sec-4-1-3)
 
-- 4 [编写基础测试用例](#sec-4-1-4)
+- 4 [Compiling Basic Test Cases](#sec-4-1-4)
 
-- 5 [编写用户测试配置](#sec-4-1-5)
+- 5 [Compiling User Test Configuration Files](#sec-4-1-5)
 
 <a id="sec-4-1-1" name="sec-4-1-1"></a>
 
-#### 创建用户工程
+#### Creating a User Project
 
-用户如需编写自己的测试用例，首先需要创建工程，可将`example`或者`template`文件夹中的sim文件夹复制到用户目录，例如：
+To compile your own test cases, create a project by copying the **sim** folder in the `example` or `template` folder to the user directory. For example:
 
 ```bash
   $ export USER_DIR=$/WORK_DIR/hardware/vivado_desgin/user/user_xxx
@@ -345,7 +345,7 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
   $ cd ./sim
 ```
 
-还可以在用户目录下，使用`creat_prj.sh`帮助用户完成用户仿真文件夹的创建，例如：
+You can also run the `creat_prj.sh` command in the user directory to create a user simulation folder. For example:
 
 ```bash
   $ cd $WORK_DIR/hardware/vivado_desgin/user
@@ -353,13 +353,13 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
   $ cd ./user_pri_name/sim
 ```
 
-详细`create_prj.sh`命令的参数请参考[usr_template用户指南](../../template/readme.md)。
+For details about the parameters of the `create_prj.sh` command, see [usr_template User Guide](../../template/readme.md).
 
 <a id="sec-4-1-2" name="sec-4-1-2"></a>
 
-#### 创建用户测试用例
+#### Creating User Test Cases
 
-用户创建工程后，工程中会包含仿真文件夹，整个用户仿真文件夹目录如下：
+A project contains the simulation folder. The directory of the folder is as follows:
 
 ```bash
     sim/
@@ -378,7 +378,7 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
     |-- Makefile
 ```
 
-用户需要建立用户自己的Testcase，testcase的名称与用户建立的文件夹名称相同。用户可将example文件夹中的已有测试用例复制为自己的testcase，也可以自行创建。
+Create your own test cases. Ensure that the name of each test case is the same as that of the folder you created. You can copy the existing test cases in the example folder as your own test cases or create new ones.
 
 ```bash
   $ cd ./tests/sv
@@ -386,16 +386,16 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
   $ cp -r ./sv_demo_001/* xxx_test/ # Copy Example to Own Testcase
 ```
 
-其中测试用例可分为两部分，即**基础测试用例**以及**用户测试配置**。
-基础测试用例采用systemverilog语言编写，主要完成测试用例的主体流程；
-用户测试配置是用户的配置文件，主要决定测试用例中需要的激励、配置等参数。
+The user test cases are divided into two parts: **basic test cases** and **user test configurations**.
+Basic test cases are compiled using the SystemVerilog language and are used to complete the main process of test cases.
+Incentive and configuration parameters are obtained from these user test configuration files.
 
 <a id="sec-4-1-3" name="sec-4-1-3"></a>
 
-#### 修改仿真配置
+#### Modifying Simulation Configuration
 
-创建了测试用例目录后，用户还需要修改`scripts`目录中的`project_settings.cfg`文件，主要需要指定用户自定义仿真宏以及库文件。
-其中**USER_LIBS**与**SIM_MACRO**分别对应自定义库文件以及仿真宏。（如果没有可不填）
+After creating test case directories, modify the `project_settings.cfg` file in the `scripts` directory by designating user-defined simulation macros and library files.
+**USER_LIBS** and **SIM_MACRO** are user-defined library files and simulation macros. The two parameters are not required if there are no files or macros.
 
 ```bash
   $ vi ./scripts/project_settings.cfg
@@ -415,23 +415,23 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 
 <a id="sec-4-1-4" name="sec-4-1-4"></a>
 
-#### 编写基础测试用例
+#### Compiling Basic Test Cases
 
-基础测试用例采用systemverilog语言编写，主要完成测试用例的主体流程以及用户自定义组件的实例化与连接。
+Basic test cases are compiled using the SystemVerilog language, and are used to complete the main process of test cases and the instantiation and connection of user-defined components.
 
-基础测试用例的编写应遵循以下规则（详细用法请参考[仿真平台用户指导](./user_guide.md)）：
+The compilation of basic test cases must comply with the following rules. For details, see [Simulation Platform User Guide](./user_guide.md.)
 
-- 基础测试用例必须继承自`tb_test`类或者其子类；
+- Basic test cases must be inherited from `tb_test` or its subcategories.
 
-- 基础测试用例中需要显式调用宏`tb_register_test`来完成测试用例的注册；
+- Debug and display the macro `tb_register_test` to register test cases.
 
-- 基础测试用例的new需要显式调用父类的`new`方法；
+- Debug and display the `new` method of the parent category for the new in basic test cases.
 
-- 建议用户将测试的主体部分放到任务`run`中；
+You are advised to place the main part of the test in the `run` task.
 
-- 如果用户需要进行结果检测，错误请使用`tb_error`宏上报，经过该宏上报的错误最终会使得用例失败。
+- To check results, use the `tb_error` macro to report the error (if any). Cases will fail if there are errors reported with this macro.
 
-基础测试用例可参考以下方式编写：
+Compile basic test cases in the following way:
 
 ```verilog
     class tb_reg_test extends tb_test;
@@ -484,27 +484,27 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 
 <a id="sec-4-1-5" name="sec-4-1-5"></a>
 
-#### **编写用户测试配置**
+#### **Compiling User Test Configuration Files**
 
-用户测试配置主要用于确定测试用例中的激励、配置的数据的内容，采用配置文件的方法编写。配置文件语法格式如下：
+User test configurations are used to determine the incentive and configuration data in the test cases, and are compiled in the same way as configuring files. The configuration file format is as follows:
 
 ```bash
-  // 可使用'//'或者'#'作为注释，注释不会被传入Testbench
+  // Use '//' or '' '#' to for comments, which will not be sent to the Testbench.
 
-  // 参数传递语法格式为+xxx_name=yyyyy，其中xxx_name为参数的名字，yyyyy为参数内容（*注意：'='两端都不能有空格*）
-  // 参数内容可以为10进制数字（123、456）、16进制数字（'hxxx）、字符串（abcd、"xxyyzz"）以及序列
-  // 序列为多个参数的组合，中间使用','或者'；'进行分割，例如123,456,'h678,aaa
+  // The format of the parameter transmission is +xxx_name=yyyyy, where xxx_name is the parameter name, and yyyyy is the parameter content. (*Note: The two ends of '=' cannot have spaces.*)
+  // The parameter content can be a decimal number (123, 456), a hexadecimal number ('hxxx), a string (abcd, "xxyyzz"), or a sequence.
+  // If the sequence is a combination of multiple parameters, separate them with a comma ',' or 'semicolon'. (for example, 123,456,'h678, aaa)
 
-  # TEST_NAME表示测试用例对应的基础test
+  # TEST_NAME indicates the basic test corresponding to the test case.
   +TEST_NAME=tb_reg_test
 
-  # DUMP_FSDB表示是否DUMP VERDI波形
+  # DUMP_FSDB indicates whether the VERDI wave needs to be dumped.
   +DUM_FSDB=0
 
   ...
 ```
 
-配置文件中包含诸多配置项，其中每个配置项的名称定义在用户cfg中，例如：
+A configuration file contains many configuration items. The name of each item is defined in the user cfg. For example:
 
 ```verilog
     class tb_reg_cfg;
@@ -514,7 +514,7 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
         int name;
 
         function new();
-            // get_string第一个参数为参数在配置文件中的名称，第二个参数为默认值
+            // The first parameter of get_string is the name of the parameter in the configuration file, and the second parameter is the default value.
             name   = config_opt::get_string("NAME","noname");
             adder0 = config_opt::get_int("ADDER0", 'd0     );
             adder1 = config_opt::get_int("ADDER1", 'd0     );
@@ -523,7 +523,7 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
     endclass : tb_reg_cfg
 ```
 
-配置文件中对应的配置项如下：
+The configuration items in the configuration file are as follows:
 
 ```bash
   +NAME=TEST_NAME
@@ -533,50 +533,50 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 
 <a id="sec-4-2" name="sec-4-2"></a>
 
-### **对用户测试用例进行仿真**
+### **Simulating User Test Cases**
 
-执行用户测试用例的方法与仿真示例的方法类似，仅需要修改仿真根目录即可，详细过程请参考章节[对示例进行仿真](#sec-3-1)。
+The method of simulating user test cases is similar to that of simulating an example. You only need to modify the simulation root directory. For details, see [Simulating Examples](#sec-3-1).
 
 <a id="sec-5" name="sec-5"></a>
 
-## **用户自定义组件**
+## **User-Defined Components**
 
 ---
 
-如果有复杂激励、参考模型的需求，用户需要自定义这些组件。目前可支持用户自定义的组件如下：
+You need to customize complex incentive and reference models. The following components can be customized:
 
-- [激励](#sec-5-1)
-- [配置](#sec-5-2)
-- [CPU模型](#sec-5-3)
-- [参考模型](#sec-5-4)
+- [Incentives](#sec-5-1)
+- [Configuration](#sec-5-2)
+- [CPU Models](#sec-5-3)
+- [Reference Models](#sec-5-4)
 
 <a id="sec-5-1" name="sec-5-1"></a>
 
-### **用户自定义激励**
+### **User-Defined Incentives**
 
 ---
 
-用户激励分为三部分，即**激励产生方法**、**激励生成器**以及**激励配置**。如下图所示：
+User incentives are divided into three parts: **incentive generating method **, **incentive generator**, and **incentive configuration**, as shown in the following figure.	
 
-<img src="./images/stim.png" alt="激励组件框图">
+<img src="./images/stim.png" alt="Incentive component structure">
 
-其中激励生产器本身比不包含激励的产生方法，故用户无需修改；如需自定义激励仅需要修改激励产生方法以及配置。
+The incentive generator does not include the method of generating incentives. Therefore, you do not need to modify it. If you need to customize incentives, modify the incentive generating method and configuration.
 
-如果需要自己定义激励的产生方法，可采用以下三个步骤实现：
+If you need to define the method for generating an incentive, perform the following three steps:
 
 <a id="sec-5-1-1" name="sec-5-1-1"></a>
 
-#### 创建用户激励
+#### Creating User Incentives
 
-用户激励可放在`$USER_DIR/sim`文件夹下的`common`或用户`testcase`目录下的`base`文件夹。
+User incentives can be stored in `common` of the `$USER_DIR/sim` folder or the `base` folder in the user `testcase` directory.
 
-用户激励需继承自`$LIB_DIR/sim/bench/stim`文件夹中的`axi_stims.sv`，所以建议用户直接copy该文件到上述文件夹下，例如：
+User incentives must be inherited from `axi_stims.sv` in the `$LIB_DIR/sim/bench/stim` folder. Therefore, you are advised to copy the file to the folder. For example:
 
 ```bash
   $ cp $LIB_DIR/sim/bench/stim/axi_stims.sv $USER_DIR/sim/common/user_stim.sv
 ```
 
-或
+or
 
 ```bash
   $ cp $LIB_DIR/sim/bench/stim/axi_stims.sv $USER_DIR/sim/testcase/sv/base/user_stim.sv
@@ -584,28 +584,28 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 
 <a id="sec-5-1-2" name="sec-5-1-2"></a>
 
-#### 修改用户激励
+#### Modifying User Incentives
 
-用户可以按照自己的需求修改`user_stim.sv`文件。
+Modify the `user_stim.sv` file as required.
 
-修改user_stim.sv有以下几个建议或要求：
+Suggestions or requirements for the modification:
 
-- `user_stim.sv`必须继承自`axi_stims`类；
+- `user_stim.sv` must be inherited from `axi_stims`.
 
-- 如果需要自定义激励的产生方法，请重载任务`gen_pkt`；
+- To customize the method of generating incentives, reload the task `gen_pkt`.
 
-- 如果需要自定义激励的发送方法，请重载任务`send_pkt`；
+- To customize the method of sending incentives, reload the task `send_pkt`.
 
-例如：
+For example:
 
 ```verilog
     class user_stims extends axi_stims;
         ...
         // Stim constraint
         constraint axi_data_user_constraint {
-        // 如果不使用VIVADO作为仿真器，在下面编写用户自己的的激励产生方式
-        // 如果使用VIVADO作为仿真器，则此段代码可删除
-        // Vivado仿真器不支持constraint
+        // If the Vivado is not used as the simulator, compile your own incentive generating mode.
+        // If the Vivado is used as the simulator, code can be deleted.
+        // Vivado simulator does not support constraint.
         `ifndef VIVADO
             m_item.id    == 'd0;
             m_item.addr inside {[m_cfg.axi_addr_min : m_cfg.axi_addr_max]};
@@ -664,19 +664,19 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 
 <a id="sec-5-1-3" name="sec-5-1-3"></a>
 
-#### 绑定用户激励
+#### Associating User Incentives
 
-修改用户激励完成后，还需要将自己编写的激励绑定到激励生成器上，实现最终的激励产生。这部分实现需要在基础测试用例中实现。例如：
+Associate modified incentives with the incentive generator to generate incentives. This step must be performed in basic test cases. For example:
 
-用户可编辑`tb_test_user`(用户基础testcase)，在`build`以及`connect`方法中实现用户激励的创建与绑定。详细方法请参考章节[在测试用例中创建连接用户自定义组件](#sec-5-5)。
+Users can edit `tb_test_user` (a basic test case of the user), and create and associate user incentives in `build` and `connect` methods. For details, see [Creating and Connecting User-Defined Components in Test Cases](#sec-5-5)".
 
 <a id="sec-5-1-4" name="sec-5-1-4"></a>
 
-#### 启动用户激励
+#### Starting User Incentives
 
-用户可在完成激励实例化与绑定后通过激励组件方法<kbd>start</kbd>启动激励发送，并通过<kbd>stop</kbd>方法手动停止激励发送或通过<kbd>wait_done</kbd>方法等待激励发送完成后自动停止。
+After completing the incentive instantiation and association, you can enable the incentive sending by using the incentive component method <kbd>start</kbd>, manually stop the incentive sending by using <kbd>stop</kbd>, or wait until the incentives are sent and stopped automatically by using <kbd>wait_done</kbd>.
 
-例如：
+For example:
 
 ```verilog
     task run();
@@ -691,41 +691,41 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 
 <a id="sec-5-2" name="sec-5-2"></a>
 
-### **编写用户自定义配置**
+### **User-Defined Configuration**
 
 ---
 
-用户自定义配置可放在`$USER_DIR/sim`文件夹下的`common`或用户`testcase`目录下的`base`文件夹。
+The user-defined configuration can be stored in `common` of the `$USER_DIR/sim` folder or the `base` folder in the user `testcase` directory.
 
-用户自定义配置包含**自定义激励配置**与**自定义平台配置**。
+The user-defined configuration includes **user-defined incentive configurations** and **user-defined platform configurations**.
 
 <a id="sec-5-2-1" name="sec-5-2-1"></a>
 
-#### 编写自定义激励配置
+#### User-Defined Incentives
 
-如果是自定义激励配置，配置需继承自`$LIB_DIR/sim/bench/stim`文件夹中的`axi_stim_cfg.svh`，所以建议用户直接copy该文件到上述文件夹下，例如：
+Configurations must be inherited from `axi_stim_cfg.svh` in the `$LIB_DIR/sim/bench/stim` folder. You are advised to copy the file to the folder. For example:
 
 ```bash
   $ cp $LIB_DIR/sim/bench/stim/axi_stim_cfg.svh $USER_DIR/sim/common/user_stim_cfg.svh
 ```
 
-或
+or
 
 ```bash
   $ cp $LIB_DIR/sim/bench/stim/axi_stim_cfg.svh $USER_DIR/sim/testcase/sv/base/user_stim_cfg.svh
 ```
 
-然后再按照用户自己的需求修改`user_stim_cfg.svh`文件，例如：
+Then, modify the `user_stim_cfg.svh` file as required. For example:
 
 ```verilog
     class user_stim_cfg extends axi_stim_cfg;
-        // 用户自行定义配置变量
+        //User-defined variables
         bit [63 : 0]      axi_addr_min  ;  // Address low range
         bit [63 : 0]      axi_addr_max  ;  // Address max range
         int               axi_data_len  ;  // Data length
         ...
         function new();
-            // 获得配置文件中的内容
+            // Obtain the content from the configuration file.
             axi_addr_min  = config_opt#(64)::get_bits("axi_addr_min"  );
             axi_addr_max  = config_opt#(64)::get_bits("axi_addr_max"  );
             axi_data_len  = config_opt#(32)::get_bits("axi_data_len"  );
@@ -734,21 +734,21 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
     endclass : user_stim_cfg
 ```
 
-最后，用户需要将自己编写的激励配置绑定到对应的激励上，实现最终的激励产生。这部分实现需要在基础Testcase中实现。
+Finally, associate incentives compiled by yourself to the corresponding incentive to generate incentives. This step must be performed in basic test cases.
 
-用户可编辑tb_test_user(用户基础testcase)，在`build`以及`connect`方法中实现用户激励的创建与绑定。详细方法请参考章节[在测试用例中创建连接用户自定义组件](#sec-5-5)。
+Users can edit `tb_test_user` (a basic test case of the user), and create and associate user incentives in `build` and `connect` methods. For details, see [Creating and Connecting User-Defined Components in Test Cases](#sec-5-5)".
 
 <a id="sec-5-2-2" name="sec-5-2-2"></a>
 
-#### 编写自定义平台配置
+#### Configuring the User-Defined Platform
 
-如果是自定义平台配置，则无继承关系约束，用户可直接新建该文件到上述文件夹下，例如：
+There is no inheritance restriction for user-defined platform configurations. Create a new file in the following folder. For example:
 
 ```bash
   $ touch -f $USER_DIR/sim/common/user_tb_cfg.svh
 ```
 
-然后再按照用户自己的需求修改`user_tb_cfg.svh`文件，例如：
+Then, modify the `user_tb_cfg.svh` file as required. For example:
 
 ```verilog
     class user_tb_cfg;
@@ -761,35 +761,35 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
     endclass : user_tb_cfg
 ```
 
-最后，用户需要将自己编写的激励配置绑定到对应的激励上，实现最终的激励产生，详细步骤见[编写自定义激励配置](#5-2-1)。
+Finally, associate incentives compiled by yourself to the corresponding incentive to generate incentives. For details, see [Compiling User-Defined Incentive Configuration](#5-2-1).
 
 <a id="sec-5-3" name="sec-5-3"></a>
 
-### **编写用户CPU模型回调**
+### **Compiling Callback of the User CPU Model**
 
 ---
 
-CPU模型主要用于模拟CPU与`SHELL`的行为，与`UL`按照预定义规则完成交互。CPU模型可分为两部分：**CPU模型**以及**CPU模型回调**。如下图所示：
+The CPU model is used to simulate behaviors of the CPU and `SHELL` and interact with the `UL` according to predefined rules. The CPU model consists of two parts: **CPU model ** and **CPU model callback **, as shown in the following figure.
 
-<img src="./images/model.png" alt="CPU模型组件框图">
+<img src="./images/model.png" alt="CPU Model Components Diagram">
 
-其中CPU模型中不包含任何交互相关的实现，仅提供接口与其他组件连接，所以如果用户需要自己定义CPU模型的行为，只需自定义CPU模型回调。
+The CPU model does not include any interaction implementation and provides only interfaces to other components. Therefore, if you need to customize behaviors of the CPU model, just customize its callback function.
 
-编写CPU模型回调可分为以下三个步骤：
+To compile the CPU model callback, perform the following three steps:
 
 <a id="sec-5-3-1" name="sec-5-3-1"></a>
 
-#### 创建用户CPU模型回调
+#### **Creating Model Callback of the User CPU**
 
-用户CPU模型回调可放在`$USER_DIR/sim`文件夹下的`common`或用户`testcase`目录下的`base`文件夹。
+The model callback of the user CPU can be stored in `common` of the `$USER_DIR/sim` folder or the `base` folder in the user `testcase` directory.
 
-用户CPU模型回调需继承自`$LIB_DIR/sim/bench/rm`文件夹中的`cpu_model_cb.svh`，所以建议用户直接copy该文件到上述文件夹下，例如：
+The model callback of the user CPU must be inherited from `cpu_model_cb.svh` in the `$LIB_DIR/sim/bench/rm` folder. Therefore, you are advised to copy the file to the folder. For example:
 
 ```bash
   $ cp $LIB_DIR/sim/bench/rm/cpu_model_cb.svh $USER_DIR/sim/common/user_model_cb.svh
 ```
 
-或
+or
 
 ```bash
   $ cp $LIB_DIR/sim/bench/rm/cpu_model_cb.svh $USER_DIR/sim/testcase/sv/base/user_model_cb.svh
@@ -797,38 +797,38 @@ CPU模型主要用于模拟CPU与`SHELL`的行为，与`UL`按照预定义规则
 
 <a id="sec-5-3-2" name="sec-5-3-2"></a>
 
-#### 修改用户CPU模型回调
+#### **Modifying Model Callback of the User CPU**
 
-CPU模型回调模块提供了三个任务可供用户重载，这三个任务分别为：
+The CPU model callback module provides three tasks for users to reload. The three tasks are as follows:
 
-- request_process：
+- request_process
 
-    主要负责CPU模型对激励的处理，即收到激励发送的数据后，按照规则产生BD、将数据存入本地虚拟memory中，再将数据发送给`RM`，完成预期。
+    Processes incentives. After receiving the data sent by incentives, the task generates BDs according to the rules, stores data to the local virtual memory, and then sends data to the `RM`.
 
 - response_process
 
-    主要负责完成CPU模型对请求的相应返回，即收到`UL`发送的读请求后，按照BD中的指示从本地虚拟memory中读取数据，再将数据发送给`UL`。
+    Returns requests. After receiving the read request sent by the `UL`, the task reads data from the local virtual memory according to the instructions in the BD, and then returns data to the `UL`.
 
 - user_process
 
-    主要负责完成CPU模型对`UL`发送数据的处理，即收到`UL`发送的写数据和BD后，将数据与BD拼接在一起，再将数据发送给`RM`，完成预期。
+    Processes data sent by the `UL`. After receiving the write data and BDs from the `UL`, the task combines data with BDs, and then sends data to the `RM`.
 
-用户可以按照自己的需求对`user_model_cb.svh`文件中的三个任务进行重载。
+You can reload three tasks in the `user_model_cb.svh` file as required.
 
-例如：
+For example:
 
 ```verilog
     class user_model_cb extends cpu_model_cb;
         ...
-        // 该方法主要完成CPU模型对激励的处理
+        / / This method processes incentives.
         task request_process();
             ...
         endtask : request_process
-        // 该方法主要完成CPU模型根据请求返回响应
+        / / This method returns requests.
         task cpu_model_cb::response_process();
             ...
         endtask : response_process
-        // 该方法主要完成CPU模型的其他处理
+        / / This method processes other tasks.
         task cpu_model_cb::user_process();
             ...
         endtask : user_process
@@ -837,113 +837,112 @@ CPU模型回调模块提供了三个任务可供用户重载，这三个任务�
 
 <a id="sec-5-3-3" name="sec-5-3-3"></a>
 
-#### 绑定用户CPU模型回调
+#### **Associating Model Callback of the User CPU**
 
-修改用户CPU模型回调完成后，还需要将自己编写的CPU模型回调绑定到CPU模型上，实现最终的CPU模型自定义。这部分实现需要在基础测试用例中实现。
+After modifying the model callback, associate the callback compiled by yourself with the CPU model. This step must be performed in basic test cases.
 
-用户可编辑`tb_test_user`(用户基础testcase)，在`build`以及`connect`方法中实现用户CPU模型回调的创建与绑定。详细方法请参考章节[在测试用例中创建连接用户自定义组件](#sec-5-5)。
+Users can edit `tb_test_user` (a basic test case of the user), and create and associate user incentives in `build` and `connect` methods. For details, see [Creating and Connecting User-Defined Components in Test Cases](#sec-5-5)".
 
 <a id="sec-5-4" name="sec-5-4"></a>
 
-### **编写用户参考模型**
+### **Compiling User Reference Models**
 
 ---
 
-用户参考模型主要用于用户数据的预期以及对输出相应的核查。
+The user reference models are used to predict the user data and check the output.
 
-如果用户需要自己定义参考模型(RM)，首先需创建参考模型，RM可放在`$USER_DIR/sim`文件夹下的`common`或用户`testcase`目录下的`base`文件夹。
+To customize a reference model (RM), create a reference model first. The RM can be stored in `common` of the `$USER_DIR/sim` folder or the `base` folder in the `testcase` directory.
 
-其次，用户CPU模型回调需继承自`$LIB_DIR/sim/bench/rm`文件夹中的`axi_rm.sv`，所以建议用户直接copy该文件到上述文件夹下，例如：
+The model callback of the user CPU must be inherited from `axi_rm.sv` in the `$LIB_DIR/sim/bench/rm` folder. Therefore, you are advised to copy the file to the folder. For example:
 
 ```bash
   $ cp $LIB_DIR/sim/bench/rm/axi_rm.sv $USER_DIR/sim/common/user_rm.sv
 ```
 
-或
+or
 
 ```bash
   $ cp  $LIB_DIR/sim/bench/rm/axi_rm.sv $USER_DIR/sim/testcase/sv/base/user_rm.sv
 ```
 
-用户RM模块提供了两个函数可供用户重载，这两个函数分别为：
+The RM module provides two functions for users to reload. The two functions are as follows:
 
-- insert：
+- insert:
 
-    主要完成激励数据的预期。
+    Completes the expectation of the incentive data.
 
 - check
 
-    主要完成对返回数据的处理与比对。
+    Processes and compares returned data.
 
-用户可按照自己的需求修改`user_rm.sv`文件。由于`axi_rm.sv`中实现了记分牌的功能，所以建议用户以如下方式修改该组件：
+Modify the `user_rm.sv` file as required. As the `axi_rm.sv` has the scoreboard function, you are advised to modify components as follows:
 
-- 1 用户自定义RM需要继承自`axi_rm.sv`；
+- 1 The user-defined RM must be inherited from `axi_rm.sv`.
+- 2 In the `insert` and `check` functions reloaded by users, it is recommended that the parent class be explicitly invoked in the last phase to complete the expectation and comparison of the scoreboard.
 
-- 2 用户重载的函数`insert`和`check`中建议最后阶段显式调用父类的方法完成记分牌的预期与比对；
-
-例如：
+For example:
 
 ```verilog
     class user_rm extends axi_rm;
         ...
-        // 该方法主要完成激励部分的预期
+        // This method completes the expectation of the incentive part.
         function void insert(ref DATA data);
             ...
         endfunction : insert
-        // 该方法主要完成响应的核查
+        // This method checks responses.
         function void check(ref DATA data);
             ...
         endfunction : check
     endclass : user_rm
 ```
 
-最后，用户需要把自己编写的RM和其他组件连接起来。这部分实现需要在基础Testcase中实现。例如：
+Finally, connect the RM compiled by yourself to other components. This step must be performed in basic test cases. For example:
 
-用户可编辑tb_test_user(用户基础testcase)，在`build`以及`connect`方法中实现RM的创建与连接。详细方法请参考章节[在测试用例中创建连接用户自定义组件](#sec-5-5)。
+Users can edit `tb_test_user` (a basic test case of the user), and create and associate the RM in `build` and `connect` methods. For details, see [Creating and Connecting User-Defined Components in Test Cases](#sec-5-5)".
 
 <a id="sec-5-5" name="sec-5-5"></a>
 
-### **在测试用例中创建连接用户自定义组件**
+### **Creating and Connecting User-Defined Components in Test Cases**
 
 ---
 
-如果用户编写了自定义的RM、激励或者其他callback，还需要实例化并且连接后才可使用。实例化与连接的方法如下：
+If you have compiled a customized RM, incentives, or other callback, instantiating and connecting the callback before using it. The instantiation and connection methods are as follows:
 
 ```verilog
     ...
-    // 实例化用户自定义组件
+    // Instantiating user-defined components
     function void build();
         m_user_tb_cfg   = new();
         m_user_stim_cfg = new();
-        m_user_cb       = new("m_user_cb"  ); // 实例化用户回调
-        m_user_stim     = new("m_user_stim"); // 实例化用户激励
-        m_user_rm       = new("m_user_rm"  ); // 实例化RM
+        m_user_cb       = new("m_user_cb"  ); // Instantiating user callback
+        m_user_stim     = new("m_user_stim"); // Instantiating user incentives
+        m_user_rm       = new("m_user_rm"  ); // Instantiating the RM
         super.build();
     endfunction : build
-    // 连接用户自定义组件
+    // Connecting user-defined components
     function void connect();
         super.connect();
-        // 绑定激励配置到激励方法
+        // Associating incentive configurations with incentive methods.
         m_user_stim.set_cfg(m_user_stim_cfg);
-        // 连接RM
+        / / Connecting the RM
         m_user_cb.m_rm = m_user_rm;
-        // 绑定用户激励与激励生成器
+        // Associating user incentives with incentive generators
         m_tb_env.m_axi_gen.reg_stims(m_user_stim);
-        // 添加用户回调到组件
+        / / Adding user callback to components
         m_tb_env.m_cpu_model.append_callback(m_user_cb);
     endfunction : connect
 ```
 
 <a id="sec-6" name="sec-6"></a>
 
-## **VIP集成**
+## **Integrating VIPs **
 
 ---
 
-**VIP**(*Verification Intellectual Property*)即**验证IP**，指的是某些设计好的验证组件，用于方便用户对复杂协议或功能进行验证。
+**Verification Intellectual Property** (*VIP*) are verification components designed for users to verify complex protocols or functions.
 
-用户可将VIP放到`$LIB_DIR/sim/vip`目录，也可将VIP放置在用户`$USER_DIR/sim/lib`目录中，只要放在该目录中的代码，仿真平台会自动编译。如果用户集成的VIP有独立的宏或者仿真选项，可在`project_setting.cfg`文件中的制定选项中进行添加。
+Place VIPs in the `$LIB_DIR/sim/vip` directory or the `$USER_DIR/sim/lib` directory. The simulation platform automatically compiles code in either of the two directories. If the integrated VIPs have independent macro or simulation options, add them to the customized options in the `project_setting.cfg` file.
 
-仿真平台默认情况下需要使用Xilinx的**DDR4仿真模型**以及**DDR4 RDIMM**仿真模型。这两个仿真模型默认情况下不会包含在仿真平台的VIP目录中，用户执行环境设置脚本`setup.sh`后会调用Vivado的接口自动生成这两个VIP。
+By default, the simulation platform uses the **DDR4 simulation model ** and **DDR4 RDIMM** simulation model of the Xilinx. By default, the two simulation models are not included in the VIP directory of the simulation platform. After you run the environment setting script `setup.sh`, the two VIP directories are automatically generated by invoking the interface of the Vivado.
 
-注意：仿真平台在调用Vivado的接口自动生成这两个VIP后会通过脚本对VIP的**部分代码进行修改**，所以请**不要随意修改**这两个VIP的内容。
+Note: After the simulation platform automatically generates the two VIPs by invoking the Vivado interface, **a part of code is modified** by running the setup.sh script. Do not modify the two VIPs without permissions.

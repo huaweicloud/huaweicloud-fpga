@@ -1,4 +1,4 @@
-#FPGA Development Suite
+# FPGA Development Suite
 [切换到中文版](./README_CN.md)
 
 # Contents

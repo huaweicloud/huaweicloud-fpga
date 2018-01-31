@@ -1,6 +1,6 @@
 Configuring the Development Environment
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-[切换到中文版](./SDAccel-based SDK Configuration and Compilation_cn.md)
+[切换到中文版](./SDAccel_based_SDK_Configuration_and_Compilation_cn.md)
 
 Compile and run the host program in the execution environment.
 ```

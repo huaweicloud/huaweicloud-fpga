@@ -1,7 +1,7 @@
 配置开发环境
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-[Switch to the English version](./SDAccel-based SDK Configuration and Compilation.md)
+[Switch to the English version](./SDAccel_based_SDK_Configuration_and_Compilation.md)
 
 在执行环境上编译主机程序并运行。
 

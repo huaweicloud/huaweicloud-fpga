@@ -1,7 +1,7 @@
 使用基于SDAccel的Example
 ========================
 
-[Switch to the English version](./Using an SDAccel-based Example.md)
+[Switch to the English version](./Using_an_SDAccel_based_Example.md)
 
 功能描述
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

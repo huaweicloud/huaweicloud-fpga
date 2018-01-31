@@ -1,6 +1,6 @@
 Implementation Process of SDAccel-based Hardware Development
 =======================
-[切换到中文版](./Implementation Process of SDAccel-based Hardware Development_cn.md)
+[切换到中文版](./Implementation_Process_of_SDAccel_based_Hardware_Development_cn.md)
 
 Contents
 -------------------------

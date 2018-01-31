@@ -1,6 +1,6 @@
 注册
 ----
-[Switch to the English version](./Register an FPGA image.md)
+[Switch to the English version](./Register_an_FPGA_image.md)
 
 用户使用AEI_Register.sh工具向FPGA镜像管理模块注册FPGA镜像。完成注册后，用户会获得一个FPGA镜像ID，可用于查询FPGA镜像的注册操作是否成功，以及后续的FPGA镜像加载、删除、关联等操作。
 

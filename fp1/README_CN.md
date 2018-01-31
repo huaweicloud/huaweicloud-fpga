@@ -193,7 +193,7 @@ Vivado开发模式采用DPDK的架构完成fpga与处理器的数据交互，详
 
 - SDx开发模式
 
-SDx开发模式采用Xilinx的SDAccel架构完成fpga与处理器的数据交互，详细编写以及调试用户应用的方法请参考[基于SDAccel的用户应用开发说明](./docs/Using an SDAccel-based Example_cn.md)。
+SDx开发模式采用Xilinx的SDAccel架构完成fpga与处理器的数据交互，详细编写以及调试用户应用的方法请参考[基于SDAccel的用户应用开发说明](./docs/Using_an_SDAccel_based_Example_cn.md)。
 
 
 <a id="sec-4-4" name="sec-4-4"></a>

@@ -1,7 +1,7 @@
 Implementation Process of Vivado-based Hardware Development
 =======
 
-[切换到中文版](./Implementation Process of Vivado-based Hardware Development_cn.md)
+[切换到中文版](./Implementation_Process_of_Vivado_based_Hardware_Development_cn.md)
 
 This section describes the Vivado operation process and development environment configuration.
 

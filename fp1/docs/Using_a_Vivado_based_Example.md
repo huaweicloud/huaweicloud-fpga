@@ -1,6 +1,6 @@
 Using a Vivado-based Example
 =======================
-[切换到中文版](./Using a Vivado-based Example_cn.md)
+[切换到中文版](./Using_a_Vivado_based_Example_cn.md)
 
 [Example 1 Operation Instructions](#Example 1 Operation Instructions)
 

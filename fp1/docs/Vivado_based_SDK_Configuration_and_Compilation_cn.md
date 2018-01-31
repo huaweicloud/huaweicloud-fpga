@@ -1,6 +1,6 @@
 基于vivado工具的SDK配置及编译
 ===========================
-[Switch to the English version](./Vivado-based SDK Configuration and Compilation.md)
+[Switch to the English version](./Vivado_based_SDK_Configuration_and_Compilation.md)
 
 [配置环境](#a)
 

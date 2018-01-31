@@ -1,7 +1,6 @@
 Registration
 ----
-
-[切换到中文版](./Register an FPGA image for a DPDK project_cn.md)
+[切换到中文版](./Register_an_FPGA_image_cn.md)
 
 Use AEI_Regsiter.sh to register an FPGA image with the image management module. After the registration, an ID is assigned to the FPGA image. The ID can be used to query the registration status, and load, delete, and associate the image.
 
@@ -11,22 +10,31 @@ Make the following preparations before the registration:
 
 #### Switch to the project directory where the scripts are stored.
 
-switch to the **prj** directory.
+-   For a DPDK project, switch to the **prj** directory.
 
-For example, for an example project, switch to the `huaweicloud-fpga/fp1/hardware/vivado_design/examples/example1/prj` directory.
+For example, for an example project, switch to the `/home/fp1/hardware/vivado_design/examples/example1/prj` directory.
 
+-   For an OpenCL project, switch to the **scripts** directory.
+
+For example, for an example project, switch to the `/home/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts` directory.
 
 #### Build a project. (If a project has been built, skip this step.)
 
-Run the `sh build.sh` command.
+-   For a DPDK project, run the `sh build.sh` command.
 
-Modify the `AEI_Register.cfg` file in the **script** directory. Set the **OBS_BUCKETNAME** option in the file to the OBS bucket name created in the configuration section. The **MODE** option uses the default value.
+-   For an OpenCL project, run the `sh compile.sh hw` command.
 
-The output information is as follows:
+     Modify the `AEI_Register.cfg` file in the **script** directory. Set the **OBS_BUCKETNAME** option in the file to the OBS bucket name created in the configuration section. The **MODE** option uses the default value.
+
+-   For a DPDK project, the output information is as follows:
 
     MODE=DPDK  
     OBS_BUCKETNAME=obs-fpga
 
+-   For an OpenCL project, the output information is as follows:
+
+    MODE=OCL  
+    OBS_BUCKETNAME=obs-fpga
 
 \----End
 
@@ -78,15 +86,15 @@ verifying the access_key,secret_key successfully
 verifying the password and /etc/cfg.file successfully  
 INFO: OCL Running  
 upload:
-'huaweicloud-fpga/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
+'/home/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
 -\> 's3://obs-fpga/bin_mmult_hw.xclbin'[part 1 of 3, 15MB] [1 of 1]  
 15728640 of 15728640100% in0s17.53 MB/sdone  
 upload:
-'huaweicloud-fpga/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
+'/home/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
 -\> 's3://obs-fpga/bin_mmult_hw.xclbin'[part 2 of 3, 15MB] [1 of 1]  
 15728640 of 15728640100% in0s17.15 MB/sdone  
 upload:
-'huaweicloud-fpga/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
+'/home/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
 -\> 's3://obs-fpga/bin_mmult_hw.xclbin'[part 3 of 3, 13MB] [1 of 1]  
 14380204 of 14380204100% in0s18.29 MB/sdone  
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#  

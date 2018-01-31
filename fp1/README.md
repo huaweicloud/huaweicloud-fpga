@@ -195,7 +195,7 @@ If you need to modify the driver, see [DPDK-based Driver Development Description
 
 - SDx Development Mode
 
-SDx development mode uses the Xilinx SDAccel architecture to exchange data between the FPGA and processors. For details about how to compile and debug user applications, see [Using an SDAccel-based Example](./docs/Using an SDAccel-based Example.md).
+SDx development mode uses the Xilinx SDAccel architecture to exchange data between the FPGA and processors. For details about how to compile and debug user applications, see [Using an SDAccel-based Example](./docs/Using_an_SDAccel_based_Example.md).
 
 <a id="sec-4-4" name="sec-4-4"></a>
 

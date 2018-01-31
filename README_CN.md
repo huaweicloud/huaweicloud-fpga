@@ -56,7 +56,7 @@ http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0069154765.html
 
 <a name="sec_2_1_1"></a>
 ### 2.1.1 生成dcp文件
-基于vivado的dcp文件开发详细步骤，参见[基于vivado的硬件开发流程](./fp1/docs/Implementation Process of Vivado-based Hardware Development_cn.md)。
+基于vivado的dcp文件开发详细步骤，参见[基于vivado的硬件开发流程](./fp1/docs/Implementation_Process_of_Vivado_based_Hardware_Development_cn.md)。
 
 <a name="sec_2_1_2"></a>
 ### 2.1.2 注册FPGA镜像
@@ -68,7 +68,7 @@ FPGA镜像管理工具fisclient是一款跨平台命令行工具，用于FPGA镜
 #### 步骤2 注册FPGA镜像
 用户使用AEI_Register.sh工具向FPGA镜像管理模块注册FPGA镜像。完成注册后，请记录并妥善保存返回结果里的ID，此ID将用于查询FPGA镜像的注册操作是否成功以及后续的软件开发中。注册的详细步骤请参见以下资源。
 
-[注册FPGA镜像](./fp1/docs/Register an FPGA image for a DPDK project_cn.md)
+[注册FPGA镜像](./fp1/docs/Register_an_FPGA_image_for_a_DPDK_project_cn.md)
 
 #### 步骤3 查询FPGA镜像
 在弹性云服务器中执行`fisclient`命令进入FPGA镜像管理工具fisclient登录界面，根据提示信息输入华为云账户密码，通过校验后进入fisclient命令行。在fisclient命令行中，用户可以执行相应的命令进行FPGA镜像的查询、删除和关联等操作。
@@ -110,7 +110,7 @@ FPGA镜像加载工具的编译和安装请参见[fpga_tool README](./fp1/tools/
 
 ![](./fp1/docs/media/vivado_example_cn.jpg)
 
-基于vivado的Example详细说明请见[使用基于vivado的Example](./fp1/docs/Using a Vivado-based Example_cn.md)。
+基于vivado的Example详细说明请见[使用基于vivado的Example](./fp1/docs/Using_a_Vivado_based_Example_cn.md)。
 
 <a name="sec_3"></a>
 # 3 通用型架构FPGA开发指南
@@ -128,11 +128,11 @@ FPGA镜像加载工具的编译和安装请参见[fpga_tool README](./fp1/tools/
 
 <a name="sec_3_1_1"></a>
 ### 3.1.1 生成xclbin文件
-基于SDAccel的xclbin文件开发详细步骤，请参见[基于SDAccel的硬件开发流程](./fp1/docs/Implementation Process of SDAccel-based Hardware Development_cn.md)。
+基于SDAccel的xclbin文件开发详细步骤，请参见[基于SDAccel的硬件开发流程](./fp1/docs/Implementation_Process_of_SDAccel_based_Hardware_Development_cn.md)。
 
 <a name="sec_3_1_2"></a>
 ### 3.1.2 注册FPGA镜像
-注册FPGA镜像依赖镜像管理工具Fisclient，请参照[2.1.2](#sec_2_1_2)节步骤1完成镜像管理工具的安装。在工具安装成功后，用户使用AEI_Register.sh工具向FPGA镜像管理模块注册FPGA镜像。注册的详细步骤请参见[注册FPGA镜像](./fp1/docs/Register an FPGA image for an OpenCL project_cn.md)。完成注册后，请记录并妥善保存返回结果里的ID，此ID将用于查询FPGA镜像的注册操作是否成功以及后续的软件开发中。
+注册FPGA镜像依赖镜像管理工具Fisclient，请参照[2.1.2](#sec_2_1_2)节步骤1完成镜像管理工具的安装。在工具安装成功后，用户使用AEI_Register.sh工具向FPGA镜像管理模块注册FPGA镜像。注册的详细步骤请参见[注册FPGA镜像](./fp1/docs/Register_an_FPGA_image_for_an_OpenCL_project_cn.md)。完成注册后，请记录并妥善保存返回结果里的ID，此ID将用于查询FPGA镜像的注册操作是否成功以及后续的软件开发中。
 > 用户可以使用Fisclient对注册结果进行查询，具体查询步骤参见[2.1.2](#sec_2_1_2)节步骤3。
 
 <a name="sec_3_1"></a>
@@ -159,6 +159,6 @@ FPGA镜像加载工具的编译和安装请参见[fpga_tool README](./fp1/tools/
 
 ![](./fp1/docs/media/SDAccel_example_cn.jpg)
 
-基于SDAccel的Example详细说明请见[使用基于SDAccel的Example](./fp1/docs/Using an SDAccel-based Example_cn.md)。
+基于SDAccel的Example详细说明请见[使用基于SDAccel的Example](./fp1/docs/Using_an_SDAccel_based_Example_cn.md)。
 
 \----End

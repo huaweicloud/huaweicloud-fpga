@@ -1,7 +1,7 @@
 注册
 ----
 
-[Switch to the English version](./Register an FPGA image for an OpenCL project.md)
+[Switch to the English version](./Register_an_FPGA_image_for_a_DPDK_project.md)
 
 用户使用AEI_Register.sh工具向FPGA镜像管理模块注册FPGA镜像。完成注册后，用户会获得一个FPGA镜像ID，可用于查询FPGA镜像的注册操作是否成功，以及后续的FPGA镜像加载、删除、关联等操作。
 
@@ -11,13 +11,14 @@
 
 #### 切换到工程的脚本目录。
 
-需要切换到工程中的“scripts”目录。
+需要切换到工程中的“prj”目录。
 
-例如，对于example工程，该目录为“`huaweicloud-fpga/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts`”。
+例如，对于example工程，该目录为“`huaweicloud-fpga/fp1/hardware/vivado_design/examples/example1/prj`”。
+
 
 #### 构建工程（若已完成工程的构建，则不需要再重复构建）。
 
-执行`sh compile.sh hw`命令构建工程。
+执行`sh build.sh`命令构建工程。
 
 编辑工程脚本目录下的`AEI_Register.cfg`文件。将文件中的**OBS_BUCKETNAME**选项的内容配置为在配置章节中创建的OBS桶名，**MODE**选项使用默认值，无需重新配置。
 
@@ -25,7 +26,7 @@
 
 配置后的信息如下回显所示。
 
-    MODE=OCL  
+    MODE=DPDK  
     OBS_BUCKETNAME=obs-fpga
 
 \----结束

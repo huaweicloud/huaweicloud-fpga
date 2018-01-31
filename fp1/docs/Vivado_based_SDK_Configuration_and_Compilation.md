@@ -1,7 +1,7 @@
 Vivado-based SDK Configuration and Compilation
 ===========================
 
-[切换到中文版](./Vivado-based SDK Configuration and Compilation_cn.md)
+[切换到中文版](./Vivado_based_SDK_Configuration_and_Compilation_cn.md)
 
 [Configuring the Environment](#a)
 

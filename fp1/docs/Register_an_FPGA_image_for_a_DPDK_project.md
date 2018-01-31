@@ -1,7 +1,7 @@
 Registration
 ----
 
-[切换到中文版](./Register an FPGA image for an OpenCL project_cn.md)
+[切换到中文版](./Register_an_FPGA_image_for_a_DPDK_project_cn.md)
 
 Use AEI_Regsiter.sh to register an FPGA image with the image management module. After the registration, an ID is assigned to the FPGA image. The ID can be used to query the registration status, and load, delete, and associate the image.
 
@@ -11,21 +11,22 @@ Make the following preparations before the registration:
 
 #### Switch to the project directory where the scripts are stored.
 
+switch to the **prj** directory.
 
-Switch to the **scripts** directory.
+For example, for an example project, switch to the `huaweicloud-fpga/fp1/hardware/vivado_design/examples/example1/prj` directory.
 
-For example, for an example project, switch to the `huaweicloud-fpga/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts` directory.
 
 #### Build a project. (If a project has been built, skip this step.)
 
-Run the `sh compile.sh hw` command.
+Run the `sh build.sh` command.
 
 Modify the `AEI_Register.cfg` file in the **script** directory. Set the **OBS_BUCKETNAME** option in the file to the OBS bucket name created in the configuration section. The **MODE** option uses the default value.
 
 The output information is as follows:
 
-    MODE=OCL  
+    MODE=DPDK  
     OBS_BUCKETNAME=obs-fpga
+
 
 \----End
 

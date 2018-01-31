@@ -55,7 +55,7 @@ When a high-performance architecture FACS is used, the FPGA hardware development
 
 <a name="sec_2_1_1"></a>
 ### 2.1.1 Generating a DCP File
-For details about how to develop a .dcp file based on the Vivado, see [Vivado-based Hardware Development Process](./fp1/docs/Implementation Process of Vivado-based Hardware Development.md).
+For details about how to develop a .dcp file based on the Vivado, see [Vivado-based Hardware Development Process](./fp1/docs/Implementation_Process_of_Vivado_based_Hardware_Development.md).
 
 <a name="sec_2_1_2"></a>
 ### 2.1.2 Registering an FPGA Image
@@ -67,7 +67,7 @@ For details, please see the chapter of installation in [fisclient README](./cli/
 #### Step 2: Register an FPGA image
 You can use AEI_Register.sh to register an FPGA image with the image management module. After the registration, an ID is assigned to the FPGA image. Please record this ID, because it can be used to query the registration status, and load, delete, and associate the image.
 
-[Registering an FPGA Image](./fp1/docs/Register an FPGA image for a DPDK project.md)
+[Registering an FPGA Image](./fp1/docs/Register_an_FPGA_image_for_a_DPDK_project.md)
 
 #### Step 3: Query the FPGA image
 After configuring the files, run the `fisclient` command on the Linux shell to go to the fisclient login screen and enter the HWS account password when prompted. On the fisclient CLI, you can run corresponding commands to query, delete, or associate FPGA images.
@@ -110,7 +110,7 @@ For high-performance server architectures, FAC services provide three examples. 
 
 ![](./fp1/docs/media/vivado_example.jpg)
 
-For details, see [Using a Vivado-based Example](./fp1/docs/Using a Vivado-based Example.md).
+For details, see [Using a Vivado-based Example](./fp1/docs/Using_a_Vivado_based_Example.md).
 
 <a name="sec_3"></a>
 # 3 FPGA Development Guide for General-Purpose Architecture
@@ -128,11 +128,11 @@ When a general-purpose architecture is used, the hardware development is based o
 
 <a name="sec_3_1_1"></a>
 ### 3.1.1 Generating an .xclbin File
-For details about how to develop an .xclbin file based on the SDAccel, see [SDAccel-based Hardware Development Process](./fp1/docs/Implementation Process of SDAccel-based Hardware Development.md).
+For details about how to develop an .xclbin file based on the SDAccel, see [SDAccel-based Hardware Development Process](./fp1/docs/Implementation_Process_of_SDAccel_based_Hardware_Development.md).
 
 <a name="sec_3_1_2"></a>
 ### 3.1.2 Registering an FPGA Image
-Before registering an FPGA image, install the image management tool fisclient by referring to step 1 in section [2.1.2](#sec_2_1_2). After the installation, you can use AEI_Register.sh to register an FPGA image with the image management module. For details about how to register an FPGA image, see [Registering an FPGA Image](./fp1/docs/Register an FPGA image for an OpenCL project.md). After the registration, an ID is assigned to the FPGA image. Please record this ID, because it can be used to query the registration status, and load, delete, and associate the image.
+Before registering an FPGA image, install the image management tool fisclient by referring to step 1 in section [2.1.2](#sec_2_1_2). After the installation, you can use AEI_Register.sh to register an FPGA image with the image management module. For details about how to register an FPGA image, see [Registering an FPGA Image](./fp1/docs/Register_an_FPGA_image_for_an_OpenCL_project.md). After the registration, an ID is assigned to the FPGA image. Please record this ID, because it can be used to query the registration status, and load, delete, and associate the image.
 
 > You can run the Fisclient command to query the registration result. For details, see step 3 in section [2.1.2](#sec_2_1_2).
 
@@ -160,6 +160,6 @@ When a general-purpose architecture is used, the Huawei FAC services provide thr
 
 ![](./fp1/docs/media/SDAccel_example.jpg)
 
-For details, see [Using an SDAccel-based Example](./fp1/docs/Using an SDAccel-based Example.md).
+For details, see [Using an SDAccel-based Example](./fp1/docs/Using_an_SDAccel_based_Example.md).
 
 \----End

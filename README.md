@@ -37,6 +37,11 @@ Before using the FPGA development suite, download the suite, modify the configur
 
 <a name="sec_1_2_2"></a>
 ### 1.2.2 Modifying the Configuration File and Configuring an FACS Image
+#### Step 1: Compile and install the FPGA image management tool
+The fisclient is a cross-platform command-line interface (CLI) tool used for FPGA image management, which is mandatory before FPGA image loading. By using fisclient, you can register, delete, and query FPGA images (AEIs), or manage the association between AEIs and elastic cloud server (ECS) images. You can associate an AEI with an ESC image, and release the AEI to the cloud market or share it with other users through the ESC image.
+
+For details, please see the chapter of installation in [fisclient README](./cli/fisclient/README.md).
+### step 2: Modifying the Configuration File and Configuring an FACS Image
 Before registering and querying an FPGA image, modify the configuration file and configure an FACS image. For details, visit: [http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0069154765.html](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0069154765.html).
 
 <a name="sec_2"></a>
@@ -59,17 +64,14 @@ For details about how to develop a .dcp file based on the Vivado, see [Vivado-ba
 
 <a name="sec_2_1_2"></a>
 ### 2.1.2 Registering an FPGA Image
+Before registering an FPGA image, if you have not installed this tool yet, please install the image management tool fisclient by referring to section [1.2.2](#sec_1_2_2).
 
-#### Step 1: Compile and install the FPGA image management tool
-The fisclient is a cross-platform command-line interface (CLI) tool used for FPGA image management, which is mandatory before FPGA image loading. By using fisclient, you can register, delete, and query FPGA images (AEIs), or manage the association between AEIs and elastic cloud server (ECS) images. You can associate an AEI with an ESC image, and release the AEI to the cloud market or share it with other users through the ESC image.
-
-For details, please see the chapter of installation in [fisclient README](./cli/fisclient/README.md).
-#### Step 2: Register an FPGA image
+#### Step 1: Register an FPGA image
 You can use AEI_Register.sh to register an FPGA image with the image management module. After the registration, an ID is assigned to the FPGA image. Please record this ID, because it can be used to query the registration status, and load, delete, and associate the image.
 
 [Registering an FPGA Image](./fp1/docs/Register_an_FPGA_image_for_a_DPDK_project.md)
 
-#### Step 3: Query the FPGA image
+#### Step 2: Query the FPGA image
 After configuring the files, run the `fisclient` command on the Linux shell to go to the fisclient login screen and enter the HWS account password when prompted. On the fisclient CLI, you can run corresponding commands to query, delete, or associate FPGA images.
 
 For details about how to use the fisclient to query the FPGA image, see [fisclient README](./cli/fisclient/README.md).
@@ -132,9 +134,9 @@ For details about how to develop an .xclbin file based on the SDAccel, see [SDAc
 
 <a name="sec_3_1_2"></a>
 ### 3.1.2 Registering an FPGA Image
-Before registering an FPGA image, install the image management tool fisclient by referring to step 1 in section [2.1.2](#sec_2_1_2). After the installation, you can use AEI_Register.sh to register an FPGA image with the image management module. For details about how to register an FPGA image, see [Registering an FPGA Image](./fp1/docs/Register_an_FPGA_image_for_an_OpenCL_project.md). After the registration, an ID is assigned to the FPGA image. Please record this ID, because it can be used to query the registration status, and load, delete, and associate the image.
+Before registering an FPGA image, if you have not installed this tool yet, please install the image management tool fisclient by referring to section [1.2.2](#sec_1_2_2). After the installation, you can use AEI_Register.sh to register an FPGA image with the image management module. For details about how to register an FPGA image, see [Registering an FPGA Image](./fp1/docs/Register_an_FPGA_image_for_an_OpenCL_project.md). After the registration, an ID is assigned to the FPGA image. Please record this ID, because it can be used to query the registration status, and load, delete, and associate the image.
 
-> You can run the Fisclient command to query the registration result. For details, see step 3 in section [2.1.2](#sec_2_1_2).
+> You can run the Fisclient command to query the registration result. For details, see step 2 in section [2.1.2](#sec_2_1_2).
 
 <a name="sec_3_1"></a>
 ## 3.2 Software Development Process

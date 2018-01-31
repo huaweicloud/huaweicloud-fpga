@@ -37,6 +37,12 @@
 
 <a name="sec_1_2_2"></a>
 ### 1.2.2 修改配置文件并配置镜像
+#### 步骤1 FPGA镜像管理工具的编译和安装
+FPGA镜像管理工具fisclient是一款跨平台命令行工具，用于FPGA镜像管理，而镜像管理是进行FPGA镜像加载前的必须步骤。通过fisclient，用户可以实现FPGA镜像的删除、查询等操作。此外，fisclient还提供了FPGA镜像（AEI，Accelerated Engine Image）和弹性云服务器镜像之间关联关系的管理功能。用户在创建AEI和弹性云服务器镜像之间的关联关系后，可以将弹性云服务器镜像发布到云市场或共享给其他用户，从而实现将AEI发布到云市场或共享给其他用户。
+
+管理工具的编译和安装请参见[fisclient README](./cli/fisclient/README_CN.md)安装部分。
+
+#### 步骤2 修改配置文件并配置加速服务器镜像
 在注册FPGA镜像和查询FPGA镜像前，需要完成对配置文件的修改以及FPGA加速服务器镜像的配置，配置的具体方法请参见 
 http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0069154765.html
 
@@ -60,17 +66,13 @@ http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0069154765.html
 
 <a name="sec_2_1_2"></a>
 ### 2.1.2 注册FPGA镜像
-
-#### 步骤1 FPGA镜像管理工具的编译和安装
-FPGA镜像管理工具fisclient是一款跨平台命令行工具，用于FPGA镜像管理，而镜像管理是进行FPGA镜像加载前的必须步骤。通过fisclient，用户可以实现FPGA镜像的删除、查询等操作。此外，fisclient还提供了FPGA镜像（AEI，Accelerated Engine Image）和弹性云服务器镜像之间关联关系的管理功能。用户在创建AEI和弹性云服务器镜像之间的关联关系后，可以将弹性云服务器镜像发布到云市场或共享给其他用户，从而实现将AEI发布到云市场或共享给其他用户。
-
-管理工具的编译和安装请参见[fisclient README](./cli/fisclient/README_CN.md)安装部分。
-#### 步骤2 注册FPGA镜像
+注册FPGA镜像依赖镜像管理工具Fisclient，如果您还未安装此工具，请参照[1.2.2](#sec_1_2_2)节完成镜像管理工具的安装及配置。
+#### 步骤1 注册FPGA镜像
 用户使用AEI_Register.sh工具向FPGA镜像管理模块注册FPGA镜像。完成注册后，请记录并妥善保存返回结果里的ID，此ID将用于查询FPGA镜像的注册操作是否成功以及后续的软件开发中。注册的详细步骤请参见以下资源。
 
 [注册FPGA镜像](./fp1/docs/Register_an_FPGA_image_for_a_DPDK_project_cn.md)
 
-#### 步骤3 查询FPGA镜像
+#### 步骤2 查询FPGA镜像
 在弹性云服务器中执行`fisclient`命令进入FPGA镜像管理工具fisclient登录界面，根据提示信息输入华为云账户密码，通过校验后进入fisclient命令行。在fisclient命令行中，用户可以执行相应的命令进行FPGA镜像的查询、删除和关联等操作。
 
 如何使用工具进行FPGA镜像查询请参见[fisclient README](./cli/fisclient/README_CN.md)查询部分。
@@ -132,8 +134,8 @@ FPGA镜像加载工具的编译和安装请参见[fpga_tool README](./fp1/tools/
 
 <a name="sec_3_1_2"></a>
 ### 3.1.2 注册FPGA镜像
-注册FPGA镜像依赖镜像管理工具Fisclient，请参照[2.1.2](#sec_2_1_2)节步骤1完成镜像管理工具的安装。在工具安装成功后，用户使用AEI_Register.sh工具向FPGA镜像管理模块注册FPGA镜像。注册的详细步骤请参见[注册FPGA镜像](./fp1/docs/Register_an_FPGA_image_for_an_OpenCL_project_cn.md)。完成注册后，请记录并妥善保存返回结果里的ID，此ID将用于查询FPGA镜像的注册操作是否成功以及后续的软件开发中。
-> 用户可以使用Fisclient对注册结果进行查询，具体查询步骤参见[2.1.2](#sec_2_1_2)节步骤3。
+注册FPGA镜像依赖镜像管理工具Fisclient，如果您还未安装此工具，请参照[1.2.2](#sec_1_2_2)节完成镜像管理工具的安装及配置。在工具安装成功后，用户使用AEI_Register.sh工具向FPGA镜像管理模块注册FPGA镜像。注册的详细步骤请参见[注册FPGA镜像](./fp1/docs/Register_an_FPGA_image_for_an_OpenCL_project_cn.md)。完成注册后，请记录并妥善保存返回结果里的ID，此ID将用于查询FPGA镜像的注册操作是否成功以及后续的软件开发中。
+> 用户可以使用Fisclient对注册结果进行查询，具体查询步骤参见[2.1.2](#sec_2_1_2)节步骤2。
 
 <a name="sec_3_1"></a>
 ## 3.2 通用型架构软件开发流程

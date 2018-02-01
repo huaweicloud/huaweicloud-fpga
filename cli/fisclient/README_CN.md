@@ -1,5 +1,5 @@
 # fisclient #
-[Switch to the English version](https://github.com/Huawei/huaweicloud-fpga/blob/master/cli/fisclient/README.md)<br/><br/>
+[Switch to the English version](README.md)<br/><br/>
 **fisclient** 是FIS（FPGA镜像服务）的命令行客户端，它将用于FPGA镜像管理的命令集成到一个shell中。
 
 - [1 运行环境要求](#1-运行环境要求)
@@ -32,7 +32,7 @@
 在安装之前，用户首先要确保已经以 **root** 身份登录弹性云服务器。
 
 ## 步骤1 绑定弹性IP ##
-如何为弹性云服务器绑定弹性IP请参见[绑定弹性IP]()。
+如何为弹性云服务器绑定弹性IP请参见[绑定弹性IP](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783971.html)。
 
 ## 步骤2 下载源码包 ##
 - 执行 **git clone https://github.com/Huawei/huaweicloud-fpga.git** 命令下载 **fisclient** 源码包（位于[FPGA开发套件](https://github.com/Huawei/huaweicloud-fpga)中）。
@@ -48,10 +48,10 @@
 
 > 安装过程中会下载并安装 **fisclient** 工具的依赖包，请耐心等待。
 
-- 执行 **cp cfg.file /etc** 命令将配置文件 **cfg.file** 复制到 **/etc** 目录下。如何配置 **/etc/cfg.file** 文件请参见[配置/etc/cfg.file文件]()。
+- 执行 **cp cfg.file /etc** 命令将配置文件 **cfg.file** 复制到 **/etc** 目录下。如何配置 **/etc/cfg.file** 文件请参见[配置/etc/cfg.file文件](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085784016.html)。
 
 # 3 介绍 #
-在完成[配置/etc/resolv.conf文件]()和[配置/etc/cfg.file文件]()后，用户通过在Linux操作系统的shell中执行 **fisclient** 命令进入fisclient登录界面，根据提示信息输入**华为云账户密码**，通过校验后进入fisclient命令行。在fisclient命令行中，用户可以执行相应的命令进行FPGA镜像的查询、删除、关联、解关联和查询关联等操作。
+在完成[配置/etc/resolv.conf文件](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783971.html)和[配置/etc/cfg.file文件](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085784016.html)后，用户通过在Linux操作系统的shell中执行 **fisclient** 命令进入fisclient登录界面，根据提示信息输入**华为云账户密码**，通过校验后进入fisclient命令行。在fisclient命令行中，用户可以执行相应的命令进行FPGA镜像的查询、删除、关联、解关联和查询关联等操作。
 <pre>
 [root@ ~]# fisclient
 please input the password:
@@ -179,8 +179,8 @@ Success: 204 No Content
 ### 共享FPGA镜像 ###
 当用户A想要将自己拥有的一个已注册成功的FPGA镜像共享给用户B时，需要完成以下步骤。以下假设用户A想将ID为 **4010b39c5d4\*\*\*\*\*\*\*\*\*\*f2cf8070c7e** 的 **通用型架构** 的FPGA镜像共享给用户B。 
 
-- 步骤1：从 **通用型架构** 的FPGA弹性云服务器创建一个ECS私有镜像，更多详细信息请参见[创建私有镜像]()。
-- 步骤2：获取创建的ECS私有镜像的镜像ID，更多详细信息请参见[获取镜像ID]()。以下假设创建的ECS私有镜像的镜像ID为 **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**。
+- 步骤1：从 **通用型架构** 的FPGA弹性云服务器创建一个ECS私有镜像，更多详细信息请参见[创建私有镜像](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783964.html)。
+- 步骤2：获取创建的ECS私有镜像的镜像ID，更多详细信息请参见[获取镜像ID](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783972.html)。以下假设创建的ECS私有镜像的镜像ID为 **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**。
 - 步骤3：关联待共享的FPGA镜像和创建的ECS私有镜像。
 
 用户A需要登录到FPGA弹性云服务器中，运行 **fisclient** 程序，然后执行fis关联子命令来关联FPGA镜像和ECS私有镜像。
@@ -190,19 +190,19 @@ Success: 204 No Content
 </pre>
 如果命令的回显信息为 **Success: 204 No Content**，则表示关联操作执行成功。
 
-- 步骤4：将创建的ECS私有镜像共享给用户B，更多细节信息请参见[共享私有镜像]()。
+- 步骤4：将创建的ECS私有镜像共享给用户B，更多细节信息请参见[共享私有镜像](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783965.html)。
 
 > ECS私有镜像在共享之后会变为 **共享镜像**，无法进行关联操作。因此，确保在共享镜像之前进行关联。
 
 ### 查询共享的FPGA镜像 ###
 当用户B想要使用用户A共享的FPGA镜像时，需要完成以下步骤。
 
-- 步骤1：接受用户A共享的ECS镜像，更多详细信息请参见[接受共享镜像]()。
+- 步骤1：接受用户A共享的ECS镜像，更多详细信息请参见[接受共享镜像](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783966.html)。
 - 步骤2：从用户A处获取共享的FPGA镜像的类型。在本示例中，FPGA镜像的类型是 **通用型架构**。
-- 步骤3：使用共享的ECS镜像创建一个与FPGA镜像相同类型的FPGA弹性云服务器，更多详细信息请参见[使用共享镜像创建FACS]()。在本示例中，用户B需要创建一个 **通用型架构** 的FPGA弹性云服务器。
+- 步骤3：使用共享的ECS镜像创建一个与FPGA镜像相同类型的FPGA弹性云服务器，更多详细信息请参见[使用共享镜像创建FACS](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783967.html)。在本示例中，用户B需要创建一个 **通用型架构** 的FPGA弹性云服务器。
 > 确保创建的FPGA弹性云服务器的类型与共享的FPGA镜像的类型相同。
 
-- 步骤4：获取共享的ECS镜像的镜像ID，更多详细信息请参见[获取镜像ID]()。在本示例中，共享的ECS镜像的镜像ID是 **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**。
+- 步骤4：获取共享的ECS镜像的镜像ID，更多详细信息请参见[获取镜像ID](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783972.html)。在本示例中，共享的ECS镜像的镜像ID是 **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**。
 - 步骤5：使用共享的ECS镜像的镜像ID作为参数来查询用户A共享的FPGA镜像。
 
 用户B需要登录到使用用户A共享的ECS镜像创建的FPGA弹性云服务器中，运行 **fisclient** 程序，然后执行fis查询关联子命令（将 **image-id** 参数设置为共享的ECS镜像的镜像ID）来查询用户A共享的FPGA镜像。
@@ -220,7 +220,7 @@ Success: 200 OK
 ### 取消FPGA镜像共享 ###
 当用户A想取消给用户B的FPGA镜像共享时，需要完成以下步骤。
 
-- 步骤1：取消给用户B的ECS镜像共享，更多详细信息请参见[取消共享镜像的共享]()。
+- 步骤1：取消给用户B的ECS镜像共享，更多详细信息请参见[取消共享镜像的共享](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783969.html)。
 - 步骤2：解关联共享的FPGA镜像和ECS镜像。
 
 用户A需要登录到FPGA弹性云服务器中，运行 **fisclient** 程序，然后执行fis解关联子命令来解关联FPGA镜像和ECS镜像。
@@ -398,7 +398,7 @@ Success: 200 OK
 | 参数 | 说明 | 取值 | 备注 |
 | --------- | ----------- | ----- | ------- |
 | **--fpga-image-id** | （必选）待关联的FPGA镜像的ID。 | **fpga-image-id**参数是由英文小写字母a-f，数字0-9组成的32位字符串。 | 在查询子命令执行成功后，用户可以在回显信息中查找到相应的FPGA镜像ID。 |
-| **--image-id** | （必选）待关联的弹性云服务器镜像的ID。 | **image-id**参数遵循IMS（镜像服务）的镜像ID限制。 | 如何获取 **image-id** 参数请参见[获取镜像ID]() |
+| **--image-id** | （必选）待关联的弹性云服务器镜像的ID。 | **image-id**参数遵循IMS（镜像服务）的镜像ID限制。 | 如何获取 **image-id** 参数请参见[获取镜像ID](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783972.html) |
 
 > FPGA镜像管理模块在进行关联操作时，要求弹性云服务器镜像的类型是 **private**，即私有镜像。而私有镜像在发布到云市场或进行共享操作后，镜像类型会分别变为 **market** 和 **shared**，从而无法进行关联操作。用户需要将已发布到云市场的镜像下架，或将已共享的镜像取消共享，才能进行关联操作。
 
@@ -496,7 +496,7 @@ Success: 204 No Content
 | 参数 | 说明 | 取值 | 备注 |
 | --------- | ----------- | ----- | ------- |
 | **--fpga-image-id** | （可选）待查询关联的FPGA镜像的ID。 | **fpga-image-id**参数是由英文小写字母a-f，数字0-9组成的32位字符串。 | 在查询子命令执行成功后，用户可以在回显信息中查找到相应的FPGA镜像ID。 |
-| **--image-id** | （可选）待查询关联的弹性云服务器镜像的ID。 | **image-id**参数遵循IMS（镜像服务）的镜像ID限制。 | 如何获取 **image-id** 参数请参见[获取镜像ID]() |
+| **--image-id** | （可选）待查询关联的弹性云服务器镜像的ID。 | **image-id**参数遵循IMS（镜像服务）的镜像ID限制。 | 如何获取 **image-id** 参数请参见[获取镜像ID](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783972.html) |
 | **--page** | （可选）分页查询时的页编号。 | **page**参数是[1,65535)范围内的十进制整数，并且不能包含+号。 | 由用户自行指定。 |
 | **--size** | （可选）分页查询时的页大小。 | **size**参数是[1,100]范围内的十进制整数，并且不能包含+号。 | 由用户自行指定。 |
 

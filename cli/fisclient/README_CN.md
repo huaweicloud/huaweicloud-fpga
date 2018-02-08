@@ -51,7 +51,7 @@
 - 执行 **cp cfg.file /etc** 命令将配置文件 **cfg.file** 复制到 **/etc** 目录下。如何配置 **/etc/cfg.file** 文件请参见[配置/etc/cfg.file文件](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085784016.html)。
 
 # 3 介绍 #
-在完成[配置/etc/resolv.conf文件](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783971.html)和[配置/etc/cfg.file文件](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085784016.html)后，用户通过在Linux操作系统的shell中执行 **fisclient** 命令进入fisclient登录界面，根据提示信息输入**华为云账户密码**，通过校验后进入fisclient命令行。在fisclient命令行中，用户可以执行相应的命令进行FPGA镜像的查询、删除、关联、解关联和查询关联等操作。
+在完成[配置/etc/resolv.conf文件](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085784015.html)和[配置/etc/cfg.file文件](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085784016.html)后，用户通过在Linux操作系统的shell中执行 **fisclient** 命令进入fisclient登录界面，根据提示信息输入**华为云账户密码**，通过校验后进入fisclient命令行。在fisclient命令行中，用户可以执行相应的命令进行FPGA镜像的查询、删除、关联、解关联和查询关联等操作。
 <pre>
 [root@ ~]# fisclient
 please input the password:

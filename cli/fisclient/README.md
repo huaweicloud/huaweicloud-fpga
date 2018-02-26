@@ -1,5 +1,5 @@
 # fisclient #
-[切换到中文版](https://github.com/Huawei/huaweicloud-fpga/blob/master/cli/fisclient/README_CN.md)<br/><br/>
+[切换到中文版](README_CN.md)<br/><br/>
 **fisclient** is a command-line client for FIS (FPGA Image Service) that brings the command set for FPGA image management together in a single shell.
 
 - [1 Operating Environment Requirements](#1-operating-environment-requirements)
@@ -99,6 +99,9 @@ The preceding information indicates that the tenant f26e\*\*\*\*\*\*\*\*4e489b61
 # 4 Application Scenario #
 ## 4.1 Querying FPGA Images ##
 After registering an FPGA image, you can use the fis query subcommand to query information about FPGA images owned by youself. After the **status** of an FPGA image changes to **active**, you can use the corresponding FPGA image ID to load, delete, and associate the FPGA image.<br/>
+
+> With the fis query subcommand, you can only query information about **FPGA images owned by youself**. For purchased and shared FPGA images, you should use the **fis association query subcommand**. For example, you can refer to [Query the Shared FPGA Image](#querying-the-shared-fpga-images) to find out how to query the shared FPGA Image.
+
 The fis query subcommand displays FPGA image information in a table, and also supports pagination query. For more details, see [Query Subcommand](#query-subcommand).
 
 ### Example ###
@@ -171,8 +174,6 @@ By associating a registered FPGA image, you can share the FPGA image with other 
 
 By querying associations, you can query the FPGA images provided by other users. By disassociating an FPGA image, you can stop sharing the FPGA image with other users. <br/>
 This section uses the FPGA image sharing scenario as an example to describe how to associate or disassociate an FPGA image, and query associations. For more details about these subcommands, see [Association Subcommand](#association-subcommand), [Disassociation Subcommand](#disassociation-subcommand) and [Association Query Subcommand](#association-query-subcommand).
-
-> For more details about marketing scenario, see [Publishing the FPGA Image In the Cloud Market]().
 
 ### Sharing the FPGA Image ###
 If user A wants to share a self-owned registered FPGA image with user B, user A needs to perform the following steps. The following assumes that user A wants to share the **general-purpose architecture** FPGA image whose ID is **4010b39c5d4\*\*\*\*\*\*\*\*\*\*f2cf8070c7e** with user B.

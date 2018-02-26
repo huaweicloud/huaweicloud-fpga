@@ -180,7 +180,7 @@ Success: 204 No Content
 ### 共享FPGA镜像 ###
 当用户A想要将自己拥有的一个已注册成功的FPGA镜像共享给用户B时，需要完成以下步骤。以下假设用户A想将ID为 **4010b39c5d4\*\*\*\*\*\*\*\*\*\*f2cf8070c7e** 的 **通用型架构** 的FPGA镜像共享给用户B。 
 
-- 步骤1：从 **通用型架构** 的FPGA弹性云服务器创建一个ECS私有镜像，更多详细信息请参见[创建私有镜像](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783964.html)。
+- 步骤1：从 **通用型架构** 的FPGA弹性云服务器创建一个ECS私有镜像，更多详细信息请参见[创建私有镜像](http://support.huaweicloud.com/usermanual-ims/zh-cn_topic_0030713180.html)。
 - 步骤2：获取创建的ECS私有镜像的镜像ID，更多详细信息请参见[获取镜像ID](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783972.html)。以下假设创建的ECS私有镜像的镜像ID为 **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**。
 - 步骤3：关联待共享的FPGA镜像和创建的ECS私有镜像。
 
@@ -191,7 +191,7 @@ Success: 204 No Content
 </pre>
 如果命令的回显信息为 **Success: 204 No Content**，则表示关联操作执行成功。
 
-- 步骤4：将创建的ECS私有镜像共享给用户B，更多细节信息请参见[共享私有镜像](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783965.html)。
+- 步骤4：将创建的ECS私有镜像共享给用户B，更多细节信息请参见[共享私有镜像](http://support.huaweicloud.com/usermanual-ims/zh-cn_topic_0032042419.html)。
 
 > ECS私有镜像在共享之后会变为 **共享镜像**，无法进行关联操作。因此，确保在共享镜像之前进行关联。
 
@@ -199,7 +199,7 @@ Success: 204 No Content
 ### 查询共享的FPGA镜像 ###
 当用户B想要使用用户A共享的FPGA镜像时，需要完成以下步骤。
 
-- 步骤1：接受用户A共享的ECS镜像，更多详细信息请参见[接受共享镜像](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783966.html)。
+- 步骤1：接受用户A共享的ECS镜像，更多详细信息请参见[接受共享镜像](http://support.huaweicloud.com/usermanual-ims/zh-cn_topic_0032042420.html)。
 - 步骤2：从用户A处获取共享的FPGA镜像的类型。在本示例中，FPGA镜像的类型是 **通用型架构**。
 - 步骤3：使用共享的ECS镜像创建一个与FPGA镜像相同类型的FPGA弹性云服务器，更多详细信息请参见[使用共享镜像创建FACS](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783967.html)。在本示例中，用户B需要创建一个 **通用型架构** 的FPGA弹性云服务器。
 > 确保创建的FPGA弹性云服务器的类型与共享的FPGA镜像的类型相同。
@@ -222,7 +222,7 @@ Success: 200 OK
 ### 取消FPGA镜像共享 ###
 当用户A想取消给用户B的FPGA镜像共享时，需要完成以下步骤。
 
-- 步骤1：取消给用户B的ECS镜像共享，更多详细信息请参见[取消共享镜像的共享](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783969.html)。
+- 步骤1：取消给用户B的ECS镜像共享，更多详细信息请参见[取消共享镜像的共享](http://support.huaweicloud.com/usermanual-ims/zh-cn_topic_0032087324.html)。
 - 步骤2：解关联共享的FPGA镜像和ECS镜像。
 
 用户A需要登录到FPGA弹性云服务器中，运行 **fisclient** 程序，然后执行fis解关联子命令来解关联FPGA镜像和ECS镜像。

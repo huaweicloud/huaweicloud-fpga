@@ -100,7 +100,7 @@ The preceding information indicates that the tenant f26e\*\*\*\*\*\*\*\*4e489b61
 ## 4.1 Querying FPGA Images ##
 After registering an FPGA image, you can use the fis query subcommand to query information about FPGA images owned by youself. After the **status** of an FPGA image changes to **active**, you can use the corresponding FPGA image ID to load, delete, and associate the FPGA image.<br/>
 
-> With the fis query subcommand, you can only query information about **FPGA images owned by youself**. For purchased and shared FPGA images, you should use the **fis association query subcommand**. For example, you can refer to [Query the Shared FPGA Image](#querying-the-shared-fpga-images) to find out how to query the shared FPGA Image.
+> With the fis query subcommand, you can only query information about **FPGA images owned by youself**. For purchased and shared FPGA images, you should use the **fis association query subcommand**. For example, you can refer to [Query the Shared FPGA Image](#querying-the-shared-fpga-image) to find out how to query the shared FPGA Image.
 
 The fis query subcommand displays FPGA image information in a table, and also supports pagination query. For more details, see [Query Subcommand](#query-subcommand).
 

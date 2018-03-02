@@ -32,7 +32,7 @@ For other environments, availability is not guaranteed.
 You should first make sure that you have logged in to the Elastic Cloud Server as **root** before installation.
 
 ### Step 1. Bound the Elastic IP ###
-See [Bound the Elastic IP]() for how to bind Elastic IP to the Elastic Cloud Server.
+See [Bound the Elastic IP](http://support.huaweicloud.com/en-us/usermanual-fpga/en-us_topic_0085783971.html) for how to bind Elastic IP to the Elastic Cloud Server.
 
 ### Step 2. Download the source package ###
 - Run the "**git clone https://github.com/Huawei/huaweicloud-fpga.git**" command to download the **fisclient** source package.
@@ -46,10 +46,10 @@ See [Bound the Elastic IP]() for how to bind Elastic IP to the Elastic Cloud Ser
 ### Step 3. Install the fisclient ###
 - Run the "**python setup.py install**" command to install the **fisclient**.
 
-- Run the "**cp cfg.file /etc**" command to copy the config file **cfg.file** to the **/etc** directory. See [configuring /etc/cfg.file]() for how to configure the **/etc/cfg.file** file.
+- Run the "**cp cfg.file /etc**" command to copy the config file **cfg.file** to the **/etc** directory. See [configuring /etc/cfg.file](http://support.huaweicloud.com/en-us/usermanual-fpga/en-us_topic_0085784016.html) for how to configure the **/etc/cfg.file** file.
 
 # 3 Introduction #
-After [configuring /etc/resolv.conf]() and [configuring /etc/cfg.file](), run the **fisclient** command on the Linux shell to go to the fisclient login screen and enter the **huaweicloud account password** when prompted. On the fisclient CLI, you can run corresponding commands to query, delete, associate, disassociate FPGA images and query associations.
+After [configuring /etc/resolv.conf](http://support.huaweicloud.com/en-us/usermanual-fpga/en-us_topic_0085784015.html) and [configuring /etc/cfg.file](http://support.huaweicloud.com/en-us/usermanual-fpga/en-us_topic_0085784016.html), run the **fisclient** command on the Linux shell to go to the fisclient login screen and enter the **huaweicloud account password** when prompted. On the fisclient CLI, you can run corresponding commands to query, delete, associate, disassociate FPGA images and query associations.
 <pre>
 [root@ ~]# fisclient
 please input the password:
@@ -178,8 +178,8 @@ This section uses the FPGA image sharing scenario as an example to describe how 
 ### Sharing the FPGA Image ###
 If user A wants to share a self-owned registered FPGA image with user B, user A needs to perform the following steps. The following assumes that user A wants to share the **general-purpose architecture** FPGA image whose ID is **4010b39c5d4\*\*\*\*\*\*\*\*\*\*f2cf8070c7e** with user B.
 
-- Step 1. Create a private ECS image from an **general-purpose architecture** FPGA Elastic Cloud Server. For more details, see [Creating a private image]().
-- Step 2. Obtain the image ID of the created private ECS image. For more details, see [Obtaining The Image ID](). The following assumes that the image ID of the created private ECS image is **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**.
+- Step 1. Create a private ECS image from an **general-purpose architecture** FPGA Elastic Cloud Server. For more details, see [Creating a private image](http://support.huaweicloud.com/en-us/usermanual-fpga/en-us_topic_0085783964.html).
+- Step 2. Obtain the image ID of the created private ECS image. For more details, see [Obtaining The Image ID](http://support.huaweicloud.com/en-us/usermanual-fpga/en-us_topic_0085783972.html). The following assumes that the image ID of the created private ECS image is **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**.
 - Step 3. Associate the FPGA image to be shared with the created private ECS image.
 
 User A needs to log in to the FPGA Elastic Cloud Server, run the **fisclient** program, and run a fis association subcommand to associate the FPGA image with the private ECS image.
@@ -188,7 +188,7 @@ User A needs to log in to the FPGA Elastic Cloud Server, run the **fisclient** p
 Success: 204 No Content
 </pre>
 If **Success: 204 No Content** is displayed, the association is successful.
-- Step 4. Share the created private ECS image with user B. For more details, see [Sharing the private image]().
+- Step 4. Share the created private ECS image with user B. For more details, see [Sharing the private image](http://support.huaweicloud.com/en-us/usermanual-fpga/en-us_topic_0085783965.html).
 
 > A private image will become a **shared** one after the sharing and cannot be used for association. Therefore, associate a private image before sharing it.
 
@@ -196,12 +196,12 @@ If **Success: 204 No Content** is displayed, the association is successful.
 ### Querying the Shared FPGA Image ###
 If user B wants to use a registered FPGA image shared by user A, user B needs to perform the following steps.
 
-- Step 1. Accept the ECS image shared by user A. For more details, see [Accepting the shared image]().
+- Step 1. Accept the ECS image shared by user A. For more details, see [Accepting the shared image](http://support.huaweicloud.com/en-us/usermanual-fpga/en-us_topic_0085783966.html).
 - Step 2. Obtain the type of the FPGA image from user A. In this example, it is **general-purpose architecture**.
-- Step 3. Use the shared ECS image to create an FPGA Elastic Cloud Server with the same type as the FPGA image. For more details, see [Using a shared image to create an FPGA Elastic Cloud Server](). In this example, user B needs to create an FPGA Elastic Cloud Server of **general-purpose architecture**.
+- Step 3. Use the shared ECS image to create an FPGA Elastic Cloud Server with the same type as the FPGA image. For more details, see [Using a shared image to create an FPGA Elastic Cloud Server](http://support.huaweicloud.com/en-us/usermanual-fpga/en-us_topic_0085783967.html). In this example, user B needs to create an FPGA Elastic Cloud Server of **general-purpose architecture**.
 > Ensure that the type of the created FPGA Elastic Cloud Server is the same with that of the shared FPGA image.
 
-- Step 4. Obtain the image ID of the shared ECS image. For more details, see [Obtaining The Image ID](). In this example, it is **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**.
+- Step 4. Obtain the image ID of the shared ECS image. For more details, see [Obtaining The Image ID](http://support.huaweicloud.com/en-us/usermanual-fpga/en-us_topic_0085783972.html). In this example, it is **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**.
 - Step 5. Query the FPGA image shared by user A using the image ID of the shared ECS image.
 
 User B needs to log in to the FPGA Elastic Cloud Server created from the ECS image shared by user A, run the **fisclient** program, and run a fis association query subcommand (set the **image-id** parameter to the image ID of the shared ECS image) to check for the FPGA image shared by user A.
@@ -219,7 +219,7 @@ The output shows that the ID of the FPGA image shared by user A shared is **4010
 ### Canceling the FPGA Image Sharing ###
 If user A wants to stop sharing the FPGA image with user B, user A needs to perform the following operations:
 
-- Step 1. Cancel the image sharing with user B. For more details, see [Canceling the Image Sharing]().
+- Step 1. Cancel the image sharing with user B. For more details, see [Canceling the Image Sharing](http://support.huaweicloud.com/en-us/usermanual-fpga/en-us_topic_0085783969.html).
 - Step 2. Disassociate the shared FPGA image from the private ECS image.
 
 User A needs to log in to the FPGA Elastic Cloud Server, run the **fisclient** program, and run a fis disassociation subcommand to disassociate the shared FPGA image from the private ECS image.
@@ -397,7 +397,7 @@ The association subcommand is used to associate an FPGA image with an ECS image.
 | Parameter | Description | Value | Remarks |
 | --------- | ----------- | ----- | ------- |
 | **--fpga-image-id** | Specifies the ID of the FPGA image to be associated. This parameter is mandatory. | The value of **fpga-image-id** is a string of 32 characters, including lowercase letters a to f and digits 0 to 9. | You can check the ID of an FPGA image in the output of a query subcommand. |
-| **--image-id** | Specifies the ID of the ECS image to be associated. This parameter is mandatory. | **image-id** complies with IMS image ID rules. | See [Obtaining The Image ID]() about how to get the **image-id** parameter. |
+| **--image-id** | Specifies the ID of the ECS image to be associated. This parameter is mandatory. | **image-id** complies with IMS image ID rules. | See [Obtaining The Image ID](http://support.huaweicloud.com/en-us/usermanual-fpga/en-us_topic_0085783972.html) about how to get the **image-id** parameter. |
 
 > The ECS image to be associated must be a **private** one before the FPGA image management module performs an association. After being published to the image market or shared, a private image will become a **market** or **shared** one and cannot be associated. You need to remove the published image from the image market image or cancel the sharing before association.
 
@@ -494,7 +494,7 @@ The association query subcommand lists the associations between FPGA images and 
 | Parameter | Description | Value | Remarks |
 | --------- | ----------- | ----- | ------- |
 | **--fpga-image-id** | Specifies the ID of the FPGA image whose association is to be queried. This parameter is optional. | The value of **fpga-image-id** is a string of 32 characters, including lowercase letters a to f and digits 0 to 9. | You can check the ID of an FPGA image in the output of a query subcommand. |
-| **--image-id** | Specifies the ID of the ECS image whose association is to be queried. This parameter is optional. | **image-id** complies with IMS image ID rules. | See [Obtain The Image ID]() about how to get the **image-id** parameter. |
+| **--image-id** | Specifies the ID of the ECS image whose association is to be queried. This parameter is optional. | **image-id** complies with IMS image ID rules. | See [Obtain The Image ID](http://support.huaweicloud.com/en-us/usermanual-fpga/en-us_topic_0085783972.html) about how to get the **image-id** parameter. |
 | **--page** | Specifies the page number for pagination query. This parameter is optional. | The value of **page** is a decimal integer between [1,65535) and cannot contain +. | Specified by the user. |
 | **--size** | Specifies the size of a page for pagination query. This parameter is optional. | The value of **size** is a decimal integer between [1,100] and cannot contain +. | Specified by the user. |
 

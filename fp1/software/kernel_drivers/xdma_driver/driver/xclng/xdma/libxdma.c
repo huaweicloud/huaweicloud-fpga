@@ -627,7 +627,7 @@ struct xdma_transfer *engine_service_final_transfer(struct xdma_engine *engine,
 				engine->name, engine->status);
 			engine_status_dump(engine);
 			engine_err_handle(engine, transfer, *pdesc_completed);
-			return transfer;
+			goto transfer_del;
 		}
 
 		if (engine->status & XDMA_STAT_BUSY)
@@ -654,7 +654,8 @@ struct xdma_transfer *engine_service_final_transfer(struct xdma_engine *engine,
 			/* mark transfer as succesfully completed */
 			transfer->state = TRANSFER_STATE_COMPLETED;
 		}
-
+		
+transfer_del:
 		/* remove completed transfer from list */
 		list_del(engine->transfer_list.next);
 		/* add to dequeued number of descriptors during this run */

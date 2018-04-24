@@ -66,6 +66,26 @@ then
 	mkdir -p $FPGA_TOOL_DST_DIR
 fi
 
+#Copy libfpgamgmt.so to /usr/lib64
+cp -f $FPGA_TOOL_DIST_DIR/libfpgamgmt.so /usr/lib64
+RET=$?
+if [ $RET -ne 0 ]; 
+then
+    echo "FPGA_TOOL INSTALL ERROR: Copy libfpgamgmt.so to /usr/lib64 failed."
+    exit 1
+fi
+echo "FPGA_TOOL INSTALL MESSAGE: Copy libfpgamgmt.so to /usr/lib64 success "
+
+#Set libfpgamgmt.so privilege
+chmod 600 /usr/lib64/libfpgamgmt.so
+RET=$?
+if [ $RET -ne 0 ]; 
+then
+    echo "FPGA_TOOL INSTALL ERROR: Set the privilege of /usr/lib64/libfpgamgmt.so failed."
+    exit 1
+fi
+echo "FPGA_TOOL INSTALL MESSAGE: Set the privilege of /usr/lib64/libfpgamgmt.so success"
+
 #Copy fpga tool to /usr/local/bin or /usr/bin
 cp -f $FPGA_TOOL_DIST_DIR/FpgaCmdEntry $FPGA_TOOL_DST_DIR
 RET=$?
@@ -74,15 +94,15 @@ then
     echo "FPGA_TOOL INSTALL ERROR:Copy FpgaCmdEntry to $FPGA_TOOL_DST_DIR failed."
     exit 1
 fi
-echo "FPGA_TOOL INSTALL MESSAGE: Copy fpga_tool to $FPGA_TOOL_DST_DIR sucess "
+echo "FPGA_TOOL INSTALL MESSAGE: Copy FpgaCmdEntry to $FPGA_TOOL_DST_DIR success "
 
 #Set fpga tool privilege
 chmod 700 $FPGA_TOOL_DST_DIR/FpgaCmdEntry
 RET=$?
 if [ $RET -ne 0 ]; 
 then
-    echo "FPGA_TOOL INSTALL ERROR:Set fpga tool privilege failed."
+    echo "FPGA_TOOL INSTALL ERROR:Set the privilege of FpgaCmdEntry failed."
     exit 1
 fi
 
-echo "FPGA_TOOL INSTALL MESSAGE: Set privilege of $FPGA_TOOL_DST_DIR/FpgaCmdEntry success"
+echo "FPGA_TOOL INSTALL MESSAGE: Set the privilege of $FPGA_TOOL_DST_DIR/FpgaCmdEntry success"

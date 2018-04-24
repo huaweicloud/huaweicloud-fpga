@@ -23,5 +23,6 @@ constrants文件夹主要存放用户逻辑ddra/ddrb/ddrd的管脚约束信息�
 * pr_pblock.xdc  
   本文档承载`pblock约束信息`;  
 
-* README_CN.md
+* README_CN.md  
+
   本文档，用于介绍其他文档。

@@ -50,7 +50,6 @@
 #include "FPGA_CmdLog.h"
 #include "FPGA_CmdPci.h"
 #include "FPGA_CmdProcess.h"
-#include "FPGA_CmdMonitorMain.h"
 
 
 #ifdef    __cplusplus
@@ -128,13 +127,11 @@ UINT32 FPGA_MboxReadReg( UINT32 ulHandle, UINT32 ulOffset, UINT32 *pulValue )
     }
 
     /* Use the Device ID and Vendor ID to distinguish the address of different shell register */
-    if ( HW_VF_VENDOR_ID == g_astrFpgaInfo[g_strFpgaModule.ulSlotIndex].usVendorId && 
-    HW_VF_DEVICE_ID == g_astrFpgaInfo[g_strFpgaModule.ulSlotIndex].usDeviceId )
+    if ( HW_VF_VENDOR_ID == g_astrShellType.usVendorId && HW_VF_DEVICE_ID == g_astrShellType.usDeviceId )
     {
         ulOffsetTmp = ulOffset;
     }
-    else if ( HW_OCL_PF_VENDOR_ID == g_astrFpgaInfo[g_strFpgaModule.ulSlotIndex].usVendorId && 
-    HW_OCL_PF_DEVICE_ID == g_astrFpgaInfo[g_strFpgaModule.ulSlotIndex].usDeviceId )
+    else if ( HW_OCL_PF_VENDOR_ID == g_astrShellType.usVendorId && HW_OCL_PF_DEVICE_ID == g_astrShellType.usDeviceId )
     {
         ulOffsetTmp = FPGA_OCL_PF_BASE_REG + ulOffset;
     }
@@ -142,7 +139,7 @@ UINT32 FPGA_MboxReadReg( UINT32 ulHandle, UINT32 ulOffset, UINT32 *pulValue )
     {
         /* Report type error after the device ID match failed */
         printf("FPGA shell type error.\r\n");
-        return SDKRTN_MONITOR_SHELL_TYPE_ERROR;           
+        return SDKRTN_MBX_SHELL_TYPE_ERROR;           
     }
 
     /* Get BAR info */
@@ -204,21 +201,19 @@ UINT32 FPGA_MboxWriteReg( UINT32 ulHandle, UINT32 ulOffset, UINT32 ulValue )
     }
 
     /* Use the Device ID and Vendor ID to distinguish the address of different shell register */
-    if ( HW_VF_VENDOR_ID == g_astrFpgaInfo[g_strFpgaModule.ulSlotIndex].usVendorId && 
-    HW_VF_DEVICE_ID == g_astrFpgaInfo[g_strFpgaModule.ulSlotIndex].usDeviceId )
+    if ( HW_VF_VENDOR_ID == g_astrShellType.usVendorId && HW_VF_DEVICE_ID == g_astrShellType.usDeviceId )
     {
         ulOffsetTmp = ulOffset;
     }
-    else if ( HW_OCL_PF_VENDOR_ID == g_astrFpgaInfo[g_strFpgaModule.ulSlotIndex].usVendorId && 
-    HW_OCL_PF_DEVICE_ID == g_astrFpgaInfo[g_strFpgaModule.ulSlotIndex].usDeviceId )
+    else if ( HW_OCL_PF_VENDOR_ID == g_astrShellType.usVendorId && HW_OCL_PF_DEVICE_ID == g_astrShellType.usDeviceId )
     {
         ulOffsetTmp = FPGA_OCL_PF_BASE_REG + ulOffset;
     }
     else
     {
-        /* Report type error after the device ID match failrd */
+        /* Report type error after the device ID match failed */
         printf("FPGA shell type error.\r\n");
-        return SDKRTN_MONITOR_SHELL_TYPE_ERROR;           
+        return SDKRTN_MBX_SHELL_TYPE_ERROR;           	
     }
 
     /* Get BAR space info */
@@ -266,6 +261,7 @@ UINT32 FPGA_MBoxVFLock( UINT32 ulHandle )
 {
     UINT32 ulRet = SDKRTN_MBX_FAIL;
     UINT32 ulValue = 0;
+    UINT32 ulCount = 0;
 
     if ( ulHandle >=  FPGA_VF_BAR_NUM_MAX )
     {
@@ -273,31 +269,39 @@ UINT32 FPGA_MBoxVFLock( UINT32 ulHandle )
          return SDKRTN_MBX_INPUT_ERROR;
     }
 
-    /* Lock VFU */
-    ulRet = FPGA_MboxWriteReg( ulHandle, FPGA_VF_CNTRL_REG, FPGA_VF_VFU );
-    if ( SDKRTN_MBX_SUCCESS != ulRet )
+    /* Read VFU bit, check for new message in 5 seconds */
+    ulCount = g_strMboxDelay.ulTimeout;
+    while ( ulCount )
     {
-        LOG_ERROR( "Mbox write reg failed:%d", ulRet );
-        return ulRet;
+        /* Lock VFU */
+        ulRet = FPGA_MboxWriteReg( ulHandle, FPGA_VF_CNTRL_REG, FPGA_VF_VFU );
+        if ( SDKRTN_MBX_SUCCESS != ulRet )
+        {
+            LOG_ERROR( "Mbox write reg failed:%d", ulRet );
+            return ulRet;
+        }
+        /* Read VFU */
+        ulRet = FPGA_MboxReadReg( ulHandle, FPGA_VF_CNTRL_REG, &ulValue );
+        if ( SDKRTN_MBX_SUCCESS != ulRet )
+        {
+            LOG_ERROR( "Mbox read reg failed:%d", ulRet );
+            return ulRet;
+        }
+        /* if has new message£¬then break */
+        if ( ( ulValue & FPGA_VF_VFU ) )
+        {
+            ulRet = SDKRTN_MBX_SUCCESS;        
+            break ;
+        }
+
+        msleep( ( INT32 )g_strMboxDelay.ulDelayMsec );
+        ulCount--;
     }
 
-    /* Read the register value after setting */
-    ulRet = FPGA_MboxReadReg( ulHandle, FPGA_VF_CNTRL_REG, &ulValue );
-    if ( SDKRTN_MBX_SUCCESS != ulRet )
+    if ( 0 == ulCount )
     {
-        LOG_ERROR( "Mbox read reg failed:%d", ulRet );
-        return ulRet;
-    }
-
-    /* Check result of lock */
-    if ( ulValue & FPGA_VF_VFU )
-    {
-        ulRet = SDKRTN_MBX_SUCCESS;
-    }
-    else
-    {
-        LOG_ERROR( " Lock vf failed .\n " );
-        ulRet = SDKRTN_MBX_VFLOCK_ERROR;
+        LOG_ERROR( "Vf Lock failed, Timeout, VFU Value=0x%x", ulValue);
+        return SDKRTN_MBX_VFLOCK_ERROR;
     }
 
     return ulRet;
@@ -617,13 +621,13 @@ UINT32 FPGA_MboxSendMsg( UINT32 ulHandle, void *pMsg, UINT32 ulLength )
 }
 
 /*******************************************************************************
-Function     : FPGA_BaseBarReadReg
+Function     : FPGA_MboxBaseBarReadReg
 Description  : Read the base bar reg
 Input        : UINT32 ulHandle, UINT32 ulOffset
 Output       : UINT32 *pulValue
 Return       : 0:sucess other:fail  
 *******************************************************************************/
-UINT32 FPGA_BaseBarReadReg( UINT32 ulHandle, UINT32 ulOffset, UINT32 *pulValue )
+UINT32 FPGA_MboxBaseBarReadReg( UINT32 ulHandle, UINT32 ulOffset, UINT32 *pulValue )
 {
     volatile UINT32 *pulRegAddr = NULL;
     FPGA_PCI_BAR_INFO *pStrBar = NULL;

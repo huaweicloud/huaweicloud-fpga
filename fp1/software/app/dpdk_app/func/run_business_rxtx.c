@@ -34,6 +34,7 @@
 #include <linux/limits.h>
 #include <stdint.h>
 #include <sys/time.h>
+#include <sched.h>
 #include <assert.h>
 #include <rte_config.h>
 #include <rte_eal.h>
@@ -291,6 +292,9 @@ int run_business_thread(pstBusinessThreadArgs p_business_thread_args) {
     uint32_t cpu_tx = 0;
     uint32_t port_id = 0;
     uint32_t queue_idx = 0;
+    cpu_set_t mask;
+    pthread_t   tx_task_id = 0;
+    pthread_t   rx_task_id = 0;
 
     port_id = p_business_thread_args->port_id;
     queue_idx = p_business_thread_args->queue_idx;
@@ -307,29 +311,73 @@ int run_business_thread(pstBusinessThreadArgs p_business_thread_args) {
 
     /* create RX thread, CPU sequential binding, cpu0 reserved */
     if (0 == p_business_thread_args->p_business_args->not_rx_thread) {
-        cpu_rx = p_business_thread_args->cpu_bind;
-        int ret = rte_eal_remote_launch(run_business_rx_thread_route, (void*)p_business_thread_args, cpu_rx);
-        if (0 != ret) {
-            printf("Create RX thread failed");
-            goto error;
+        if(DPDK_BIND == p_business_thread_args->thread_flag) {
+            cpu_rx = p_business_thread_args->cpu_bind;
+            int ret = rte_eal_remote_launch(run_business_rx_thread_route, (void*)p_business_thread_args, cpu_rx);
+            if (0 != ret) {
+                printf("Create RX thread failed");
+                goto error;
+            }
+        }
+        else {
+            cpu_rx = p_business_thread_args->rx_cpu_bind;
+            int ret = pthread_create(&rx_task_id, NULL, (void *)run_business_rx_thread_route, (void*)p_business_thread_args);    //lint !e611
+            if (0 != ret) {
+                printf("Create RX thread failed");
+                goto error;
+            }
+
+            CPU_ZERO(&mask);
+            (void)CPU_SET(cpu_rx, &mask);   //lint !e160
+            if (sched_setaffinity(0, sizeof(mask), &mask) <0) {
+                printf("sched_setaffinity RX thread failed");
+                goto error;
+            }
         }
     }
     
     /* create TX thread, CPU sequential binding */
     if (0 == p_business_thread_args->p_business_args->not_tx_thread) {
-        cpu_tx = p_business_thread_args->cpu_bind+1;
-        int ret = rte_eal_remote_launch(run_business_tx_thread_route, (void*)p_business_thread_args, cpu_tx);
-        if (0 != ret) {
-            printf("Create TX thread failed");
-            goto error;
+        if(DPDK_BIND == p_business_thread_args->thread_flag) {
+            cpu_tx = p_business_thread_args->cpu_bind+1;
+            int ret = rte_eal_remote_launch(run_business_tx_thread_route, (void*)p_business_thread_args, cpu_tx);
+            if (0 != ret) {
+                printf("Create TX thread failed");
+                goto error;
+            }
+        }
+        else {
+            cpu_tx = p_business_thread_args->tx_cpu_bind;
+            int ret = pthread_create(&tx_task_id, NULL, (void *)run_business_tx_thread_route, (void*)p_business_thread_args);   //lint !e611
+            if (0 != ret) {
+                printf("Create TX thread failed");
+                goto error;
+            }
+
+            CPU_ZERO(&mask);
+            (void)CPU_SET(cpu_tx, &mask);       //lint !e160
+            if (sched_setaffinity(0, sizeof(mask), &mask) <0) {
+                printf("sched_setaffinity TX thread failed");
+                goto error;
+            }
         }
     }
 
     if (0 == p_business_thread_args->p_business_args->not_rx_thread) {
-        (void)rte_eal_wait_lcore(cpu_rx);
+        if(DPDK_BIND == p_business_thread_args->thread_flag) {
+            (void)rte_eal_wait_lcore(cpu_rx);
+        }
+        else {
+            (void)pthread_join(rx_task_id, NULL);
+        }
     }
     if (0 == p_business_thread_args->p_business_args->not_tx_thread) {
-        (void)rte_eal_wait_lcore(cpu_tx);
+        if(DPDK_BIND == p_business_thread_args->thread_flag) {
+            (void)rte_eal_wait_lcore(cpu_tx);
+        }
+        else {
+            (void)pthread_join(tx_task_id, NULL);
+        }
     }
     real_tx_nb = p_business_thread_args->real_tx_nb;
     real_rx_nb = p_business_thread_args->real_rx_nb;
@@ -360,7 +408,7 @@ int run_business_tx(uint16_t port_id, uint16_t queue_idx,
     uint16_t    remain_tx_nb = require_tx_nb;
     uint16_t    has_tx_nb = 0;
     uint32_t    continue_tx_zero_nb = 0;
-    static struct timespec ts;   
+    struct timespec ts;   
 
     if (NULL == tx_mbufs || NULL == real_tx_nb) {
         printf("\033[1;31;40mrun_business_tx input parameter null\033[0m\r\n");
@@ -416,7 +464,7 @@ int run_business_rx(uint16_t port_id, uint16_t queue_idx,
     uint16_t    remain_rx_nb = require_rx_nb;
     uint16_t    has_rx_nb = 0;
     uint32_t    continue_rx_zero_nb = 0;
-    static struct timespec ts;    
+    struct timespec ts;    
 
     if (NULL == rx_mbufs || NULL == real_rx_nb) {
         printf("\033[1;31;40mrun_business_rx input parameter null\033[0m\r\n");
@@ -476,6 +524,8 @@ static int run_business_tx_thread_route(void* arg) {
     struct timeval  tx_start_time, tx_end_time;
     (void)gettimeofday(&tx_start_time, NULL);
 
+    struct rte_mbuf** tx_mbufs = g_mbufs_pools[pst_tx_thead_args->port_id][pst_tx_thead_args->queue_idx].tx_bd_mbufs;
+
     for (tx_time_idx = 0; tx_time_idx < (tx_time + 1); ++tx_time_idx) {
         uint16_t    cur_require_tx_nb = (tx_time_idx==tx_time) ? tx_last_time_nb : MBUFS_NB_IN_POOL;
         uint16_t    curr_real_tx_nb = 0;
@@ -483,7 +533,7 @@ static int run_business_tx_thread_route(void* arg) {
             break;
         }
         status = run_business_tx(pst_tx_thead_args->port_id, pst_tx_thead_args->queue_idx, 
-                g_mbufs_pools[pst_tx_thead_args->port_id][pst_tx_thead_args->queue_idx].tx_bd_mbufs, cur_require_tx_nb, &curr_real_tx_nb);
+                tx_mbufs, cur_require_tx_nb, &curr_real_tx_nb);
         pst_tx_thead_args->real_tx_nb += curr_real_tx_nb;
         if (status < 0) {
             printf("\033[1;31;40mrequire_tx_all(%lu), real_tx_all(%lu), "
@@ -515,6 +565,7 @@ static int run_business_rx_thread_route(void* arg) {
 
     port_id = pst_rx_thead_args->port_id;
     queue_idx = pst_rx_thead_args->queue_idx;
+    struct rte_mbuf** rx_mbufs = g_mbufs_pools[port_id][queue_idx].rx_bd_mbufs;
 
     (void)gettimeofday(&rx_start_time, NULL);
     for (rx_time_idx = 0; rx_time_idx < (rx_time + 1); ++rx_time_idx) {
@@ -524,7 +575,7 @@ static int run_business_rx_thread_route(void* arg) {
             break;
         }
         status = run_business_rx(port_id, queue_idx, 
-                g_mbufs_pools[port_id][queue_idx].rx_bd_mbufs, cur_require_rx_nb, &curr_real_rx_nb);
+                rx_mbufs, cur_require_rx_nb, &curr_real_rx_nb);
         pst_rx_thead_args->real_rx_nb += curr_real_rx_nb;
 
         if (status < 0) {

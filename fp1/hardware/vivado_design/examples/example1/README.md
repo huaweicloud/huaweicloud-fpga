@@ -19,7 +19,7 @@ The example is stored in `$WORK_DIR/hardware/vivado_design/examples/`. The direc
   - src_encrypt  
   - README.md 
 
-## File and Folder Descriptions
+## File and Folder Description
 
 - prj  
 
@@ -63,6 +63,6 @@ For details, see [Example 1 Simulation Guide](./sim/README.md).
 
 ### Example Testing
 
-1. Go to the `$WORK_DIR/software/app/dpdk_app/example1` directory and run the make command.
+1. Go to the `$WORK_DIR/software/app/dpdk_app/example1` directory and run the **make** command.
 2. After the compilation is completed, perform example tests by referring to [Application Operation Instructions](../../../../software/app/dpdk_app/README.md).
 

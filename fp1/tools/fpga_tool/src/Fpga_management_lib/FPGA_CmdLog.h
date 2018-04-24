@@ -41,11 +41,6 @@
 #define ERR_NUM_BUFFER_SIZE      64
 #define LOG_MESSAGE_LENGTH_MAX   512
 
-#define LOG_ERROR(...)     FPGA_LogErr( __LINE__, __func__, __VA_ARGS__)
-#define LOG_WARNING(...)   FPGA_LogWarning( __LINE__, __func__, __VA_ARGS__)
-#define LOG_INFO(...)      FPGA_LogInfo(__LINE__, __func__, __VA_ARGS__)
-#define LOG_DEBUG(...)     FPGA_LogDebug(__LINE__, __func__, __VA_ARGS__)
-
 typedef enum tagLOG_LEVEL
 {
     LOG_LEVEL_ERROR,
@@ -81,15 +76,9 @@ typedef struct tagLOG_RECORD
 #define SDKRTN_LOG_FUNC_ERROR                         ( SDKRTN_LOG_ERROR_BASE + 0x6 )
 #define SDKRTN_LOG_OPEN_ERROR                         ( SDKRTN_LOG_ERROR_BASE + 0x7 )
 
-
-void FPGA_LogErr( INT32 lLine, const INT8 *pcFunc, const INT8 *pcFormat, ... );
-void FPGA_LogWarning( INT32 lLine, const INT8 *pcFunc, const INT8 *pcFormat, ... );
-void FPGA_LogInfo(  INT32 lLine, const INT8 *pcFunc, const INT8 *pcFormat, ... );
-void FPGA_LogDebug( INT32 lLine, const INT8 *pcFunc, const INT8 *pcFormat, ... );
 UINT32 FPGA_LogEnable( void );
 UINT32 FPGA_LogWriteKmsg( LOG_LEVEL enLevel, INT8 *pcMessage );
 UINT32 FPGA_LogInitKmsg(void);
 UINT32 FPGA_LogInit( void );
-
 
 #endif

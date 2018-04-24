@@ -8,17 +8,16 @@
   `EXE=XXX`
 
 Indicates the host target program name, for example, `EXE=host`.
-​	
 	`KERNEL_NAME=XXX`
 
 Indicates the kernel target file name, which must be the same as the kernel name.
-For example, `KERNEL_NAME = krnl_vadd`
+For example, `KERNEL_NAME = krnl_vadd`.
 
 
-# hdl Directory Descriptions
+# hdl Directory Description
 This directory stores .rtl files.
 # *.tcl
-Generate the *.xo target files based on .rtl files.
+This file generates the *.xo target files based on .rtl files.
 # kernel.xml
 This file describes kernel information. Users can edit the file as required by using the kernel.
 

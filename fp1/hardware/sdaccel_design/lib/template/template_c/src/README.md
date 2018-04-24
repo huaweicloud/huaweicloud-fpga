@@ -7,10 +7,9 @@
 
   `HOST_EXE=XXX`
 
-Indicates the host target program name, for example, `HOST_EXE=vadd`
-​	
+Indicates the host target program name, for example, `HOST_EXE=vadd`.
 	`KERNEL_NAME=XXX`
 
 Indicates the kernel target file name, which must be the same as the kernel name.
-For example, `KERNEL_NAME = krnl_vadd`
+For example, `KERNEL_NAME = krnl_vadd`.
 

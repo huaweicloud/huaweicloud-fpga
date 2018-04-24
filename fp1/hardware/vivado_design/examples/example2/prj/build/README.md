@@ -6,7 +6,7 @@ The structure of **build** in **example2/prj** is as follows:
 
 * [exampe2/prj/build](#example2/prj/build_dir)/
    - checkpoints
-   - README.md (This document)
+   - README.md (this document)
    - reports
 
 # Contents of Each File or Folder
@@ -14,7 +14,7 @@ The structure of **build** in **example2/prj** is as follows:
 * checkpoints    
    This directory stores the files generated during example building. The `checkpoints/` folder contains the following folders and files:
    - README.md
-   - xxx.dcp (.dcp file generated during building for one-click or single-step execution)
+   - xxx.dcp (.dcp file generated during one-click or single-step buildings)
    - to_facs             
       + 'user_prj_name '_partial.bin
       + 'user_prj_name '_partial.bit
@@ -51,7 +51,7 @@ The structure of **build** in **example2/prj** is as follows:
              PPPP          AAAA    AAAA    SSSSSSSS      SSSSSSSS
      ```
 
-    - After `build.sh ` is completed, you can run the following commands for `single-step execution`.
+    - You can add the following parameters to `build.sh ` for `single-step execution` operations:
       + -s | -S | -synth     : only executes synthesis.
       + -i | -I | -impl      : only executes placing and routing.
       + -p | -P | -pr        : only executes PR verification.

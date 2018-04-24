@@ -195,14 +195,34 @@ Example3中包含了两个测试用例`sv_demo_001`与`sv_demo_002`。
     详细过程如下：
     sv_demo_002会通过仿真平台构造报文与BD并通过与UL相连的AXI4-Stream接口发送给UL。
     UL处理后会将报文原封不动的返回仿真平台并产生BD。
-    仿真凭他比对发送与接收的报文，如果相等则会打印PASS，否则打印FAIL并终止仿真。
+    仿真平台比对发送与接收的报文，如果相等则会打印PASS，否则打印FAIL并终止仿真。
 
 <a id="sec-2" name="sec-2"></a>
 
 ## **用户自定义测试**
 
 <a id="sec-2-1" name="sec-2-1"></a>
+### **修改仿真配置**
+`scripts`目录中的`project_settings.cfg`文件，主要需要指定用户自定义仿真宏以及库文件。其中**USER_LIBS**与**SIM_MACRO**分别对应自定义库文件以及仿真宏。（如果没有可不填）
+ example3 **SIM_MACRO** 仿真宏中ACC_LEN_CFG值不容许修改。
 
+```bash
+  $ vi ./scripts/project_settings.cfg
+  
+  SIM_MACRO=" USE_DDR_MODEL 
+              ACC_LEN_CFG=1
+  # '#' means comments
+  # Example:
+  # MACRO1
+  # MACRO2
+  "
+  USER_LIBS="
+  # '#' means comments
+  # Example:
+  # FILE_PATH1/FILE_NAME1
+  # FILE_PATH2/FILE_NAME2
+  "
+```
 ### **编写用户测试用例**
 
 整个example仿真文件夹目录如下：

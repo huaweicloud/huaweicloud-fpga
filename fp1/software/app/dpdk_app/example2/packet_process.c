@@ -52,7 +52,6 @@
 #include "run_business_rxtx.h"
 #include "securec.h"
 
-#define APP_VERSION "application LOG-Heterogeneous computing V100R001C10B065"
 /* Seconds wait before DPDK memory init, 
     for that IP may have some job to do for the former task */
 #define WAIT_TIME_BEFORE_DPDK_INIT 1
@@ -140,9 +139,10 @@ int main(int argc, char* argv[]) {
 
     /* CPU 0 is reserved for primary, for other cpus, every queue have 2 CPUs to oneself, one for tx and another for rx */
     if ((g_business_args.port_used * g_business_args.queue_used)*2 > (cpu_nb-1)) {
-        printf("\033[1;31;40mthe port and queue error, the required cpu number(%u) is larger than vm's dpdk tx/rx busincess core(%u)\033[0m\r\n",
+        printf("\033[1;31;40mthe required cpu number(%u) is larger than vm's dpdk tx/rx busincess core(%u), select normal cpu bind\033[0m\r\n",
             g_business_args.port_used * g_business_args.queue_used*2, (cpu_nb-1));
-        return -1;
+        g_business_args.thread_flag = NORMAL_BIND;
+        g_business_args.cpu_nb = cpu_nb;
     }
 
     ts.tv_sec = WAIT_TIME_BEFORE_DPDK_INIT;
@@ -311,6 +311,7 @@ static void set_default_args() {
     g_business_args.queue_desc_nb = QUEUE_DESC_MAX_NB;
     g_business_args.loop_time = LOOP_TIME_DEFAULT;
     g_business_args.fmmu_enable = DISABLE;
+    g_business_args.thread_flag = DPDK_BIND;
 }
 
 static int check_args_step_one() {
@@ -376,7 +377,6 @@ static int check_args_step_two() {
 static void help() {
     printf(
         "-----------------------------------------------------------------------------------\r\n"
-        "app version: %s\r\n"
         "argument format:\n"
         "\t-d xxx   xxx: queue depth, should be 1024 or 2048 or 4096 or 8192, 8192 as default\r\n"
         "\t-p xxx   xxx: port id, logic only support vf0;\r\n"
@@ -387,7 +387,6 @@ static void help() {
         "\t-f: enable FMMU function(disable as default)\r\n"
         "\t-h: print help\n"
         "-----------------------------------------------------------------------------------\r\n",
-        APP_VERSION, 
         PACKET_LEN_MAX, UINT32_MAX-1024, UINT16_MAX-1024);
 }
 
@@ -504,7 +503,16 @@ static int packet_secondary(uint32_t port_id) {
         }
         printf("\033[1;32;40m---------------- test for port %u, queue %u, %s ----------------\033[0m\r\n",   \
             port_id, queue, g_business_args.fmmu_enable?"[FMMU] ":" ");
-        g_business_thread_args[port_id][queue].cpu_bind = cpu_bind;
+
+        if(DPDK_BIND == g_business_args.thread_flag) {
+            g_business_thread_args[port_id][queue].thread_flag = DPDK_BIND;
+            g_business_thread_args[port_id][queue].cpu_bind = cpu_bind;
+        }
+        else {
+            g_business_thread_args[port_id][queue].thread_flag = NORMAL_BIND;
+            g_business_thread_args[port_id][queue].tx_cpu_bind = cpu_bind;
+            g_business_thread_args[port_id][queue].rx_cpu_bind = ((cpu_bind + 1) == g_business_args.cpu_nb) ? 0 : (cpu_bind + 1);
+        }
         status = pthread_create(&task_id, NULL, (void *)run_business_thread, &g_business_thread_args[port_id][queue]);  //lint !e611
         if (0 != status){
             printf("can't create thread. errno = %d\n", errno);
@@ -512,7 +520,13 @@ static int packet_secondary(uint32_t port_id) {
         }
 
         g_business_thread_args[port_id][queue].task_id = task_id;
-        cpu_bind += 2;
+
+        if(DPDK_BIND == g_business_args.thread_flag) {
+            cpu_bind += 2;
+        }
+        else {
+            cpu_bind = ((cpu_bind + 2) >= g_business_args.cpu_nb) ? (cpu_bind + 2 - g_business_args.cpu_nb) : (cpu_bind + 2);
+        }
     }
     
     return 0;

@@ -386,7 +386,7 @@ touch $user_macro_list
 declare -a user_sim_macro=($SIM_MACRO)
 for item in ${user_sim_macro[@]}; do
     if [ $simulator == "vivado" ] ; then
-        # Vivado syntax libfile
+        # Vivado syntax libfile 
         echo "--define $item" >> $user_macro_list
     else
         echo "+define+$item" >> $user_macro_list

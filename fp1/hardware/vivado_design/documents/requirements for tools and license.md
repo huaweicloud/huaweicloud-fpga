@@ -17,7 +17,7 @@ SW Build 1915620 on Thu Jun 22 17:54:59 MDT 2017
   * xcvu9p_bitgen     
   * ap_opencl     
 
-# Download:  
+# Download  
 Vivado HLx 2017.2: `All OS installer Single-File`:  
 <https://www.xilinx.com/support/download/index.html/content/xilinx/en/downloadNav/vivado-design-tools.html>
 

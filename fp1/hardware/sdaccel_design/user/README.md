@@ -24,7 +24,7 @@
     $ sh create_prj.sh -h
     ````
 
-    This obtains help information about the command.
+    By running this command, you can obtain help information about **create_prj.sh**.
 
 
 # Creating a User Project

@@ -30,7 +30,7 @@ if [ $? -ne 0 ]; then
         echo "build dpdk failed!"
         exit 1
 fi
-# 2.  set env path
+# 2.  set build env path
 export DPDK_INCLUDE_HOME=${DPDK_DIR}/dpdk-16.04/x86_64-native-linuxapp-gcc/include
 export DPDK_LIB_HOME=${DPDK_DIR}/dpdk-16.04/x86_64-native-linuxapp-gcc/lib
 export SECUREC_LIB_HOME=${DPDK_DIR}/securec/lib
@@ -43,4 +43,9 @@ if [ $? -ne 0 ]; then
         echo "build dpdk app failed!"
         exit 2
 fi
+
+# 4. set running env path
+export LD_LIBRARY_PATH=${CUR_PATH}/../../userspace/dpdk_src/dpdk-16.04/x86_64-native-linuxapp-gcc/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=${CUR_PATH}/../../userspace/dpdk_src/securec/lib:$LD_LIBRARY_PATH
+
 echo "==================build dpdk app success============="

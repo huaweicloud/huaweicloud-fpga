@@ -14,12 +14,13 @@
 FPGA镜像加载工具是作为FPGA开发套件的一部分，工具 **FpgaCmdEntry** 实现了FPGA镜像加载、加载状态查询、设备信息查询和虚拟点灯状态查询的功能。FPGA工具目录结构如下：
 
 	linux-htucef:/home/huaweicloud-fpga/fp1/tools/fpga_tool # ll
-	total 20
-	drwxr-x--- 2 root root 4096 Nov 20 20:07 build
-	drwxr-x--- 2 root root 4096 Nov 20 20:07 docs
-	-rw-r----- 1 root root 1579 Nov 20 20:07 LICENSE.txt
-	-rw-r----- 1 root root 3530 Nov 20 20:07 README.md
-	drwxr-x--- 3 root root 4096 Nov 20 20:07 src
+	total 32
+	drwxr-x--- 2 root root 4096 Mar  5 21:41 build
+	drwxr-x--- 2 root root 4096 Mar  5 21:41 docs
+	-rw-r----- 1 root root 1579 Mar  6 14:37 LICENSE.txt
+	-rw-r----- 1 root root 4044 Mar  6 14:37 README_CN.md
+	-rw-r----- 1 root root 4152 Mar  6 14:37 README.md
+	drwxr-x--- 5 root root 4096 Mar  5 21:41 src
 
 
 
@@ -63,8 +64,10 @@ FPGA镜像加载工具是作为FPGA开发套件的一部分，工具 **FpgaCmdEn
 	finish FpgaCmdEntry
 	FPGA_TOOL SETUP MESSAGE: Build completed.
 	FPGA_TOOL INSTALL MESSAGE: Executing as root...
-	FPGA_TOOL INSTALL MESSAGE: Copy fpga_tool to /usr/local/bin sucess 
-	FPGA_TOOL INSTALL MESSAGE: Set privilege of /usr/local/bin/FpgaCmdEntry success
+	FPGA_TOOL INSTALL MESSAGE: Copy libfpgamgmt.so to /usr/lib64 success
+	FPGA_TOOL INSTALL MESSAGE: Set the privilege of /usr/lib64/libfpgamgmt.so success
+	FPGA_TOOL INSTALL MESSAGE: Copy FpgaCmdEntry to /usr/local/bin success
+	FPGA_TOOL INSTALL MESSAGE: Set the privilege of /usr/local/bin/FpgaCmdEntry success
 	FPGA_TOOL SETUP MESSAGE: Setup fpga_tool success.
 
 <a name="tool_usage"></a>
@@ -90,6 +93,8 @@ FPGA镜像加载工具编译和安装完成后，可在任一目录下调用工�
 	linux-htucef:/home/huaweicloud-fpga/fp1 # bash fpga_tool_unistall.sh 
 	Entering /home/huaweicloud-fpga/fp1/tools/fpga_tool/build/../src
 	rm -rf /home/huaweicloud-fpga/fp1/tools/fpga_tool/src/../dist/tool_obj 
+	rm -f  /home/huaweicloud-fpga/fp1/tools/fpga_tool/src/../dist/libfpgamgmt.so
+	rm -rf /home/huaweicloud-fpga/fp1/tools/fpga_tool/src/../dist/tool_obj
 	rm -f  /home/huaweicloud-fpga/fp1/tools/fpga_tool/src/../dist/FpgaCmdEntry
 	FPGA_TOOL CLEAN MESSAGE:Clean success
 	FPGA_TOOL UNISTALL MESSAGE: Unistall completed.

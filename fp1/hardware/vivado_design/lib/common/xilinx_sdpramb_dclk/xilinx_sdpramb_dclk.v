@@ -495,7 +495,7 @@ endgenerate
 //endfunction
 
 
-// 2012-1-29 l00125452
+// 2012-1-29 
 ///////////////////////////////////////////////////////////////////////
 //  READ_WIDTH | BRAM_SIZE | READ Depth  | RDADDR Width |            //
 // WRITE_WIDTH |           | WRITE Depth | WRADDR Width |  WE Width  //
@@ -680,7 +680,7 @@ function integer ram_count;
 endfunction
 
 
-// 2012-2-1 l00125452
+// 2012-2-1 
 function integer we_width;
     input [31:0] max_data_width;
 
@@ -697,7 +697,7 @@ function integer we_width;
 
 endfunction
 
-// 2012-2-1 l00125452
+// 2012-2-1 
 function integer address_other_cal;
     input [31:0] data_width;
 

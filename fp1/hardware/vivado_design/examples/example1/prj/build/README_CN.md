@@ -7,6 +7,7 @@ example1/prj的build文件目录文件层级结构如下：
 * [example1/prj/build](#example1/prj/build_dir)/
    - checkpoints
    - README_CN.md （本文档）
+   - README.md（本文档的英文版本）
    - reports
 
 # 各文件或文件夹的内容
@@ -14,7 +15,7 @@ example1/prj的build文件目录文件层级结构如下：
 * checkpoints    
    该目录主要用于存放示例构建产生的文件，`checkpoints/`一般包含如下文件夹及层级文件：
    - README_CN.md
-   - xxx.dcp(构建过程中产生的一键执行的，或者是其他单步执行的.dcp文件。)
+   - xxx.dcp(构建过程中一键执行或者其他单步执行产生的.dcp文件)
    - to_facs             
       + 'user_prj_name '_partial.bin
       + 'user_prj_name '_partial.bit
@@ -52,7 +53,7 @@ example1/prj的build文件目录文件层级结构如下：
              PPPP          AAAA    AAAA    SSSSSSSS      SSSSSSSS
      ```
 
-    - 我们通过`build.sh `后面可跟随以下命令,进行`单步执行`操作。
+    - 我们通过在`build.sh `后面输入以下参数,进行`单步执行`操作。
       + -s | -S | -synth     : 只执行综合
       + -i | -I | -impl      : 只执行布局布线
       + -p | -P | -pr        :只执行pr校验

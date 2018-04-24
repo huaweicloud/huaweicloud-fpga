@@ -46,12 +46,20 @@ then
 	exit 1
 fi
 
-make clean
+make clean -f Makefile_lib
 RET=$?
 if [ $RET -ne 0 ]; 
 then
-	echo "FPGA_TOOL CLEAN ERROR:Make clean failed"
-	exit 1
+    echo "FPGA_TOOL CLEAN ERROR: make clean -f Makefile_lib failed"
+    exit 1
+fi
+
+make clean -f Makefile_cli
+RET=$?
+if [ $RET -ne 0 ]; 
+then
+    echo "FPGA_TOOL CLEAN ERROR: make clean -f Makefile_cli failed"
+    exit 1
 fi
 
 #Remove dist dir
@@ -75,6 +83,15 @@ else
 		echo "FPGA_TOOL CLEAN ERROR:Remove tool failed"
 		exit 1
 	fi
+fi
+
+#Remove libfpgamgmt.so
+rm /usr/lib64/libfpgamgmt.so
+RET=$?
+if [ $RET -ne 0 ]; 
+then
+	echo "FPGA_TOOL CLEAN ERROR: Remove /usr/lib64/libfpgamgmt.so failed"
+	exit 1
 fi
 
 cd $TOP

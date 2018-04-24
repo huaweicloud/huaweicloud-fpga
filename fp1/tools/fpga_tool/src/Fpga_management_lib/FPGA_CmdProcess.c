@@ -49,7 +49,6 @@
 #include "FPGA_CmdLog.h"
 #include "FPGA_CmdMbox.h"
 #include "FPGA_CmdPci.h"
-#include "FPGA_CmdMonitorMain.h"
 
 #ifdef    __cplusplus
 extern "C"{
@@ -62,6 +61,167 @@ FPGA_MBOX_OPT_INFO g_stFpgaMboxOptInfo =
     .ulTimeout = FPGA_MBOX_TIMEOUT,
     .ulDelay = FPGA_MBOX_DELAY_MS
 };
+
+/*******************************************************************************
+Function     : FPGA_MgmtOpsMutexRead
+Description  : Use file lock to prevent multiple processes from calling the tool at the same time
+Input        : INT32 ulSlotId
+Output       : INT32 * plFd
+Return       : 0:sucess other:fail
+*******************************************************************************/
+UINT32 FPGA_MgmtOpsMutexRlock( UINT32 ulSlotId, INT32 * plFd )
+{
+    INT8 acLockFile[NAME_MAX + 1] = { 0 };
+    UINT32 ulRet = 0;
+    INT32 lRet = 0;
+    INT32 lFd = 0;
+    struct flock lock;
+
+    if ( ulSlotId >= FPGA_SLOT_MAX )
+    {
+        LOG_ERROR( "FPGA_MgmtOpsMutexRlock Invalid slot_id=%d", ulSlotId );
+        return SDKRTN_PROCESS_INTPUT_ERROR;
+    }
+    if ( NULL == plFd )
+    {
+        LOG_ERROR( "FPGA_MgmtOpsMutexRlock plFd is null" );
+        return SDKRTN_PROCESS_INTPUT_ERROR;
+    }
+    
+    /* To construct a name of file lock  */
+    ulRet = snprintf_s( acLockFile, sizeof( acLockFile ), ( sizeof( acLockFile ) - 1 ), HW_MUTEX_PATH, ulSlotId );
+    if ( (size_t)ulRet >= ( sizeof(acLockFile) - 1 ) )
+    {
+        LOG_ERROR( "FPGA_MgmtOpsMutexRlock Mutex path is too long %d.", ulRet );
+        return SDKRTN_PROCESS_SPRINTF_FAIL;
+    }
+
+    /* Creat file lock */
+    lFd = open( acLockFile, ( O_CREAT | O_RDWR ), 0644 );
+    if ( lFd < 0 )
+    {
+        LOG_ERROR( "FPGA_MgmtOpsMutexRlock Open Fpga%d.lock file error.\r\n", ulSlotId);
+        return SDKRTN_PROCESS_OPEN_FAIL;
+    }
+
+    /* initialize the flock struct */
+    lock.l_type = F_RDLCK; 
+    lock.l_whence = SEEK_SET; 
+    lock.l_start = 0; 
+    lock.l_len = 0;
+
+    /* control the file wlock */
+    lRet = fcntl(lFd, F_SETLK, &lock);
+    if ( 0 != lRet )    
+    {
+        LOG_ERROR( "FPGA_MgmtOpsMutexRlock file lock failed lRet = 0x%x", lRet);    
+        close( lFd );        
+        return SDKRTN_PROCESS_OPEN_FAIL;    
+    }
+
+    *plFd = lFd;
+
+    return SDKRTN_PROCESS_SUCCESS;
+}
+
+/*******************************************************************************
+Function     : FPGA_MgmtOpsMutexWlock
+Description  : Use file lock to prevent multiple processes from calling the tool at the same time
+Input        : INT32 ulSlotId
+Output       : INT32 * plFd
+Return       : 0:sucess other:fail
+*******************************************************************************/
+UINT32 FPGA_MgmtOpsMutexWlock( UINT32 ulSlotId, INT32 * plFd )
+{
+    INT8 acLockFile[NAME_MAX + 1] = { 0 };
+    UINT32 ulRet = 0;
+    INT32 lRet = 0;
+    INT32 lFd = 0;
+    struct flock lock;
+
+    if ( ulSlotId >= FPGA_SLOT_MAX )
+    {
+        LOG_ERROR( "FPGA_MgmtOpsMutexWlock Invalid slot_id=%d", ulSlotId );
+        return SDKRTN_PROCESS_INTPUT_ERROR;
+    }
+    if ( NULL == plFd )
+    {
+        LOG_ERROR( "FPGA_MgmtOpsMutexWlock plFd is null" );
+        return SDKRTN_PROCESS_INTPUT_ERROR;
+    }
+    
+    /* To construct a name of file lock  */
+    ulRet = snprintf_s( acLockFile, sizeof( acLockFile ), ( sizeof( acLockFile ) - 1 ), HW_MUTEX_PATH, ulSlotId );
+    if ( (size_t)ulRet >= ( sizeof(acLockFile) - 1 ) )
+    {
+        LOG_ERROR( "FPGA_MgmtOpsMutexWlock Mutex path is too long %d.", ulRet );
+        return SDKRTN_PROCESS_SPRINTF_FAIL;
+    }
+
+    /* Creat file lock */
+    lFd = open( acLockFile, ( O_CREAT | O_RDWR ), 0644 );
+    if ( lFd < 0 )
+    {
+        LOG_ERROR( "FPGA_MgmtOpsMutexWlock Open Fpga%d.lock file error.\r\n", ulSlotId);
+        return SDKRTN_PROCESS_OPEN_FAIL;
+    }
+
+    /* initialize the flock struct */
+    lock.l_type = F_WRLCK; 
+    lock.l_whence = SEEK_SET; 
+    lock.l_start = 0; 
+    lock.l_len = 0;
+
+    /* lock the file */
+    lRet = fcntl(lFd, F_SETLK, &lock);
+    if ( 0 != lRet )    
+    {
+        LOG_ERROR( "FPGA_MgmtOpsMutexWlock file lock failed lRet = 0x%x", lRet);    
+        close( lFd );        
+        return SDKRTN_PROCESS_OPEN_FAIL;    
+    }
+
+    *plFd = lFd;
+
+    return SDKRTN_PROCESS_SUCCESS;
+}
+
+/*******************************************************************************
+Function     : FPGA_MgmtOpsMutexUnlock
+Description  : Use file lock to unlock
+Input        : INT32 * plFd
+Output       : none
+Return       : 0:sucess other:fail
+*******************************************************************************/
+UINT32 FPGA_MgmtOpsMutexUnlock( INT32 lFd )
+{
+    INT32 lRet = 0;
+    struct flock lock;
+
+    if ( lFd < 0 )
+    {
+        LOG_ERROR( "FPGA_MgmtOpsMutexUnlock input lFd is error" );
+        return SDKRTN_PROCESS_INTPUT_ERROR;
+    }
+    
+    /* initialize the flock struct */
+    lock.l_type = F_UNLCK; 
+    lock.l_whence = SEEK_SET; 
+    lock.l_start = 0; 
+    lock.l_len = 0;
+
+    /* lock the file */
+    lRet = fcntl(lFd, F_SETLK, &lock);
+    if ( 0 != lRet )    
+    {       
+        LOG_ERROR( "FPGA_MgmtOpsMutexUnlock file lock failed lRet = 0x%x", lRet);   
+        close( lFd );
+        return SDKRTN_PROCESS_OPEN_FAIL;    
+    }
+
+    close( lFd );
+    return SDKRTN_PROCESS_SUCCESS;
+}
 
 /*******************************************************************************
 Function     : FPGA_MgmtCmdMutex
@@ -128,19 +288,24 @@ void FPGA_MgmtPrintFunc( UINT32 ulErrorCode )
 {
     switch ( ulErrorCode )
     {
-        case FPGA_LOAD_STATUS_BUSY:
+        case LOAD_GET_LOCK_BUSY :
         {
-            printf("Error: (%u) busy\r\n", ulErrorCode );
+            printf("Error: (%u) Commond busy\r\n", ulErrorCode );
+            break;
+        }            
+        case CLEAR_GET_LOCK_BUSY:
+        {
+            printf("Error: (%u) Commond busy\r\n", ulErrorCode );
             break;
         }
-        case FPGA_LOAD_STATUS_INVALID_ID:
+        case LOAD_AEIID_CHECK_ERR:
         {
-            printf("Error: (%u) invalid AEI id\r\n", ulErrorCode );
+            printf("Error: (%u) invalid AEI ID\r\n", ulErrorCode );
             break;
         }
         default :
         {
-            printf("Error: (%u) unknow\r\n", ulErrorCode );
+            printf("Error: (%u) internal error, please try FpgaCmdEntry IF -S <slot num> for details\r\n", ulErrorCode );
         }
     }
 
@@ -154,7 +319,7 @@ Input        : None
 Output       : None
 Return       : None
 *******************************************************************************/
-void FPGA_MmgtMboxOptInit( void )
+void FPGA_MgmtMboxOptInit( void )
 {
     UINT32 i = 0;
     
@@ -163,6 +328,31 @@ void FPGA_MmgtMboxOptInit( void )
         g_stFpgaMboxOptInfo.strSlots[i].ulHandle = INIT_VALUE;
     }
     return;
+}
+
+/*******************************************************************************
+Function     : FPGA_MgmtInit
+Description  : Initialize option structure of mailbox
+Input        : None
+Output       : None
+Return       : None
+*******************************************************************************/
+UINT32 FPGA_MgmtInit( void )
+{
+    UINT32 ulRet = SDKRTN_PROCESS_ERROR_BASE;
+
+    /* Initialize log */
+    ulRet = FPGA_LogInit(  );
+    if ( SDKRTN_PROCESS_SUCCESS != ulRet )
+    {
+        LOG_ERROR( "FPGA_LogInit  failed" );    
+        return ( INT32 )ulRet;
+    }
+
+    /* Initialize Mailbox */
+    FPGA_MgmtMboxOptInit(  );
+    
+    return SDKRTN_PROCESS_SUCCESS;
 }
 
 /*******************************************************************************
@@ -233,23 +423,60 @@ UINT32 FPGA_MgmtLoadMsgInit( MBOX_MSG_DATA *punMsg, UINT32 *pulLen, INT8 *pcHfiI
 }
 
 /*******************************************************************************
+Function     : FPGA_MgmtClearMsgInit
+Description  : Initialize the stucture of message
+Input        : MBOX_MSG_DATA *punMsg, UINT32 *pulLen
+Output       : None
+Return       : 0:sucess other:fail
+*******************************************************************************/
+UINT32 FPGA_MgmtClearMsgInit( MBOX_MSG_DATA *punMsg, UINT32 *pulLen )
+{
+    if ( NULL == punMsg )
+    {
+        LOG_ERROR( "FPGA_MgmtClearMsgInit pstMsg is NULL" );
+        return SDKRTN_PROCESS_INTPUT_ERROR;
+    }
+
+    if ( NULL == pulLen )
+    {
+        LOG_ERROR( "FPGA_MgmtClearMsgInit pulLen is NULL" );
+        return SDKRTN_PROCESS_INTPUT_ERROR;
+    }
+
+    /* Fill in the command header */
+    punMsg->strCmdMsgInfo.strMsgHead.ulVersion = HFI_CMD_API_VERSION;
+    punMsg->strCmdMsgInfo.strMsgHead.ulOpt = HFI_CMD_CLEAR;
+    punMsg->strCmdMsgInfo.strMsgHead.ulId = HFI_CMD_MSG_FLAG;
+    
+    /* Fill in the payload lenth and flag */
+    punMsg->strCmdMsgInfo.strMsgHead.usLength = FPGA_IMAGE_CLEAR_USLEN;
+    punMsg->strCmdMsgInfo.strMsgHead.usFlag = SEND_MSG_LENGTH_FLAG;
+
+    *pulLen = sizeof( HFI_CMD_HEAD );
+
+    return SDKRTN_PROCESS_SUCCESS;
+}
+
+
+
+/*******************************************************************************
 Function     : FPGA_MgmtLoadMsgInitForInquireImageInfo
 Description  : Initialize the stucture of message
 Input        : MBOX_MSG_DATA *punMsg, UINT32 *pulLen
 Output       : None
 Return       : 0:sucess other:fail
 *******************************************************************************/
-UINT32 FPGA_MgmtLoadMsgInitForInquireImageInfo( MBOX_MSG_DATA *punMsg, UINT32 *pulLen )
+UINT32 FPGA_MgmtInquireMsgInit( MBOX_MSG_DATA *punMsg, UINT32 *pulLen )
 {
     if ( NULL == punMsg )
     {
-        LOG_ERROR( "FPGA_MgmtLoadMsgInitForInquireImageInfo pstMsg is NULL" );
+        LOG_ERROR( "FPGA_MgmtInquireMsgInit pstMsg is NULL" );
         return SDKRTN_PROCESS_INTPUT_ERROR;
     }
 
     if ( NULL == pulLen )
     {
-        LOG_ERROR( "FPGA_MgmtLoadMsgInitForInquireImageInfo pulLen is NULL" );
+        LOG_ERROR( "FPGA_MgmtInquireMsgInit pulLen is NULL" );
         return SDKRTN_PROCESS_INTPUT_ERROR;
     }
 
@@ -350,7 +577,7 @@ UINT32 FPGA_MgmtCheckMsg( MBOX_MSG_DATA *punMsgSend, MBOX_MSG_DATA *punMsgRsp, U
     
     if ( ulLength < sizeof( HFI_CMD_HEAD ) )
     {
-         LOG_ERROR( "Msg length is too smal %d", ulLength );
+         LOG_ERROR( "Msg length is too small %d", ulLength );
          return SDKRTN_PROCESS_MSG_LENGTH_ERROR;
     }
 
@@ -456,6 +683,29 @@ UINT32 FPGA_MgmtSendMsg( UINT32 ulSlotIndex, MBOX_MSG_DATA *punMsgSend, MBOX_MSG
 }
 
 /*******************************************************************************
+Function     : FPGA_MgmtDisableMbox
+Description  : Disable mailbox 
+Input        : UINT32 ulSlotIndex
+Output       : None
+Return       : None
+*******************************************************************************/
+void  FPGA_MgmtDisableMbox( UINT32 ulSlotIndex )
+{
+    if ( ulSlotIndex >= FPGA_SLOT_MAX )
+    {
+        LOG_ERROR( "Invalid slot_id = %d", ulSlotIndex );
+        return ;
+    }
+
+    if (g_stFpgaMboxOptInfo.strSlots[ulSlotIndex].ulHandle != ( UINT32 )INIT_VALUE)
+    {
+        g_stFpgaMboxOptInfo.strSlots[ulSlotIndex].ulHandle = (UINT32)INIT_VALUE;
+    }
+
+    return;
+}
+
+/*******************************************************************************
 Function     : FPGA_MgmtSendMsg
 Description  : Process the command 
 Input        : UINT32 ulSlotIndex, MBOX_MSG_DATA *punMsgSend, MBOX_MSG_DATA *punMsgRsp
@@ -495,7 +745,7 @@ UINT32 FPGA_MgmtProcCmd( UINT32 ulSlotIndex, MBOX_MSG_DATA *punMsgSend,  MBOX_MS
     ulRet = FPGA_MgmtCmdMutex( ulSlotIndex, &lFd );
     if ( OK != ulRet )
     {
-        LOG_ERROR( "FPGA_MgmtEnableMbox failed" );
+        LOG_ERROR( "FPGA_MgmtCmdMutex failed" );
         return ulRet;
     }
 
@@ -523,26 +773,102 @@ UINT32 FPGA_MgmtProcCmd( UINT32 ulSlotIndex, MBOX_MSG_DATA *punMsgSend,  MBOX_MS
 }
 
 /*******************************************************************************
-Function     : FPGA_MgmtDisableMbox
-Description  : Disable mailbox 
+Function     : FPGA_MgmtClearHfiImage
+Description  : Clear AEI image 
 Input        : UINT32 ulSlotIndex
 Output       : None
-Return       : None
+Return       : 0:sucess other:fail
 *******************************************************************************/
-void  FPGA_MgmtDisableMbox( UINT32 ulSlotIndex )
+UINT32 FPGA_MgmtClearHfiImage( UINT32 ulSlotIndex )
 {
+    UINT32 ulRet = SDKRTN_PROCESS_SUCCESS;
+    UINT32 ulLen = 0;
+    MBOX_MSG_DATA unMsgSend = { { { 0 } } };
+    MBOX_MSG_DATA unMsgRsp = { { { 0 } } };
+    INT32 lFd = 0;
+    
     if ( ulSlotIndex >= FPGA_SLOT_MAX )
     {
-        LOG_ERROR( "Invalid slot_id = %d", ulSlotIndex );
-        return ;
+        printf( "[***TIPS***]Please input the correct slot number.\r\n" );
+        return SDKRTN_PROCESS_INTPUT_ERROR;
     }
 
-    if (g_stFpgaMboxOptInfo.strSlots[ulSlotIndex].ulHandle != ( UINT32 )INIT_VALUE)
+    /* Initialize message */
+    ulRet = FPGA_MgmtClearMsgInit( &unMsgSend, &ulLen );
+    if ( OK != ulRet )
     {
-        g_stFpgaMboxOptInfo.strSlots[ulSlotIndex].ulHandle = (UINT32)INIT_VALUE;
+        LOG_ERROR( "FpgaClearMsgInit failed" );
+        return ulRet;
+    }
+    
+    /* Set and recognize the file Wlock */
+    ulRet = FPGA_MgmtOpsMutexWlock( ulSlotIndex, &lFd );
+    if ( OK != ulRet )
+    {
+        LOG_ERROR( "FPGA_MgmtClearHfiImage wlock failed" );
+        return ulRet;
     }
 
-    return;
+    /* Send command to PF */
+    ulRet = FPGA_MgmtProcCmd( ulSlotIndex, &unMsgSend, &unMsgRsp, &ulLen );
+    if ( OK != ulRet )
+    {
+        LOG_ERROR( "FPGA_MgmtProcCmd failed, ulRet = 0x%x", ulRet );
+        
+        /* If Cmd failed , unlock the file Wlock and close the file*/
+        if ( OK != FPGA_MgmtOpsMutexUnlock( lFd ))
+        {
+            LOG_ERROR( "FPGA_MgmtClearHfiImage unlock failed");
+        }
+        
+        return ulRet;
+    }
+
+    /* Unlock the file Wlock and close the file*/
+    ulRet = FPGA_MgmtOpsMutexUnlock( lFd );
+    if ( OK != ulRet )
+    {
+        LOG_ERROR( "FPGA_MgmtClearHfiImage unlock failed" );
+        return ulRet;
+    }
+
+    return SDKRTN_PROCESS_SUCCESS;
+}
+
+/*******************************************************************************
+Function     : FPGA_CheckAEIId
+Description  : Check AEI ID which must consist of '0'~'9' or 'a'~'f'  
+Input        : INT8 *pcHfiId
+Output       : None
+Return       : 0:sucess other:fail
+*******************************************************************************/
+UINT32 FPGA_MgmtCheckAeiId( INT8 *pcHfiId )
+{
+    INT32 i = 0;
+
+    if ( NULL == pcHfiId ) 
+    {
+        LOG_ERROR( "Input Hfi id is null" );
+        return SDKRTN_PROCESS_AEIID_ERROR;
+    }
+    
+    if ( HFI_ID_LEN != strnlen( pcHfiId, HFI_ID_LEN + 1) )
+    {
+        LOG_ERROR( "The length[%d] of AEI ID is wrong", strnlen( pcHfiId, HFI_ID_LEN_MAX + 1) );
+        return SDKRTN_PROCESS_AEIID_ERROR;
+    }
+    
+
+    for ( i = 0; i < strnlen( pcHfiId, HFI_ID_LEN_MAX + 1); i++ )
+    {
+        if ( ( pcHfiId[i] < 'a' || pcHfiId[i] > 'f' ) && ( pcHfiId[i] < '0' || pcHfiId[i] > '9') )
+        {
+            LOG_ERROR("AEI ID contain a char not belong to '0'~'9' or 'a'~'f'\r\n");
+            return SDKRTN_PROCESS_AEIID_ERROR;
+        }
+    }
+
+    return SDKRTN_PROCESS_SUCCESS;
 }
 
 /*******************************************************************************
@@ -558,7 +884,8 @@ UINT32 FPGA_MgmtLoadHfiImage( UINT32 ulSlotIndex, INT8 *pcHfiId )
     UINT32 ulLen = 0;
     MBOX_MSG_DATA unMsgSend = { { { 0 } } };
     MBOX_MSG_DATA unMsgRsp = { { { 0 } } };
-
+    INT32 lFd = 0;
+    
     if ( ulSlotIndex >= FPGA_SLOT_MAX )
     {
         printf( "[***TIPS***]Please input the correct slot number.\r\n" );
@@ -577,6 +904,13 @@ UINT32 FPGA_MgmtLoadHfiImage( UINT32 ulSlotIndex, INT8 *pcHfiId )
         return SDKRTN_PROCESS_INTPUT_ERROR;
     }
 
+    ulRet = FPGA_MgmtCheckAeiId( pcHfiId );
+    if ( OK != ulRet)
+    {
+        printf("[***TIPS***]FPGA image ID is illegal.\r\n");
+        return SDKRTN_PROCESS_INTPUT_ERROR;
+    }
+
     /* Initialize message */
     ulRet = FPGA_MgmtLoadMsgInit( &unMsgSend, &ulLen, pcHfiId );
     if ( OK != ulRet )
@@ -585,11 +919,34 @@ UINT32 FPGA_MgmtLoadHfiImage( UINT32 ulSlotIndex, INT8 *pcHfiId )
         return ulRet;
     }
 
+    /* Set and recognize the file Wlock */
+    ulRet = FPGA_MgmtOpsMutexWlock( ulSlotIndex, &lFd );
+    if ( OK != ulRet )
+    {
+        LOG_ERROR( "FPGA_MgmtLoadHfiImage wlock failed" );
+        return ulRet;
+    }
+
     /* Send command to PF */
     ulRet = FPGA_MgmtProcCmd( ulSlotIndex, &unMsgSend, &unMsgRsp, &ulLen );
     if ( OK != ulRet )
     {
-        LOG_ERROR( "fpga_mgmt_process_cmd failed" );
+        LOG_ERROR( "FPGA_MgmtProcCmd failed, ulRet = 0x%x", ulRet );
+        
+        /* If Cmd failed , unlock the file Wlock and close the file*/
+        if ( OK != FPGA_MgmtOpsMutexUnlock( lFd ) )
+        {
+            LOG_ERROR( "FPGA_MgmtLoadHfiImage unlock failed");
+        }
+        
+        return ulRet;
+    }
+
+    /* Unlock the file Wlock and close the file*/
+    ulRet = FPGA_MgmtOpsMutexUnlock( lFd );
+    if ( OK != ulRet )
+    {
+        LOG_ERROR( "FPGA_MgmtLoadHfiImage unlock failed" );
         return ulRet;
     }
 
@@ -623,10 +980,10 @@ UINT32 FPGA_MgmtInquireFpgaImageInfo( UINT32 ulSlotIndex, FPGA_IMG_INFO *pstrImg
     }
 
     /* Initialize the body of message  */
-    ulRet = FPGA_MgmtLoadMsgInitForInquireImageInfo( &unMsgSend, &ulLen );
+    ulRet = FPGA_MgmtInquireMsgInit( &unMsgSend, &ulLen );
     if ( OK != ulRet )
     {
-        LOG_ERROR( "FpgaLoadMsgInit failed" );
+        LOG_ERROR( "FPGA_MgmtInquireMsgInit failed" );
         return ulRet;
     }
 
@@ -634,7 +991,7 @@ UINT32 FPGA_MgmtInquireFpgaImageInfo( UINT32 ulSlotIndex, FPGA_IMG_INFO *pstrImg
     ulRet = FPGA_MgmtProcCmd( ulSlotIndex, &unMsgSend, &unMsgRsp, &ulLen );
     if ( OK != ulRet )
     {
-        LOG_ERROR( "fpga_mgmt_process_cmd failed" );
+        LOG_ERROR( "FPGA_MgmtProcCmd failed" );
         return ulRet;
     }
 
@@ -674,11 +1031,10 @@ UINT32 FPGA_MgmtInquireLEDStatus( UINT32 ulSlotIndex )
         return ulRet;
     }
 
-    if ( HW_VF_VENDOR_ID == g_astrFpgaInfo[ulSlotIndex].usVendorId && 
-        HW_VF_DEVICE_ID == g_astrFpgaInfo[ulSlotIndex].usDeviceId )
+    if ( HW_VF_VENDOR_ID == g_astrShellType.usVendorId && HW_VF_DEVICE_ID == g_astrShellType.usDeviceId )
     {
         /* Read reg value of bar0 */
-        ulRet = FPGA_BaseBarReadReg(ulBarHandle,LED_OFFSET,&ulValue);
+        ulRet = FPGA_MboxBaseBarReadReg(ulBarHandle,LED_OFFSET,&ulValue);
 
         if (SDKRTN_MBX_SUCCESS != ulRet )
         {
@@ -711,8 +1067,7 @@ UINT32 FPGA_MgmtInquireLEDStatus( UINT32 ulSlotIndex )
     }
     
     /* No lighting function for OCL */
-    else if ( HW_OCL_PF_VENDOR_ID == g_astrFpgaInfo[ulSlotIndex].usVendorId && 
-        HW_OCL_PF_DEVICE_ID == g_astrFpgaInfo[ulSlotIndex].usDeviceId )	
+    else if ( HW_OCL_PF_VENDOR_ID == g_astrShellType.usVendorId && HW_OCL_PF_DEVICE_ID == g_astrShellType.usDeviceId )	
     {
         printf("General purpose architecture device doesn't support user LED.\r\n");
         return SDKRTN_PROCESS_SUCCESS;
@@ -721,7 +1076,8 @@ UINT32 FPGA_MgmtInquireLEDStatus( UINT32 ulSlotIndex )
     {
         /* Report type ID error after the device ID match fails */
         printf("FPGA shell type error.\r\n");
-        return SDKRTN_MONITOR_SHELL_TYPE_ERROR;           
+        return SDKRTN_PROCESS_SHELL_TYPE_ERROR;           
+
     }
 }
 

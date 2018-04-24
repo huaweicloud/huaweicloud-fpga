@@ -10,7 +10,7 @@ The **constraints** folder stores the DDRA/DDRB/DDRD pin constraint information 
   - pr_pblock.xdc
   - README.md
 
- # Directory Descriptions 
+ # Directory Description 
 * ddra_pin_x8.xdc  
   This document records the `DDRA pin constraint information` of the user logic.  
 

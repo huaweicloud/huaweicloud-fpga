@@ -13,7 +13,7 @@ SDAccel Example示例实现基于SDAccel的仿真及硬件测试流程。本例�
 
 SDAccel HDK主要完成SDAccel开发流程的编译和仿真部分，需要在SDAccel编译环境下运行。用户申请SDAccel开发环境，登录VM，从github上获取最新的开发套件fp1完整目录，建议存放在“huaweicloud-fpga”目录下。本文档基于"huaweicloud-fpga/fp1/"目录说明。
 
-### 使用步骤如下所示。
+### 使用步骤如下所示
 
 1.  进入SDAccel开发编译环境。
 
@@ -32,7 +32,7 @@ SDAccel HDK主要完成SDAccel开发流程的编译和仿真部分，需要在SD
   	XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"。
 
 ##### 说明:
-  华为提供的Xilinx软件License**仅限root账号**使用。
+  华为提供的Xilinx软件License *仅限root账号* 使用。
 
 3.  配置开发环境。
 
@@ -57,14 +57,14 @@ SDAccel HDK主要完成SDAccel开发流程的编译和仿真部分，需要在SD
    hw_em ------------- 硬件仿真模式，编译结束生成bin_mmult_hw_emu.xclbin   
    hw ------------------ 硬件编译模式，编译结束生成bin_mmult_hw.xclbin   
    用户根据自身需求选择对应编译模式即可。  
-   具体使用方法请参考[示例介绍](..\hardware\sdaccel_design\examples\mmult_hls\README_CN.md)。
+   具体使用方法请参考[示例介绍](../hardware/sdaccel_design/examples/mmult_hls/README_CN.md)。
 
 5.  仿真example。
    ```
     cd $HW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/scripts
     sh run.sh emu ../prj/bin/host ../prj/bin/xclbin
    ```
-   
+
 ##### 说明:
 
    *host*为编译生成的主机程序（硬件编译模式不支持仿真）：  
@@ -82,7 +82,6 @@ SDAccel HDK主要完成SDAccel开发流程的编译和仿真部分，需要在SD
 
   按照步骤4选择hw模式编译并生成xclbin文件，需要先完成环境配置及SDK的编译（具体可参考根目录下README 3.1.2章节），按照下节SDAccel SDK流程在执行环境上进行硬件测试。
 
-----结束
 
 使用SDAccel SDK
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -107,7 +106,7 @@ SDAccel的SDK平台主要实现对硬件的测试，需要在执行环境下编�
   	source $SW_FPGA_DIR/setup.sh
 ##### 说明:
 
-  参见目录huaweicloud-fpga/fp1/README、配置环境部分。
+  参见目录huaweicloud-fpga/fp1/README_CN.md配置环境部分。
 
 3.  进入主机应用程序所在文件目录。
 
@@ -138,5 +137,3 @@ SDAccel的SDK平台主要实现对硬件的测试，需要在执行环境下编�
 
   run.sh具体使用请执行sh run.sh -h查看。  
   *bin_dir*为SDAccel HDK流程**hw模式**编译生成的xclbin文件所在目录。
-
-----结束

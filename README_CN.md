@@ -4,16 +4,16 @@
 # 目录
 
 + [1 认识基于FP1平台的FPGA开发套件](#sec_1)
-	+ [1.1 关于开发套件](#sec_1_1)
-	+ [1.2 使用前准备](#sec_1_2)
+  + [1.1 关于开发套件](#sec_1_1)
+  + [1.2 使用前准备](#sec_1_2)
 + [2 高性能架构FPGA开发指南](#sec_2)
-	+ [2.1 高性能架构硬件开发流程](#sec_2_1)
-	+ [2.2 高性能架构软件开发流程](#sec_2_2)
-	+ [2.3 使用基于vivado的Example](#sec_2_3)
+  + [2.1 高性能架构硬件开发流程](#sec_2_1)
+  + [2.2 高性能架构软件开发流程](#sec_2_2)
+  + [2.3 使用基于vivado的Example](#sec_2_3)
 + [3 通用型架构FPGA开发指南](#sec_3)
-	+ [3.1 通用型架构硬件开发流程](#sec_3_1)
-	+ [3.2 通用型架构软件开发流程](#sec_3_2)
-	+ [3.3 使用基于SDAccel的Example](#sec_3_3)
+  + [3.1 通用型架构硬件开发流程](#sec_3_1)
+  + [3.2 通用型架构软件开发流程](#sec_3_2)
+  + [3.3 使用基于SDAccel的Example](#sec_3_3)
 
 <a name="sec_1"></a>
 # 1 认识基于FP1平台的FPGA开发套件
@@ -116,7 +116,7 @@ FPGA镜像加载工具的编译和安装请参见[fpga_tool README](./fp1/tools/
 
 <a name="sec_3"></a>
 # 3 通用型架构FPGA开发指南
-通用型架构架构FPGA开发包括硬件开发、软件开发和使用Example三个场景。在硬件开发场景下，用户通过使用基于SDAccel的工具套件完成FPGA镜像文件的生成和注册；在软件开发场景下，用户可基于已有的FPGA镜像文件开发自己的应用；在使用Example时，用户可以通过示例的使用快速掌握在当前服务器架构下的FPGA开发流程。
+通用型架构FPGA开发包括硬件开发、软件开发和使用Example三个场景。在硬件开发场景下，用户通过使用基于SDAccel的工具套件完成FPGA镜像文件的生成和注册；在软件开发场景下，用户可基于已有的FPGA镜像文件开发自己的应用；在使用Example时，用户可以通过示例的使用快速掌握在当前服务器架构下的FPGA开发流程。
 
 + [3.1 通用型架构硬件开发流程](#sec_3_1)
 + [3.2 通用型架构软件开发流程](#sec_3_2)
@@ -137,27 +137,24 @@ FPGA镜像加载工具的编译和安装请参见[fpga_tool README](./fp1/tools/
 注册FPGA镜像依赖镜像管理工具Fisclient，如果您还未安装此工具，请参照[1.2.2](#sec_1_2_2)节完成镜像管理工具的安装及配置。在工具安装成功后，用户使用AEI_Register.sh工具向FPGA镜像管理模块注册FPGA镜像。注册的详细步骤请参见[注册FPGA镜像](./fp1/docs/Register_an_FPGA_image_for_an_OpenCL_project_cn.md)。完成注册后，请记录并妥善保存返回结果里的ID，此ID将用于查询FPGA镜像的注册操作是否成功以及后续的软件开发中。
 > 用户可以使用Fisclient对注册结果进行查询，具体查询步骤参见[2.1.2](#sec_2_1_2)节步骤2。
 
-<a name="sec_3_1"></a>
+<a name="sec_3_2"></a>
 ## 3.2 通用型架构软件开发流程
 
 如果用户已完成硬件开发，注册了FPGA镜像，则可以按照本章内容完成FPGA用户应用的开发。
 
 <a name="sec_3_2_1"></a>
-### 3.2.1 加载FPGA镜像
-加载FPGA镜像时进行FPGA软件开发的必要步骤，如何加载请参见[2.2.1](#sec_2_2_1)节内容。
-
-<a name="sec_3_2_2"></a>
-### 3.2.2 编写与调试用户应用
+### 3.2.1 编写与调试用户应用
 通用型架构开发模式采用Xilinx的SDAccel架构完成FPGA与处理器的数据交互，编写和调试用户应用的方法请参见[基于SDAccel的用户应用开发说明](./fp1/software/app/sdaccel_app/README_CN.md)。
 如果用户需要修改HAL，请参见[SDAccel模式HAL开发说明](./fp1/software/userspace/sdaccel/README_CN.md)。
 
-<a name="sec_3_2_3"></a>
-### 3.2.3 运行用户应用
+<a name="sec_3_2_2"></a>
+### 3.2.2 运行用户应用
 
 用户在完成FPGA镜像加载和应用编译后，进入目录[huaweicloud-fpga/fp1/software/app/sdaccel_app](./fp1/software/app/sdaccel_app)，执行用户程序。
 
+<a name="sec_3_3"></a>
 ## 3.3 使用基于SDAccel的Example
-在通用型服务器架构下，华为FPGA云加速服务提供了三种Example。Example1是一个矢量相加的实例，采用opencl c实现逻辑算法；Example2是一个矩阵乘法实例，基于c实现逻辑算法；Example3是一个矢量相加的实例，采用rtl来实现其逻辑功能。基于SDAccel的Example操作流程如下图所示。
+在通用型服务器架构下，华为FPGA云加速服务提供了三种Example。Example1是一个矩阵乘法实例，基于c实现逻辑算法；Example2是一个矢量相加的实例，采用opencl c实现逻辑算法；Example3是一个矢量相加的实例，采用rtl来实现其逻辑功能。基于SDAccel的Example操作流程如下图所示。
 
 ![](./fp1/docs/media/SDAccel_example_cn.jpg)
 

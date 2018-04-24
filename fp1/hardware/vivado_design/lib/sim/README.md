@@ -1,4 +1,4 @@
-# Descriptions on Simulation Common Folders
+# Description on Simulation Common Folders
 
 [切换到中文版](./README_CN.md)
 
@@ -54,7 +54,7 @@ This folder stores simulation common files, including common simulation library 
   - [scripts/](#sec-2-13)
   - [doc/](#sec-2-14)
 
-## Directory Descriptions
+## Directory Description
 
 ---
 
@@ -146,7 +146,7 @@ Indicates the simulation document folder and contains simulation platform descri
 
 <a id="sec-3" name="sec-3"></a>
 
-## Simulation Descriptions
+## Simulation Description
 
-For details about the simulation platform, see the [Simulation Platform Quick Start Guide](./doc/quick_start.md) and the [Simulation Platform User Guide](./doc/user_guide.md).
+For details about the simulation platform, see [Simulation Platform Quick Start Guide](./doc/quick_start.md) and [Simulation Platform User Guide](./doc/user_guide.md).
 

@@ -1,8 +1,8 @@
-# Descriptions
+# Description
 
 [切换到中文版](./README_CN.md)
 
-This directory stores the `project directory templates`, aiming to standardizing and simplifying project building. The templates can also be used as a reference for users to build their own projects.
+This directory stores `project directory templates`, aiming to standardizing and simplifying project building. The templates can also be used as a reference for users to build their own projects.
 
 # Directory Structure
 [template_XX](#template_XX_dir)/  
@@ -14,7 +14,7 @@ This directory stores the `project directory templates`, aiming to standardizing
 - src
 - scripts
 
-# File and Folder Descriptions
+# File and Folder Description
 - prj
 
   - prj/bin
@@ -29,7 +29,7 @@ User Simulation Application
 
 - src
 
-This directory stores host source code and kernel source code. It contains the basic Makefile, which can be modified as required. For details, see src README.md.
+This directory stores host source code and kernel source code. It contains the basic Makefile, which can be modified as required. For details, see **src README.md**.
 
 - scripts
 

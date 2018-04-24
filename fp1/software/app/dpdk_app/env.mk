@@ -41,11 +41,11 @@ DIR_BINS = $(MAKEROOT)/bin
 
 DPDK_CFLAGS = -march=native -I$(DPDK_INCLUDE_HOME)
 SECUREC_CFLAGS = -I$(SECUREC_INCLUDE_HOME)
-CFLAGS += -g -fPIC -std=gnu99 -D__VU9P__ $(SECUREC_CFLAGS) $(DPDK_CFLAGS) -I$(DIR_INC)
+CFLAGS += -g -fPIC -std=gnu99 -D_GNU_SOURCE -D__VU9P__ $(SECUREC_CFLAGS) $(DPDK_CFLAGS) -I$(DIR_INC)
 
 DPDK_LDFLAGS = -L$(DPDK_LIB_HOME) -lethdev -lrte_mbuf -lrte_mempool -lrte_ring -lrte_eal -lrte_pmd_acc
 SECUREC_LDFLAGS = -L$(SECUREC_LIB_HOME) -lsecurec
-LDFLAGS += -g -fPIC -lpthread -lrt -ldl $(SECUREC_LDFLAGS) $(DPDK_LDFLAGS)
+LDFLAGS += -g -fPIC -lpthread -lrt -ldl -fstack-protector -Wl,-z,relro -Wl,-z,noexecstack $(SECUREC_LDFLAGS) $(DPDK_LDFLAGS)
 
 
 

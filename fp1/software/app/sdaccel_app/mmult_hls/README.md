@@ -1,9 +1,9 @@
-Matrix Multiplication Example with C Kernel
+Matrix Multiplication Example Using C Kernel
 ================================
 
 [切换到中文版](./README_CN.md)
 
-This is an implementation of performing matrix multiplication of two 16x16 matrices and getting the result back in 16x16 matrix. 
+This is an implementation of performing matrix multiplication of two 16 x 16 matrices and getting the result back in a 16 x 16 matrix. 
 The main algorithm characteristics of this application are:
 
 Files in the Example
@@ -14,9 +14,9 @@ Application host code
 
 Compilation File
 --------------------------------
-* Makefile: Makefile for compiling application
+* Makefile: used for compiling application
 
 Note
 --------------------------------
-* SDx must be already installed and then xcpp tool can be available 
+* SDx must be installed to use the xcpp tool.
 

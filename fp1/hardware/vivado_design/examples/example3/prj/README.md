@@ -9,10 +9,10 @@
 <div id="text-table-of-contents">
 <ul>
 <li><a href="#sec-1">1. <b>Directory Structure</b></a></li>
-<li><a href="#sec-2">2. <b>File and Folder Descriptions</b></a></li>
-<li><a href="#sec-3">3. <b>Building Descriptions</b></a>
+<li><a href="#sec-2">2. <b>File and Folder Description</b></a></li>
+<li><a href="#sec-3">3. <b>Building Description</b></a>
 <ul>
-<li><a href="#sec-3-1">3.1. <b>usr_prj_cfg Configuration Descriptions</b></a></li>
+<li><a href="#sec-3-1">3.1. <b>usr_prj_cfg Configuration Description</b></a></li>
 </ul>
 <ul>
 <li><a href="#sec-3-2">3.2. <b>build.sh Operation Instructions</b></a></li>
@@ -21,10 +21,10 @@
 <li><a href="#sec-3-3">3.3. <b>schedule_task.sh Operation Instructions</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-4">3.4. <b>AEI_Register.cfg Configuration Descriptions</b></a></li>
+<li><a href="#sec-3-4">3.4. <b>AEI_Register.cfg Configuration Description</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-5">3.5. <b>AEI_Register.sh Configuration Descriptions</b></a></li>
+<li><a href="#sec-3-5">3.5. <b>AEI_Register.sh Configuration Description</b></a></li>
 </ul>
 </li>
 <li><a href="#sec-4">4. <b>Others</b></a></li>
@@ -43,7 +43,7 @@ The structure of the **prj** folder of the Example 3 is as follows:
 - [build/](#sec-2-1)
   - [constraints/](#sec-2-2)
   - [build.sh](#sec-2-3)
-  - README.md (This document)
+  - README.md (this document)
   - [schedule_task.sh](#sec-2-4)
   - [usr_prj_cfg](#sec-2-5)
   - [AEI_Register.cfg](#sec-2-6)
@@ -51,7 +51,7 @@ The structure of the **prj** folder of the Example 3 is as follows:
 
 <a id="sec-2" name="sec-2"></a>
 
-## File and Folder Descriptions  
+## File and Folder Description  
 
 <a id="sec-2-1" name="sec-2-1"></a>
 
@@ -66,7 +66,7 @@ The structure of the **prj** folder of the Example 3 is as follows:
 <a id="sec-2-3" name="sec-2-3"></a>
 
 - build.sh  
-  This file is used to build a project. After users modify 'usr_prj_cfg', they can run the file to build a project. For details, see [build.sh Operation Instructions](#sec-3-2).
+  This file is used to build a project. After users modify `usr_prj_cfg`, they can run the file to build a project. For details, see [build.sh Operation Instructions](#sec-3-2).
 
 <a id="sec-2-4" name="sec-2-4"></a>
 
@@ -81,33 +81,33 @@ The structure of the **prj** folder of the Example 3 is as follows:
 <a id="sec-2-6" name="sec-2-6"></a>
 
 - AEI_Register.cfg  
-  This file is used to configure the upload mode of the bit file generated during compilation and the name of the OBS bucket. For details, see [AEI_Register.cfg Operation Instructions](#sec-3-4).
+  This file is used to configure the upload mode of the .bit file generated during compilation and the name of the OBS bucket. For details, see [AEI_Register.cfg Operation Instructions](#sec-3-4).
 
 <a id="sec-2-7" name="sec-2-7"></a>
 
 - AEI_Register.sh  
-  This command is used to complete the PR verification and generate and upload the bit file. Run this file to upload the bit file to the OBS bucket and obtain the registration ID. For details, see [AEI_Register.sh Operation Instructions](#sec-3-5).
+  This command is used to complete the PR verification and generate and upload the .bit file. Run this file to upload the .bit file to the OBS bucket and obtain the registration ID. For details, see [AEI_Register.sh Operation Instructions](#sec-3-5).
 
 <a id="sec-3" name="sec-3"></a>
 
-## Building Descriptions
+## Building Description
 
 <a id="sec-3-1" name="sec-3-1"></a>
 
-### usr_prj_cfg Configuration Descriptions
+### usr_prj_cfg Configuration Description
 
 The file is used to configure user-defined information of a user project.
 
-- The usr_prj_cfg file is saved in the `$WORK_DIR/hardware/vivado_design/example/example3/prj/` directory. (All subsequent operations are performed in this directory.)
+- The **usr_prj_cfg** file is saved in the `$WORK_DIR/hardware/vivado_design/example/example3/prj/` directory. (All subsequent operations are performed in this directory.)
 
-To edit the **usr_prj_cfg** file, run the following command:
+To edit the **usr_prj_cfg** file, run the following commands:
 
 ```bash
   $ cd $WORK_DIR/hardware/vivado_design/example/example3/prj/
   $ vim ./usr_prj_cfg
 ```
 
-`usr_prj_cfg` content introduction:
+The content of `usr_prj_cfg` is listed in the following table.
 
 | Content                                  | Keyword           | Example                                  |
 | :--------------------------------------- | :---------------- | :--------------------------------------- |
@@ -121,17 +121,17 @@ To edit the **usr_prj_cfg** file, run the following command:
 
 Configure **usr_prj_cfg** of the user-defined project according to the `example` in the preceding table:
 
-- USR_PRJ_NAME=`Name of the project created by the user`, for example, ul_pr_top or usr_prjxx_top.
-- USR_TOP=`Top-Layer name of the project`, for example, ul_pr_top or usr_prjxx_top.
-- USR_SYN_STRATEGY=`Synthesis policy`, for example, AreaOptimized_high. It is user-defined. The default value is **DEFAULT**.
-- USR_IMPL_STRATEGY=`implementation policy`, for example, Explore. It is user-defined. The default value is **DEFAULT**.
+- USR_PRJ_NAME=`Name of the project created by the user`, for example, **ul_pr_top** or **usr_prjxx_top**.
+- USR_TOP=`Top-Layer name of the project`, for example, **ul_pr_top** or **usr_prjxx_top**.
+- USR_SYN_STRATEGY=`Synthesis policy`, for example, **AreaOptimized_high**. It is user-defined. The default value is **DEFAULT**.
+- USR_IMPL_STRATEGY=`implementation policy`, for example, **Explore**. It is user-defined. The default value is **DEFAULT**.
 - USR_CONSTRAINTS=`user-defined constraints`. Generally, it is in the default state and does not need to be changed.
 
 <a id="sec-3-2" name="sec-3-2"></a>
 
 ### build.sh Operation Instructions
 
-The `build.sh` script is used to build a project. The script supports both one-click building and branch building. For details, run the `-h` command. The command is as follows:
+The `build.sh` script is used to build a project. The script supports both one-click building and building step by step. For details, run the `-h` command. The command is as follows:
 
 ```bash
   $ sh build.sh -h
@@ -154,27 +154,27 @@ To use one-click project building, run the following command:
   $ sh build.sh
 ```
 
-This command is used to complete the synthesis policy and placing and routing in one-click mode. The whole project runs PASS only if `all steps are implemented successfully`.  
-Notes
+This command is used to complete the **synthesis policy** and **placing and routing** in one-click mode. The whole project runs PASS only if `all steps are implemented successfully`.  
+**Notes**
 
-PR verification** and bit file generation  are implemented in **AEI_Register.sh**. (For details, see [AEI_Register.cfg Operation Instructions](#sec-3-4).)  
-PR verification  and bit file generation can also be implemented in a single step. For details, see single-step execution descriptions in [build.sh Operation Instructions](#sec-3-2).  
+**PR verification** and **.bit file generation** are implemented in AEI_Register.sh. (For details, see [AEI_Register.cfg Operation Instructions](#sec-3-4).)  
+**PR verification** and **.bit file generation** can also be implemented in a single step. For details, see single-step execution description in [build.sh Operation Instructions](#sec-3-2).  
 
 ---
 
 `build.sh` can also be used to implement a compilation task in a single step.
 
-- Run the ** synthesis** command in a single step:
+- Run the **synthesis** command in a single step:
 
 ```bash
   $ sh build.sh -s
 ```
 
-If `" synth_design completed successfully."` is displayed when you run the synthesis in a single step, it indicates that the synthesis is successful.
+If `"synth_design completed successfully."` is displayed when you run the synthesis in a single step, it indicates that the synthesis is successful.
 
 ---
 
-- Run the ** implementation** command in a single step:
+- Run the **implementation** command in a single step:
 
 ```bash
   $ sh build.sh -i
@@ -200,11 +200,11 @@ If `"PR_VERIFY: check points /home/.../usr_prjxx/prj/build/checkpoints/to_facs/u
   $ sh build.sh -b
 ```
 
-If `"Bitgen Completed Successfully."` is displayed when you run the bit file generation in a single step, the bit file generation is generated successfully.
+If `"Bitgen Completed Successfully."` is displayed when you run the bit file generation in a single step, the .bit file generation is generated successfully.
 
 ---
 
-When users view the execution progress, they can read whether the execution result of each step in the Vivado tool is successful and whether the final result is PASS.
+When users view the execution progress, they can read whether the execution result of each step in the Vivado tool is successful and whether the final result is **PASS**.
 
 ---
 
@@ -247,7 +247,7 @@ In addition, `schedule_task.sh` supports two execution modes:
 
 <a id="sec-3-4" name="sec-3-4"></a>
 
-### AEI_Register.cfg File Configuration Descriptions
+### AEI_Register.cfg File Configuration Description
 
 This file is used to configure the upload mode of the bit file and the name of the user-defined OBS bucket. If you need to modify the file name, run the following command to open `AEI_Register.cfg`:
 
@@ -264,10 +264,10 @@ Configuration parameters are as follows:
 
 <a id="sec-3-5" name="sec-3-5"></a>
 
-### AEI_Register.sh Command Operation Instructions
+### AEI_Register.sh Script Operation Instructions
 
 This command is used to verify the PR, generate and upload the bit file to the OBS bucket, and obtain the registration ID.
-The format of the command for running the AEI_Register.sh script is as follows:
+The format of the command for running the **AEI_Register.sh** script is as follows:
 
 ```bash
   $ sh AEI_Register.sh -n [AEI_name] -d [AEI_Description]
@@ -280,7 +280,7 @@ The format of the command for running the AEI_Register.sh script is as follows:
 
 **Notes**
 
-- Running the **AEI_Register.sh** command requires completing the `PR verification, ` bit file generation`, and `registration ID generation`. It takes some time to finish these three steps.
+- Running the **AEI_Register.sh** script requires completing the `PR verification, ` `bit file generation`, and `registration ID generation`. It takes some time to finish these three steps.
 
 - During the execution of the **AEI_Register.sh** script, enter the AK, SK, and password as prompted.
 
@@ -301,7 +301,7 @@ id: 0000********5568015e3c87835c0326
 status: saving
 ```
 
-- `Success: 200 OK` indicates that the AEI_Register.sh script is executed successfully and the bit file is uploaded to the OBS bucket.
+- `Success: 200 OK` indicates that the **AEI_Register.sh** script is executed successfully and the .bit file is uploaded to the OBS bucket.
 - `status: saving` indicates that the binary file registered by the user is in saving state.
 
 <a id="sec-4" name="sec-4"></a>

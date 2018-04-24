@@ -98,10 +98,11 @@ typedef struct tagFPGA_MBOX_WAIT_TIME
 #define SDKRTN_MBX_READ_ERROR              ( SDKRTN_MBX_BASE  + 0x11 )        
 #define SDKRTN_MBX_WRITE_ERROR             ( SDKRTN_MBX_BASE  + 0x12 )         
 #define SDKRTN_MBX_SIGNAL_ERROR            ( SDKRTN_MBX_BASE  + 0x13 )         
+#define SDKRTN_MBX_SHELL_TYPE_ERROR            ( SDKRTN_MBX_BASE  + 0x14 )         
 
 UINT32 FPGA_MboxDelayInit( FPGA_MBOX_WAIT_TIME *pstrMbox );
 UINT32 FPGA_MboxRecvMsg(UINT32 ulHandle, void *pMsg, UINT32 * pulLength);
 UINT32 FPGA_MboxSendMsg(UINT32 ulHandle, void *pMsg, UINT32 ulLength);
-UINT32 FPGA_BaseBarReadReg( UINT32 ulHandle, UINT32 ulOffset, UINT32 *pulValue );
+UINT32 FPGA_MboxBaseBarReadReg( UINT32 ulHandle, UINT32 ulOffset, UINT32 *pulValue );
 
 #endif

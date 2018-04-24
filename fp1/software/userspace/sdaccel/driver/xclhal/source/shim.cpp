@@ -86,7 +86,9 @@
 
 #include "xclbin.h"
 #include "cdev_ctrl.h"
-#include "FPGA_Shell.h"
+#include "FPGA_Common.h"
+#include "xclFpgaMgmtproxy.h"
+
 /**
  * DDR Zero IP Register definition
  */
@@ -169,37 +171,138 @@ namespace xclxdma {
     int XDMAShim::xclLoadXclBin(const xclBin *buffer)
     {
  #ifndef _MGMT_
-		int nRet = FPGA_get_load_info();
-		if(-1 == nRet)
+    
+ #define AEI_ID_LEN_MAX       36
+ #define AEI_ID_LEN           32
+ #define AEI_RPLACE_OFFSET    416
+ #define FPGAMGMT_TMOUT_COUNT 300
+             
+             FPGA_IMG_INFO prloadinfo;
+             char xclbin_aeiid[AEI_ID_LEN_MAX];
+             
+             int nRet;
+             int infoopsstatus;
+             int tprocessout;
+             static bool fpgamgmtinitlflag=false;
+             tprocessout = 0;
+             std::memset(xclbin_aeiid, 0, sizeof(xclbin_aeiid));
+             
+             char *xclbininmemory = reinterpret_cast<char*> (const_cast<xclBin*> (buffer));
+
+             memcpy(xclbin_aeiid,xclbininmemory+AEI_RPLACE_OFFSET,AEI_ID_LEN);
+             std::cout<<"Sending aei id is : "<<xclbin_aeiid<<std::endl;
+             
+             if (!fpgamgmtinitlflag)
+             {
+                nRet = fpgamgmt_obj.m_FPGA_MgmtInit();
+                if(nRet)
+    		    {
+    		        std::cout<<"FPGA_MgmtInit : error: Fpga mailbox initial failed!"<<std::endl;
+    		        std::cout<<"FPGA_MgmtInit : errno is "<<nRet<<std::endl;
+    		        return -1;
+    		    }
+                 fpgamgmtinitlflag = true;
+             }
+
+             tprocessout = FPGAMGMT_TMOUT_COUNT;
+             std::cout<<"start inquire info \n"<<std::endl;
+             std::memset(&prloadinfo,0,sizeof(tagFPGA_IMG_INFO));
+             
+		do
 		{
-			std::cout<<"ERROR: the xclbin file is not loaded successfully.."<<std::endl;
+			nRet = fpgamgmt_obj.m_FPGA_MgmtInquireFpgaImageInfo( 0, &prloadinfo);
+                   
+			if (nRet)
+			{
+				std::cout<<"Ops_status_processing : error, "<<__LINE__<<" : Inquire Fpga image info failed!"<<std::endl;
+				std::cout<<"Ops_status_processing : error,  "<<__LINE__<<" : Inquire Fpga image info count is :"<<tprocessout<<std::endl;
+				std::cout<<"Ops_status_processing : CmdOpsStatus is :"<< prloadinfo.ulCmdOpsStatus <<std::endl;
+                         	return -1;
+			}
+			
+			infoopsstatus = (prloadinfo.ulCmdOpsStatus & 0xffff0000) >> 16;
+		
+			if (!tprocessout)
+			{
+				std::cout<<"Ops_status_processing : error, "<<__LINE__<<" : Inquire Fpga image info proccess timeout!"<<std::endl;
+				std::cout<<"Ops_status_processing : error , "<<__LINE__<<" : CmdOpsStatus is :"<<prloadinfo.ulCmdOpsStatus<<std::endl;		
+				return -1;
+			}
+
+                   if ((infoopsstatus == FPGA_OPS_STATUS_PROCESSING) || (prloadinfo.ulFpgaPrStatus == FPGA_PR_STATUS_PROGRAMMING))
+                   {
+                       sleep(1);
+                   }
+			
+			tprocessout--;
+			
+		}while((infoopsstatus == FPGA_OPS_STATUS_PROCESSING) || (prloadinfo.ulFpgaPrStatus == FPGA_PR_STATUS_PROGRAMMING));
+		
+		std::cout<<"Operation status is : "<<infoopsstatus<<std::endl;
+
+        if (prloadinfo.ulFpgaPrStatus == FPGA_PR_STATUS_EXCEPTION)
+        {
+            std::cout<<"PR status is FPGA_PR_STATUS_EXCEPTION !"<<std::endl;
+            return -1;
+        }
+        
+		nRet = fpgamgmt_obj.m_FPGA_MgmtLoadHfiImage(0, xclbin_aeiid );
+		if (nRet)
+		{
+			std::cout<<"FPGA_MgmtLoadHfiImage : error, "<<__LINE__<<" : Loading pr image failed!"<<std::endl;
 			return -1;
 		}
-		
-		switch(nRet)
+
+
+             tprocessout = FPGAMGMT_TMOUT_COUNT;
+		do
 		{
-			case STATUS_NOT_PROGRAMMED:
-			case STATUS_INVALID_ID:
-			case STATUS_FAILED:
+			nRet = fpgamgmt_obj.m_FPGA_MgmtInquireFpgaImageInfo( 0, &prloadinfo);
+			if (nRet)
 			{
-				std::cout<<"ERROR: the xclbin file is not loaded successfully.."<<std::endl;
-				return -1;	
+				std::cout<<"Ops_status_processing : error, "<<__LINE__<<" : Inquire Fpga image info failed!"<<std::endl;
+				std::cout<<"Ops_status_processing : error, "<<__LINE__<<" : Inquire Fpga image info count is :"<<tprocessout<<std::endl;
+				std::cout<<"Ops_status_processing : CmdOpsStatus is :"<< prloadinfo.ulCmdOpsStatus <<std::endl;
+                          return -1;
 			}
-			case STATUS_BUSY:
-			{
-				std::cout<<"INFO: the xclbin file is loading.."<<std::endl;
-				return -1;	
-			}
-			case STATUS_LOADED:
-			break;
-			default:
-			{
-				std::cout<<"ERROR: the xclbin file is not loaded successfully error ret.."<<std::endl;
-				return -1;	
-			}
-		}
+			
+			infoopsstatus = (prloadinfo.ulCmdOpsStatus & 0xffff0000) >> 16;
 		
-		return 0;
+			if (!tprocessout)
+			{
+				std::cout<<"Ops_status_processing : error,  "<<__LINE__<<" : Inquire Fpga image info proccess timeout!"<<std::endl;
+				std::cout<<"Ops_status_processing : error ,  "<<__LINE__<<" : CmdOpsStatus is :"<<prloadinfo.ulCmdOpsStatus<<std::endl;		
+				return -1;
+			}
+			
+			if ((infoopsstatus == FPGA_OPS_STATUS_PROCESSING) || (prloadinfo.ulFpgaPrStatus == FPGA_PR_STATUS_PROGRAMMING))
+                   {
+                       sleep(1);
+                   }
+			tprocessout--;
+			
+		}while((infoopsstatus == FPGA_OPS_STATUS_PROCESSING) || (prloadinfo.ulFpgaPrStatus == FPGA_PR_STATUS_PROGRAMMING));
+		
+		if ((!strncmp(xclbin_aeiid,prloadinfo.acHfid,AEI_ID_LEN)) && (infoopsstatus == FPGA_OPS_STATUS_SUCCESS) && (prloadinfo.ulFpgaPrStatus == FPGA_PR_STATUS_PROGRAMMED))
+		{
+			std::cout<<"Loading pr image completed!"<<std::endl;
+
+                   if (fpgamgmt_obj.m_FPGA_MgmtOpsMutexRlock( 0, &prlock))
+                   {
+                           std::cout << "ERROR: get pr_lock statue failed!\n";
+                           std::cout << "pr_lock value is :"<<prlock<<std::endl; 
+                           return -1;
+                   }
+			return 0;
+		}
+		else
+		{
+			std::cout<<"Loading pr image status error!"<<std::endl;
+			std::cout<<"Ops_status_processing : error , "<<__LINE__<<" : CmdOpsStatus is :"<<prloadinfo.ulCmdOpsStatus<<std::endl;
+			std::cout<<"PR status processing : error ,  "<<__LINE__<<" : FpgaPr status is :"<<prloadinfo.ulFpgaPrStatus<<std::endl;
+                   std::cout<<"PR status processing : error ,  "<<__LINE__<<" : FpgaPr aeiid is :"<<prloadinfo.acHfid<<std::endl;
+			return -1;
+		}             
 
  #else
         std::cout<<"ERROR: xclLoadXclBin is not supported in this version!\n";
@@ -611,6 +714,14 @@ namespace xclxdma {
             mLogStream << __func__ << ", " << std::this_thread::get_id() << std::endl;
             mLogStream.close();
         }
+
+        if (prlock)
+        {
+            if (fpgamgmt_obj.m_FPGA_MgmtOpsMutexUnlock(prlock))
+            {
+                std::cout << "ERROR: Unlock pr_lock statue failed!\n";
+            }
+        }
     }
 
     XDMAShim::XDMAShim(unsigned index, const char *logfileName,
@@ -664,6 +775,7 @@ namespace xclxdma {
         }
 #endif
         initMemoryManager();
+        prlock=0;
     }
 
     bool XDMAShim::isGood() const {

@@ -1,19 +1,19 @@
-# File Descriptions
+# File Description
 
 [切换到中文版](./README_CN.md)
 
 *  **vivado_design/lib/common** stores the Common Building Blocks (CBBs) provided by Huawei.
 *  All CBBs in the **vivado_design/lib/common** belong to the common library, and can be directly invoked by projects in the `fp1/hardware/vivado_design` directory.
-*  The CBBs provided by Huawei are distinguished by the file name. For details, see Directory Descriptions.
+*  The CBBs provided by Huawei are distinguished by the file name. For details, see "Directory Description".
 
-# Directory Descriptions
+# Directory Description
 * [vivado_design/lib/common](#vivado_design/lib/common_dir)/  
-  See the following table for the CBBs and their functions:  
+  See the following table for the CBBs and their functions.
 
   | Name                     | Description                              |
   | :----------------------- | :--------------------------------------- |
   | asyn_frm_fifo_288x512_sa | 288 x 512 (width x depth) asynchronous frame FIFO |
-  | axi_time_out             | Valid & ready timeout detection block of the AXI protocol |
+  | axi_time_out             | Valid and ready timeout detection block of the AXI protocol |
   | axi4                     | HPI-to-AXI4 switch block                 |
   | axil2hpis_adp            | PCIe BAR0/BAR5 AXI-L interface adaptation block |
   | buft32                   | 32-bit tri-state buffer                  |

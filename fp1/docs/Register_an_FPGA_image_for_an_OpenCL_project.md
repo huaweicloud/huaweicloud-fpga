@@ -20,18 +20,18 @@ For example, for an example project, switch to the `huaweicloud-fpga/fp1/hardwar
 
 Run the `sh compile.sh hw` command.
 
-Modify the `AEI_Register.cfg` file in the **script** directory. Set the **OBS_BUCKETNAME** option in the file to the OBS bucket name created in the configuration section. The **MODE** option uses the default value.
+Modify the `AEI_Register.cfg` file in the **script** directory. Set the **OBS_BUCKETNAME** option in the file to the OBS bucket name created in the configuration section. Retain the default value for the **MODE** option.
+
+**Note:** For details, see section 1.2.2 "Modifying the Configuration File and Configuring an FACS Image" in README.md in the root directory.
 
 The output information is as follows:
 
     MODE=OCL  
     OBS_BUCKETNAME=obs-fpga
 
-\----End
+#### Run the registration script.
 
-#### Running the Registration Script
-
-The format of the AEI_Register.sh script is as follows:
+The format of the **AEI_Register.sh** script is as follows:
 
 Usage:sh AEI_Register.sh *-n* [AEI_name] *-d* [AEI_Description]
 
@@ -58,14 +58,14 @@ status: saving
 
 -   "Success: 200 OK" indicates that the **AEI_Register.sh** script is executed successfully. The execution of the **AEI_Register.sh** script does not necessarily mean that the FPGA image is successfully registered. Users need to run query subcommands of fisclient and use the FPGA image ID in the registration command output to check the FPGA image information. If the state of the FPGA image is active, the image is successfully registered. An FPGA image can be loaded only after it is successfully registered.
 
--   "id: 00005568015e3c87835c0326" indicates that the FPGA image management module assigns the FPGA image to be registered the image ID 00005568015e3c87835c0326, which can be used to query the FPGA image registration and loading status.
+-   "id: 00005568015e3c87835c0326" indicates the ID of the image to be registered. The ID is assigned by the FPGA image management module, and can be used to query the FPGA image registration and loading status.
 
 -   "status: saving" indicates that the FPGA image is being saved.
 
 
 **Note:** The **AEI_Register.sh** script will transfer the FPGA logic files generated during the registration to the OBS bucket for image registration. After confirming that the registration is successful, you can manually delete the logical files from the OBS bucket to prevent unnecessary OBS charging.
 
-For example, to register an OCL image, run the following command:
+For example, to register an OCL image, run the following commands:
 
 [root\@ scripts]\# sh AEI_Register.sh -n "ocl-test" -d "ocl-desc"  
 fischeck arguments are OK  

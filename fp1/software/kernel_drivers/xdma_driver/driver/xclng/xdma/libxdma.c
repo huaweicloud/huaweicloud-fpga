@@ -15,6 +15,8 @@
 #include <linux/errno.h>
 #include <linux/sched.h>
 
+#include <linux/delay.h>
+
 #include "libxdma.h"
 #include "libxdma_api.h"
 
@@ -627,7 +629,7 @@ struct xdma_transfer *engine_service_final_transfer(struct xdma_engine *engine,
 				engine->name, engine->status);
 			engine_status_dump(engine);
 			engine_err_handle(engine, transfer, *pdesc_completed);
-			goto transfer_del;
+            goto transfer_del;
 		}
 
 		if (engine->status & XDMA_STAT_BUSY)
@@ -654,7 +656,6 @@ struct xdma_transfer *engine_service_final_transfer(struct xdma_engine *engine,
 			/* mark transfer as succesfully completed */
 			transfer->state = TRANSFER_STATE_COMPLETED;
 		}
-		
 transfer_del:
 		/* remove completed transfer from list */
 		list_del(engine->transfer_list.next);
@@ -2488,6 +2489,7 @@ static int probe_engines(struct xdma_dev *xdev)
 	int i, j;
 	int rv = 0;
 
+
 	BUG_ON(!xdev);
 
 	/* iterate over channels */
@@ -2543,8 +2545,13 @@ static void __devinit enable_pcie_relaxed_ordering(struct pci_dev *dev)
 void *xdma_device_open(const char *mod_name, struct pci_dev *pdev,
 			int *user_max, int *channel_max)
 {
+#define INIT_TMOUT 100
 	struct xdma_dev *xdev = NULL;
 	int rv = 0;
+
+    u32 init_done=0;
+    u32 init_time_out;
+    init_time_out = INIT_TMOUT;
 
 	pr_info("%s device %s, 0x%p.\n", mod_name, dev_name(&pdev->dev), pdev);
 
@@ -2581,6 +2588,24 @@ void *xdma_device_open(const char *mod_name, struct pci_dev *pdev,
 	rv = map_bars(xdev, pdev);
 	if (rv)
 		goto err_map;
+    
+    iowrite32(0x0,xdev->bar[xdev->user_bar_idx]+0x360000);
+    iowrite32(0x1,xdev->bar[xdev->user_bar_idx]+0x360000);
+    while ((!init_done) && init_time_out)
+    {  
+       init_time_out --;
+       init_done = ioread32(xdev->bar[xdev->user_bar_idx]+0x360000);
+       mdelay(100);
+    }
+
+    if (!init_time_out)
+    {
+	    pr_info("DDR init failed, 10s timeout!\n");
+    }
+    else
+    {
+	    pr_info("DDR Init Done!\n");
+    }
 
 	rv = set_dma_mask(pdev);
 	if (rv)

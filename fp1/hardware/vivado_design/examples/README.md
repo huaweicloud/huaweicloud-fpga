@@ -4,7 +4,7 @@
 
 [切换到中文版](./README_CN.md)
 
-## Directory Descriptions
+## Directory Description
 
 This directory contains the following folders and files:
 
@@ -14,7 +14,7 @@ This directory contains the following folders and files:
   - example3
   - README.md
 
-## Example Descriptions
+## Example Description
 
 - example1
 

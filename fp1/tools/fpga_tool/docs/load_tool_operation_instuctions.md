@@ -7,7 +7,7 @@ FpgaCmdEntry is a linux system command-line tool. Users need to specify paramete
 
 The format of the command is **FpgaCmdEntry Operation code -Parameter**.
 
-The operation codes include DF (querying VM FPGA devices), LF (loading an image to an FPGA card), IF (querying the FPGA card image status), IL (querying the virtual LED status), IV (querying tool version information).
+The operation codes include DF (querying VM FPGA devices), LF (loading an image to an FPGA card), IF (querying the FPGA card image status), CF (clearing the FPGA card image), IL (querying the virtual LED status), and IV (querying tool version information).
 
 Querying VM FPGA Devices
 ----------------------------
@@ -28,12 +28,12 @@ This command is used to query FPGA card information of a VM, including slot numb
 ###Parameters
 
 | Parameter | Description                       |
-|-----------|-----------------------------------|
-|   -D      | Displays FPGA device information. |
-|   -?      | Displays help information.        |
-|   -h      | Displays help information.        |
+| --------- | --------------------------------- |
+| -D        | Displays FPGA device information. |
+| -?        | Displays help information.        |
+| -h        | Displays help information.        |
 
-Loading an Image to an FPGA card
+Loading an Image to an FPGA Card
 --------------------------------
 ###Function
 
@@ -51,12 +51,12 @@ This command is used to load an FPGA image to an FPGA card in a specified slot. 
 
 ###Parameters
 
-| Parameter | Description                                                                                                                                  |
-|-----------|--------------------------------------------------------------------------------------------------|
-| -S      | Specifies the slot number of an FPGA card. The value ranges from 0 to 7. You can run the **FpgaCmdEntry DF -D** command to obtain the number. |
-| -I      | Specifies the FPGA image ID.                                                                                                                 |
-| -?      | Displays help information.                                                                                                                   |
-| -h      | Displays help information.                                                                                                                   |
+| Parameter | Description                              |
+| --------- | ---------------------------------------- |
+| -S        | Specifies the slot number of an FPGA card. The value ranges from 0 to 7. You can run the **FpgaCmdEntry DF -D** command to obtain the number. |
+| -I        | Specifies the FPGA image ID.             |
+| -?        | Displays help information.               |
+| -h        | Displays help information.               |
 
 Querying the Status of an FPGA Card Image
 -----------------------------------------
@@ -74,11 +74,35 @@ This command is used to query the loading status of an FPGA image. You need to s
 
 ###Parameters
 
-| Parameter | Description                                                                                                                                  |
-|-----------|----------------------------------------------------------------------------------------------------------------------------------------------|
-|  -S       | Specifies the slot number of an FPGA card. The value ranges from 0 to 7. You can run the **FpgaCmdEntry DF -D** command to obtain the number. |
-|  -?       | Displays help information.                                                                                                                   |
-|  -h       | Displays help information.                                                                                                                   |
+| Parameter | Description                              |
+| --------- | ---------------------------------------- |
+| -S        | Specifies the slot number of an FPGA card. The value ranges from 0 to 7. You can run the **FpgaCmdEntry DF -D** command to obtain the number. |
+| -?        | Displays help information.               |
+| -h        | Displays help information.               |
+
+Clearing the FPGA Card Image
+--------------------------------
+###Function
+
+This command is used to clear the FPGA card image in a specified slot. You need to specify slot information.
+
+###Format
+
+**FpgaCmdEntry CF -Parameter**
+
+**FpgaCmdEntry CF -S** *Slot*
+
+**FpgaCmdEntry CF -?**
+
+**FpgaCmdEntry CF -h**
+
+###Parameters
+
+| Parameter | Description                              |
+| --------- | ---------------------------------------- |
+| -S        | Specifies the slot number of an FPGA card. The value ranges from 0 to 7. You can run the **FpgaCmdEntry DF -D** command to obtain the number. |
+| -?        | Displays help information.               |
+| -h        | Displays help information.               |
 
 Querying the Virtual LED Status
 -------------------------------
@@ -96,11 +120,11 @@ This command is used to query the LED status of an FPGA card. You need to specif
 
 ###Parameters
 
-| Parameter | Description                                                                                                                                  |
-|-----------|----------------------------------------------------------------------------------------------------------------------------------------------|
-|   -S      | Specifies the slot number of an FPGA card. The value ranges from 0 to 7. You can run the **FpgaCmdEntry DF -D** command to obtain the number. |
-|   -?      | Displays help information.                                                                                                                   |
-|   -h      | Displays help information.                                                                                                                   |
+| Parameter | Description                              |
+| --------- | ---------------------------------------- |
+| -S        | Specifies the slot number of an FPGA card. The value ranges from 0 to 7. You can run the **FpgaCmdEntry DF -D** command to obtain the number. |
+| -?        | Displays help information.               |
+| -h        | Displays help information.               |
 
 Querying the Tool Version
 -------------------------

@@ -13,13 +13,11 @@
 #      Huawei Software License for more details. 
 #-------------------------------------------------------------------------------
 
-export WORK_DIR = $(PWD)/../../..
+export USER_DIR = $(WORK_DIR)/hardware/vivado_design/user/usr_prj0
 
-export LIB_DIR = $(WORK_DIR)/hardware/lib
+export TC ?= sv_demo_001
 
-export USER_DIR = $(WORK_DIR)/hardware/user
-
-export TC ?= test_null
+export TOOL ?= vivado
 
 include $(LIB_DIR)/sim/scripts/common.mk
 

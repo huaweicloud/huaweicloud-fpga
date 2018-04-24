@@ -1,25 +1,24 @@
-# Vector Addition Example with kernel RTL
+# Vector Addition Example Using Kernel RTL
 ============================================
 
 [切换到中文版](./README_CN.md)
 
-This is a simple example of vector addition. The kernel is used RTL
-The prupose of this
- code is to introduce the user to application development
+This is an example of vector addition. The kernel uses RTL.
+This code introduces application development to users.
 
 ## Files in the Example
 ----------------------
-### Application host code
+### Application Host Code
 
 - host.cpp
 - xcl.cpp 
 
-### kernel code
+### Kernel Code
 - hdl/*
 
 ### Compilation File
-Makefile: Makefile for compiling  application.
-if you want cpmpile the program by yourself, please use
+Makefile: used for compiling  applications.
+For details about how to compile the program by yourself, run the following command:
 
 	make help
 

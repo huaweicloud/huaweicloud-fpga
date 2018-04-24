@@ -74,7 +74,7 @@ ro_reg_inst
     .din                ( reg_ver_time              )   
     );
 
-assign reg_ver_time = 32'h2017_1209;	
+assign reg_ver_time = 32'h2018_0308;	
 
 ro_reg_inst
     #(
@@ -89,7 +89,7 @@ ro_reg_inst
     .din                ( reg_ver_type              )   
     );
 
-assign reg_ver_type = 32'h00D3_0006; 
+assign reg_ver_type = 32'h00D3_0008; 
 /******************************************************************************\
     adder function
 \******************************************************************************/

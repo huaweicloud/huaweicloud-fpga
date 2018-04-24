@@ -47,11 +47,11 @@ wire    [DATA_WIDTH-1:0]        cpu_data_out     ;
 // axi acess to bar 
 //-------------------------------------------------
 axi4l2hpis_adp 
-    #(	
+    #(
      .ADDR_WIDTH         (ADDR_WIDTH             ),
      .DATA_WIDTH         (DATA_WIDTH             ),
      .DATA_BYTE_NUM      (DATA_BYTE_NUM          )	
-	)
+     )
 u_bar1_axi4l2hpi
    (
     
@@ -74,11 +74,11 @@ u_bar1_axi4l2hpi
     .arvalid             (sh2bar1_arvalid        ),
     .araddr              (sh2bar1_araddr         ),
     .arready             (bar12sh_arready        ),
-	
+
     .rvalid              (bar12sh_rvalid         ),
     .rdata               (bar12sh_rdata          ),
     .rresp               (bar12sh_rresp          ),
-    .rready              (sh2bar1_rready         ),                          
+    .rready              (sh2bar1_rready         ),
                                   
     .cpu_wr              (cpu_wr                 ),
     .cpu_wr_addr         (cpu_addr               ),
@@ -92,11 +92,11 @@ u_bar1_axi4l2hpi
 // reg base
 //-----------------------------------------------
 reg_ul_access
-    #(	
+    #(
      .CPU_ADDR_WIDTH      (12                     ),
      .CPU_DATA_WIDTH      (DATA_WIDTH             )	
-	)
-u_reg_ul_access	
+     )
+u_reg_ul_access
    (
     .clks                 (clk_200m               ),  
     .reset                (rst_200m               ),                            	    
@@ -106,7 +106,7 @@ u_reg_ul_access
     .cpu_data_in          (cpu_data_in            ),
     .cpu_rd               (cpu_rd                 ),
     .cpu_data_out         (cpu_data_out           )
-	                 
+                 
    );      
 
 //-----------------------------------------------

@@ -65,7 +65,7 @@ Example1的编译、运行以及调试均通过Makefile实现。在编译、仿�
     $ make comp
 ```
 
-默认采用vivado作为仿真器，如果用户需要使用vcs仿真器或questasim仿真器，可使用如下命令：[1][1]
+默认采用vivado作为仿真器，如果用户需要使用vcs仿真器或questasim仿真器，可使用如下命令：
 
 ```bash
     $ make comp TOOL=vcs # Compile Using vcsmx
@@ -103,7 +103,7 @@ Example1的编译、运行以及调试均通过Makefile实现。在编译、仿�
     $ make wave TC=sv_demo_001
 ```
 
-默认采用vivado进行调试，如果用户需要使用dve或questasim进行调试，可使用如下命令：
+默认采用vivado进行调试，如果用户需要使用vcs或questasim进行调试，可使用如下命令：
 
 ```bash
     $ make wave TOOL=vcs TC=sv_demo_001 # Compile Using vcsmx
@@ -146,13 +146,13 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 如果仿真编译出现错误，可查看report目录下的**log_comp.log**文件。编译中出现的错误会在日志中以`ERROR`关键字进行标注，命令如下：
 
 ```bash
-    $ vi ./report/log_comp.log
+    $ vim ./report/log_comp.log
 ```
 
 如果编译成功而执行报错，可进入到相应的测试用例目录下，通过**log_simulation.log**可查看仿真运行的日志。仿真过程中的错误会以`[ERROR]:`关键字进行标注，命令如下：
 
 ```bash
-    $ vi ./report/sv_demo_001/log_simulation.log
+    $ vim ./report/sv_demo_001/log_simulation.log
 ```
 
 <a id="sec-1-7" name="sec-1-7"></a>
@@ -201,7 +201,7 @@ Example1中包含了一个测试用例`sv_demo_001`，该测试用例主要功�
     $ cp -r ./tests/sv/sv_demo_001/* ./tests/sv/xxx_test # Copy Example to Own Testcase
 ```
 
-其中用户测试用例可分为两部分，即**基础测试用例**以及**用户测试配置**。基础测试用例采用systemverilog语言编写，主要完成测试用例的主体流程；而用户测试配置是用户的配置文件，主要决定测试用例中需要的激励、配置等数据。
+其中用户测试用例可分为两部分，即**基础测试用例**以及**用户测试配置**。基础测试用例采用systemverilog语言编写，主要完成测试用例的主体流程；而用户测试配置是用户的配置文件，主要确定测试用例中需要的激励、配置等数据。
 
 <a id="sec-2-1-1" name="sec-2-1-1"></a>
 
@@ -263,7 +263,7 @@ Example1中包含了一个测试用例`sv_demo_001`，该测试用例主要功�
 
 #### **编写用户测试配置**
 
-用户测试配置主要用于确定测试用例中的激励、配置的数据的内容，采用配置文件的方法编写。用户配置文件建议放在`./tests/sv/xxx_test`目录中并且命名为`test.cfg`。配置文件语法格式如下：
+用户测试配置主要用于确定测试用例中的激励、配置等数据内容，采用配置文件的方法编写。用户配置文件建议放在`./tests/sv/xxx_test`目录中并且命名为`test.cfg`。配置文件语法格式如下：
 
 ```bash
     // 可使用'//'或者'#'作为注释，注释不会被传入Testbench

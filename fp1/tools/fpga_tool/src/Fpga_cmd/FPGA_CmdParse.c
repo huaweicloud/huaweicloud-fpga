@@ -43,10 +43,9 @@
 #include <sys/mman.h>
 
 #include "securec.h"
-#include "FPGA_Common.h"
+#include "FPGA_CmdCommon.h"
 #include "FPGA_CmdParse.h"
 #include "FPGA_CmdMonitorMain.h"
-#include "FPGA_CmdLog.h"
 
 #ifdef    __cplusplus
 extern "C"{
@@ -54,7 +53,7 @@ extern "C"{
 
 extern UINT32 g_ulparseParaFlag;
 
-INT8 *g_pacCommandEntryHelp[11] =
+INT8 *g_pacCommandEntryHelp[12] =
 {
     "  Summary:",
     "    FpgaCmdEntry [Opcode] [-h/-?]",
@@ -62,7 +61,8 @@ INT8 *g_pacCommandEntryHelp[11] =
     "     This procedure is the entry of all commands, through",
     "     the operation code to achieve the user's intention",
     "  Opcode:",
-    "     LF --Load image to fpga",
+    "     LF --Load the fpga image",
+    "     CF --Clear the fpga image",
     "     DF --Display the fpga resource maps",
     "     IF --Inquire the fpga image status",
     "     IL --Inquire the user led status",
@@ -85,6 +85,24 @@ INT8 *g_pacHfiLoadHelp[16] =
     "          execute 'FpgaCmdEntry DF' result.",
     "      -I, --Fpga-AEI-Id",
     "          The user's FPGA image id.",
+    "      -h/-?, --Help",
+    "          Display this help."
+};
+
+INT8 *g_pacHfiClearHelp[14] =
+{
+    "  Summary:",
+    "      FpgaCmdEntry CF [Parameters]",
+    "      Example: FpgaCmdEntry CF -S <slot num>",
+    "               FpgaCmdEntry CF -h",
+    "               FpgaCmdEntry CF -?",
+    "  Description:",
+    "      Clear user's FPGA image of the specified slot number, and",
+    "      return the status of the command. ",
+    "  Parameters:",
+    "      -S, --FpgaSlotInfo",
+    "          The logical slot number for the FPGA image,which inquired by,range:0~7",
+    "          execute 'FpgaCmdEntry DF' result.",
     "      -h/-?, --Help",
     "          Display this help."
 };
@@ -193,7 +211,7 @@ UINT32 FPGA_ParseString2Uint( UINT32 *plNum, const INT8 *pcSstr )
 
     errno = 0;
 
-    lVal = ( INT32 )strtol( pcSstr, &pcEnd, 0 );
+    lVal = ( INT32 )strtol( pcSstr, &pcEnd, 10 );
 
     /* The string has illegal characters */
     if ( *pcEnd )
@@ -246,6 +264,119 @@ void  FPGA_ParsePrintHelpInfo( INT8 *pcCmdName,  INT8 *pcBuf[], UINT32 ulNum )
 }
 
 /*******************************************************************************
+Function     : FPGA_ParseClearHfi
+Description  : Parse the load command
+Input        : INT32 argc, INT8 *argv[] 
+Output       : None
+Return       : 0:sucess other:fail 
+*******************************************************************************/
+UINT32 FPGA_ParseClearHfi( INT32 argc, INT8 *argv[] )
+{
+    INT32 lOpt = 0;
+    INT32 lHelpPrintedCount = 0;
+    struct option strLongOptions[] =
+    {
+        {"FpgaSlotInfo", required_argument, 0, FPGA_SLOT_INFO},
+        {"Helph", no_argument, 0, COMMAND_HELP_INFO},
+        {"Help?", no_argument, 0, COMMAND_HELP_INFO1},
+        {0, 0, 0, 0},
+    };
+    INT32 lLongIndex = 0;
+    UINT32 ulRet = SDKRTN_PARSE_ERROR_BASE;
+    UINT32 ulParaFlag = 0;
+
+    if ( argc < INPUT_PARAS_FOR_PARSE_MIN )
+    {
+        printf( "[***TIPS***] CMD-CF Input parameter number shouldn't be less than %d.\r\n", INPUT_PARAS_FOR_PARSE_MIN );
+        FPGA_ParsePrintHelpInfo(argv[0], g_pacHfiClearHelp, sizeof_array(g_pacHfiClearHelp));
+        return SDKRTN_PARSE_INPUT_ERROR;
+    }
+
+    if ( argc > INPUT_PARAS_FOR_CF_MAX )
+    {
+        printf( "[***TIPS***] CMD-CF Input parameter number shouldn't be more than %d.\r\n", INPUT_PARAS_FOR_CF_MAX );
+        FPGA_ParsePrintHelpInfo(argv[0], g_pacHfiClearHelp, sizeof_array(g_pacHfiClearHelp));
+        return SDKRTN_PARSE_INPUT_ERROR;
+    }
+
+    /* Check the format of the parameter */
+    if ( '-' != *argv[2] )
+    {
+        printf("Parameter format is incorrect and should be prefixed '-'.\r\n");
+        FPGA_ParsePrintHelpInfo(argv[0], g_pacHfiClearHelp, sizeof_array(g_pacHfiClearHelp));
+        return SDKRTN_PARSE_INPUT_ERROR;
+    }
+
+    /* Parse the input parameters */
+    while ( ( lOpt = getopt_long( argc, argv, "S:?h",strLongOptions, &lLongIndex ) ) != ERROR )
+    {
+        ulParaFlag  = PARA_FLAG;
+        switch ( lOpt )
+        {
+            /* -S */
+            case FPGA_SLOT_INFO:
+            {
+                ulRet = FPGA_ParseString2Uint( &g_strFpgaModule.ulSlotIndex, optarg );
+                if ( SDKRTN_PARSE_SUCCESS != ulRet )
+                {
+                    printf("[***TIPS***]Option -S should be followed by a decimal number\r\n" );
+                    LOG_ERROR( "String2Uint failed %d", ulRet );
+                    return ulRet;
+                }
+
+                if ( g_strFpgaModule.ulSlotIndex >= FPGA_SLOT_MAX )
+                {
+                    printf( "Fpga slot number(%u) must be less than %d\r\n", g_strFpgaModule.ulSlotIndex, FPGA_SLOT_MAX );
+                    FPGA_ParsePrintHelpInfo( argv[0], g_pacHfiClearHelp, sizeof_array( g_pacHfiClearHelp ) );
+                    return SDKRTN_PARSE_SLOT_ERROR;
+                }
+                break;
+            }
+
+            /* -h */
+            case COMMAND_HELP_INFO:
+            {
+                FPGA_ParsePrintHelpInfo( argv[0], g_pacHfiClearHelp, sizeof_array( g_pacHfiClearHelp ) );
+                g_ulparseParaFlag = QUIT_FLAG;
+                return SDKRTN_PARSE_SUCCESS;
+            }
+
+            /* -? */
+            case COMMAND_HELP_INFO1:
+            {
+                if( PRINTED_COUNT == lHelpPrintedCount )
+                {
+                    FPGA_ParsePrintHelpInfo( argv[0], g_pacHfiClearHelp, sizeof_array( g_pacHfiClearHelp ) );
+                    g_ulparseParaFlag = QUIT_FLAG;
+                    lHelpPrintedCount = 1;
+                    ( void )lHelpPrintedCount;
+                    return SDKRTN_PARSE_SUCCESS;
+                }
+            }
+
+            //lint -fallthrough
+            default:
+            {
+                printf( "\r\nERROR: Invalid input parameter.\r\n" );
+                FPGA_ParsePrintHelpInfo( argv[0], g_pacHfiClearHelp, sizeof_array( g_pacHfiClearHelp ) );
+                return SDKRTN_PARSE_INVALID_PARA_ERROR;
+            }
+        }
+    }
+
+    /* Exception handling */
+    if ( ( ERROR == lOpt ) && ( 0 == ulParaFlag ) ) /*lint !e774*/
+    {
+        printf( "\r\nERROR: Invalid input parameter.\r\n" );
+        FPGA_ParsePrintHelpInfo( argv[0], g_pacHfiClearHelp, sizeof_array( g_pacHfiClearHelp ) );
+        return SDKRTN_PARSE_INVALID_PARA_ERROR;
+    }
+
+    return SDKRTN_PARSE_SUCCESS;
+}
+
+
+/*******************************************************************************
 Function     : FPGA_ParseLoadHfi
 Description  : Parse the load command
 Input        : INT32 argc, INT8 *argv[] 
@@ -255,7 +386,7 @@ Return       : 0:sucess other:fail
 UINT32 FPGA_ParseLoadHfi( INT32 argc, INT8 *argv[] )
 {
     INT32 lOpt = 0;
-    INT32 ulHelpPrintedCount = 0;
+    INT32 lHelpPrintedCount = 0;
     struct option strLongOptions[] =
     {
         {"FpgaSlotInfo", required_argument, 0, FPGA_SLOT_INFO},
@@ -302,7 +433,7 @@ UINT32 FPGA_ParseLoadHfi( INT32 argc, INT8 *argv[] )
                 ulRet = FPGA_ParseString2Uint( &g_strFpgaModule.ulSlotIndex, optarg );
                 if ( SDKRTN_PARSE_SUCCESS != ulRet )
                 {
-                    printf("[***TIPS***]Option -S should be followed by a number\r\n" );
+                    printf("[***TIPS***]Option -S should be followed by a decimal number\r\n" );
                     LOG_ERROR( "String2Uint failed %d", ulRet );
                     return ulRet;
                 }
@@ -319,9 +450,9 @@ UINT32 FPGA_ParseLoadHfi( INT32 argc, INT8 *argv[] )
             /* -I */
             case HFI_ID_INFO:
             {
-                if ( HFI_ID_LEN_MAX == strnlen( optarg, HFI_ID_LEN_MAX ) )
+                if ( HFI_ID_LEN != strnlen( optarg, HFI_ID_LEN + 1) )
                 {
-                    printf( "Input AEI id length must be less than %d bytes\r\n",  HFI_ID_LEN_MAX );
+                    printf( "Input AEI id length must be %d bytes\r\n", HFI_ID_LEN );
                     FPGA_ParsePrintHelpInfo( argv[0], g_pacHfiLoadHelp, sizeof_array( g_pacHfiLoadHelp ) );
                     return SDKRTN_PARSE_HFI_ID_ERROR;
                 }
@@ -348,12 +479,12 @@ UINT32 FPGA_ParseLoadHfi( INT32 argc, INT8 *argv[] )
             /* -? */
             case COMMAND_HELP_INFO1:
             {
-                if( PRINTED_COUNT == ulHelpPrintedCount )
+                if( PRINTED_COUNT == lHelpPrintedCount )
                 {
                     FPGA_ParsePrintHelpInfo( argv[0], g_pacHfiLoadHelp, sizeof_array( g_pacHfiLoadHelp ) );
                     g_ulparseParaFlag = QUIT_FLAG;
-                    ulHelpPrintedCount = 1;
-                    ( void )ulHelpPrintedCount;
+                    lHelpPrintedCount = 1;
+                    ( void )lHelpPrintedCount;
                     return SDKRTN_PARSE_SUCCESS;
                 }
             }
@@ -369,7 +500,7 @@ UINT32 FPGA_ParseLoadHfi( INT32 argc, INT8 *argv[] )
     }
 
     /* Exception handling */
-    if ( ( ERROR == lOpt ) && ( 0 == ulParaFlag ) )
+    if ( ( ERROR == lOpt ) && ( 0 == ulParaFlag ) ) /*lint !e774*/
     {
         printf( "\r\nERROR: Invalid input parameter.\r\n" );
         FPGA_ParsePrintHelpInfo( argv[0], g_pacHfiLoadHelp, sizeof_array( g_pacHfiLoadHelp ) );
@@ -389,7 +520,7 @@ Return       : 0:sucess other:fail
 UINT32 FPGA_ParseInquireFpgaResource( INT32 argc, INT8 *argv[] )
 {
     INT32 lOpt = 0;
-    INT32 ulHelpPrintedCount = 0;
+    INT32 lHelpPrintedCount = 0;
     struct option strLongOptions[] =
     {
         {"FpgaInfo", no_argument, 0, DISPLAY_FPGA_PHY_INFO},
@@ -445,12 +576,12 @@ UINT32 FPGA_ParseInquireFpgaResource( INT32 argc, INT8 *argv[] )
             /* - ? */
             case COMMAND_HELP_INFO1:
             {
-                if( PRINTED_COUNT == ulHelpPrintedCount )
+                if( PRINTED_COUNT == lHelpPrintedCount )
                 {
                     FPGA_ParsePrintHelpInfo( argv[0], g_pacInquireFpgaHelp, sizeof_array( g_pacInquireFpgaHelp ) );
                     g_ulparseParaFlag = QUIT_FLAG;
-                    ulHelpPrintedCount = 1;
-                    ( void )ulHelpPrintedCount;
+                    lHelpPrintedCount = 1;
+                    ( void )lHelpPrintedCount;
                     return SDKRTN_PARSE_SUCCESS;
                 }
             }
@@ -466,7 +597,7 @@ UINT32 FPGA_ParseInquireFpgaResource( INT32 argc, INT8 *argv[] )
     }
     
     /* Exception handling */
-    if ( ERROR == lOpt )
+    if ( ERROR == lOpt ) /*lint !e774*/
     {
         printf( "\r\nERROR: Invalid input parameter.\r\n" );
         FPGA_ParsePrintHelpInfo( argv[0], g_pacInquireFpgaHelp, sizeof_array(g_pacInquireFpgaHelp ) );
@@ -486,7 +617,7 @@ Return       : 0:sucess other:fail
 UINT32 FPGA_ParseInquireFpgaImageInfo( INT32 argc, INT8 *argv[] )
 {
     INT32 lOpt = 0;
-    INT32 ulHelpPrintedCount = 0;
+    INT32 lHelpPrintedCount = 0;
 
     struct option stLongOptions[] =
     {
@@ -531,7 +662,7 @@ UINT32 FPGA_ParseInquireFpgaImageInfo( INT32 argc, INT8 *argv[] )
                 ulRet = FPGA_ParseString2Uint( &g_strFpgaModule.ulSlotIndex, optarg );
                 if ( SDKRTN_PARSE_SUCCESS != ulRet )
                 {
-                    printf("[***TIPS***]Option -S should be followed by a number.\r\n" );
+                    printf("[***TIPS***]Option -S should be followed by a decimal number\r\n" );
                     LOG_ERROR( "String2Uint failed %d", ulRet );
                     return ulRet;
                 }
@@ -556,12 +687,12 @@ UINT32 FPGA_ParseInquireFpgaImageInfo( INT32 argc, INT8 *argv[] )
             /* -? */
             case COMMAND_HELP_INFO1:
             {
-                if( PRINTED_COUNT == ulHelpPrintedCount )
+                if( PRINTED_COUNT == lHelpPrintedCount )
                 {
                     FPGA_ParsePrintHelpInfo( argv[0], g_pacInquireImageHelp, sizeof_array(g_pacInquireImageHelp ) );
                     g_ulparseParaFlag = QUIT_FLAG;
-                    ulHelpPrintedCount = 1;
-                    ( void )ulHelpPrintedCount;
+                    lHelpPrintedCount = 1;
+                    ( void )lHelpPrintedCount;
                     return SDKRTN_PARSE_SUCCESS;
                 }
             }
@@ -577,7 +708,7 @@ UINT32 FPGA_ParseInquireFpgaImageInfo( INT32 argc, INT8 *argv[] )
     }
 
     /* Exception handling */
-    if ( ERROR == lOpt )
+    if ( ERROR == lOpt ) /*lint !e774*/
     {
         printf( "\r\nERROR: Invalid input parameter.\r\n" );
         FPGA_ParsePrintHelpInfo( argv[0], g_pacInquireImageHelp, sizeof_array( g_pacInquireImageHelp ) );
@@ -597,7 +728,7 @@ Return       : 0:sucess other:fail
 UINT32 FPGA_ParseInquireLEDStatus( INT32 argc, INT8 *argv[] )
 {
     INT32 lOpt = 0;
-    INT32 ulHelpPrintedCount = 0;
+    INT32 lHelpPrintedCount = 0;
 
     struct option stLongOptions[] =
     {
@@ -642,7 +773,7 @@ UINT32 FPGA_ParseInquireLEDStatus( INT32 argc, INT8 *argv[] )
                 ulRet = FPGA_ParseString2Uint( &g_strFpgaModule.ulSlotIndex, optarg );
                 if ( SDKRTN_PARSE_SUCCESS != ulRet )
                 {
-                    printf("[***TIPS***]Option -S should be followed by a number\r\n" );
+                    printf("[***TIPS***]Option -S should be followed by a decimal number\r\n" );
                     LOG_ERROR( "String2Uint failed %d", ulRet );
                     return ulRet;
                 }
@@ -667,12 +798,12 @@ UINT32 FPGA_ParseInquireLEDStatus( INT32 argc, INT8 *argv[] )
             /* -? */
             case COMMAND_HELP_INFO1:
             {
-                if( PRINTED_COUNT == ulHelpPrintedCount)
+                if( PRINTED_COUNT == lHelpPrintedCount)
                 {
                     FPGA_ParsePrintHelpInfo(argv[0], g_pacInquireLedStatusHelp, sizeof_array(g_pacInquireFpgaHelp));
                     g_ulparseParaFlag = QUIT_FLAG;
-                    ulHelpPrintedCount = 1;
-                    ( void )ulHelpPrintedCount;
+                    lHelpPrintedCount = 1;
+                    ( void )lHelpPrintedCount;
                     return SDKRTN_PARSE_SUCCESS;
                 }
             }
@@ -688,7 +819,7 @@ UINT32 FPGA_ParseInquireLEDStatus( INT32 argc, INT8 *argv[] )
     }
 
     /* Exception handling */
-    if ( ERROR == lOpt )
+    if ( ERROR == lOpt ) /*lint !e774*/
     {
         printf( "\r\nERROR: Invalid input parameter.\r\n" );
         FPGA_ParsePrintHelpInfo( argv[0], g_pacInquireLedStatusHelp, sizeof_array( g_pacInquireLedStatusHelp ) );
@@ -710,6 +841,7 @@ UINT32 FPGA_ParseCommand( INT32 argc, INT8 *argv[] )
     INPUT_COMMAND_PARSE strInputParse[] =
     {
         {"LF", CMD_HFI_LOAD, FPGA_ParseLoadHfi},
+        {"CF", CMD_HFI_CLEAR, FPGA_ParseClearHfi},
         {"IF", CMD_IMAGE_INQUIRE, FPGA_ParseInquireFpgaImageInfo},
         {"DF", CMD_RESOURSE_INQUIRE, FPGA_ParseInquireFpgaResource},
         {"IL", CMD_LED_STATUS_INQUIRE, FPGA_ParseInquireLEDStatus},

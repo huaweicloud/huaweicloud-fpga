@@ -30,7 +30,7 @@ class config_opt #(int WIDTH = 'd32);
 
     `define tc_config_opt_get_string(NAME, ARG, DFLT) \
       begin \
-          bit val = $value$plusargs({`"NAME`", "=%s"}, ARG); \
+          automatic bit val = $value$plusargs({`"NAME`", "=%s"}, ARG); \
           if (!val) ARG = DFLT; \
       end
 
@@ -38,8 +38,8 @@ class config_opt #(int WIDTH = 'd32);
 
     `define tc_config_opt_get_bits(NAME, ARG, DFLT) \
       begin \
-          string dflt_str; \
-          string get_str ; \
+          automatic string dflt_str; \
+          automatic string get_str ; \
           $sformat(dflt_str, "%d", DFLT); \
           `tc_config_opt_get_string(NAME, get_str, dflt_str) \
           if (get_str == "") begin \

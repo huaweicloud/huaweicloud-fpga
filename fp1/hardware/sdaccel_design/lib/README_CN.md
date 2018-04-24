@@ -2,7 +2,7 @@
 
 [Switch to the English version](./README.md)
 
-此目录存放硬件平台信息以及通用
+此目录存放硬件平台信息
 
 # 目录结构
  platform

@@ -6,7 +6,8 @@ The structure of **build** in **example1/prj** is as follows:
 
 * [example1/prj/build](#example1/prj/build_dir)/
    - checkpoints
-   - README.md (This document)
+   - README.md (this document)
+   - README_CN.md (Chinese version of this document)
    - reports
 
 # Contents of Each File or Folder
@@ -14,7 +15,7 @@ The structure of **build** in **example1/prj** is as follows:
 * checkpoints    
    This directory stores the files generated during example building. The `checkpoints/` folder contains the following folders and files:
    - readme.md
-   - xxx.dcp (.dcp file generated during building for one-click or single-step execution.)
+   - xxx.dcp (.dcp files generated during one-click or single-step buildings.)
    - to_facs             
       + 'user_prj_name '_partial.bin
       + 'user_prj_name '_partial.bit
@@ -52,7 +53,7 @@ The structure of **build** in **example1/prj** is as follows:
              PPPP          AAAA    AAAA    SSSSSSSS      SSSSSSSS
      ```
 
-    - After `build.sh ` is completed, you can run the following commands for `single-step execution`.
+    - You can add the following parameters to `build.sh ` to perform `single-step execution`:
       + -s | -S | -synth     : only executes synthesis.
       + -i | -I | -impl      : only executes placing and routing.
       + -p | -P | -pr        : only executes PR verification.
@@ -130,7 +131,7 @@ The structure of **build** in **example1/prj** is as follows:
              PPPP          AAAA    AAAA  SSSS    SSSS  SSSS    SSSS
              PPPP          AAAA    AAAA    SSSSSSSS      SSSSSSSS
       ```
-    - Run the `sh build.sh -b` command for single-step execution of .bit file generation. If "Bitgen Completed Successfully." is displayed, the .bit file generation is successful.Information similar to the following is displayed:
+    - Run the `sh build.sh -b` command for single-step execution of .bit file generation. If "Bitgen Completed Successfully." is displayed, the .bit file generation is successful. Information similar to the following is displayed:
       ```bash
       +-----------+------------------------------------------------------------+
       |   time    |                                            [0d_0h_07m_12s] |

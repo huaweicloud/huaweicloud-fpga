@@ -11,19 +11,19 @@
 <li><a href="#sec-2">2. <b>文件及文件夹说明</b></a></li>
 <li><a href="#sec-3">3. <b>构建说明</b></a>
 <ul>
-<li><a href="#sec-3-1">3.1. <b>usr_prj_cfg 配置说明</b></a></li>
+<li><a href="#sec-3-1">3.1. <b>usr_prj_cfg文件配置说明</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-2">3.2. <b>build.sh使用说明</b></a></li>
+<li><a href="#sec-3-2">3.2. <b>build.sh脚本使用说明</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-3">3.3. <b>schedule_task.sh使用说明</b></a></li>
+<li><a href="#sec-3-3">3.3. <b>schedule_task.sh脚本使用说明</b></a></li>
 </ul>
 <ul>
 <li><a href="#sec-3-4">3.4. <b>AEI_Register.cfg文件配置说明</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-5">3.5. <b>AEI_Register.sh文件配置说明</b></a></li>
+<li><a href="#sec-3-5">3.5. <b>AEI_Register.sh脚本使用说明</b></a></li>
 </ul>
 </li>
 <li><a href="#sec-4">4. <b>其他</b></a></li>
@@ -43,6 +43,7 @@ Example1的prj文件夹层级结构如下：
   - [constraints/](#sec-2-2)
   - [build.sh](#sec-2-3)
   - README_CN.md （本文档）
+  - README.md(本文档的英文版本)
   - [schedule_task.sh](#sec-2-4)
   - [usr_prj_cfg](#sec-2-5)
   - [AEI_Register.cfg](#sec-2-6)
@@ -65,27 +66,27 @@ Example1的prj文件夹层级结构如下：
 <a id="sec-2-3" name="sec-2-3"></a>
 
 - build.sh  
-  该文件主要用于构建工程，用户`修改完usr_prj_cfg`后，执行该文件即可实现工程构建，详细使用说明请见[build.sh使用说明](#sec-3-2)。
+  该文件主要用于构建工程，用户`修改完usr_prj_cfg`后，执行该文件即可实现工程构建，详细使用说明请见[build.sh脚本使用说明](#sec-3-2)。
 
 <a id="sec-2-4" name="sec-2-4"></a>
 
 - schedule_task.sh  
-  该文件主要用于完成工程的延时以及定时构建，详细使用说明请见[schedule_task.sh使用说明](#sec-3-3)。
+  该文件主要用于完成工程的延时以及定时构建，详细使用说明请见[schedule_task.sh脚本使用说明](#sec-3-3)。
 
 <a id="sec-2-5" name="sec-2-5"></a>
 
 - usr_prj_cfg  
-  该文件主要用于配置example1工程的自定义信息，详细使用说明请见[usr_prj_cfg使用说明](#sec-3-1)。
+  该文件主要用于配置example1工程的自定义信息，详细使用说明请见[usr_prj_cfg文件配置说明](#sec-3-1)。
 
 <a id="sec-2-6" name="sec-2-6"></a>
 
 - AEI_Register.cfg  
-  该文件主要用于配置编译生成的bit文件对应的上传模式和创建OBS桶名，详细使用说明请见[AEI_Register.cfg使用说明](#sec-3-4)。
+  该文件主要用于配置编译生成的bit文件对应的上传模式和创建OBS桶名，详细使用说明请见[AEI_Register.cfg文件配置说明](#sec-3-4)。
 
 <a id="sec-2-7" name="sec-2-7"></a>
 
 - AEI_Register.sh  
-  该命令主要用于完成pr校验、bit文件生成、上传等步骤，执行该文件即可实现将bit文件上传至OBS桶，并获取注册ID，详细使用说明请见[AEI_Register.sh使用说明](#sec-3-5)。
+  该命令主要用于完成pr校验、bit文件生成、上传等步骤，执行该文件即可实现将bit文件上传至OBS桶，并获取注册ID，详细使用说明请见[AEI_Register.sh脚本使用说明](#sec-3-5)。
 
 <a id="sec-3" name="sec-3"></a>
 
@@ -93,7 +94,7 @@ Example1的prj文件夹层级结构如下：
 
 <a id="sec-3-1" name="sec-3-1"></a>
 
-### usr_prj_cfg 配置说明
+### usr_prj_cfg文件配置说明
 
 - 该文件主要用于配置用户工程的自定义信息。
 
@@ -110,11 +111,11 @@ Example1的prj文件夹层级结构如下：
 
 | 内容        | 关键字               | 示例                                       |
 | :-------- | :---------------- | :--------------------------------------- |
-| 用户创建工程的名字 | USR_PRJ_NAME      | USR_PRJ_NAME=ul_pr_top                   |
+| 用户创建工程的名字   | USR_PRJ_NAME      | USR_PRJ_NAME=ul_pr_top                   |
 | 工程顶层的名字   | USR_TOP           | USR_TOP=ul_pr_top                        |
-| 用户指定的综合策略 | USR_SYN_STRATEGY  | USR_SYN_STRATEGY=AreaOptimized_high      |
-| 用户指定的实现策略 | USR_IMPL_STRATEGY | USR_IMPL_STRATEGY=Explore                |
-| 用户的自定义约束  | USR_CONSTRAINTS   | USR_CONSTRAINTS="set_multicycle_path -setup -from [get_pins cpu_data_out*/D] 3" |
+| 用户指定的综合策略   | USR_SYN_STRATEGY  | USR_SYN_STRATEGY=AreaOptimized_high      |
+| 用户指定的实现策略   | USR_IMPL_STRATEGY | USR_IMPL_STRATEGY=Explore                |
+| 用户的自定义约束   | USR_CONSTRAINTS   | USR_CONSTRAINTS="set_multicycle_path -setup -from [get_pins cpu_data_out*/D] 3" |
 
 ---
 
@@ -128,9 +129,9 @@ Example1的prj文件夹层级结构如下：
 
 <a id="sec-3-2" name="sec-3-2"></a>
 
-### build.sh使用说明
+### build.sh脚本使用说明
 
-`build.sh`脚本主要完成工程构建。不仅支持一键式构建也支持分部构建，更多工程构建详细的说明可使用`-h`命令获得，命令如下：
+`build.sh`脚本主要完成工程构建。不仅支持一键式构建也支持分步构建，更多工程构建详细的说明可使用`-h`命令获得，命令如下：
 
 ```bash
   $ sh build.sh -h
@@ -154,8 +155,8 @@ Example1的prj文件夹层级结构如下：
 ```
 
   该命令将一键式完成**综合**、**布局布线**2个步骤，`所有步骤都successfully`，整个工程执行PASS；  
-  `注：**pr校验**和**bit文件生成**2个步骤是在AEI上传注册中实现的（详细内容参见本文：[AEI_Register.cfg使用说明](#sec-3-4)）；  
-  **pr校验**和**bit文件生成**这2个步骤也可以通过单步执行的方式实现（参见[build.sh使用说明](#sec-3-2)单步执行的说明）。  
+  注：**pr校验**和**bit文件生成**2个步骤是在AEI上传注册中实现的（详细内容参见本文：[AEI_Register.cfg文件配置说明](#sec-3-4)）；  
+  **pr校验**和**bit文件生成**这2个步骤也可以通过单步执行的方式实现（参见[build.sh脚本使用说明](#sec-3-2)单步执行的说明）。  
 
 ---
 
@@ -207,7 +208,7 @@ Example1的prj文件夹层级结构如下：
 
 <a id="sec-3-3" name="sec-3-3"></a>
 
-### schedule_task.sh使用说明
+### schedule_task.sh脚本使用说明
 
 `schedule_task.sh`脚本主要完成可配置时间的定时构建，更多详细的说明可使用`-h`命令获得，命令如下：
 
@@ -215,7 +216,7 @@ Example1的prj文件夹层级结构如下：
   $ sh schedule_task.sh -h
 ```
 
-`schedule_task.sh`有两个参数，分别为：`hour和minutes`；
+`schedule_task.sh`有四个参数，分别为：`day、hour、minutes、s`；
 同时，`schedule_task.sh`支持两种执行方式：
 
 - 方式1：延时执行
@@ -227,6 +228,7 @@ Example1的prj文件夹层级结构如下：
 ```bash
   $ sh ./schedule_task.sh 1m      # after 1 minute run
   $ sh ./schedule_task.sh 1h      # after 1 hour run
+  $ sh ./schedule_task.sh 1d      # after 1 day run
 ```
 
 ---
@@ -261,7 +263,7 @@ Example1的prj文件夹层级结构如下：
 
 <a id="sec-3-5" name="sec-3-5"></a>
 
-### AEI_Register.sh命令的使用说明
+### AEI_Register.sh脚本使用说明
 
 该命令主要完成pr校验、bit文件生成、上传等步骤，执行该文件即可实现将bit文件上传至OBS桶，并获取注册ID。
 执行AEI_Register.sh脚本的命令格式如下：
@@ -277,7 +279,7 @@ Example1的prj文件夹层级结构如下：
 
 **重要说明**:
 
-- 执行AEI_Register.sh命令j完成`pr校验`、`bit文件生成`和`注册ID生成`3个步骤，因此该步骤耗时稍长。
+- 执行AEI_Register.sh命令完成`pr校验`、`bit文件生成`和`注册ID生成`3个步骤，因此该步骤耗时稍长。
 
 - 在AEI_Register.sh脚本执行过程中，用户需要根据提示信息输入AK、SK和密码。
 
@@ -305,4 +307,4 @@ Example1的prj文件夹层级结构如下：
 
 ## 其他
 
-完成构建后，会产生的`vivado.log`、`ul_pr_top_terminal_run.log`等文件。如果构建失败，用户可根据这些日志定位构建失败的原因。
+完成构建后，会产生`vivado.log`、`ul_pr_top_terminal_run.log`等文件。如果构建失败，用户可根据这些日志定位构建失败的原因。

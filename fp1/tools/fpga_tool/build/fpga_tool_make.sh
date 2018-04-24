@@ -50,29 +50,49 @@ then
     exit 1
 fi
 
-make clean
+make clean -f Makefile_lib
 RET=$?
 if [ $RET -ne 0 ]; 
 then
-    echo "FPGA_TOOL MAKE ERROR:make clean failed"
+    echo "FPGA_TOOL MAKE ERROR: make clean -f Makefile_lib failed"
+    exit 1
+fi
+
+make clean -f Makefile_cli
+RET=$?
+if [ $RET -ne 0 ]; 
+then
+    echo "FPGA_TOOL MAKE ERROR: make clean -f Makefile_cli failed"
     exit 1
 fi
 
 if [[ $DEBUGSW -eq 1 ]] 
 then
-    make DEBUG=1
+	make DEBUG=1 -f Makefile_lib
 	if [ $? -ne 0 ]
 	then
-           echo "FPGA_TOOL MAKE ERROR:make failed"
+           echo "FPGA_TOOL MAKE ERROR: make DEBUG=1 -f Makefile_lib failed"
 		   exit 1
-        fi
+        fi		
+	make DEBUG=1 -f Makefile_cli
+	if [ $? -ne 0 ]
+	then
+           echo "FPGA_TOOL MAKE ERROR: make DEBUG=1 -f Makefile_cli failed"
+		   exit 1
+        fi		
 else
-	make
+	make -f Makefile_lib
  	if [ $? -ne 0 ]
 	then
-           echo "FPGA_TOOL MAKE ERROR:make failed"
+           echo "FPGA_TOOL MAKE ERROR: make -f Makefile_lib failed"
 		   exit 1
         fi
+	make -f Makefile_cli
+ 	if [ $? -ne 0 ]
+	then
+           echo "FPGA_TOOL MAKE ERROR: make -f Makefile_cli failed"
+		   exit 1
+        fi	
 fi
 
 cd $TOP

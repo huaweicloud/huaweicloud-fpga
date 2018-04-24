@@ -1,4 +1,4 @@
-﻿# Vivado Design Descriptions
+﻿# Vivado Design Description
 
 ---
 [切换到中文版](./README_CN.md)
@@ -12,9 +12,9 @@
   - user/
   - README.md
 
-## Subdirectory Descriptions
+## Subdirectory Description
 - documents  
-  This directory stores the .jpg` structure` of three Vivado-based examples, `interface signal introduction` files of examples, introduction files of `PCIe interface BAR space mapping`, `mandatory tools and license` introduction, and `.jpg interface relationship diagram` of the static and dynamic logics.
+  This directory stores the .jpg ` structure` of three Vivado-based examples, `interface signal introduction` files of examples, introduction files of `PCIe interface BAR space mapping`, `mandatory tools and license` introduction, and `.jpg interface relationship diagram` of the static and dynamic logics.
 
 - examples  
 

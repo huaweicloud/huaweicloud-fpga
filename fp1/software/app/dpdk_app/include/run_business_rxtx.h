@@ -86,6 +86,11 @@ typedef enum _stENABLE_FLAG_ {
     ENABLE = 1
 }ENABLE_FLAG;
 
+typedef enum _stTHREAD_FLAG_ {
+    DPDK_BIND = 0,
+    NORMAL_BIND
+}THREAD_FLAG;
+
 typedef struct _stBusinessPrimaryArg_ {
     uint16_t    queue_desc_nb;
     uint8_t     port_nb;        /* VF's number that want to configure */
@@ -124,6 +129,8 @@ typedef struct _stBusinessArgs_ {
     uint32_t    queue_desc_nb;
 
     ENABLE_FLAG     fmmu_enable;
+    THREAD_FLAG     thread_flag;
+    uint8_t     cpu_nb;
 } stBusinessArgs, *pstBusinessArgs;
 
 typedef struct _stBusinessThreadArg_ {
@@ -138,6 +145,9 @@ typedef struct _stBusinessThreadArgs_ {
     uint32_t    port_id;
     uint32_t    queue_idx;
     uint32_t    cpu_bind;
+    THREAD_FLAG     thread_flag;
+    uint32_t    tx_cpu_bind;
+    uint32_t    rx_cpu_bind;
     pthread_t   task_id;
     struct rte_mempool* business_bd_mp;
     struct rte_mempool* business_data_mp;

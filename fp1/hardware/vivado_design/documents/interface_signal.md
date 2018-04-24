@@ -4,12 +4,12 @@
 
 ![sh_ul_interface.jpg ](./sh_ul_interface.jpg)
 
-* The FPGA acceleration card is connected to the CPU through the PCIe3.0 x16 interface with four external DDR4s. The FPGA acceleration card supports high-speed device interconnection interfaces and 100 GB Ethernet ports.FPGA logic consists of `Shell and custom logic`.
+* The FPGA acceleration card is connected to the CPU through the PCIe3.0 x16 interface with four external DDR4s. The FPGA acceleration card supports high-speed device interconnection interfaces and 100 GB Ethernet ports. FPGA logic consists of `Shell and user logic`.
   - Shell (SH): indicates static logic provided by FACS, including peripheral interfaces such as PCIe and DDR4.
-  - Custom logic (CL): indicates dynamic logic developed by users.
+  - User logic (UL): indicates dynamic logic developed by users.
 
-  You need to use SH and CL to compile the `AEI file` of FPGA images.      
-  This document describes hardware interfaces between SH and CL and the function of shell.  
+  You need to use SH and UL to compile the `AEI file` of FPGA images.      
+  This document describes hardware interfaces between SH and UL and the function of shell.  
 
 # Shell Function
 * Provides access to PCIe BAR1/BAR5. 
@@ -17,7 +17,7 @@
 * Provides access to one DDR4 mapping space.
 * Implements debugging, status, and control functions.
 
-# Shell interfaces
+# Shell Interfaces
 The shell function is connected to user logic through the AXI-Lite or AXI4 interface.
 * The 32-bit AXI-Lite interface is used for BAR1/BAR5 space access.
 * The 512-bit AXI4 interface is used for DMA channel access.

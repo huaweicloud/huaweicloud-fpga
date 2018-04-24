@@ -495,7 +495,7 @@ endgenerate
 //endfunction
 
 
-// 2012-1-29 l00125452
+// 2012-1-29 
 ///////////////////////////////////////////////////////////////////////
 //  READ_WIDTH | BRAM_SIZE | READ Depth  | RDADDR Width |            //
 // WRITE_WIDTH |           | WRITE Depth | WRADDR Width |  WE Width  //

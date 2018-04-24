@@ -6,7 +6,7 @@ The structure of **../prj/build** is as follows:
 
 * [prj/build](#/prj/build_dir)/
    - checkpoints
-   - README.md (This document)
+   - README.md (this document)
    - reports
 
 # Contents of Each File or Folder
@@ -14,7 +14,7 @@ The structure of **../prj/build** is as follows:
 * checkpoints    
    This directory stores the files generated during user project building. The `checkpoints/` folder contains the following folders and files:
    - README.md
-   - xxx.dcp (.dcp file generated during building for one-click or single-step execution)
+   - xxx.dcp (.dcp file generated during one-click or single-step building)
    - to_facs             
       + 'user_prj_name '_partial.bin
       + 'user_prj_name '_partial.bit
@@ -24,8 +24,8 @@ The structure of **../prj/build** is as follows:
 * README.md  
   This document describes other documents.
 
-*  reports  
-  This directory stores the latest xxx.rpt file generated during user project building. You can view the `xxx.rpt` file for the project execution information and determine whether the project is executed successfully.    
+*  reports 
+  This directory stores the latest xxx.rpt file generated during user project building. You can view the `xxx.rpt` file for the project execution information and determine whether the project is executed successfully. 
   The FPGA Accelerated Cloud Server (FACS) platform also provides a more intuitive method to view the result of project building, displaying the result directly on the display terminal. (The time required for each execution is slightly different.)
      - By one-click execution of `sh build.sh`, information similar to the following is displayed:
      ```bash
@@ -52,7 +52,7 @@ The structure of **../prj/build** is as follows:
              PPPP          AAAA    AAAA    SSSSSSSS      SSSSSSSS
      ```
 
-    - After `build.sh ` is completed, you can run the following commands for `single-step execution`.
+    - You can add the following parameters to `build.sh ` for `single-step execution` operations.
       + -s | -S | -synth     : only executes synthesis.
       + -i | -I | -impl      : only executes placing and routing.
       + -p | -P | -pr        : only executes PR verification.

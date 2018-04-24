@@ -69,9 +69,10 @@ status: saving
 
 **说明：**AEI_Register.sh脚本在注册过程中会将生成的FPGA逻辑文件传输到用户的OBS桶中，用于注册相应的FPGA镜像。在确认注册成功后，用户可以将OBS桶中的逻辑文件手动删除，以便消除不必要的OBS服务计费。
 
-例如，用户可以执行如下命令来注册一个OCL镜像，并将AEI_name设置为“ocl-test”，将AEI_Description设置为“ocl-desc”。
+例如，用户可以执行如下命令来注册一个DPDK镜像，并将AEI_name设置为“DPDK-test”，将AEI_Description设置为“DPDK-desc”。
 
-[root\@ scripts]\# sh AEI_Register.sh -n "ocl-test" -d "ocl-desc"  
+**说明：**执行以下命令运行约20分钟左右。
+[root\@ scripts]\# sh AEI_Register.sh -n "DPDK-test" -d "DPDK-desc"  
 fischeck arguments are OK  
 **Input access_key:**  
 **Input secret_key:**  
@@ -79,22 +80,22 @@ fischeck arguments are OK
 verifying the access_key,secret_key successfully  
 **Input passwd:**fischeck password and config file are OK  
 verifying the password and /etc/cfg.file successfully  
-INFO: OCL Running  
-upload:
-'huaweicloud-fpga/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
--\> 's3://obs-fpga/bin_mmult_hw.xclbin'[part 1 of 3, 15MB] [1 of 1]  
-15728640 of 15728640100% in0s17.53 MB/sdone  
-upload:
-'huaweicloud-fpga/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
--\> 's3://obs-fpga/bin_mmult_hw.xclbin'[part 2 of 3, 15MB] [1 of 1]  
-15728640 of 15728640100% in0s17.15 MB/sdone  
-upload:
-'huaweicloud-fpga/fp1/hardware/sdaccel_design/examples/mmult_hls/scripts/../prj/bin/bin_mmult_hw.xclbin'
--\> 's3://obs-fpga/bin_mmult_hw.xclbin'[part 3 of 3, 13MB] [1 of 1]  
-14380204 of 14380204100% in0s18.29 MB/sdone  
+INFO: DPDK Running
+
+... ...
+
+write_bitstream completed successfully
+write_bitstream: Time (s): cpu = 01:12:43 ; elapsed = 00:22:32 . Memory (MB): peak = 10133.406 ; gain = 3079.641 ; free physical = 2149 ; free virtual = 10317
+INFO: [Common 17-206] Exiting Vivado at Sun Apr  8 17:15:03 2018...
+upload: '/home/fp1/hardware/vivado_design/examples/example3/prj/build/checkpoints/to_facs/pr_ul_20180408163826_aei.bin' -> 's3://obs-yx-fpga/pr_ul_20180408163826_aei.bin'  [part 1 of 4, 15MB] [1 of 1]
+ 15728640 of 15728640   100% in    0s    21.30 MB/s  done
+upload: '/home/fp1/hardware/vivado_design/examples/example3/prj/build/checkpoints/to_facs/pr_ul_20180408163826_aei.bin' -> 's3://obs-yx-fpga/pr_ul_20180408163826_aei.bin'  [part 2 of 4, 15MB] [1 of 1]
+ 15728640 of 15728640   100% in    0s    21.04 MB/s  done
+upload: '/home/fp1/hardware/vivado_design/examples/example3/prj/build/checkpoints/to_facs/pr_ul_20180408163826_aei.bin' -> 's3://obs-yx-fpga/pr_ul_20180408163826_aei.bin'  [part 3 of 4, 15MB] [1 of 1]
+ 15728640 of 15728640   100% in    0s    21.44 MB/s  done
+upload: '/home/fp1/hardware/vivado_design/examples/example3/prj/build/checkpoints/to_facs/pr_ul_20180408163826_aei.bin' -> 's3://obs-yx-fpga/pr_ul_20180408163826_aei.bin'  [part 4 of 4, 3MB] [1 of 1]
+ 3432084 of 3432084   100% in    0s    11.57 MB/s  done 
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#  
 Register AEI  
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#  
-**Success: 200 OK**  
-**id: 0000\*\*\*\*\*\*\*\*5568015e3c83e7290321**  
-**status: saving**
+**Success: 200 OK id: ff808082628ffc7a0162a48d452a760c status: saving**

@@ -22,7 +22,7 @@
 
 ---
 
-**fp1**是一款基于HWS的开源的云化的FPGA硬件与软件开发工具套件。该套件不仅能够帮助用户更完成设计、仿真、实现以及联合运行，而且还为用户提供专业的设计以及验证组件，帮助开发者更高效的实现FPGA的开发。
+**fp1**是一款基于HWS的开源的云化FPGA硬件与软件开发工具套件。该套件不仅能够帮助用户完成设计、仿真、实现以及联合运行，而且为用户提供专业的设计以及验证组件，帮助开发者更高效的实现FPGA的开发。
 
 **fp1**主要由两部分组成，**硬件开发套件**（**HDK**）与**软件开发套件**（**SDK**）。其中HDK包括从RTL（Verilog/VHDL）设计、验证到构建的全部设计文件以及脚本。SDK则主要包含运行FPGA实例所需要的驱动、工具、运行环境以及应用程序。
 
@@ -70,7 +70,7 @@
 
 - tools
 
-  用于存放FP1平台下FPGA开发时所需的工具，目前仅包含FPGA镜像加载工具。
+  用于存放fp1平台下FPGA开发时所需的工具，目前仅包含FPGA镜像加载工具。
 
 <a id="sec-3-4" name="sec-3-4"></a>
 
@@ -100,13 +100,13 @@
 
 - setup.cfg
 
-  用户配置文件，包含license配置及vivado版本配置。
+  用户配置文件，包含工具的选择、license配置及vivado版本配置。
 
 <a id="sec-3-9" name="sec-3-9"></a>
 
 - setup.sh
 
-  环境变量设置脚本,用户使用开发套件前需要执行。
+  环境变量设置及配置检查脚本,用户使用开发套件前需要执行。
 
 <a id="sec-4" name="sec-4"></a>
 
@@ -137,8 +137,8 @@ HDK的运行流程分为：基于vivado的流程，和基于sdaccel的流程。
 
 - 配置FPGA_DEVELOP_MODE：
 
-  如果使用SDAccel开发的话，请配置成：FPGA_DEVELOP_MODE="sdx"。
-  如果使用vivado开发的话，请配置成：FPGA_DEVELOP_MODE="vivado"。
+  如果使用SDAccel开发，配置为：FPGA_DEVELOP_MODE="sdx"。
+  如果使用vivado开发，配置为：FPGA_DEVELOP_MODE="vivado"。
   默认配置为vivado。
 
 - 配置软件License：
@@ -151,8 +151,8 @@ HDK的运行流程分为：基于vivado的流程，和基于sdaccel的流程。
 
 - 配置VIVADO_VER_REQ：
 
-  如果使用SDAccel开发的话，请配置成：VIVADO_VER_REQ="2017.1"。
-  如果使用vivado开发的话，请配置成：VIVADO_VER_REQ="2017.2"。
+  如果使用SDAccel开发，配置为：VIVADO_VER_REQ="2017.1"。
+  如果使用vivado开发，配置为：VIVADO_VER_REQ="2017.2"。
   默认配置为2017.2。
 
 - 配置环境变量：
@@ -178,13 +178,13 @@ HDK的运行流程分为：基于vivado的流程，和基于sdaccel的流程。
 
 ### 设计和仿真的流程
 
-HDK支持使用`vivado`以及`SDx`工具进行设计与仿真，详细步骤请见[hardware说明](./hardware/README_CN.md)中的**用户逻辑仿真**章节相关内容。
+HDK支持使用`vivado`或`SDx`工具进行设计与仿真，详细步骤请见[hardware说明](./hardware/README_CN.md)中的**用户逻辑仿真**章节相关内容。
 
 <a id="sec-4-3" name="sec-4-3"></a>
 
 ### 编写与调试用户应用
 
-用户如果采用不同的开发方式，此步骤略有不同。
+用户如果采用不同的开发模式，此步骤略有不同。
 
 - vivado开发模式
 
@@ -200,7 +200,7 @@ SDx开发模式采用Xilinx的SDAccel架构完成fpga与处理器的数据交互
 
 ### 上传与注册
 
-用户可以依据fpga云服务提供的API以及上传和注册工具，完成bin文件的上传和注册ID的生成，详细注册方法请参考文档[usr_prj0构建指南](./hardware/vivado_design/user/usr_prj0/prj/README_CN.md)中的“AEI_Register.cfg文件配置说明”和“AEI_Register.sh命令的使用说明”章节。
+用户可以依据fpga云服务提供的API以及上传和注册工具，完成bin文件的上传和注册ID的生成，详细注册方法请参考文档[usr_prj0构建指南](./hardware/vivado_design/user/usr_prj0/prj/README_CN.md)中的“AEI_Register.cfg文件配置说明”和“AEI_Register.sh文件配置说明”章节。
 
 <a id="sec-4-5" name="sec-4-5"></a>
 

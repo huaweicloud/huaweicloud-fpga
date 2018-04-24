@@ -35,11 +35,22 @@
 
 #include <stdbool.h>
 
-#define  FPGA_SLOT_INFO                      'S'
-#define  HFI_ID_INFO                         'I'
-#define  DISPLAY_FPGA_PHY_INFO               'D'
-#define  COMMAND_HELP_INFO                   'h'
-#define  COMMAND_HELP_INFO1                  '?'
+#define FPGA_SLOT_INFO                      'S'
+#define HFI_ID_INFO                         'I'
+#define DISPLAY_FPGA_PHY_INFO               'D'
+#define COMMAND_HELP_INFO                   'h'
+#define COMMAND_HELP_INFO1                  '?'
+
+#define HFI_TOOL_VERSION  "v104"
+
+#define INPUT_PARAS_NUM_MIN                     2
+#define INPUT_PARAS_FOR_PARSE_MIN               3
+#define INPUT_PARAS_FOR_IL_MAX                  4
+#define INPUT_PARAS_FOR_DF_MAX                  3
+#define INPUT_PARAS_FOR_IF_MAX                  4
+#define INPUT_PARAS_FOR_LF_MAX                  6
+#define INPUT_PARAS_FOR_CF_MAX                  4
+#define INPUT_OPTCODE_LENGTH_LIMIT              3 
 
 /************************* Define error code ************************************/
 #define PARSE_ERROR                              3
@@ -68,9 +79,12 @@ typedef struct tagINPUT_COMMAND_PARSE
 
 void  FPGA_ParsePrintHelpInfo( INT8 *pcCmdName,  INT8 *pcBuf[], UINT32 ulNum);
 UINT32 FPGA_ParseCommand( INT32 argc, INT8 *argv[] );
+UINT32 FPGA_ParseClearHfi( INT32 argc, INT8 *argv[] );
 
-extern INT8 *g_pacCommandEntryHelp[11];
+
+extern INT8 *g_pacCommandEntryHelp[12];
 extern INT8 *g_pacHfiLoadHelp[16];
+extern INT8 *g_pacHfiClearHelp[14];
 extern INT8 *g_pacInquireFpgaHelp[12];
 extern INT8 *g_pacInquireImageHelp[14];
 extern INT8 *g_pacInquireLedStatusHelp[14];

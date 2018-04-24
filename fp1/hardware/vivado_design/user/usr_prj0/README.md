@@ -16,7 +16,7 @@ The directory is `$WORK_DIR/hardware/vivado_design/user/usr_template/` and conta
   - src_encrypt
   - README.md
 
-## File and Folder Descriptions
+## File and Folder Description
 
 - prj
 

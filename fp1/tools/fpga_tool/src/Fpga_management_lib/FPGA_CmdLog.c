@@ -172,7 +172,7 @@ INT8 *FPGA_LogStringErrNum( INT32 iErrNum )
 
     if ( ( UINT32 )lRet > ( sizeof( g_acErrNumBuf ) - 1 ) )
     {
-        LOG_ERROR( "err_num  lengrh too big %d.", lRet );
+        LOG_ERROR( "err_num  length too big %d.", lRet );
     }
 
     return g_acErrNumBuf;

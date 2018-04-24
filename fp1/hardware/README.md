@@ -8,7 +8,7 @@
 <ul>
 <li><a href="#sec-1">1. <b>Subdirectory Structure</b></a></li>
 <li><a href="#sec-2">2. <b>Subdirectory Description</b></a></li>
-<li><a href="#sec-3">3. <b>Description of FAC-based Hardware Development</b></a>
+<li><a href="#sec-3">3. <b>Description of FAC-Based Hardware Development</b></a>
 <ul>
 <li><a href= "#sec-3-1" >3.1. <b>Applying for an Example</b></a></li>
 </ul>
@@ -40,8 +40,9 @@
   - sdaccel_design/
   - LICENSE.txt
   - README.md
+  - version_hdk_tag.txt
   - version_note_dpdk.txt
-  - version_note_sdx.txt
+  - version_note_sdaccel.txt
 
 <a id="sec-2" name="sec-2"></a>
 
@@ -63,17 +64,21 @@
 
   This document describes other documents.  
 
+- version_hdk_tag.txt
+
+- This document records tags information when the HDK is uploaded to the github.
+
 - version_note_dpdk.txt  
 
   This document describes the **release date** and **version** of Vivado-based static logic. Do not modify the contents of this file.
 
-- version_note_sdx.txt  
+- version_note_sdaccel.txt
 
   This document describes the **release date** and **version** of SDx-based static logic. Do not modify the contents of this file.  
 
 <a id="sec-3" name="sec-3"></a>
 
-## 3 Description of FAC-based Hardware Development
+## 3 Description of FAC-Based Hardware Development
 
 Huawei FPGA Accelerated Cloud (FAC) services provide Vivado-based development mode using RTL and SDAccel-based development mode using C, C++, and OpenCl. You can flexibly choose a development mode as required and complete the acceleration design in the corresponding directory structure.
 
@@ -91,7 +96,7 @@ Huawei FPGA Accelerated Cloud (FAC) services provide Vivado-based development mo
 
 **Note**
 
-FAC-based hardware development can only be implemented in the **CentOS 7.3** system and all designing files and scripts are available. You can use the preinstalled tools to **develop, simulate, and [build AEIs](../docs/Registering an FPGA Image.md)** on the FPGA cloud server.
+FAC-based hardware development can be implemented only in the **CentOS 7.3** system and all designing files and scripts are available. You can use the preinstalled tools to **develop, simulate, and [build AEIs](../docs/Registering an FPGA Image.md)** on the FPGA cloud server.
 
 <a id="sec-3-1" name="sec-3-1"></a>
 
@@ -113,7 +118,7 @@ Skip this step if you have configured environment variables.
   $ cd huaweicloud-fpga/fp1
 ```
 
-2. Configure user-defined information in the **setup.cfg** file. For details, see **Configuring the License File and Environment Variables** in the [fp1 Development Suite Description](../README.md).
+2. Configure user-defined information in the **setup.cfg** file. For details, see "Configuring the License File and Environment Variables" in [fp1 Development Suite Description](../README.md).
 
 3. Run the **setup.sh** command to configure environment variables and project dependencies:
 
@@ -134,7 +139,7 @@ If the project is installed for the first time or the version is upgraded, in ad
 1. Precompile the VCSMX simulation library (if the VCSMX tool exists).
 2. Precompile the QuestaSim simulation library (if the QuestaSim tool exists).
 3. Use the Vivado tool to generate an IP and a DDR simulation model.
-4. Download the .dcp file and compressed package of shell logic from the OBS bucket. This process takes about 3 to 5 minutes.
+4. Download the .dcp file and compressed package of shell logic from the OBS bucket. This process takes about three to five minutes.
 
 <a id="sec-3-3" name="sec-3-3"></a>
 

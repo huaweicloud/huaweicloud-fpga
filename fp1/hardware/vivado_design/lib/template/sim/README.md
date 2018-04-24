@@ -26,9 +26,9 @@
 <li><a href="#sec-1-6">1.6. <b>Viewing Logs</b></a></li>
 </ul>
 </li>
-<li><a href="#sec-2">2. <b>User-defined Tests</b></a>
+<li><a href="#sec-2">2. <b>User-Defined Tests</b></a>
 <ul>
-<li><a href="#sec-2-1">2.1. <b>Compiling User-defined Components</b></a>
+<li><a href="#sec-2-1">2.1. <b>Compiling User-Defined Components</b></a>
 </ul>
 <ul>
 <li><a href="#sec-2-2">2.2. <b>Compiling User Test Cases</b></a>
@@ -65,7 +65,7 @@ Run the `make comp` command to compile a user project. The following is the comm
     $ make comp
 ```
 
-By default, Vivado is used as the simulator. To use the VCS simulator or QuestaSim simulator, run the following command: [1][1]
+By default, Vivado is used as the simulator. To use the VCS simulator or QuestaSim simulator, run the following commands: [1][1]
 
 ```bash
     $ make comp TOOL=vcs # Compile Using vcsmx
@@ -73,7 +73,7 @@ By default, Vivado is used as the simulator. To use the VCS simulator or QuestaS
     $ make comp TOOL=vivado # Compile Using vivado(Same as do not specify the simulation tools)
 ```
 
-**For details about make parameters**, see [user_guide] (../../../lib/sim/doc/user_guide.md).
+**For details about parameters of make**, see [user_guide](../../../lib/sim/doc/user_guide.md).
 
 <a id="sec-1-2" name="sec-1-2"></a>
 
@@ -85,7 +85,7 @@ Run the `make run` command to execute the user project simulation. Specify the n
     $ make run TC=sv_demo_001
 ```
 
-By default, Vivado is used as the simulator. To use the VCS simulator or QuestaSim simulator, run the following command:
+By default, Vivado is used as the simulator. To use the VCS simulator or QuestaSim simulator, run the following commands:
 
 ```bash
     $ make run TOOL=vcs TC=sv_demo_001 # Compile Using vcsmx
@@ -103,7 +103,7 @@ Run the `make wave` command to debug a user project. Specify the name of the tes
     $ make wave TC=sv_demo_001
 ```
 
-By default, Vivado is used for debugging. If you need to use DVE or QuestaSim, run the following command:
+By default, Vivado is used for debugging. If you need to use DVE or QuestaSim, run the following commands:
 
 ```bash
     $ make wave TOOL=vcs TC=sv_demo_001 # Compile Using vcsmx
@@ -143,7 +143,7 @@ When executing test cases again, users can delete the previous compilation or si
 
 ### **Viewing Logs**
 
-If errors occur during the simulation compilation, you can view the **log_comp.log** file in the report directory. Errors occurred during the compilation are marked with the keyword `ERROR` in the log. The command is as follows:
+If errors occur during the simulation compilation, you can view the **log_comp.log** file in the report directory. Errors occurred during the compilation are marked with the keyword `ERROR` in the logs. The command is as follows:
 
 ```bash
     $ vi ./report/log_comp.log
@@ -157,14 +157,14 @@ If the compilation is successful but execution errors occur, you can enter the c
 
 <a id="sec-2" name="sec-2"></a>
 
-## **User-defined Tests**
+## **User-Defined Tests**
 
 <a id="sec-2-1" name="sec-2-1"></a>
 
-### **Compiling User-defined Components**
+### **Compiling User-Defined Components**
 
 Users can compile test cases, test configurations, and some simulation platform components. Currently, the following components can be edited: `reference model`, `CPU model`, `incentive`, and `incentive configuration`. You are advised to save user-defined components in the `./common` directory.
-For details about user-defined components, see the [Simulation Platform Quick Guide](../../../lib/sim/doc/quick_start.md).
+For details about user-defined components, see [Simulation Platform Quick Guide](../../../lib/sim/doc/quick_start.md).
 
 <a id="sec-2-2" name="sec-2-2"></a>
 
@@ -197,7 +197,7 @@ Users need to create test cases by themselves. The name of the test case must be
     $ cp -r ./tests/sv/sv_demo_001/* ./tests/sv/xxx_test # Copy Example to Own Testcase
 ```
 
-User test cases are divided into two parts: ** basic test cases ** and ** user test configuration **. The former is compiled using the SystemVerilog language and are used to complete the main process of test cases, and the latter is the configuration file of the user, which determines the data such as the incentive and configuration required in the test case.
+User test cases are divided into two parts: **basic test cases** and **user test configuration**. The former is compiled using the SystemVerilog language and are used to complete the main process of test cases, and the latter is the configuration file of the user, which determines the data such as the incentive and configuration required in the test case.
 
 <a id="sec-2-2-1" name="sec-2-2-1"></a>
 
@@ -310,7 +310,7 @@ The configuration items in the configuration file are as follows:
 
 ### **Executing User Test Cases**
 
-To compile and execute the test case `xxx_test`, run the following command:
+To compile and execute the test case `xxx_test`, run the following commands:
 
 ```bash
     $ make TC=xxx_test              # Run testcase xxx_test，Compile Using vivado

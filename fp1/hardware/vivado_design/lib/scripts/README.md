@@ -12,17 +12,17 @@ This folder stores encrypted KeyFile and FAC services build scripts not concerne
   - keyfile_vhd.txt
   - README.md
 
-# Directory Descriptions
+# Directory Description
 * build_facs.tcl  
-  This file bears `FAC service building code` of the FPGA.
+  This file carries `FAC service building code` of the FPGA.
 * fpga_design_run.sh  
-  This file bears `project execution code` of the fpga_design project.
+  This file carries `project execution code` of the fpga_design project.
 * init_ip.sh  
-  This file bears `main script code for generating IPs`. It works with i**nit_ip.tcl** to generate IPs.
+  This file bears `main script code for generating IPs`. It works with **init_ip.tcl** to generate IPs.
 * init_ip.tcl  
-  This file bears `sub-script code for generating IP addresses`. It works with **init_ip.sh** to generate IPs.
+  This file carries `sub-script code for generating IP addresses`. It works with **init_ip.sh** to generate IPs.
 * keyfile_ver.txt  
-  This file bears encryption methods and is used for encrypting  `Verilog HDL language` code.
+  This file carries encryption methods and is used for encrypting `Verilog HDL language` code.
 * keyfile_vhd.txt  
   This file carries encryption methods and is used for encrypting `VHDL language` code.
 * README.md  

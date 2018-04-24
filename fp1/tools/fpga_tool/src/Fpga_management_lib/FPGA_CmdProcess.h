@@ -52,6 +52,7 @@
 #define HFI_CMD_MSG_FLAG                   0x4D534746               /* "MSGF" message verify flag */
 #define LED_OFFSET                         0x00004400               /* Virtus led reg offset */
 
+#define FPGA_IMAGE_CLEAR_USLEN           0                        /* The USLENGTH of clear fpga image */
 #define FPGA_IMAGE_INQUIRE_USLEN           0                        /* The USLENGTH of inquiring fpga image */
 #define HFI_MUTEX_PATH                     "/tmp/fpgasdk%d.lock"
 #define LED_STATUS_REG_DIGITS              32                       /* The lenth of virtus led status reg */    
@@ -59,6 +60,9 @@
 #define LED_STATUS_LEFTSHIFT               1                        /* Shift one bit */
 #define LED_STATUS_TRANSFORM_TOOL          0x80000000               /* Decimal conversion to binary */
 
+#define LOAD_GET_LOCK_BUSY                 1  /* Get lock busy */
+#define LOAD_AEIID_CHECK_ERR                     9  /* AEI ID is invalid */
+#define CLEAR_GET_LOCK_BUSY                101  /* Clear command Get lock busy */
 
 /************************* Define error code ************************************/
 #define PROCESS_ERROR                          6
@@ -75,6 +79,8 @@
 #define SDKRTN_PROCESS_LOCK_FAIL               ( SDKRTN_PROCESS_ERROR_BASE + 0x9 )
 #define SDKRTN_PROCESS_OPEN_FAIL               ( SDKRTN_PROCESS_ERROR_BASE + 0xA )
 #define SDKRTN_PROCESS_SPRINTF_FAIL            ( SDKRTN_PROCESS_ERROR_BASE + 0xB )
+#define SDKRTN_PROCESS_SHELL_TYPE_ERROR        ( SDKRTN_PROCESS_ERROR_BASE + 0xC )
+#define SDKRTN_PROCESS_AEIID_ERROR             ( SDKRTN_PROCESS_ERROR_BASE + 0xD )
 
 typedef struct tagFPGA_MBOX_OPT_INFO
 {
@@ -123,6 +129,7 @@ typedef enum tagFpgaCmdListForHost
     HFI_CMD_ERROR = 0,
     HFI_CMD_LOAD = 1,
     HFI_CMD_INQUIRE = 2,
+    HFI_CMD_CLEAR = 3,
     HFI_CMD_END
 }FpgaCmdListForHost;
 
@@ -132,20 +139,6 @@ typedef struct tagFPGA_CMD_ERROR_INFO
     UINT32   ulInfo;
 }FPGA_CMD_ERROR_INFO;
 
-typedef struct tagFPGA_IMG_INFO{
-    UINT32 ulHfiLoadStatus;                       /* FPGA load status code */
-    UINT32 ulHfiLoadErr;                          /* FPGA load error code */
-    INT8   acHfid[HFI_ID_LEN_MAX];                /* HFID information */
-    UINT32 ulShVer;                               /* FPGA shell version */
-}FPGA_IMG_INFO;
-
-void FPGA_MmgtMboxOptInit( void );
-UINT32 FPGA_MgmtLoadHfiImage( UINT32 ulSlotIndex, INT8 *pcHfiId );
-UINT32 FPGA_MgmtCheckMsg( MBOX_MSG_DATA *punMsgSend, MBOX_MSG_DATA *punMsgRsp, UINT32 ulLength);
-UINT32 FPGA_MgmtSendMsg( UINT32 ulSlotIndex, MBOX_MSG_DATA *punMsgSend, MBOX_MSG_DATA *punMsgRsp, UINT32 *pulLen );
-void  FPGA_MgmtDisableMbox( UINT32 ulSlotIndex );
-UINT32 FPGA_MgmtInquireFpgaImageInfo( UINT32 ulSlotIndex, FPGA_IMG_INFO *pstrImgInfo );
-UINT32 FPGA_MgmtInquireLEDStatus( UINT32 ulSlotIndex );
-
 extern FPGA_MBOX_OPT_INFO g_stFpgaMboxOptInfo;
+
 #endif

@@ -18,9 +18,9 @@
 ## get script path
 #######################################################################################################################
 if [[ "$0" =~ ^\/.* ]]; then
-	script=$0
+    script=$0
 else
-	script=$(pwd)/$0
+    script=$(pwd)/$0
 fi
 script=$(readlink -f $script)
 script_path=${script%/*}
@@ -38,6 +38,7 @@ function usage
     echo "   -p | -P | -pr             Only run pr_verify "
     echo "   -b | -B | -bit            Only run bitgen "
     echo "   -e | -E | -encrypt        Do not encrypt "
+    echo "   -t [num]                  Build after [num] seconds"
     echo " "
     echo "   -s_strategy_help          Synthesis Supported values include: "
     echo "                                 * DEFAULT                     "
@@ -328,10 +329,10 @@ while [ "$1" != "" ]; do
                                         delay_time=$1
                                         ;;
         * ) 
-		echo "ERROR:'$1' invalid character!  "   
-		echo "        please input the '-h','-H','-help' or '--help' character to get help of build.sh"
-		echo
-		exit
+        echo "ERROR:'$1' invalid character!  "   
+        echo "        please input the '-h','-H','-help' or '--help' character to get help of build.sh"
+        echo
+        exit
     esac
     shift
 done
@@ -342,8 +343,8 @@ done
 source $script_path/usr_prj_cfg
 
 if [ "x${USR_PRJ_NAME}" = x -o "x${USR_TOP}" = x  ]; then
-	echo "ERROR:The parameter value cannot be empty,you need to complete usr_prj_cfg file! "
-	exit
+    echo "ERROR:The parameter value cannot be empty,you need to complete usr_prj_cfg file! "
+    exit
 fi
 
 sleep $delay_time
@@ -352,8 +353,8 @@ sleep $delay_time
 #######################################################################################################################
 if [[ $syhth_en == 0 || $impl_en == 0 || $pr_en == 1 || $bit_en == 1 ]]; then
 
-	syhth_en=$[! $syhth_en]
-	impl_en=$[! $impl_en]
+    syhth_en=$[! $syhth_en]
+    impl_en=$[! $impl_en]
 fi
 #######################################################################################################################
 ## echo the information of the set

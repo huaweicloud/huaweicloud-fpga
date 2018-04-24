@@ -17,16 +17,16 @@
 `timescale 1ns/1ns
 
 module reg_ul_access
-    #(	
+    #(
      parameter   CPU_ADDR_WIDTH  =12                        ,
      parameter   CPU_DATA_WIDTH  =32                       
     )
     (
     //globle signal                      
-    input    wire                            clks           ,  
-    input    wire                            reset          ,                            
-	
-    output   wire [15:0]                     ul2sh_vled     ,                                                        
+    input    wire                            clks           ,
+    input    wire                            reset          ,
+
+    output   wire [15:0]                     ul2sh_vled     ,
     //mpi interface                                         
     input                                    cpu_wr         ,
     input        [CPU_ADDR_WIDTH-1:0]        cpu_wr_addr    ,
@@ -47,14 +47,14 @@ wire  [CPU_DATA_WIDTH-1:0]       reg_adder_cfg_wdata0  ;
 wire  [CPU_DATA_WIDTH-1:0]       reg_adder_cfg_wdata1  ;
 reg                              cpu_rd_dly1           ;
 
-wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h0       ; 
-wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h1       ; 
-wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h2       ; 
-wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h3       ; 
-wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h4       ; 
-wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h5       ; 
-wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h6       ; 
-wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h7       ; 
+wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h0       ;
+wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h1       ;
+wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h2       ;
+wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h3       ;
+wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h4       ;
+wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h5       ;
+wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h6       ;
+wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h7       ;
 
 /******************************************************************************\
     version info 
@@ -62,31 +62,31 @@ wire  [CPU_DATA_WIDTH-1:0]       cpu_data_out_h7       ;
 ro_reg_inst
     #(
     .ADDR_WIDTH (CPU_ADDR_WIDTH),
-    .VLD_WIDTH(CPU_DATA_WIDTH)                                         
+    .VLD_WIDTH(CPU_DATA_WIDTH)                        
      )
     inst_reg_ver_time                        
     (
-    .cpu_data_out       ( cpu_data_out_h0           ),  
-    .cpu_addr           ( cpu_wr_addr               ),  
-    .its_addr           ( 12'h000                   ),  
-    .din                ( reg_ver_time              )   
+    .cpu_data_out       ( cpu_data_out_h0           ),
+    .cpu_addr           ( cpu_wr_addr               ),
+    .its_addr           ( 12'h000                   ),
+    .din                ( reg_ver_time              ) 
     );
 
-assign reg_ver_time = 32'h2017_1208;	
+assign reg_ver_time = 32'h2018_0308;
 ro_reg_inst
     #(
     .ADDR_WIDTH (CPU_ADDR_WIDTH),
-    .VLD_WIDTH(CPU_DATA_WIDTH)                                         
+    .VLD_WIDTH(CPU_DATA_WIDTH)                      
      )
     inst_reg_ver_type                       
     (
-    .cpu_data_out       ( cpu_data_out_h1           ),  
-    .cpu_addr           ( cpu_wr_addr               ),  
-    .its_addr           ( 12'h001                   ),  
-    .din                ( reg_ver_type              )   
+    .cpu_data_out       ( cpu_data_out_h1           ),
+    .cpu_addr           ( cpu_wr_addr               ),
+    .its_addr           ( 12'h001                   ),
+    .din                ( reg_ver_type              ) 
     );
 
-assign reg_ver_type = 32'h00D1_0006; 
+assign reg_ver_type = 32'h00D1_0008; 
 /******************************************************************************\
     adder function
 \******************************************************************************/
@@ -94,52 +94,52 @@ assign reg_ver_type = 32'h00D1_0006;
 rw_reg_inst
     #(
     .ADDR_WIDTH (CPU_ADDR_WIDTH),
-    .VLD_WIDTH(CPU_DATA_WIDTH),                                       
+    .VLD_WIDTH(CPU_DATA_WIDTH),                       
     .INIT_DATA(32'd0)                   
     )
     inst_reg_adder_cfg_wdata0                      
     (
-    .clks               ( clks                      ), 
-    .reset              ( reset                     ), 
-    .cpu_data_in        ( cpu_data_in               ), 
-    .cpu_data_out       ( cpu_data_out_h2           ), 
-    .cpu_addr           ( cpu_wr_addr               ), 
-    .cpu_wr             ( cpu_wr                    ), 
-    .its_addr           ( 12'h002                   ), 
-    .dout               ( reg_adder_cfg_wdata0      )  
+    .clks               ( clks                      ),
+    .reset              ( reset                     ),
+    .cpu_data_in        ( cpu_data_in               ),
+    .cpu_data_out       ( cpu_data_out_h2           ),
+    .cpu_addr           ( cpu_wr_addr               ),
+    .cpu_wr             ( cpu_wr                    ),
+    .its_addr           ( 12'h002                   ),
+    .dout               ( reg_adder_cfg_wdata0      ) 
     );
 
 //reg_adder_cfg_wdata0          
 rw_reg_inst
     #(
     .ADDR_WIDTH (CPU_ADDR_WIDTH),
-    .VLD_WIDTH(CPU_DATA_WIDTH),                                        
+    .VLD_WIDTH(CPU_DATA_WIDTH),                      
     .INIT_DATA(32'd0)                   
     )
     inst_reg_adder_cfg_wdata1                      
     (
-    .clks               ( clks                      ), 
-    .reset              ( reset                     ), 
-    .cpu_data_in        ( cpu_data_in               ), 
-    .cpu_data_out       ( cpu_data_out_h3           ), 
-    .cpu_addr           ( cpu_wr_addr               ), 
-    .cpu_wr             ( cpu_wr                    ), 
-    .its_addr           ( 12'h003                   ), 
-    .dout               ( reg_adder_cfg_wdata1      )  
+    .clks               ( clks                      ),
+    .reset              ( reset                     ),
+    .cpu_data_in        ( cpu_data_in               ),
+    .cpu_data_out       ( cpu_data_out_h3           ),
+    .cpu_addr           ( cpu_wr_addr               ),
+    .cpu_wr             ( cpu_wr                    ),
+    .its_addr           ( 12'h003                   ),
+    .dout               ( reg_adder_cfg_wdata1      ) 
     );
 
 //reg_adder_cfg_rdata          
 ro_reg_inst
     #(
     .ADDR_WIDTH (CPU_ADDR_WIDTH),
-    .VLD_WIDTH(CPU_DATA_WIDTH)                                         
+    .VLD_WIDTH(CPU_DATA_WIDTH)                       
      )
     inst_reg_adder_sum                        
     (
-    .cpu_data_out       ( cpu_data_out_h4           ),  
-    .cpu_addr           ( cpu_wr_addr               ),  
-    .its_addr           ( 12'h004                   ),  
-    .din                ( reg_adder_cfg_rdata       )   
+    .cpu_data_out       ( cpu_data_out_h4           ),
+    .cpu_addr           ( cpu_wr_addr               ),
+    .its_addr           ( 12'h004                   ),
+    .din                ( reg_adder_cfg_rdata       ) 
     );
 
 
@@ -148,7 +148,7 @@ always @ (posedge clks or posedge reset)
 begin
     if (reset == 1'b1) begin 
         adder_sum <= {CPU_DATA_WIDTH{1'b0}};
-	end 	
+    end 
     else begin
         adder_sum <= reg_adder_cfg_wdata0 + reg_adder_cfg_wdata1;  
     end
@@ -165,45 +165,45 @@ begin
 end   
 
 assign reg_adder_cfg_rdata = adder_sum_1dly;
-	
+
 /******************************************************************************\
     test function
 \******************************************************************************/
 ts_reg_inst
    #(
-    .ADDR_WIDTH (CPU_ADDR_WIDTH)                                      
+    .ADDR_WIDTH (CPU_ADDR_WIDTH)                      
     )
   inst_reg_oppos_data                      
     (
-    .clks               ( clks                      ), 
-    .reset              ( reset                     ),                                                     
-    .cpu_data_in        ( cpu_data_in               ), 
-    .cpu_data_out       ( cpu_data_out_h5           ), 
-    .cpu_addr           ( cpu_wr_addr               ), 
-    .cpu_wr             ( cpu_wr                    ), 
+    .clks               ( clks                      ),
+    .reset              ( reset                     ),
+    .cpu_data_in        ( cpu_data_in               ),
+    .cpu_data_out       ( cpu_data_out_h5           ),
+    .cpu_addr           ( cpu_wr_addr               ),
+    .cpu_wr             ( cpu_wr                    ),
     .its_addr           ( 12'h005                   )
-    );	
+    );
 
 /******************************************************************************\
     vled function
-\******************************************************************************/       
+\******************************************************************************/
 rw_reg_inst
     #(
     .ADDR_WIDTH (CPU_ADDR_WIDTH),
-    .VLD_WIDTH(16),                                       
+    .VLD_WIDTH(16),                                   
     .INIT_DATA(32'd0)                   
     )
     inst_reg_ul2sh_vled                     
     (
-    .clks               ( clks                      ), 
-    .reset              ( reset                     ), 
-    .cpu_data_in        ( cpu_data_in               ), 
-    .cpu_data_out       ( cpu_data_out_h6           ), 
-    .cpu_addr           ( cpu_wr_addr               ), 
-    .cpu_wr             ( cpu_wr                    ), 
-    .its_addr           ( 12'h006                   ), 
-    .dout               ( ul2sh_vled                )  
-    );	
+    .clks               ( clks                      ),
+    .reset              ( reset                     ),
+    .cpu_data_in        ( cpu_data_in               ),
+    .cpu_data_out       ( cpu_data_out_h6           ),
+    .cpu_addr           ( cpu_wr_addr               ),
+    .cpu_wr             ( cpu_wr                    ),
+    .its_addr           ( 12'h006                   ),
+    .dout               ( ul2sh_vled                ) 
+    );
 
 /******************************************************************************\
     addr test function
@@ -214,13 +214,13 @@ ts_addr_reg_inst
      )
     inst_reg_addr_test
     (
-    .clks               ( clks                     ),  
-    .reset              ( reset                    ),  
-    .cpu_data_out       ( cpu_data_out_h7          ),  
-    .cpu_addr           ( cpu_wr_addr              ),  
-    .cpu_rd             ( cpu_rd                   ),  
-    .cpu_rd_dly1        ( cpu_rd_dly1              ),  
-    .its_addr           ( 12'h007                  )   
+    .clks               ( clks                     ),
+    .reset              ( reset                    ),
+    .cpu_data_out       ( cpu_data_out_h7          ),
+    .cpu_addr           ( cpu_wr_addr              ),
+    .cpu_rd             ( cpu_rd                   ),
+    .cpu_rd_dly1        ( cpu_rd_dly1              ),
+    .its_addr           ( 12'h007                  ) 
     );
 always @( posedge clks or posedge reset )
 begin
@@ -238,17 +238,17 @@ always @ (posedge clks or posedge reset)
 begin
     if (reset == 1'b1) begin 
         cpu_data_out <= {CPU_DATA_WIDTH{1'b0}};
-	end 	
+    end
     else begin
         case(cpu_wr_addr[11:0])       
             12'd0   :  cpu_data_out <= cpu_data_out_h0  ;
             12'd1   :  cpu_data_out <= cpu_data_out_h1  ;
-            12'd2   :  cpu_data_out <= cpu_data_out_h2  ;	
-            12'd3   :  cpu_data_out <= cpu_data_out_h3  ;		
-            12'd4   :  cpu_data_out <= cpu_data_out_h4  ;           
-            12'd5   :  cpu_data_out <= cpu_data_out_h5  ;			
-            12'd6   :  cpu_data_out <= cpu_data_out_h6  ;			
-            12'd7   :  cpu_data_out <= cpu_data_out_h7  ;			
+            12'd2   :  cpu_data_out <= cpu_data_out_h2  ;
+            12'd3   :  cpu_data_out <= cpu_data_out_h3  ;
+            12'd4   :  cpu_data_out <= cpu_data_out_h4  ;
+            12'd5   :  cpu_data_out <= cpu_data_out_h5  ;
+            12'd6   :  cpu_data_out <= cpu_data_out_h6  ;
+            12'd7   :  cpu_data_out <= cpu_data_out_h7  ;
             default :  cpu_data_out <= {CPU_DATA_WIDTH{1'b0}};
         endcase        
     end

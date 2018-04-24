@@ -1,5 +1,3 @@
-
-
 # About This Example
 
 [切换到中文版](./README_CN.md)
@@ -11,8 +9,6 @@ This example implements the C standardization of **mmult_hls** matrix multiplica
 # Directory Structure
 
 [mmult_hls](#mmult_hls_dir)/
-
-
 
 - prj
 
@@ -28,7 +24,7 @@ This example implements the C standardization of **mmult_hls** matrix multiplica
 
 
 
-# File and Folder Descriptions
+# File and Folder Description
 
 - prj
 
@@ -38,14 +34,14 @@ This example implements the C standardization of **mmult_hls** matrix multiplica
 
   - prj/log
 
-  This directory stores logs generated after the execution of target files
+  This directory stores logs generated after the execution of target files.
 - sim
 
   This is the user simulation directory.
 
 - src
 
-  This directory stores the host source code and kernel source code.
+  This directory stores host source code and kernel source code.
 
 
 - scripts
@@ -53,7 +49,7 @@ This example implements the C standardization of **mmult_hls** matrix multiplica
   This directory stores compilation and execution scripts.
 
   compile.sh
-  This is the compilation script. For details, see sh `compile.sh -h` or `sh compile.sh --help`
+  This is the compilation script. For details, see `sh compile.sh -h` or `sh compile.sh --help`
 
   run.sh
 

@@ -10,10 +10,10 @@ SHLIB := libxclngdrv.so
 XCLHAL_VER =-DXCLHAL_MAJOR_VER=1 -DXCLHAL_MINOR_VER=1
 
 SHIM_INC := -I../include/hal  \
+            -I../include/FPGA_management_lib  \
             -I../include/xdma
 
 CXXFLAGS += $(CXXFLAGS) $(XCLHAL_VER) $(SHIM_INC) -fpic -fvisibility=hidden -lrt
-
 ifeq ($(debug),1)
 	CXXFLAGS += -g -DDEBUG
 else
@@ -36,8 +36,9 @@ clean:
 	$(CXX) $(CXXFLAGS) $(MYCFLAGS) -c $< -o $@
 	$(CXX) $(CXXFLAGS) $(MYCFLAGS) -c -MM $< -o $(patsubst %.o, %.d, $@)
 
+#$(SHLIB) : $(OBJS) /usr/local/lib64/libfpgamgmt.so
 $(SHLIB) : $(OBJS)
-	$(CXX) -shared -o $@ $^
+	$(CXX) -shared -fPIC -o $@ $^
 
 $(STLIB) : $(OBJS)
 	$(AR) $(ARFLAGS) $@ $^

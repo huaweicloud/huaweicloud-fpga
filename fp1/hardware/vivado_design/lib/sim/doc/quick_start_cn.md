@@ -102,7 +102,7 @@
 
 ---
 
-FACS仿真平台可以实现C/Systemverilog混合语言的协同仿真。它提完整的分离的仿真平台与测试用例，用户可方便的通过对测试用例的设计实现仿真而无需修改仿真平台。
+FACS仿真平台可以实现C/Systemverilog混合语言的协同仿真。FACS仿真平台实现了仿真平台与测试用例的完全分离，用户可方便的通过对测试用例的设计实现仿真而无需修改仿真平台。
 
 FACS仿真平台基于符合IEEE-1800(2012)规范的systemverilog语言开发，不使用任何验证方法学，使得仿真平台在Vivado、VCS以及Questasim仿真器下均可执行。
 
@@ -110,7 +110,7 @@ FACS仿真平台基于符合IEEE-1800(2012)规范的systemverilog语言开发，
 
 <img src="./images/testbench.png" alt="仿真平台组件框图">
 
-其中。本架构具有如下有点：
+其中。本架构具有如下优点：
 
 - 用户可方便的完成自己的测试用例而无需关注、修改仿真平台
 
@@ -160,7 +160,7 @@ FACS仿真平台基于符合IEEE-1800(2012)规范的systemverilog语言开发，
   ...
 ```
 
-环境变量的设置可能需要一段时间，请耐心等待。关于环境变量设置的详细操作与步骤请参考[fp1开发套件说明](../../../../../README_cn.md)。
+环境变量的设置可能需要一段时间，请耐心等待。关于环境变量设置的详细操作与步骤请参考[fp1开发套件说明](../../../../../README_CN.md)。
 
 仿真环境设置完成后，会自动在环境变量中配置好工程的根目录，即`fpga_design`文件夹的目录，环境变量为`WORK_DIR`。
 
@@ -182,8 +182,8 @@ FACS仿真平台提供了丰富的示例以帮助用户更好的理解如何仿�
 
     | 示例名      | 目录                                       |
     | -------- | ---------------------------------------- |
-    | example1 | `$WORK_DIR/hardware/vivado_design/example/example1/sim` |
-    | example2 | `$WORK_DIR/hardware/vivado_design/example/example2/sim` |
+    | example1 | `$WORK_DIR/hardware/vivado_design/examples/example1/sim` |
+    | example2 | `$WORK_DIR/hardware/vivado_design/examples/example2/sim` |
 
     用户可采用如下命令切换到示例对应的仿真根目录：
 
@@ -195,7 +195,7 @@ FACS仿真平台提供了丰富的示例以帮助用户更好的理解如何仿�
 
 - 指定目录make方法：即编译、执行以及调试仿真示例时用户直接通过`make -C`命令指定Makefile的目录完成操作。
 
-    用户可采用如下命令完成制定目录的`make`操作：
+    用户可采用如下命令完成指定目录的`make`操作：
 
     ```bash
       $ export EXAMPLE_DIR=$WORK_DIR/hardware/vivado_desgin/examples/examplex
@@ -248,7 +248,7 @@ FACS仿真平台提供了丰富的示例以帮助用户更好的理解如何仿�
 
 ### **调试仿真示例**
 
-调试Example的命令为`make wave`，参数与执行类似，需要指定测试用例名，以下为调试**sv_demo_001**测试用例的命令：
+调试Example的命令为`make wave`，参数与仿真运行类似，需要指定测试用例名，以下为调试**sv_demo_001**测试用例的命令：
 
 ```bash
   $ make wave TC=sv_demo_001
@@ -284,7 +284,7 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
   $ make clean
 ```
 
-用户如果在清除仿真中间文件时还需需要清除**预编译库文件**，可执行以下命令：
+用户如果在清除仿真中间文件时还需要清除**预编译库文件**，可执行以下命令：
 
 ```bash
   $ make distclean
@@ -303,7 +303,7 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 如果编译成功而执行仿真时报错，可进入到相应的测试用例目录下，通过查看仿真运行的log文件**log_simulation.log**定位：*（test_xxx表示用户需要查看的测试用例名）*
 
 ```bash
-  $ vi ./report/test_xxx/log_simulation.log
+  $ vi ./report/sv_test_xxx/log_simulation.log
 ```
 
 <a id="sec-4" name="sec-4"></a>
@@ -353,13 +353,13 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
   $ cd ./user_pri_name/sim
 ```
 
-详细`create_prj.sh`命令的参数请参考[usr_template用户指南](../../template/readme_cn.md)。
+详细`create_prj.sh`命令的参数请参考[usr_template用户指南](../../template/README_CN.md)。
 
 <a id="sec-4-1-2" name="sec-4-1-2"></a>
 
 #### 创建用户测试用例
 
-用户创建工程后，工程中会包含仿真文件夹，整个用户仿真文件夹目录如下：
+用户创建工程后，工程中会包含仿真文件夹，用户整个仿真文件夹目录如下：
 
 ```bash
     sim/
@@ -560,7 +560,7 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 
 <img src="./images/stim.png" alt="激励组件框图">
 
-其中激励生产器本身比不包含激励的产生方法，故用户无需修改；如需自定义激励仅需要修改激励产生方法以及配置。
+其中激励产生器本身并不包含激励的产生方法，故用户无需修改；如需自定义激励仅需要修改激励产生方法以及配置。
 
 如果需要自己定义激励的产生方法，可采用以下三个步骤实现：
 
@@ -579,7 +579,7 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 或
 
 ```bash
-  $ cp $LIB_DIR/sim/bench/stim/axi_stims.sv $USER_DIR/sim/testcase/sv/base/user_stim.sv
+  $ cp $LIB_DIR/sim/bench/stim/axi_stims.sv $USER_DIR/sim/tests/sv/base/user_stim.sv
 ```
 
 <a id="sec-5-1-2" name="sec-5-1-2"></a>
@@ -712,7 +712,7 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 或
 
 ```bash
-  $ cp $LIB_DIR/sim/bench/stim/axi_stim_cfg.svh $USER_DIR/sim/testcase/sv/base/user_stim_cfg.svh
+  $ cp $LIB_DIR/sim/bench/stim/axi_stim_cfg.svh $USER_DIR/sim/tests/sv/base/user_stim_cfg.svh
 ```
 
 然后再按照用户自己的需求修改`user_stim_cfg.svh`文件，例如：
@@ -792,7 +792,7 @@ CPU模型主要用于模拟CPU与`SHELL`的行为，与`UL`按照预定义规则
 或
 
 ```bash
-  $ cp $LIB_DIR/sim/bench/rm/cpu_model_cb.svh $USER_DIR/sim/testcase/sv/base/user_model_cb.svh
+  $ cp $LIB_DIR/sim/bench/rm/cpu_model_cb.svh $USER_DIR/sim/tests/sv/base/user_model_cb.svh
 ```
 
 <a id="sec-5-3-2" name="sec-5-3-2"></a>
@@ -801,15 +801,15 @@ CPU模型主要用于模拟CPU与`SHELL`的行为，与`UL`按照预定义规则
 
 CPU模型回调模块提供了三个任务可供用户重载，这三个任务分别为：
 
-- request_process：
+- request_process
 
     主要负责CPU模型对激励的处理，即收到激励发送的数据后，按照规则产生BD、将数据存入本地虚拟memory中，再将数据发送给`RM`，完成预期。
 
-- response_process
+- user_process
 
     主要负责完成CPU模型对请求的相应返回，即收到`UL`发送的读请求后，按照BD中的指示从本地虚拟memory中读取数据，再将数据发送给`UL`。
 
-- user_process
+- response_process
 
     主要负责完成CPU模型对`UL`发送数据的处理，即收到`UL`发送的写数据和BD后，将数据与BD拼接在一起，再将数据发送给`RM`，完成预期。
 
@@ -849,11 +849,11 @@ CPU模型回调模块提供了三个任务可供用户重载，这三个任务�
 
 ---
 
-用户参考模型主要用于用户数据的预期以及对输出相应的核查。
+用户参考模型主要用于用户数据的预期以及对用户相应的输出数据进行核查。
 
 如果用户需要自己定义参考模型(RM)，首先需创建参考模型，RM可放在`$USER_DIR/sim`文件夹下的`common`或用户`testcase`目录下的`base`文件夹。
 
-其次，用户CPU模型回调需继承自`$LIB_DIR/sim/bench/rm`文件夹中的`axi_rm.sv`，所以建议用户直接copy该文件到上述文件夹下，例如：
+其次，用户参考模型(RM)需继承自`$LIB_DIR/sim/bench/rm`文件夹中的`axi_rm.sv`，所以建议用户直接copy该文件到上述文件夹下，例如：
 
 ```bash
   $ cp $LIB_DIR/sim/bench/rm/axi_rm.sv $USER_DIR/sim/common/user_rm.sv
@@ -862,7 +862,7 @@ CPU模型回调模块提供了三个任务可供用户重载，这三个任务�
 或
 
 ```bash
-  $ cp  $LIB_DIR/sim/bench/rm/axi_rm.sv $USER_DIR/sim/testcase/sv/base/user_rm.sv
+  $ cp  $LIB_DIR/sim/bench/rm/axi_rm.sv $USER_DIR/sim/tests/sv/base/user_rm.sv
 ```
 
 用户RM模块提供了两个函数可供用户重载，这两个函数分别为：

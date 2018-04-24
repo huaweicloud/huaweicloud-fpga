@@ -7,7 +7,7 @@
 - **user/**
   - create_prj.sh
   - usr_prj0
-  - README_cn.md
+  - README_CN.md
 
 ## 目录说明
 
@@ -132,12 +132,12 @@
   $ vim $WORK_DIR/hardware/vivado_design/user/usr_prjxx/prj/usr_prj_cfg
 ```
 
-详细配置信息请参考`$WORK_DIR/hardware/vivado_design/user/usr_prjxx/README_cn.md`。
+详细配置信息请参考`$WORK_DIR/hardware/vivado_design/user/usr_prjxx/README_CN.md`。
 
 #### 添加模块
 
 - 打开 `vivado_design/lib/common/`，该路径下存放了fifo 和 ram 的通用 CBB，点击打开可以看到代码，查找RAM相关的或fifo相关的设计文件;
-- 平台提供的CBB的相关信息可以参阅`vivado_design/lib/common/README_cn.md`，查看模块功能；
+- 平台提供的CBB的相关信息可以参阅`vivado_design/lib/common/README_CN.md`，查看模块功能；
 - 选择所需模块，复制并添加到自己的工程`vivado_design/user/usr_prjxx/src`下，修改参数以满足需求；
 
 #### 通过脚本build.sh完成构建
@@ -145,7 +145,7 @@
 该命令用于编译一键执行快速创建的工程，**实现综合**、**布局布线**、**pr校验**、和**bit文件生成**，完成RTL构建的完整流程。
 如用户工程进行过一键执行RTL构建，该命令还可用于单步执行某一项编译任务。
 
-详细配置信息请参考[usr_prj0构建指南](./usr_prj0/README_cn.md)。
+详细配置信息请参考[usr_prj0构建指南](./usr_prj0/README_CN.md)。
 
 #### bit文件上传
 
@@ -156,4 +156,4 @@ RTL构建结束，生成的二进制文件存放在目录`$WORK_DIR/hardware/viv
 - usr_prjxx_routed.dcp
 
 最终通过调用系统命令`AEI_Register.sh`完成上传，系统会将需要的的加载文件`usr_prjxx_routed.dcp 和 usr_prjxx_partial.bin` 上传到存储桶并返回AEI，由系统完成加载。
-命令详细使用方法见[usr_prj0构建指南](./usr_prj0/README_cn.md)。
+命令详细使用方法见[usr_prj0构建指南](./usr_prj0/README_CN.md)。

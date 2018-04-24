@@ -230,6 +230,14 @@ else
     done
 fi
 
+fiscfg=$(readlink -f ~/.fiscfg)
+#if the $fiscfg is exist
+if [ ! -f "$fiscfg" ];then
+    echo "ERROR:The $fiscfg does not exist,please check or create it"
+    echo
+    quit_script=1
+fi
+
 # If using source xxxxx, error will not cause quit of shell.
 if [ $quit_script == 1 -a $script_exec == 0 ] ; then
     return
@@ -250,7 +258,7 @@ elif [ "x$user_permit" == "x" ] ; then
     user_permit=$USER_PERMISSION
 fi
 
-id $user_permit 2>&1 > /dev/null
+id $user_permit > /dev/null 2>&1
 user_exists=`echo $?`
 cur_user=`whoami`
 
@@ -293,7 +301,7 @@ fi
 # Load user license cfg
 if [ "x$userlic_cfg" != "x" ] ; then
     vivado_lic=$userlic_cfg
-elif [ "x$XILINX_LIC_SETUP" != x ] ; then
+elif [ "x$XILINX_LIC_SETUP" != "x" ] ; then
     vivado_lic=$XILINX_LIC_SETUP
 else
     echo -e "\e[0;34m Error: No user-define license find,  vivado can not start, please check the license setup. \e[0m"
@@ -911,19 +919,46 @@ fi
 echo
 echo "---------------------------------------------------"
 echo
-####################################################################################################
-#add new develop
-####################################################################################################
-echo "Check the driver status..."
+###################################################################################################
+#check gcc and sudo 
+###################################################################################################
+#check gcc
+echo "Check the gcc/sudo infomation..."
+gcc_info=`which gcc 2>/dev/null`
+if [ -z "$gcc_info" ]; then
+    echo "ERROR: gcc has not been installed."
+    quit_script=1
+fi
+#check sudo
+sudo_info=`which sudo 2>/dev/null`
+if [ -z "$sudo_info" ]; then
+    echo "ERROR: sudo is not in path or not installed. Driver installations will fail "
+    echo "To install drivers please add sudo to your path or install sudo by running \"yum install sudo\" as root "
+    quit_script=1
+fi
+
+echo
+echo "---------------------------------------------------"
+echo
+
+if [ $quit_script == 1 -a $script_exec == 0 ] ; then
+     return
+elif [ $quit_script == 1 ] ; then
+     exit
+fi
+###################################################################################################
+#check the driver
+###################################################################################################
 bonding_log=/var/log/fpga/install_driver.log
 mkdir -p ${bonding_log%/*}
 if [ "$dev_mode_name" == "Vivado" ];then
     #***************************************************
     # if the device is exist
     #***************************************************
+    echo "Check the driver status..."
     declare -a bdf_list=(`lspci |grep "19e5:d503" |awk '{print $1}'`)
     if [ ${#bdf_list[*]} -eq 0 ];then
-	    echo "Warning: The device does not exist."
+        echo "Warning: The device does not exist."
     else
         bound="Kernel driver in use: igb_uio"
         #***************************************************
@@ -933,7 +968,7 @@ if [ "$dev_mode_name" == "Vivado" ];then
             echo "Driver has bound to device."
         else
             echo "Installing and binding driver to device. Please wait 3~5 minutes. "
-            sh  $WORK_DIR/software/platform_config/dpdk_cfg/vivado_env_cfg.sh 2>&1 > $bonding_log
+            sh  $WORK_DIR/software/platform_config/dpdk_cfg/vivado_env_cfg.sh > $bonding_log 2>&1 
             dpdk_bind=`dpdk_nic_bind.py --status | grep d503`
             if [ -n "`echo $dpdk_bind | grep "drv=igb_uio"`" ];then
                 echo "Driver installation and binding success!"
@@ -945,7 +980,40 @@ if [ "$dev_mode_name" == "Vivado" ];then
         fi
     fi
 elif [  "$dev_mode_name" == "SDAccel" ];then
-    sh $WORK_DIR/software/platform_config/sdaccel_cfg/sdaccel_env_cfg.sh 2>&1 > $bonding_log
+
+    export FPGA_TOOL_DIR=$WORK_DIR
+    fpga_tool_dist_dir=$FPGA_TOOL_DIR/tools/fpga_tool/dist
+
+    echo "Checking fpga tool infomation..."
+
+    if [ -f "/usr/lib64/libfpgamgmt.so" -a -f "$fpga_tool_dist_dir/FpgaCmdEntry" ];then
+        echo "Fpgatool had been installed successfully, do not need to reisntall"
+    else
+        fpga_tool_build_dir=$FPGA_TOOL_DIR/tools/fpga_tool/build
+        #make fpga_tool
+        (cd $fpga_tool_build_dir && bash fpga_tool_make.sh > /dev/null 2>&1)
+        RET=$?
+        if [ $RET != 0 ]; then
+            echo "ERROR: Make fpga tool failed."
+            quit_script=1
+        fi
+        bash $fpga_tool_build_dir/fpga_tool_install.sh > /dev/null 2>&1
+        RET=$?
+        if [ $RET != 0 ];then
+            echo "ERROR: Install fpga tool failed."
+            quit_script=1
+        fi
+        if [ $quit_script != 1 ];then
+            echo "Install fpga tool successful"
+        fi
+    fi
+    echo
+    echo "---------------------------------------------------"
+    echo
+
+    echo "Check the driver status..."
+
+    sh $WORK_DIR/software/platform_config/sdaccel_cfg/sdaccel_env_cfg.sh > $bonding_log  2>&1 
     if [ $? == 0 ];then
         echo "SDAccel configuration successful!"
     else
@@ -954,28 +1022,47 @@ elif [  "$dev_mode_name" == "SDAccel" ];then
     fi
 fi
 
+echo
+echo "---------------------------------------------------"
+echo
+
 if [ $quit_script == 1 -a $script_exec == 0 ] ; then
      return
 elif [ $quit_script == 1 ] ; then
      exit
 fi
 
-echo
-echo "---------------------------------------------------"
-echo
 ####################################################################################################
 #download file from OBS
 ####################################################################################################
 #check the OBS_URL
 echo "Check the obs url..."
 
-if [ "x$OBS_URL" == "x" ];then
-    echo "ERROR:Current OBS_URL is empty,please Config it"
-    quit_script=1
-elif [ -z "`ping -c 1 -W 5 ${OBS_URL#*//} | grep 'bytes from'`" ];then
-    echo "ERROR:Current $OBS_URL couldn't be accessed,please check your URL or your network"
-    quit_script=1
+if [ -n "$OBS_URL" ]&&[ -n "`ping -c 1 -W 5 ${OBS_URL#*//} 2>/dev/null| grep 'bytes from'`" ];then
+    echo "WARNING: Feature for config the variable OBS_URL in setup.cfg has been deprecated. Will not be supported in the future, please setup the variable OS_FIS_URL in $fiscfg instead."
+else
+    OBS_URL=`cat $fiscfg |grep "OS_FIS_URL"|tr -d "OS_FIS_URL ="`
+    if [ -n "$OBS_URL" ];then
+        OBS_Domain=`echo $OBS_URL|sed "s/\./ /g"|awk '{print $2}'`
+        if [ -z "$OBS_Domain" ];then
+            echo "ERROR:The configuration of $fiscfg is incorrect,please check it"
+            quit_script=1
+        elif [ "$OBS_Domain" == "cn-north-1" ];then
+            OBS_URL="https://huaweicloud-fpga.obs.myhwclouds.com"
+        else
+            OBS_URL="https://huaweicloud-fpga-$OBS_Domain.obs.myhwclouds.com"
+        fi
+
+        if [ $quit_script != 1 ]&&[ -z "`ping -c 1 -W 5 ${OBS_URL#*//} 2>/dev/null| grep 'bytes from'`" ];then
+            echo "ERROR:Current $OBS_URL couldn't be accessed,please check your configuration or your network"
+            quit_script=1
+        fi
+    else
+        echo "ERROR:The configuration of $fiscfg is incorrect,please check it"
+        quit_script=1
+    fi
 fi
+
 
 #if the URL is empty,quit the script
 if [ $quit_script == 1 -a $script_exec == 0 ] ; then

@@ -95,7 +95,7 @@
 
 - fpga_tool_unistall.sh
 
-  This script is used to uninstall the FPGA image loading tool. Run this script to uninstall the FPGA image loading tool.
+  This script is used to uninstall the FPGA image loading tool.
 
 <a id="sec-3-8" name="sec-3-8"></a>
 
@@ -143,7 +143,7 @@ The following are common steps for Vivado and SDAccel development:
 
 - Configure the software license:
 
-  Obtain XILINX License from Huawei official website. The following is a configuration example:
+  Obtain Xilinx License from the Huawei official website. The following is a configuration example:
 
 ```bash
   "XILINX_LIC_SETUP="2100@100.xxx.yyy.zzz:2100@100.xxx.yyy.zzz" (100.xxx.yyy.zzz indicates the IP address of the license.)
@@ -174,7 +174,7 @@ If the project is installed for the first time or the version is upgraded, in ad
 1. Precompile the VCSMX simulation library (if the VCSMX tool exists).
 2. Precompile the QuestaSim simulation library (if the QuestaSim tool exists).
 3. Use the Vivado tool to generate an IP and a DDR simulation model.
-4. Download the .dcp file and compressed package from the OBS bucket. This process takes about 3 to 5 minutes.
+4. Download the .dcp file and compressed package from the OBS bucket. This process takes about three to five minutes.
 
 <a id="sec-4-2" name="sec-4-2"></a>
 
@@ -201,7 +201,7 @@ SDx development mode uses the Xilinx SDAccel architecture to exchange data betwe
 
 ### Uploading and Registration
 
-You can upload a .bin file and generate the registration ID based on the APIs and the uploading and registration tools provided by the FAC services. For details, see the sections "AEI_Register.cfg Configuration Description" and "AEI_Register.sh Operation Instructions" in the [usr_prj0 Compilation Guide](./hardware/vivado_design/user/usr_prj0/prj/README.md).
+You can upload a .bin file and generate the registration ID based on the APIs and the uploading and registration tools provided by the FAC services. For details, see sections "AEI_Register.cfg Configuration Description" and "AEI_Register.sh Operation Instructions" in [usr_prj0 Compilation Guide](./hardware/vivado_design/user/usr_prj0/prj/README.md).
 
 <a id="sec-4-5" name="sec-4-5"></a>
 

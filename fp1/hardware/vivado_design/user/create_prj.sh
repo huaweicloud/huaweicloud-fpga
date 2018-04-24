@@ -48,14 +48,16 @@ while [ "$1" != "" ]; do
         -h | -H | -help | --help )       usage
                                          exit
                                          ;;
-        [_a-zA-Z0-9]* )                  filename=$1
-					 ;;
 	* )
-		echo "ERROR: '$1' invalid character. "
-		echo "        The file name must start with letters, digits, and underscores."
-		echo "Please input the '-h'，'-H'，'-help' or '--help' character to get help of create_prj.sh"
-		echo
-		exit
+        if [[ "$1" =~ ^[_a-zA-Z0-9]+$ ]] ;then 
+            filename=$1
+        else 
+            echo "ERROR: '$1' invalid character,filename must be a-z A-Z or _"
+            echo "        The file name must start with letters, digits, and underscores."
+            echo "Please input the '-h'，'-H'，'-help' or '--help' character to get help of create_prj.sh"
+            echo
+            exit
+        fi
 		;;		
     esac
     shift
@@ -82,7 +84,10 @@ fi
 cp -rf $script_path/../lib/template/*  $new_prj_path
 # Modified the project name
 sed -i "s/usr_template/$filename/g" $new_prj_path/sim/Makefile
-sed -i "s/usr_template/$filename/g" $new_prj_path/sim/readme.md
-sed -i "s/usr_template/$filename/g" $new_prj_path/prj/readme.md
-sed -i "s/usr_template/$filename/g" $new_prj_path/readme.md
+sed -i "s/usr_template/$filename/g" $new_prj_path/sim/README.md
+sed -i "s/usr_template/$filename/g" $new_prj_path/sim/README_CN.md
+sed -i "s/usr_template/$filename/g" $new_prj_path/prj/README.md
+sed -i "s/usr_template/$filename/g" $new_prj_path/prj/README_CN.md
+sed -i "s/usr_template/$filename/g" $new_prj_path/README.md
+sed -i "s/usr_template/$filename/g" $new_prj_path/README_CN.md
 echo "INFO:It's successful to create the directory of $filename. "

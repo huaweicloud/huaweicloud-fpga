@@ -17,10 +17,10 @@ This folder stores library files provided by the platform.
   - template/
   - README.md
 
-## Directory Descriptions
+## Directory Description
 
 - checkpoints
-  This directory stores the static logic netlist **shell_routed.dcp** and the corresponding `MD5 check value`.
+  This directory stores the static logic netlist **shell_routed.dcp** and the corresponding `MD5 check file`.
 
 - common
   This directory stores the Common Building Blocks (CBBs) provided by Huawei.

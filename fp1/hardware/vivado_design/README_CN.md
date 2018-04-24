@@ -11,7 +11,7 @@
   - examples/
   - lib/
   - user/
-  - README.md
+  - README_CN.md
 
 ## 子目录说明
 - documents  
@@ -19,16 +19,16 @@
 
 - examples  
 
-  该目录主要用于存放示例工程，包含`example1`、`example2`和`example3`三个工程，用户可以通过对这三个工程的学习和实际操作，深入了解平台的功能，详细说明请参考[示例应用指南](./examples/README_cn.md)。
+  该目录主要用于存放示例工程，包含`example1`、`example2`和`example3`三个工程，用户可以通过对这三个工程的学习和实际操作，深入了解平台的功能，详细说明请参考[示例应用指南](./examples/README_CN.md)。
 
 - lib
 
-  该目录主要用于平台提供的`各种公共文件`，详细说明请参考[公用文件使用说明](./lib/README_cn.md)。
+  该目录主要用于平台提供的`各种公共文件`，详细说明请参考[公用文件使用说明](./lib/README_CN.md)。
 
 - user
 
-  该目录主要用于存放用户`自定义工程`信息及代码，详细说明请参考[用户目录使用说明](./user/README_cn.md)。
+  该目录主要用于存放用户`自定义工程`信息及代码，详细说明请参考[用户目录使用说明](./user/README_CN.md)。
 
-- README.md
+- README_CN.md
 
   即本文档，用于介绍其他文档。

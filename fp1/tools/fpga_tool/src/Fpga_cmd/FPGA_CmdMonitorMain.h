@@ -45,15 +45,20 @@
 #define SDKRTN_MONITOR_OPCODE_ERROR              ( SDKRTN_MONITOR_ERROR_BASE + 0x5 )
 #define SDKRTN_MONITOR_OPCODE_FUNC_ERROR         ( SDKRTN_MONITOR_ERROR_BASE + 0x6 )
 #define SDKRTN_MONITOR_MALLOC_ERROR              ( SDKRTN_MONITOR_ERROR_BASE + 0x7 )
-#define SDKRTN_MONITOR_STATUS_NAME_ERROR         ( SDKRTN_MONITOR_ERROR_BASE + 0x8 )
-#define SDKRTN_MONITOR_ERR_NAME_ERROR            ( SDKRTN_MONITOR_ERROR_BASE + 0x9 )
-#define SDKRTN_MONITOR_SHELL_TYPE_ERROR          ( SDKRTN_MONITOR_ERROR_BASE + 0xa )
+#define SDKRTN_MONITOR_PR_STATUS_ERROR         ( SDKRTN_MONITOR_ERROR_BASE + 0x8 )
+#define SDKRTN_MONITOR_CMD_OPS_ERROR            ( SDKRTN_MONITOR_ERROR_BASE + 0x9 )
+#define SDKRTN_MONITOR_LOAD_ERRNAME_ERROR            ( SDKRTN_MONITOR_ERROR_BASE + 0xa )
 
+#define FPGA_INPUT_PARAS_NUM_MIN                     2
 #define OPTCODE_LENGTH_MAX                       2
 #define LOAD_STATUS_NAME_LEN_MAX                 20
 #define LOAD_ERR_NAME_LEN_MAX                    20
 #define QUIT_FLAG                                1              
 #define PARA_FLAG                                              1
+
+#define FPGA_OPS_STATUS_MASK                  0xffff0000
+#define FPGA_OPS_STATUS_SHIFT                 16
+#define FPGA_LOAD_ERROR_MASK                  0xffff
 
 typedef struct tagFPGA_CMD_PARA
 {
@@ -66,6 +71,7 @@ typedef struct tagFPGA_CMD_PARA
 
 typedef enum tagUSER_CMD_LIST{
     CMD_HFI_LOAD,
+    CMD_HFI_CLEAR,
     CMD_IMAGE_INQUIRE,
     CMD_RESOURSE_INQUIRE,
     CMD_LED_STATUS_INQUIRE,
@@ -80,5 +86,6 @@ UINT32 FPGA_MonitorLoadHfi(void);
 UINT32 FPGA_MonitorInquireFpgaImageInfo(void);
 UINT32 FPGA_MonitorDisplayDevice( void );
 UINT32 FPGA_MonitorInquireLEDStatus(void);
+UINT32 FPGA_MonitorClearHfi(void);
 
 #endif

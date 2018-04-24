@@ -9,10 +9,10 @@
   - usr_prj0
   - README.md
 
-## Directory Descriptions
+## Directory Description
 
 - create_prj.sh
-  - The file bears the execution code for creating a project. `create_prj.sh` is an important part of the command executed when a user creates a project.
+  - The file carries the execution code for creating a project. `create_prj.sh` is an important part of the command executed when a user creates a project.
   - Run the following command to copy the `project directory templates` to `$WORK_DIR/hardware/vivado_design/usr/` in one click.
 
     ```bash
@@ -108,7 +108,7 @@ If the project is installed for the first time or the version is upgraded, in ad
 1. Pre-compile the VCSMX simulation library (if the VCSMX tool exists).
 2. Pre-compile the QuestaSim simulation library (if the QuestaSim tool exists).
 3. Use the Vivado tool to generate an IP and a DDR simulation model.
-4. Download the .dcp file and compressed package from the OBS bucket. This process takes about 3 to 5 minutes.
+4. Download the .dcp file and compressed package from the OBS bucket. This process takes about three to five minutes.
 
 ---
 
@@ -144,12 +144,12 @@ For details, see `$WORK_DIR/hardware/vivado_design/user/usr_prjxx/README.md`.
 
 #### Completing Building Through the build.sh Script
 
-This command is used to compile a project created in one-click, implementing synthesis, placing and routing, PR verification, and bit file generation , and RTL building.
+This command is used to compile a project created in one-click mode, implementing synthesis, placing and routing, PR verification, and bit file generation , and RTL building.
 If the RTL building in one-click mode has been done for a user project, this command can also be used for single-step execution of a compilation task.
 
 For details, see [usr_prj0 Building Guide](./usr_prj0/README.md).
 
-#### Uploading a bit File
+#### Uploading a .bit File
 
 After the RTL building, the generated binary files are stored in the `$WORK_DIR/hardware/vivado_design/user/usr_prjxx/prj/build/checkpoints/to_facs` directory. The folder contains the following files:
 

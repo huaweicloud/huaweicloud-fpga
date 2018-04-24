@@ -20,6 +20,11 @@
   `define USER_DDR_NUM 'd4
 `endif
 
+
+`ifndef ACC_LEN_CFG
+  `define ACC_LEN_CFG 'd0
+`endif
+
 // ./common/common_define.svh
 `include "common_define.svh"
 
@@ -201,6 +206,7 @@ function cpu_data cpu_model_cb::generate_bd(ref REQ req);
     head.dest_addr= req.addr;
     head.acc_type = 'd0;
     head.cpu_type = cpu_data::e_CPU_WR_BD;
+    head.acc_len  = `ACC_LEN_CFG;
     generate_bd   = head;
     // void'(generate_bd.unpack_bytes(byte_array));
 endfunction : generate_bd
@@ -235,23 +241,25 @@ task cpu_model_cb::send_bd2bfm(ref REQ req);
     DATA_t   byte_array[];
     int      head_len;
     int      data_len;
-    bd.data_len+= 'd32;
+    bd.data_len+= bd.acc_len*'d32;
     head_len    = bd.pack_bytes(byte_array);
     data_len    = req.data.size();
     bd.cpu_type = cpu_data::e_CPU_RD_DATA;
     // Add BD to queue
     m_bd[bd.ve_info].push_back(bd);
     // Add hardacc to pool
-    acc.addr        = m_acc_addr[m_acc_id];
-    acc.dest_addr   = m_acc_addr[m_acc_id];
-    m_acc[bd.addr]  = acc;
-    m_acc_addr[m_acc_id++] += 'h4096;
-    if (m_acc_id >= `USER_DDR_NUM) m_acc_id = 'd0;
+    if (bd.acc_len >0) begin
+    	acc.addr        = m_acc_addr[m_acc_id];
+    	acc.dest_addr   = m_acc_addr[m_acc_id];
+    	m_acc[bd.addr]  = acc;
+    	m_acc_addr[m_acc_id++] += 'h4096;
+    	if (m_acc_id >= `USER_DDR_NUM) m_acc_id = 'd0;
+    end
 `ifndef USE_DDR_MODEL
     if (m_acc_id == 'd2) m_acc_id++;
 `endif
     // Add data to pool
-    m_data[bd.addr + 'd32]  = req.data;
+    m_data[bd.addr + bd.acc_len*'d32]  = req.data;
     // Insert to RM
     data = new();
 `ifndef VIVADO

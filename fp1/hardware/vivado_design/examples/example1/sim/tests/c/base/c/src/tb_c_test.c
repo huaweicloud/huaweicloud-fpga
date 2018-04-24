@@ -49,7 +49,7 @@ void tb_c_test_main(uint32_t *exit_code) {
 #endif
 
     // Get param does not works if using vivado as simulator
-    cfg_get_int("DUT_VER_TYPE", (int *)&ver_type_exp, 0x00d10006);
+    cfg_get_int("DUT_VER_TYPE", (int *)&ver_type_exp, 0x00d10008);
 
     // ----------------------------------------
     // STEP1: Check version

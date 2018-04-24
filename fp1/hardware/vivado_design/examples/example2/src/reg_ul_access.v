@@ -17,7 +17,7 @@
 `resetall
 `timescale 1ns / 1ns
 module reg_ul_access
-    #(	
+    #(
      parameter   CPU_ADDR_WIDTH  =12                              ,
      parameter   CPU_DATA_WIDTH  =32                             
     )
@@ -25,7 +25,7 @@ module reg_ul_access
     //globle signal                      
     input    wire                            clks                 ,  
     input    wire                            reset                ,                            
-	
+
     output   wire [15:0]                     ul2sh_vled           ,
     output   wire [15:0]                     reg_tmout_us_cfg     ,
     input    wire [1:0]                      reg_tmout_us_err     ,                                                       
@@ -76,7 +76,7 @@ ro_reg_inst
     .din                ( reg_ver_time              )   
     );
 
-assign reg_ver_time = 32'h2017_1208;	
+assign reg_ver_time = 32'h2018_0308;
 
 ro_reg_inst
     #(
@@ -91,7 +91,7 @@ ro_reg_inst
     .din                ( reg_ver_type              )   
     );
 
-assign reg_ver_type = 32'h00D2_0006; 
+assign reg_ver_type = 32'h00D2_0008; 
 /******************************************************************************\
     adder function
 \******************************************************************************/
@@ -155,7 +155,7 @@ always @ (posedge clks or posedge reset)
 begin
     if (reset == 1'b1) begin 
         adder_sum <= {CPU_DATA_WIDTH{1'b0}};
-	end 	
+    end
     else begin
         adder_sum <= reg_adder_cfg_wdata0 + reg_adder_cfg_wdata1;  
     end
@@ -172,7 +172,7 @@ begin
 end   
 
 assign reg_adder_cfg_rdata = adder_sum_1dly;
-	
+
 /******************************************************************************\
     test function
 \******************************************************************************/
@@ -183,13 +183,13 @@ ts_reg_inst
   inst_reg_oppos_data                      
     (
     .clks               ( clks                      ), 
-    .reset              ( reset                     ),                                                     
+    .reset              ( reset                     ), 
     .cpu_data_in        ( cpu_data_in               ), 
     .cpu_data_out       ( cpu_data_out_h5           ), 
     .cpu_addr           ( cpu_wr_addr               ), 
     .cpu_wr             ( cpu_wr                    ), 
     .its_addr           ( 12'h005                   )
-    );	
+    );
 
 /******************************************************************************\
     vled function
@@ -279,24 +279,24 @@ end
 
 /******************************************************************************\
     cpu_data_out
-\******************************************************************************/	
+\******************************************************************************/
 always @ (posedge clks or posedge reset)
 begin
     if (reset == 1'b1) begin 
         cpu_data_out <= {CPU_DATA_WIDTH{1'b0}};
-	end 	
+    end 
     else begin
         case(cpu_wr_addr[11:0])       
             12'd0   :  cpu_data_out <= cpu_data_out_h0  ;
             12'd1   :  cpu_data_out <= cpu_data_out_h1  ;
-            12'd2   :  cpu_data_out <= cpu_data_out_h2  ;	
-            12'd3   :  cpu_data_out <= cpu_data_out_h3  ;		
-            12'd4   :  cpu_data_out <= cpu_data_out_h4  ;           
-            12'd5   :  cpu_data_out <= cpu_data_out_h5  ;          
-            12'd6   :  cpu_data_out <= cpu_data_out_h6  ;       
-            12'd7   :  cpu_data_out <= cpu_data_out_h7  ;			
-            12'd8   :  cpu_data_out <= cpu_data_out_h8  ;			
-            12'd9   :  cpu_data_out <= cpu_data_out_h9  ;			
+            12'd2   :  cpu_data_out <= cpu_data_out_h2  ;
+            12'd3   :  cpu_data_out <= cpu_data_out_h3  ;
+            12'd4   :  cpu_data_out <= cpu_data_out_h4  ;
+            12'd5   :  cpu_data_out <= cpu_data_out_h5  ;
+            12'd6   :  cpu_data_out <= cpu_data_out_h6  ;
+            12'd7   :  cpu_data_out <= cpu_data_out_h7  ;
+            12'd8   :  cpu_data_out <= cpu_data_out_h8  ;
+            12'd9   :  cpu_data_out <= cpu_data_out_h9  ;
 
             default :  cpu_data_out <= {CPU_DATA_WIDTH{1'b0}};
         endcase        

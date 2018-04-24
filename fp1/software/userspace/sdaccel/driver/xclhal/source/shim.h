@@ -37,6 +37,8 @@
 #include <vector>
 #include <string>
 #include <mutex>
+#include "FPGA_Common.h"
+#include "xclFpgaMgmtproxy.h"
 
 // Work around GCC 4.8 + XDMA BAR implementation bugs
 // With -O3 PCIe BAR read/write are not reliable hence force -O2 as max
@@ -239,6 +241,8 @@ namespace xclxdma {
         const int mBoardNumber;
         const size_t maxDMASize;
         bool mLocked;
+        INT32 prlock;
+        xclFpgaMgmtProxy fpgamgmt_obj;
 
 #ifndef _WINDOWS
 // TODO: Windows build support

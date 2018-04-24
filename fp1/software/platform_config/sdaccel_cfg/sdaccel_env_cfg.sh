@@ -43,17 +43,6 @@ fi
 
 #check xdma driver is installed or not
 DRIVER=xdma
-check_driver()
-{
-    MODULE_INFO=`lsmod | grep $DRIVER 2>&1`
-    if [ $? != 0 ]; then
-       echo "Warning: $DRIVER driver is not exist, will install first."
-    else
-       rmmod xdma.ko
-       echo "$DRIVER driver is uninstalled!"
-    fi
-}
-check_driver
 
 echo -e "\nCompile and installing...\n"
 
@@ -67,11 +56,16 @@ if [[ -n "$XDMA_COMLOG" ]]; then
     exit 1
 fi
 
-insmod xdma.ko
-XDMADRV_LS=`lsmod | grep "$DRIVER"`
-if [[ -z "$XDMADRV_LS" ]]; then
-    echo "ERROR: $DRIVER driver is not exist, will install first!"
-    exit 1
+MODULE_INFO=`lsmod | grep $DRIVER 2>&1`
+if [[ -z "$MODULE_INFO" ]]; then
+    echo "Warning: $DRIVER driver is not exist, will install first."
+    insmod xdma.ko
+    echo "$DRIVER driver is installed now!"
+else
+    echo ""
+    echo "$DRIVER driver is exist!"
+    echo "Note: If necessary, please re-insmod $DRIVER driver manually!"
+    echo ""
 fi
 
 make clean

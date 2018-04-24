@@ -1,4 +1,4 @@
-Using a Vivado-based Example
+Using a Vivado-Based Example
 =======================
 [切换到中文版](./Using_a_Vivado_based_Example_cn.md)
 
@@ -22,15 +22,15 @@ This example implements user logic version reading, data inversion, addition, an
 
 After applying for an FPGA image, log in to a VM. The HDK is stored in the `huaweicloud-fpga/fp1` directory. To use the HDK, perform the following steps:
 
-#### Step 1 Configure the license file of EDA.
+#### Step 1 Configure the license file of Vivado.
 
-Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set `XILINX_LIC_SETUP` to the IP address `2100@100.125.1.240:2100@100.125.1.251` of the license server.
+Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set `XILINX_LIC_SETUP` to the IP address of the license server (`2100@100.125.1.240:2100@100.125.1.251` in this example).
 
 `XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
 
 
 ##### Note
-Only user root has the right to use the Xilinx license file provided by Huawei.
+Only user **root** has the right to use the Xilinx license file provided by Huawei.
 
 #### Step 2 Configure the development environment.
 
@@ -55,7 +55,7 @@ Only user root has the right to use the Xilinx license file provided by Huawei.
 
 ### Vivado SDK Operation Instructions
 ##### Note
-Generate a .dcp file, register and load the image, (For details, see "Registering an FPGA image" in the root directory), [Loading an Image](../tools/fpga_tool/docs/load_an_fpga_image.md), and compile the SDK (For details, see "Compiling the SDK" in the root directory) before using the SDK.
+Generate a .dcp file, register and load the image, (For details, see "Registering an FPGA image" in [Loading an Image](../tools/fpga_tool/docs/load_an_fpga_image.md)), and compile the SDK (For details, see "Compiling the SDK" in the root directory) before using the SDK.
 
 #### Step 1 Compile the SDK of example 1.
 
@@ -78,7 +78,7 @@ After the compilation is successful, an executable binary file is generated in t
 #### Step 4 Run the Test command.
 
 ##### Note
-You can use the – h parameter, such as `./ul_get_version -h`, to obtain help information in the following steps.
+You can use the **– h** parameter, such as `./ul_get_version -h`, to obtain help information in the following steps.
 
 ##### Example 1 Print the logic version number.
 
@@ -93,7 +93,7 @@ You can use the – h parameter, such as `./ul_get_version -h`, to obtain help i
 
 **1. Set the input register of the inverter by entering a string up to 32 bits.**
 
-Run the ./ul_set_data_test -i *num* command.
+Run the **./ul_set_data_test -i** *num* command.
 
 For example, `./ul_set_data_test -i 0xaa55`.  
 
@@ -111,7 +111,7 @@ For example, `./ul_set_data_test -i 0xaa55`.
 
 **1. Set the adder register.** 
 
-Run the ./ul_set_data_add -i *augend* -i *addend* command.
+Run the **./ul_set_data_add -i** *augend* -i *addend* command.
 
 For example, `./ul_set_data_add -i 0x11111111 -i 0x5a5a5a5a`.  
 
@@ -126,9 +126,9 @@ For example, `./ul_set_data_add -i 0x11111111 -i 0x5a5a5a5a`.
 	[root@CentOS7 bin]# ./ul_get_data_add_result
 	add result: 0x6b6b6b6b
 
-##### Example 4 Test the DFX.
+##### Example 4 Test the DFx.
 
-Run the command to print DFX status.
+Run the following command to print the DFx status:
 
 `./dump_dfx_regs`  
 
@@ -165,12 +165,12 @@ After applying for an FPGA image, log in to a VM. The HDK is stored in the `huaw
 
 #### Step 1 Configure the license file of EDA.
 
-Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set `XILINX_LIC_SETUP` to the IP address `2100@100.125.1.240:2100@100.125.1.251` of the license server.
+Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set `XILINX_LIC_SETUP` to the IP address of the license server (`2100@100.125.1.240:2100@100.125.1.251` in this example).
 
 `XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
 
 ##### Note
-Only user root has the right to use the Xilinx license file provided by Huawei.
+Only user **root** has the right to use the Xilinx license file provided by Huawei.
 
 #### Step 2 Configure the development environment.
 
@@ -223,7 +223,7 @@ After the compilation is successful, an executable binary file is generated in t
 #### SDK DMA Loop Test
 
 ##### Note
-Users can use the – h parameter to obtain help information in the following steps.
+Users can use the **– h** parameter to obtain help information in the following steps.
 
 ##### Step 1 Run the packet_process process.
 
@@ -276,16 +276,16 @@ As shown in preceding logs, if the operation is successful, **TX/RX all success*
 Currently, four 16GB 2RX8 DDRs are provided for users. The DDR read/write test is performed through configuring the BAR space register.
 
 ##### Note
-Users can use the – h parameter to obtain help information in the following steps.
+Users can use the **– h** parameter to obtain help information in the following steps.
 
 ##### Step 1 Set the DDR value.
 
-Run the ./ul_write_ddr_data -n 0 -a *addr* -d *data* command.
+Run the **./ul_write_ddr_data -n 0 -a** *addr* **-d** *data* command.
 
 For example, `./ul_write_ddr_data -n 0 -a 0x1000 -d 0x12345678`.  
 
 ##### Step 2 Set the DDR value.
-Run the ./ul_read_ddr_data -n 0 -a *addr* command.
+Run the **./ul_read_ddr_data -n 0 -a** *addr* command.
 
 For example, `./ul_read_ddr_data -n 0 -a 0x1000`.  
 
@@ -309,16 +309,16 @@ After applying for an FPGA image, log in to a VM. The HDK is stored in the `huaw
 
 #### Step 1 Configure the license file of EDA.
 
-Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set XILINX_LIC_SETUP to the IP address `2100@100.125.1.240:2100@100.125.1.251` of the license server.
+Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set **XILINX_LIC_SETUP** to the IP address of the license server (`2100@100.125.1.240:2100@100.125.1.251` in this example).
 
 `XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
 
 ##### Note
-Only user root has the right to use the Xilinx license file provided by Huawei.
+Only user **root** has the right to use the Xilinx license file provided by Huawei.
 
 #### Step 2 Configure the development environment.
 
-Run the following commands to configure the hardware development environment.
+Run the following commands to configure the hardware development environment:
 
 `cd huaweicloud-fpga/fp1`  
 `export HW_FPGA_DIR=$(pwd)`  
@@ -327,16 +327,16 @@ Run the following commands to configure the hardware development environment.
 #### Step 3 Go to the directory of example 3.
 
 `cd $HW_FPGA_DIR/hardware/vivado_design/examples/example3`  
-`export UL2_DIR=$(pwd)`
+`export UL3_DIR=$(pwd)`
 
 #### Step 4 Compile example 3.
 
-`cd $UL2_DIR/prj`  
+`cd $UL3_DIR/prj`  
 `sh ./build.sh`
 
 #### Step 5 Simulate example 3.
 
-`cd $UL2_DIR/sim`  
+`cd $UL3_DIR/sim`  
 `make TC=sv_demo_001`
 
 ### Vivado SDK Operation Instructions
@@ -367,10 +367,10 @@ After the compilation is successful, an executable binary file is generated in t
 `sysctl -w vm.nr_hugepages=8192`
 
 
-#### Testing the FMMU.
+#### Testing the FMMU
 
 ##### Note
-Users can use the – h parameter to obtain help information in the following steps.
+Users can use the **– h** parameter to obtain help information in the following steps.
 
 ##### Step 1 Run the packet_process process.
 
@@ -415,6 +415,3 @@ Users can use the – h parameter to obtain help information in the following st
 	----------------port 0, queue 0 rx_packet_len 544, packet_num: 102400099, performance = 57 gbps----------------
 	port 0, queue 0 TX/RX all success, all process 102400099 packets
 	...
-##### Note
-As shown in preceding logs, if the operation is successful, **TX/RX all success** is displayed.
-

@@ -19,7 +19,7 @@ The example is stored in `$WORK_DIR/hardware/vivado_design/examples/`. The direc
   - src_encrypt
   - README.md  
 
-## File and Folder Descriptions
+## File and Folder Description
 
 - prj
 
@@ -44,7 +44,7 @@ This directory stores the source code **encrypted** by Vivado and is used for pr
 
 ### Example Building
 
-Go to the **prj** directory, run the `build.sh` script, and wait until the building is completed.
+Go to the **prj** directory, run the `build.sh` script, and wait until the building is complete.
 For details, see [Example 3 Building Guide](./prj/README.md).
 
 The building result is stored in the `/prj/build/checkpoints/to_facs` directory.
@@ -63,5 +63,5 @@ For details, see [Example 3 Simulation Guide](./sim/README.md).
 ### Example Testing
 
 1. Go to the `$WORK_DIR/software/app/dpdk_app/example3` directory and run the **make** command.
-2. After the compilation is completed, perform example tests by referring to [Application Operation Instructions](../../../../software/app/dpdk_app/README.md).
+2. After the compilation is complete, perform example tests by referring to [Application Operation Instructions](../../../../software/app/dpdk_app/README.md).
 

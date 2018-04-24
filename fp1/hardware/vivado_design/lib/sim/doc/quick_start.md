@@ -21,7 +21,7 @@ This document is a quick start guide to the FACS simulation platform. The beginn
 <li><a href="#sec-3-3">3.3. <b>Debugging Simulation Examples</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-4">3.4. <b>Simulating Examples in One-click</b></a></li>
+<li><a href="#sec-3-4">3.4. <b>Simulating Examples in One-Click Mode</b></a></li>
 </ul>
 <ul>
 <li><a href="#sec-3-5">3.5. <b>Clearing Simulation Results</b></a></li>
@@ -102,9 +102,9 @@ This document is a quick start guide to the FACS simulation platform. The beginn
 
 ---
 
-The FACS simulation platform implements collaborative simulation of C/SystemVerilog hybrid languages. It provides a complete and separated simulation platform and test cases. You can implement simulation without modifying the simulation platform by designing test cases.
+The FACS simulation platform implements collaborative simulation of C/SystemVerilog hybrid languages. The FACS simulation platform separates test cases from the simulation platform completely. You can implement simulation without modifying the simulation platform by designing test cases.
 
-The FACS simulation platform is developed based on the SystemVerilog language compliant with IEEE-1800 (2012) and does not use any verification methods. This enables the simulation platform to be executed under a Vivado, VCS, and QuestaSim simulator.
+The FACS simulation platform is developed based on the SystemVerilog language compliant with IEEE-1800 (2012) and does not use any verification methods. This enables the simulation platform to be executed under a Vivado, VCS, or QuestaSim simulator.
 
 The following figure shows the simulation platform structure.
 
@@ -133,7 +133,7 @@ The architecture:
 Set environment variables each time a terminal is started to run the FACS simulation platform. The configuration methods are as follows:
 
 If you are using the platform for the first time, modify the configuration file to complete the license setting by changing the **XILINX_LIC_SETUP** field in the `setup.cfg` file. 
-If there are multiple licenses, use ":" to separate them.
+If there are multiple licenses, use colons (:) to separate them.
 
 ```bash
   $ cd /home/fpga_design
@@ -180,12 +180,12 @@ The FACS simulation platform provides a host of examples to help users better un
 
 - Standard make method: Before compiling, executing, and debugging a simulation example, switch to the simulation root directory where the example is stored, and then run the `make` command. The following table describes the simulation root directories.
 
-    | Example  | Directory                                |
-    | -------- | ---------------------------------------- |
-    | example1 | `$WORK_DIR/hardware/vivado_design/example/example1/sim` |
-    | example2 | `$WORK_DIR/hardware/vivado_design/example/example2/sim` |
+    | Example   | Directory                                |
+    | --------- | ---------------------------------------- |
+    | Example 1 | `$WORK_DIR/hardware/vivado_design/examples/example1/sim` |
+    | Example 2 | `$WORK_DIR/hardware/vivado_design/examples/example2/sim` |
 
-    You can run the following command to switch to the simulation root directory:
+    You can run the following commands to switch to the simulation root directory:
 
     ```bash
       $ export EXAMPLE_DIR=$WORK_DIR/hardware/vivado_desgin/examples/examplex
@@ -195,7 +195,7 @@ The FACS simulation platform provides a host of examples to help users better un
 
 - Designated directory method: While compiling, executing, and debugging a simulation example, you can run the `make -C` command to designate a **Makefile** directory.
 
-    You can run the following command to perform the `make` operation in the designated directory:
+    You can run the following commands to perform the `make` operation in the designated directory:
 
     ```bash
       $ export EXAMPLE_DIR=$WORK_DIR/hardware/vivado_desgin/examples/examplex
@@ -216,7 +216,7 @@ Run the `make comp` command to compile an example. The following is the default 
   $ make comp
 ```
 
-By default, Vivado is used as the simulator. To use the VCS simulator or QuestaSim simulator, run the following command:
+By default, Vivado is used as the simulator. To use the VCS simulator or QuestaSim simulator, run the following commands:
 
 ```bash
   $ make comp TOOL=vcs    # Compile Using vcsmx
@@ -228,7 +228,7 @@ By default, Vivado is used as the simulator. To use the VCS simulator or QuestaS
 
 ### **Running Simulation Examples**
 
-The command for running example simulation is `make run`. You need to specify the name of the test case. The following is the command for executing the test case **sv_demo_001**. (sv_demo_001 is the default name of the test case. Therefore, you can omit this name for running this test case.)
+The command for running example simulation is `make run`. You need to specify the name of the test case. The following is the command for executing the test case **sv_demo_001**. (**sv_demo_001** is the default name of the test case. You can omit this name for running this test case.)
 
 ```bash
   $ make run TC=sv_demo_001
@@ -236,7 +236,7 @@ The command for running example simulation is `make run`. You need to specify th
 
 The parameter after `TC` is the name of the test case to be executed. It must be the same as the folder name of the test case in the `$EXAMPLE_DIR/sim/tests/sv/` directory.
 
-By default, Vivado is used as the simulator. To use the VCS simulator or QuestaSim simulator, run the following command:
+By default, Vivado is used as the simulator. To use the VCS simulator or QuestaSim simulator, run the following commands:
 
 ```bash
   $ make run TOOL=vcs TC=sv_demo_001 # Compile Using vcsmx
@@ -248,13 +248,13 @@ By default, Vivado is used as the simulator. To use the VCS simulator or QuestaS
 
 ### **Debugging Simulation Examples**
 
-Run the `make wave` command to debug an example. Parameters are similar to the parameters used for executing an example. Specify the name of the test case. The following command is used to debug the **sv_demo_001** test case:
+Run the `make wave` command to debug an example. Parameters are similar to the parameters used for running a simulation example. You need to specify the name of the test case. The following command is used to debug the **sv_demo_001** test case:
 
 ```bash
   $ make wave TC=sv_demo_001
 ```
 
-By default, Vivado is used for debugging. If you need to use DVE or QuestaSim, run the following command:
+By default, Vivado is used for debugging. If you need to use DVE or QuestaSim, run the following commands:
 
 ```bash
   $ make wave TOOL=vcs TC=sv_demo_001    # Compile Using vcsmx
@@ -264,7 +264,7 @@ By default, Vivado is used for debugging. If you need to use DVE or QuestaSim, r
 
 <a id="sec-3-4" name="sec-3-4"></a>
 
-### **One-click Simulation Examples**
+### **Simulating Examples in One-Click Mode**
 
 Examples support one-click compilation and running. Run the following command (The value **all** can be omitted.):
 
@@ -272,7 +272,7 @@ Examples support one-click compilation and running. Run the following command (T
   $ make all
 ```
 
-VCS and QuestaSim also supports one-click running. For details, see descriptions in this section.
+VCS and QuestaSim also support one-click running. For details, see description in this section.
 
 <a id="sec-3-5" name="sec-3-5"></a>
 
@@ -300,10 +300,10 @@ If the compilation of the simulation fails, check the **log_comp.log** file in t
   $ vi ./report/log_comp.log
 ```
 
-If the compilation is successful but an error is reported during the simulation, go to the corresponding test case directory and view **log_simulation.log** to locate the fault. * (test_xxx indicates the name of the test case to be viewed by the user.) *
+If the compilation is successful but an error is reported during the simulation, go to the corresponding test case directory and view **log_simulation.log** to locate the fault. *(test_xxx indicates the name of the test case to be viewed by the user.)*
 
 ```bash
-  $ vi ./report/test_xxx/log_simulation.log
+  $ vi ./report/sv_test_xxx/log_simulation.log
 ```
 
 <a id="sec-4" name="sec-4"></a>
@@ -322,7 +322,7 @@ You can execute examples, or compile, run, and debug your own test cases.
 
 To compile your own test cases, perform the following steps:
 
-- 1 [Creating a User Project](#sec-4-1-1)*(Ignore this step if the project already exists.) *
+- 1 [Creating a User Project](#sec-4-1-1) *(Ignore this step if the project already exists.)*
 
 - 2 [Creating User Test Cases](#sec-4-1-2)
 
@@ -353,7 +353,7 @@ You can also run the `creat_prj.sh` command in the user directory to create a us
   $ cd ./user_pri_name/sim
 ```
 
-For details about the parameters of the `create_prj.sh` command, see [usr_template User Guide](../../template/readme.md).
+For details about the parameters of the `create_prj.sh` command, see [usr_template User Guide](../../template/README.md).
 
 <a id="sec-4-1-2" name="sec-4-1-2"></a>
 
@@ -419,7 +419,7 @@ After creating test case directories, modify the `project_settings.cfg` file in 
 
 Basic test cases are compiled using the SystemVerilog language, and are used to complete the main process of test cases and the instantiation and connection of user-defined components.
 
-The compilation of basic test cases must comply with the following rules. For details, see [Simulation Platform User Guide](./user_guide.md.)
+The compilation of basic test cases must comply with the following rules. For details, see [Simulation Platform User Guide](./user_guide.md.).
 
 - Basic test cases must be inherited from `tb_test` or its subcategories.
 
@@ -556,7 +556,7 @@ You need to customize complex incentive and reference models. The following comp
 
 ---
 
-User incentives are divided into three parts: **incentive generating method **, **incentive generator**, and **incentive configuration**, as shown in the following figure.	
+User incentives are divided into three parts: **incentive generating method**, **incentive generator**, and **incentive configuration**, as shown in the following figure.	
 
 <img src="./images/stim.png" alt="Incentive component structure">
 
@@ -579,7 +579,7 @@ User incentives must be inherited from `axi_stims.sv` in the `$LIB_DIR/sim/bench
 or
 
 ```bash
-  $ cp $LIB_DIR/sim/bench/stim/axi_stims.sv $USER_DIR/sim/testcase/sv/base/user_stim.sv
+  $ cp $LIB_DIR/sim/bench/stim/axi_stims.sv $USER_DIR/sim/tests/sv/base/user_stim.sv
 ```
 
 <a id="sec-5-1-2" name="sec-5-1-2"></a>
@@ -668,7 +668,7 @@ For example:
 
 Associate modified incentives with the incentive generator to generate incentives. This step must be performed in basic test cases. For example:
 
-Users can edit `tb_test_user` (a basic test case of the user), and create and associate user incentives in `build` and `connect` methods. For details, see [Creating and Connecting User-Defined Components in Test Cases](#sec-5-5)".
+Users can edit `tb_test_user` (a basic test case of the user), and create and associate user incentives in `build` and `connect` methods. For details, see [Creating and Connecting User-Defined Components in Test Cases](#sec-5-5).
 
 <a id="sec-5-1-4" name="sec-5-1-4"></a>
 
@@ -712,7 +712,7 @@ Configurations must be inherited from `axi_stim_cfg.svh` in the `$LIB_DIR/sim/be
 or
 
 ```bash
-  $ cp $LIB_DIR/sim/bench/stim/axi_stim_cfg.svh $USER_DIR/sim/testcase/sv/base/user_stim_cfg.svh
+  $ cp $LIB_DIR/sim/bench/stim/axi_stim_cfg.svh $USER_DIR/sim/tests/sv/base/user_stim_cfg.svh
 ```
 
 Then, modify the `user_stim_cfg.svh` file as required. For example:
@@ -736,7 +736,7 @@ Then, modify the `user_stim_cfg.svh` file as required. For example:
 
 Finally, associate incentives compiled by yourself to the corresponding incentive to generate incentives. This step must be performed in basic test cases.
 
-Users can edit `tb_test_user` (a basic test case of the user), and create and associate user incentives in `build` and `connect` methods. For details, see [Creating and Connecting User-Defined Components in Test Cases](#sec-5-5)".
+Users can edit `tb_test_user` (a basic test case of the user), and create and associate user incentives in `build` and `connect` methods. For details, see [Creating and Connecting User-Defined Components in Test Cases](#sec-5-5).
 
 <a id="sec-5-2-2" name="sec-5-2-2"></a>
 
@@ -769,11 +769,11 @@ Finally, associate incentives compiled by yourself to the corresponding incentiv
 
 ---
 
-The CPU model is used to simulate behaviors of the CPU and `SHELL` and interact with the `UL` according to predefined rules. The CPU model consists of two parts: **CPU model ** and **CPU model callback **, as shown in the following figure.
+The CPU model is used to simulate behaviors of the CPU and `SHELL` and interact with the `UL` according to predefined rules. The CPU model consists of two parts: **CPU model ** and **CPU model callback**, as shown in the following figure.
 
 <img src="./images/model.png" alt="CPU Model Components Diagram">
 
-The CPU model does not include any interaction implementation and provides only interfaces to other components. Therefore, if you need to customize behaviors of the CPU model, just customize its callback function.
+The CPU model does not include any interaction implementation and provides only interfaces to other components. Therefore, if you need to customize behaviors of the CPU model, customize its callback function.
 
 To compile the CPU model callback, perform the following three steps:
 
@@ -792,7 +792,7 @@ The model callback of the user CPU must be inherited from `cpu_model_cb.svh` in 
 or
 
 ```bash
-  $ cp $LIB_DIR/sim/bench/rm/cpu_model_cb.svh $USER_DIR/sim/testcase/sv/base/user_model_cb.svh
+  $ cp $LIB_DIR/sim/bench/rm/cpu_model_cb.svh $USER_DIR/sim/tests/sv/base/user_model_cb.svh
 ```
 
 <a id="sec-5-3-2" name="sec-5-3-2"></a>
@@ -805,11 +805,11 @@ The CPU model callback module provides three tasks for users to reload. The thre
 
     Processes incentives. After receiving the data sent by incentives, the task generates BDs according to the rules, stores data to the local virtual memory, and then sends data to the `RM`.
 
-- response_process
+- user_process
 
     Returns requests. After receiving the read request sent by the `UL`, the task reads data from the local virtual memory according to the instructions in the BD, and then returns data to the `UL`.
 
-- user_process
+- response_process
 
     Processes data sent by the `UL`. After receiving the write data and BDs from the `UL`, the task combines data with BDs, and then sends data to the `RM`.
 
@@ -841,7 +841,7 @@ For example:
 
 After modifying the model callback, associate the callback compiled by yourself with the CPU model. This step must be performed in basic test cases.
 
-Users can edit `tb_test_user` (a basic test case of the user), and create and associate user incentives in `build` and `connect` methods. For details, see [Creating and Connecting User-Defined Components in Test Cases](#sec-5-5)".
+Users can edit `tb_test_user` (a basic test case of the user), and create and associate user incentives in `build` and `connect` methods. For details, see [Creating and Connecting User-Defined Components in Test Cases](#sec-5-5).
 
 <a id="sec-5-4" name="sec-5-4"></a>
 
@@ -849,11 +849,11 @@ Users can edit `tb_test_user` (a basic test case of the user), and create and as
 
 ---
 
-The user reference models are used to predict the user data and check the output.
+The user reference models are used to predict the user data and check the output user data.
 
 To customize a reference model (RM), create a reference model first. The RM can be stored in `common` of the `$USER_DIR/sim` folder or the `base` folder in the `testcase` directory.
 
-The model callback of the user CPU must be inherited from `axi_rm.sv` in the `$LIB_DIR/sim/bench/rm` folder. Therefore, you are advised to copy the file to the folder. For example:
+User reference models (RMs) must be inherited from `axi_rm.sv` in the `$LIB_DIR/sim/bench/rm` folder. Therefore, you are advised to copy the file to the folder. For example:
 
 ```bash
   $ cp $LIB_DIR/sim/bench/rm/axi_rm.sv $USER_DIR/sim/common/user_rm.sv
@@ -862,7 +862,7 @@ The model callback of the user CPU must be inherited from `axi_rm.sv` in the `$L
 or
 
 ```bash
-  $ cp  $LIB_DIR/sim/bench/rm/axi_rm.sv $USER_DIR/sim/testcase/sv/base/user_rm.sv
+  $ cp  $LIB_DIR/sim/bench/rm/axi_rm.sv $USER_DIR/sim/tests/sv/base/user_rm.sv
 ```
 
 The RM module provides two functions for users to reload. The two functions are as follows:
@@ -898,7 +898,7 @@ For example:
 
 Finally, connect the RM compiled by yourself to other components. This step must be performed in basic test cases. For example:
 
-Users can edit `tb_test_user` (a basic test case of the user), and create and associate the RM in `build` and `connect` methods. For details, see [Creating and Connecting User-Defined Components in Test Cases](#sec-5-5)".
+Users can edit `tb_test_user` (a basic test case of the user), and create and associate the RM in `build` and `connect` methods. For details, see [Creating and Connecting User-Defined Components in Test Cases](#sec-5-5).
 
 <a id="sec-5-5" name="sec-5-5"></a>
 
@@ -945,4 +945,4 @@ Place VIPs in the `$LIB_DIR/sim/vip` directory or the `$USER_DIR/sim/lib` direct
 
 By default, the simulation platform uses the **DDR4 simulation model ** and **DDR4 RDIMM** simulation model of the Xilinx. By default, the two simulation models are not included in the VIP directory of the simulation platform. After you run the environment setting script `setup.sh`, the two VIP directories are automatically generated by invoking the interface of the Vivado.
 
-Note: After the simulation platform automatically generates the two VIPs by invoking the Vivado interface, **a part of code is modified** by running the setup.sh script. Do not modify the two VIPs without permissions.
+Note: After the simulation platform automatically generates the two VIPs by invoking the Vivado interface, **a part of code is modified** by running the **setup.sh** script. **Do not modify** the two VIPs without permissions.

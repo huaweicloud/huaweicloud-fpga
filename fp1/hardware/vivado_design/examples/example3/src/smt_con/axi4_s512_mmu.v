@@ -81,20 +81,20 @@ module axi4_s512_mmu   #(
 /********************************************************************************************************************\
     parameters
 \********************************************************************************************************************/
-parameter	  S_IDLE	 	     = 4'b0001      ; 
-parameter	  S_RECV_DATA        = 4'b0010      ;
-parameter	  S_SEND_ACK         = 4'b0011      ;
-parameter	  S_BUSY             = 4'b0100      ;
+parameter	  S_IDLE             = 2'b00      ; 
+parameter	  S_RECV_DATA        = 2'b01      ;
+parameter	  S_SEND_ACK         = 2'b10      ;
+parameter	  S_BUSY             = 2'b11      ;
 /********************************************************************************************************************\
     signals
 \********************************************************************************************************************/
-reg       [3:0]         			fsm_axi4_state_curr           ;
-reg       [3:0]         			fsm_axi4_state_next           ;
+reg       [1:0]         			fsm_axi4_state_curr           ;
+reg       [1:0]         			fsm_axi4_state_next           ;
 reg    	  [7:0]         			rx_tran_num                   ;
-reg       [PKT_TYPE_WIDTH-1:0]    	rx_chan_id					  ; 
+reg       [PKT_TYPE_WIDTH-1:0]      rx_chan_id                    ; 
 reg       [AXI_ADDR_WIDTH-1:0]      rx_wstrb                      ;
-reg       [MOD_WIDTH-1:0]           axi2fifo_wdata_mod        	  ;
-wire      [PKT_LEN_WIDTH-1:0]       axi2fifo_wdata_len 			  ;
+reg       [MOD_WIDTH-1:0]           axi2fifo_wdata_mod            ;
+wire      [PKT_LEN_WIDTH-1:0]       axi2fifo_wdata_len            ;
 reg                                 axi2fifo_wdata_sop            ;
 reg                                 axi2fifo_wdata_eop            ;
 wire      [3:0]                     axi2fifo_wdata_id             ;
@@ -528,7 +528,7 @@ begin
     end
 end 
 
-assign axi4_sl_fsm_state = {fsm_axi4_state_next,fsm_axi4_state_curr};
+assign axi4_sl_fsm_state = {4'd0,fsm_axi4_state_next,fsm_axi4_state_curr};
 
 always @ (posedge clk_sys or posedge rst)
 begin 
@@ -540,4 +540,4 @@ begin
     end
 end
 
-endmodule 
+endmodule

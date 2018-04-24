@@ -4,7 +4,7 @@
 
 ## Directory Structure
 
-The directory is `$WORK_DIR/hardware/vivado_design/user/usr_template/`.You can find the following files in this directory:
+The directory is `$WORK_DIR/hardware/vivado_design/user/usr_template/`. You can find the following files in this directory:
 
 - **usr_template/**
   - prj
@@ -13,7 +13,7 @@ The directory is `$WORK_DIR/hardware/vivado_design/user/usr_template/`.You can f
   - src
   - src_encrypt
 
-## File and Folder Descriptions
+## File and Folder Description
 
 - prj
 
@@ -38,7 +38,7 @@ This directory stores the source code **encrypted** by Vivado and is used for pr
 
 ### Example Building
 
-Go to the prj directory, run the `build.sh` script, and wait until the building is completed.
+Go to the **prj** directory, run the `build.sh` script, and wait until the building is completed.
 For building execution details, see [usr_template Building Guide](./prj/README.md).
 
 The building result is stored in the `/prj/build/checkpoints/to_facs` directory.

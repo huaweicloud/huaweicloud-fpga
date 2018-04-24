@@ -40,7 +40,8 @@ class cpu_data;
     typedef struct packed {
         bit [7  : 0] prty       ; // [255:248]
         bit [7  : 0] bdcode     ; // [247:240]
-        bit [23 : 0] rsv        ; // [239:216]
+        bit [15 : 0] rsv        ; // [239:224]
+        bit [7  : 0] acc_len    ; // [223:216]
         bit [7  : 0] acc_type   ; // [215:208]
         bit [47 : 0] ve_info    ; // [207:160]
         bit [31 : 0] data_len   ; // [159:128]
@@ -87,7 +88,7 @@ class cpu_data;
     bit [63: 0]         dest_addr;   // 
     bit [7 : 0]         acc_type ;
     bit                 done_flag;
-    bit                 acc_len  ;
+    bit [7 : 0]         acc_len  ;
 
     // Base constraint
     constraint cpu_data_base_constraint {
@@ -130,6 +131,7 @@ function int cpu_data::pack_bytes(ref bit [7 : 0] bytes[]);
             cpu_bd_t head  ;
             bd_head = 'd0;
             bd_head.acc_type  = acc_type ;
+            bd_head.acc_len   = acc_len ;
             bd_head.ve_info   = ve_info  ;
             bd_head.data_len  = data_len ;
             bd_head.src_addr  = addr     ;
@@ -169,6 +171,7 @@ function int cpu_data::unpack_bytes(const ref bit [7 : 0] bytes[]);
             cpu_bd_t head  ;
             head     = {>>8{bytes}};
             bd_head  = {<<8{head}};
+            acc_len  = bd_head.acc_len ;
             acc_type = bd_head.acc_type  ;
             ve_info  = bd_head.ve_info   ;
             data_len = bd_head.data_len  ;

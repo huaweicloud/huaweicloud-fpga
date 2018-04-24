@@ -67,7 +67,7 @@
 #define SDKRTN_PCI_VENDOR_ID_ERROR              ( SDKRTN_PCI_ERROR_BASE + 0xF )
 #define SDKRTN_PCI_READ_ERROR                   ( SDKRTN_PCI_ERROR_BASE + 0x10 )
 #define SDKRTN_PCI_INVALID_VALUE_ERROR          ( SDKRTN_PCI_ERROR_BASE + 0x11 )
-
+#define SDKRTN_PCI_MEMSET_ERROR          ( SDKRTN_PCI_ERROR_BASE + 0x12 )
 
 typedef struct tagFPGA_PCI_BAR_INFO
 {
@@ -76,10 +76,9 @@ typedef struct tagFPGA_PCI_BAR_INFO
     UINT64 ullMemSize;
 } FPGA_PCI_BAR_INFO;
 
-UINT32 FPGA_PciScanAllSlots( FpgaResourceMap straFpgaArray[], UINT32 ulSize );
 UINT32 FPGA_PciEnableSlotsBar( UINT32 ulSlotIndex, UINT32 ulBarNum, UINT32 *pulBarHandle );
 FPGA_PCI_BAR_INFO *FPGA_PciGetBar( UINT32 ulBarHandle );
 
-extern FpgaResourceMap g_astrFpgaInfo[FPGA_SLOT_MAX];
+extern FpgaShellType g_astrShellType;
 
 #endif

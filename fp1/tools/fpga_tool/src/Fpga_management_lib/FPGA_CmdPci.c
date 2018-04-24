@@ -52,7 +52,7 @@ extern "C"{
 #endif
 
 FPGA_PCI_BAR_INFO g_strBars[FPGA_VF_BAR_NUM_MAX] = { { 0 } };
-FpgaResourceMap g_astrFpgaInfo[FPGA_SLOT_MAX] = { { 0 } };
+FpgaShellType g_astrShellType = { 0 };
 
 /*******************************************************************************
 Function     : FPGA_PciGetDBDF
@@ -402,10 +402,7 @@ UINT32 FPGA_PciScanAllSlots( FpgaResourceMap straFpgaArray[], UINT32 ulSize )
             /* Use the Device ID and Vendor ID to distinguish different shell type */
             if ( ( HW_VF_VENDOR_ID == strFpgaMapGet.usVendorId && HW_VF_DEVICE_ID == strFpgaMapGet.usDeviceId )
                  || ( HW_OCL_PF_VENDOR_ID == strFpgaMapGet.usVendorId && HW_OCL_PF_DEVICE_ID == strFpgaMapGet.usDeviceId ) )
-            {
-                g_astrFpgaInfo[ulSlotIndex].usVendorId = strFpgaMapGet.usVendorId;
-                g_astrFpgaInfo[ulSlotIndex].usDeviceId = strFpgaMapGet.usDeviceId;
-                
+            {                
                 /* Get bar size */
                 ulRet = FPGA_PciFindVfResources( strEntry.d_name, &strFpgaMapGet );
                 if ( SDKRTN_PCI_SUCCESS != ulRet )
@@ -478,12 +475,15 @@ UINT32 FPGA_PciGetMapInfo( UINT32 ulSlotIndex, FpgaResourceMap *pstrMapSpec )
 
     if (0 == astrMapArray[ulSlotIndex].usVendorId )
     {
-        LOG_ERROR("Pci vendor id is null.");
+        LOG_ERROR("The pci vendor id of slot(%d) is null.", ulSlotIndex);
+        printf("[***TIPS***]There is no fpga device in slot(%u).\r\n", ulSlotIndex);        
         return SDKRTN_PCI_VENDOR_ID_ERROR;
     }
 
     *pstrMapSpec = astrMapArray[ulSlotIndex];
-
+    g_astrShellType.usVendorId = astrMapArray[ulSlotIndex].usVendorId;
+    g_astrShellType.usDeviceId = astrMapArray[ulSlotIndex].usDeviceId;
+    
     return SDKRTN_PCI_SUCCESS;
 }
 
@@ -575,13 +575,13 @@ UINT32 FPGA_PciSetBarSpace( UINT32 ulBarHandle, void *pMemBase, UINT64 ullMemSiz
 }
 
 /*******************************************************************************
-Function     : Fpga_GetBarHandle
+Function     : FPGA_PciGetBarHandle
 Description  : Get bar handle
 Input        : UINT32 ulBarNum, UINT32 *pulBarHandle
 Output       : FpgaResourceMap *pstrMapSpec
 Return       : 0:sucess other:fail
 *******************************************************************************/
-UINT32 Fpga_GetBarHandle( FpgaResourceMap *pstrMapSpec, UINT32 ulBarNum, UINT32 *pulBarHandle )
+UINT32 FPGA_PciGetBarHandle( FpgaResourceMap *pstrMapSpec, UINT32 ulBarNum, UINT32 *pulBarHandle )
 {
     void *pMemBase = NULL;
     FpgaResourceMap *pstrFpgaMap = NULL;
@@ -593,19 +593,19 @@ UINT32 Fpga_GetBarHandle( FpgaResourceMap *pstrMapSpec, UINT32 ulBarNum, UINT32 
 
     if ( NULL == pstrMapSpec )
     {
-         LOG_ERROR( "Fpga_GetBarHandle pstrMapSpec is NULL" );
+         LOG_ERROR( "FPGA_PciGetBarHandle pstrMapSpec is NULL" );
          return SDKRTN_PCI_INPUT_ERROR;
     }
 
     if ( ulBarNum >= FPGA_VF_BAR_NUM_MAX )
     {
-         LOG_ERROR( "Fpga_GetBarHandle Invalid lBarNum=%d", ulBarNum );
+         LOG_ERROR( "FPGA_PciGetBarHandle Invalid lBarNum=%d", ulBarNum );
          return SDKRTN_PCI_INPUT_ERROR;
     }
 
     if ( NULL == pulBarHandle )
     {
-         LOG_ERROR( "Fpga_GetBarHandle plBarHandle is NULL" );
+         LOG_ERROR( "FPGA_PciGetBarHandle plBarHandle is NULL" );
          return SDKRTN_PCI_INPUT_ERROR;
     }
     pstrFpgaMap = pstrMapSpec;
@@ -635,7 +635,7 @@ UINT32 Fpga_GetBarHandle( FpgaResourceMap *pstrMapSpec, UINT32 ulBarNum, UINT32 
         MAP_SHARED, lFd, ( off_t )0);
     if ( MAP_FAILED == pMemBase )
     {
-        LOG_ERROR( "Fpga_GetBarHandle Mmap failed." );
+        LOG_ERROR( "FPGA_PciGetBarHandle Mmap failed." );
         close( lFd );
         return SDKRTN_PCI_MMAP_ERROR;
     }
@@ -707,6 +707,13 @@ UINT32 FPGA_PciEnableSlotsBar( UINT32 ulSlotIndex, UINT32 ulBarNum, UINT32 *pulB
         return SDKRTN_PCI_INPUT_ERROR;
     }
 
+    ulRet = memset_s( g_strBars, sizeof( g_strBars ), 0, sizeof( g_strBars ) );
+    if ( OK != ulRet )
+    {
+        LOG_DEBUG( "FPGA_PciEnableSlotsBar memset_s failed, ulRet = 0x%x", ulRet );
+        return SDKRTN_PCI_MEMSET_ERROR;
+    }
+
     /* Get pci info of specify slot */
     ulRet = FPGA_PciGetMapInfo( ulSlotIndex, &strFpgaMap );
     if ( SDKRTN_PCI_SUCCESS != ulRet )
@@ -715,7 +722,7 @@ UINT32 FPGA_PciEnableSlotsBar( UINT32 ulSlotIndex, UINT32 ulBarNum, UINT32 *pulB
         return ulRet;
     }
     
-    ulRet = Fpga_GetBarHandle(&strFpgaMap, ulBarNum, pulBarHandle);
+    ulRet = FPGA_PciGetBarHandle(&strFpgaMap, ulBarNum, pulBarHandle);
     if ( SDKRTN_PCI_SUCCESS != ulRet )
     {
         LOG_ERROR( "Get bar handle failed =%d", ulRet );

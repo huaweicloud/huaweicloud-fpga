@@ -40,8 +40,9 @@
   - sdaccel_design/
   - LICENSE.txt
   - README_CN.md
+  - version_hdk_tag.txt
   - version_note_dpdk.txt
-  - version_note_sdx.txt
+  - version_note_sdaccel.txt
 
 <a id="sec-2" name="sec-2"></a>
 
@@ -61,13 +62,17 @@
 
 - README_CN.md
 
-  本文档，用于说明其他文件。  
+  本文档，用于说明其他文件。 
+  
+- version_hdk_tag.txt  
+
+  上传github时的tag信息。
 
 - version_note_dpdk.txt  
 
-  本文档承载的是基于vivado工具开发的静态逻辑的发布日期及版本号，用户不可以对该文件内容做任何更改。
+  本文档承载的是基于vivado工具开发的静态逻辑的**发布日期**及**版本号**，用户不可以对该文件内容做任何更改。
 
-- version_note_sdx.txt  
+- version_note_sdaccel.txt  
 
   本文档承载的是基于sdx工具开发的静态逻辑的**发布日期**及**版本号**，用户不可以对该文件内容做任何更改。  
 
@@ -81,13 +86,13 @@
 
 1.该开发模式适合有一定FPGA开发经验的用户使用。
 2.支持用户使用verilog或者VHDL语言开发、system_verilog或者c语言仿真和测试。
-3.对应的目录结构为**vivado_design**。
+3.对应的目录结构为 **vivado_design**。
 
 - SDAccel c/c++/opencl语言的开发模式
 
 1.该开发模式适合有软件开发经验的用户使用。
 2.支持SDAccel开发流程，用户灵活选择使用c/c++/opencl语言进行开发、仿真和测试。
-3.对应的目录结构为sdaccel_design。
+3.对应的目录结构为 **sdaccel_design**。
 
 说明：华为fpga云服务硬件开发只能用于**centos7.3**系统，并提供了所有的设计文件和脚本，用户可以在fpga云服务器上使用预安装的工具进行**开发、仿真和[构建AEI](../docs/Register an FPGA image_cn.md)**。
 

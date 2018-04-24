@@ -43,11 +43,8 @@
 #include <sys/mman.h>
 
 #include "securec.h"
-#include "FPGA_Common.h"
+#include "FPGA_CmdCommon.h"
 #include "FPGA_CmdMonitorMain.h"
-#include "FPGA_CmdProcess.h"
-#include "FPGA_CmdLog.h"
-#include "FPGA_CmdPci.h"
 #include "FPGA_CmdParse.h"
 
 #ifdef    __cplusplus
@@ -60,6 +57,7 @@ FPGA_CMD_PARA   g_strFpgaModule = { 0 };
 COMMAND_PROC_FUNC g_pafnFpgaCmdList[CMD_PARSE_END] =
 {
     [CMD_HFI_LOAD] = FPGA_MonitorLoadHfi,
+    [CMD_HFI_CLEAR] = FPGA_MonitorClearHfi,
     [CMD_IMAGE_INQUIRE] = FPGA_MonitorInquireFpgaImageInfo,
     [CMD_RESOURSE_INQUIRE] = FPGA_MonitorDisplayDevice,
     [CMD_LED_STATUS_INQUIRE] = FPGA_MonitorInquireLEDStatus,
@@ -89,26 +87,6 @@ UINT32 FPGA_MonitorInitModule( void )
     g_strFpgaModule.bShowInfo= false;
 
     return SDKRTN_MONITOR_SUCCESS;
-}
-
-/*******************************************************************************
-Function     : FPGA_MonitorProcInit
-Description  : Initialize manage module 
-Input        : None
-Output       : None
-Return       : None  
-*******************************************************************************/
-void FPGA_MonitorProcInit( void )
-{
-
-    if ( g_strFpgaModule.ulOpcode == CMD_RESOURSE_INQUIRE )
-    {
-        return ;
-    }
-
-    FPGA_MmgtMboxOptInit(  );
-
-    return ;
 }
 
 /*******************************************************************************
@@ -158,35 +136,14 @@ UINT32 FPGA_MonitorExecuteCmd( void )
 
     if ( g_strFpgaModule.bShowInfo )
     {
-        printf(" ----------------FPGA Information------------------\n");
-        
-        if ( HW_VF_VENDOR_ID == g_astrFpgaInfo[ulSlotId].usVendorId && 
-        HW_VF_DEVICE_ID == g_astrFpgaInfo[ulSlotId].usDeviceId )
-        {
-            printf("     Type\t\t\t%s\n","Fpga Device");
-            printf("     Slot\t\t\t%u\n",ulSlotId);
-            printf("     VendorId\t\t\t0x%04x\n",pstVfInfo->usVendorId);
-            printf("     DeviceId\t\t\t0x%04x\n",pstVfInfo->usDeviceId);
-            printf("     DBDF\t\t\t%04x:%02x:%02x.%d\n",pstVfInfo->usDomain, pstVfInfo->ucBus,
-            pstVfInfo->ucDev, pstVfInfo->ucFunc);
-            printf(" --------------------------------------------------\n");            
-        }
-        else if ( HW_OCL_PF_VENDOR_ID == g_astrFpgaInfo[ulSlotId].usVendorId && 
-        HW_OCL_PF_DEVICE_ID == g_astrFpgaInfo[ulSlotId].usDeviceId )
-        {
-            printf("     Type\t\t\t%s\n","Fpga Device");
-            printf("     Slot\t\t\t%u\n",ulSlotId);
-            printf("     VendorId\t\t\t0x%04x\n",pstVfInfo->usVendorId);
-            printf("     DeviceId\t\t\t0x%04x\n",pstVfInfo->usDeviceId);
-            printf("     DBDF\t\t\t%04x:%02x:%02x.%d\n",pstVfInfo->usDomain, pstVfInfo->ucBus,
-            pstVfInfo->ucDev, pstVfInfo->ucFunc);
-            printf(" --------------------------------------------------\n");            
-        }
-        else
-        {
-            printf("FPGA shell Type error.\r\n");
-            return SDKRTN_MONITOR_SHELL_TYPE_ERROR;                
-        }
+        printf(" ----------------FPGA Information------------------\n");       
+        printf("     Type\t\t\t%s\n","Fpga Device");
+        printf("     Slot\t\t\t%u\n",ulSlotId);
+        printf("     VendorId\t\t\t0x%04x\n",pstVfInfo->usVendorId);
+        printf("     DeviceId\t\t\t0x%04x\n",pstVfInfo->usDeviceId);
+        printf("     DBDF\t\t\t%04x:%02x:%02x.%d\n",pstVfInfo->usDomain, pstVfInfo->ucBus,
+        pstVfInfo->ucDev, pstVfInfo->ucFunc);
+        printf(" --------------------------------------------------\n");
     }
 
     return SDKRTN_MONITOR_SUCCESS;
@@ -207,7 +164,7 @@ UINT32 FPGA_MonitorDisplayDevice( void )
 
     /* Scan all VF of this VM */
     ulRet = FPGA_PciScanAllSlots( strFpgaInfo, sizeof_array( strFpgaInfo ) );
-    if ( SDKRTN_PCI_SUCCESS != ulRet )
+    if ( SDKRTN_MONITOR_SUCCESS != ulRet )
     {
         LOG_ERROR( "FPGA_PciScanAllSlots failed %d", ulRet );
         return ulRet;
@@ -224,7 +181,7 @@ UINT32 FPGA_MonitorDisplayDevice( void )
         ulRet = FPGA_MonitorDisplayVfInfo(i, &strFpgaInfo[i]);
         if ( SDKRTN_MONITOR_SUCCESS != ulRet )
         {
-            LOG_ERROR( "Display vfs failed %d", ulRet );
+            LOG_ERROR( "Display VF Devices failed %d", ulRet );
             return ulRet;
         }
     }
@@ -241,36 +198,57 @@ UINT32 FPGA_MonitorDisplayDevice( void )
  *******************************************************************************/
  UINT32 FPGA_MonitorDisplayImgInfo( UINT32 ulSlotId, FpgaResourceMap *pstVfInfo, FPGA_IMG_INFO *pstrImgInfo )
 {
-    INT8 *pfpgaLoadStatusList[FPGA_LOAD_STATUS_END] =
+    UINT32 ulFpgaOpsStatus;
+    UINT32 ulFpgaLoadErr;
+
+    INT8 *pfpgaPrStatusList[FPGA_PR_STATUS_END] =
     {
-        [FPGA_LOAD_STATUS_NOT_PROGRAMMED] = "NOT_PROGRAMMED",
-        [FPGA_LOAD_STATUS_LOADED] = "LOADED",
-        [FPGA_LOAD_STATUS_LOAD_FAILED] = "FAILED",
-        [FPGA_LOAD_STATUS_BUSY] = "BUSY",
-        [FPGA_LOAD_STATUS_INVALID_ID] = "INVALID_ID",
+        [FPGA_PR_STATUS_NOT_PROGRAMMED] = "NOT_PROGRAMMED",
+        [FPGA_PR_STATUS_PROGRAMMED] = "PROGRAMMED",
+        [FPGA_PR_STATUS_EXCEPTION] = "EXCEPTION",
+        [FPGA_PR_STATUS_PROGRAMMING] = "PROGRAMMING",
+    };
+    
+    INT8 *pfpgaOpsStatusList[FPGA_OPS_STATUS_END] =
+    {
+        [FPGA_OPS_STATUS_INITIALIZED] = "INITIALIZED",
+        [FPGA_OPS_STATUS_SUCCESS] = "SUCCESS",
+        [FPGA_OPS_STATUS_FAILURE] = "FAILURE",
+        [FPGA_OPS_STATUS_PROCESSING] = "PROCESSING",
     };
 
-    INT8* pfpgaLoadErrNameList[FPGA_STATUS_END] =
-    {
-        [FPGA_STATUS_OK] = "OK",
-        [FPGA_STATUS_COMPETENCE_ERR] = "COMPETENCE_ERR",
-        [FPGA_STATUS_GETSERVICEID_ERR] = "GETSERVICEID_ERR",
-        [FPGA_STATUS_GETPRJECTID_ERR] = "GETPRJECTID_ERR",
-        [FPGA_STATUS_GETNOVAINFO_ERR] = "GETNOVAINFO_ERR",
-        [FPGA_STATUS_GETVMUUID_ERR] = "GETVMUUID_ERR",
-        [FPGA_STATUS_GETOBSINFO_ERR] = "GETOBSINFO_ERR",
-        [FPGA_STATUS_GETFILE_ERR] = "GETFILE_ERR",
-        [FPGA_STATUS_PARA_ERR] = "PARA_ERR",
-        [FPGA_STATUS_LOAD_BUSY] = "LOAD_BUSY",
-        [FPGA_STATUS_INNER_ERR] = "INNER_ERR",
-        [FPGA_STATUS_CLEARD] = "CLEARD",
-        [FPGA_STATUS_LOADING] = "LOADING",
-        [FPGA_STATUS_MBOX_ERR] = "MBOX_ERR",
-        [FPGA_STATUS_LOCK_ERR] = "OTHERSIDE_ERR",
-        [FPGA_STATUS_GETNOVACFG_ERR] = "GETCFG_ERR",
-        [FPGA_STATUS_AEI_MATCH_ERR] = "AEI_MATCH_ERR ",
-        [FPGA_STATUS_FILE_ERR] = "AEI_FILE_ERR ",        
-    };
+    INT8* pfpgaLoadErrNameList[FPGA_CLEAR_ERROR_END] = {NULL};
+    
+    pfpgaLoadErrNameList[FPGA_LOAD_OK] = "OK";
+    pfpgaLoadErrNameList[FPGA_LOAD_GET_LOCK_BUSY] = "GET_LOCK_BUSY";
+    pfpgaLoadErrNameList[FPGA_LOAD_WRITE_DB_ERR] = "WRITE_DB_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_GET_HOSTID_ERR] = "GET_HOSTID_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_GET_NOVA_CFG_ERR] = "GET_NOVA_CFG_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_TOKEN_MATCH_ERR] = "TOKEN_MATCH_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_GET_SERVICEID_ERR] = "GET_SERVICEID_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_GET_NOVAAPI_ERR] = "GET_NOVAAPI_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_GET_UUID_ERR] = "GET_UUID_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_INVALID_AEIID] = "INVALID_AEI_ID";
+    pfpgaLoadErrNameList[FPGA_LOAD_GET_IMAGEPARA_ERR] = "GET_IMAGEPARA_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_AEI_CHECK_ERR] = "AEI_CHECK_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_GET_AEIFILE_ERR] = "GET_AEIFILE_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_WR_MAILBOX_ERR] = "WR_MAILBOX_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_PROGRAM_PARA_ERR] = "PROGRAM_PARA_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_PROGRAM_ICAP_ERR] = "PROGRAM_ICAP_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_DDR_CHECK_ERR] = "DDR_CHECK_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_FPGA_DISABLE_ERR ] = "FPGA_DISABLE_ERR";
+    pfpgaLoadErrNameList[FPGA_LOAD_PUSH_QUEUE_ERR ] = "PUSH_QUEUE_ERR";
+    pfpgaLoadErrNameList[FPGA_OTHER_EXCEPTION_ERR ] = "FPGA_EXCEPTION_ERR";
+    pfpgaLoadErrNameList[FPGA_CLEAR_GET_LOCK_BUSY] = "CLEAR_GET_LOCK_BUSY";
+    pfpgaLoadErrNameList[FPGA_CLEAR_WRITE_DB_ERR] = "CLEAR_WRITE_DB_ERR";
+    pfpgaLoadErrNameList[FPGA_CLEAR_GET_BLANK_FILE_ERR] = "CLEAR_GET_BLANK_ERR";
+    pfpgaLoadErrNameList[FPGA_CLEAR_WR_MAILBOX_ERR] = "CLEAR_WR_MAILBOX_ERR";
+    pfpgaLoadErrNameList[FPGA_CLEAR_PROGRAM_PARA_ERR] = "CLEAR_PROGRAM_PARA_ERR";
+    pfpgaLoadErrNameList[FPGA_CLEAR_PROGRAM_ICAP_ERR] = "CLEAR_PROGRAM_ICAP_ERR";
+    pfpgaLoadErrNameList[FPGA_CLEAR_DDR_CHECK_ERR] = "CLEAR_DDR_CHECK_ERR";
+    pfpgaLoadErrNameList[FPGA_CLEAR_FPGA_DISABLE_ERR] = "CLEAR_FPGA_DISABLE_ERR";
+    pfpgaLoadErrNameList[FPGA_CLEAR_NOT_SUPPORT_ERR] = "CLEAR_NOT_SUPPORT_ERR";
+    pfpgaLoadErrNameList[FPGA_CLEAR_PUSH_QUEUE_ERR ] = "CLEAR_PUSH_QUEUE_ERR";
 
     if ( ulSlotId >= FPGA_SLOT_MAX )
     {
@@ -290,65 +268,63 @@ UINT32 FPGA_MonitorDisplayDevice( void )
         return SDKRTN_MONITOR_INPUT_ERROR;
     }
 
-    if( pstrImgInfo->ulHfiLoadStatus >= FPGA_LOAD_STATUS_END )
+    /* This is the command operation status */
+    ulFpgaOpsStatus = ((pstrImgInfo->ulCmdOpsStatus) & FPGA_OPS_STATUS_MASK) >> FPGA_OPS_STATUS_SHIFT;
+    /* This is the command operation error code */
+    ulFpgaLoadErr = (pstrImgInfo->ulCmdOpsStatus) & FPGA_LOAD_ERROR_MASK;
+
+    if( pstrImgInfo->ulFpgaPrStatus >= FPGA_PR_STATUS_END )
     {
-        LOG_ERROR( "Load Status Code Out Of Range %d", pstrImgInfo->ulHfiLoadStatus );
-        return SDKRTN_MONITOR_STATUS_NAME_ERROR;
+        LOG_ERROR( "FPGA PR status Code Out Of Range %d", pstrImgInfo->ulFpgaPrStatus );
+        return SDKRTN_MONITOR_PR_STATUS_ERROR;
     }
 
-     if( pstrImgInfo->ulHfiLoadErr >= FPGA_STATUS_END )
+     if( ulFpgaOpsStatus >= FPGA_OPS_STATUS_END )
     {
-        LOG_ERROR( "Error Status Code Out Of Range %d", pstrImgInfo->ulHfiLoadErr);
-        return SDKRTN_MONITOR_ERR_NAME_ERROR;
+        LOG_ERROR( "FPGA Cmd Ops Status Code Out Of Range %d", pstrImgInfo->ulCmdOpsStatus);
+        return SDKRTN_MONITOR_CMD_OPS_ERROR;
+    }
+
+    if((( ulFpgaLoadErr >=  FPGA_LOAD_ERROR_END ) && ( ulFpgaLoadErr <  FPGA_OTHER_EXCEPTION_ERR )) ||
+        (( ulFpgaLoadErr >=  FPGA_OTHER_ERROR_END ) && ( ulFpgaLoadErr <  FPGA_CLEAR_GET_LOCK_BUSY )) ||
+        ( ulFpgaLoadErr >= FPGA_CLEAR_ERROR_END ))
+    {
+        LOG_ERROR( "FPGA Cmd Ops Status Code Out Of Range %d", pstrImgInfo->ulCmdOpsStatus);
+        return SDKRTN_MONITOR_LOAD_ERRNAME_ERROR;
     }
      
-    /* Use the Device ID and Vendor ID to distinguish different display information */
-    if ( HW_VF_VENDOR_ID == g_astrFpgaInfo[ulSlotId].usVendorId && 
-        HW_VF_DEVICE_ID == g_astrFpgaInfo[ulSlotId].usDeviceId )
+    printf(" -------------Image Information--------------------\n");
+    printf("     Type\t\t\t%s\n","Fpga Device");
+    printf("     Slot\t\t\t%u\n",ulSlotId);
+    printf("     VendorId\t\t\t0x%04x\n",pstVfInfo->usVendorId);
+    printf("     DeviceId\t\t\t0x%04x\n",pstVfInfo->usDeviceId);
+    printf("     DBDF\t\t\t%04x:%02x:%02x.%d\n",pstVfInfo->usDomain, pstVfInfo->ucBus,
+        pstVfInfo->ucDev, pstVfInfo->ucFunc);
+    printf("     AEI ID\t\t\t%s\n",pstrImgInfo->acHfid);
+    printf("     Shell ID\t\t\t%08x\n", pstrImgInfo->ulShellID);
+    printf("     FPGA PR status\t\t%s\n",pfpgaPrStatusList[pstrImgInfo->ulFpgaPrStatus]);     /* the current status of FPGA PR region */
+    printf("     Load/ClearOpsStatus\t%s\n",pfpgaOpsStatusList[ulFpgaOpsStatus]);            /* the result status of Load/clear command operation */
+    if(FPGA_OPS_STATUS_FAILURE == ulFpgaOpsStatus)
     {
-        printf(" -------------Image Information--------------------\n");
-        printf("     Type\t\t\t%s\n","Fpga Device");
-        printf("     Slot\t\t\t%u\n",ulSlotId);
-        printf("     VendorId\t\t\t0x%04x\n",pstVfInfo->usVendorId);
-        printf("     DeviceId\t\t\t0x%04x\n",pstVfInfo->usDeviceId);
-        printf("     DBDF\t\t\t%04x:%02x:%02x.%d\n",pstVfInfo->usDomain, pstVfInfo->ucBus,
-            pstVfInfo->ucDev, pstVfInfo->ucFunc);
-        printf("     ImageId\t\t\t%s\n",pstrImgInfo->acHfid);
-        printf("     LoadStatusName\t\t%s\n",pfpgaLoadStatusList[pstrImgInfo->ulHfiLoadStatus]);
-        printf("     LoadStatusCode\t\t%x\n",pstrImgInfo->ulHfiLoadStatus);
-        printf("     LoadErrName\t\t%s\n",pfpgaLoadErrNameList[pstrImgInfo->ulHfiLoadErr]);
-        printf("     LoadErrCode\t\t%u\n",pstrImgInfo->ulHfiLoadErr);
-        
-        printf("     Shell ID\t\t\t%08x\n", pstrImgInfo->ulShVer);
-        printf(" --------------------------------------------------\n");    
+        printf("     Load/ClearOpsError\t\t%s\n",pfpgaLoadErrNameList[ulFpgaLoadErr]);         /* the error reason of Load/clear command operation */    
     }
-    else if ( HW_OCL_PF_VENDOR_ID == g_astrFpgaInfo[ulSlotId].usVendorId && 
-        HW_OCL_PF_DEVICE_ID == g_astrFpgaInfo[ulSlotId].usDeviceId )
-    {
-        printf(" -------------Image Information--------------------\n");
-        printf("     Type\t\t\t%s\n","Fpga Device");
-        printf("     Slot\t\t\t%u\n",ulSlotId);
-        printf("     VendorId\t\t\t0x%04x\n",pstVfInfo->usVendorId);
-        printf("     DeviceId\t\t\t0x%04x\n",pstVfInfo->usDeviceId);
-        printf("     DBDF\t\t\t%04x:%02x:%02x.%d\n",pstVfInfo->usDomain, pstVfInfo->ucBus,
-            pstVfInfo->ucDev, pstVfInfo->ucFunc);
-        printf("     ImageId\t\t\t%s\n",pstrImgInfo->acHfid);
-        printf("     LoadStatusName\t\t%s\n",pfpgaLoadStatusList[pstrImgInfo->ulHfiLoadStatus]);
-        printf("     LoadStatusCode\t\t%x\n",pstrImgInfo->ulHfiLoadStatus);
-        printf("     LoadErrName\t\t%s\n",pfpgaLoadErrNameList[pstrImgInfo->ulHfiLoadErr]);
-        printf("     LoadErrCode\t\t%u\n",pstrImgInfo->ulHfiLoadErr);
-        
-        printf("     Shell ID\t\t\t%08x\n", pstrImgInfo->ulShVer);
-        printf(" --------------------------------------------------\n");    
-    }
-    else
-    {
-        /* Report type ID error after the device ID match fails */
-        printf("FPGA shell Type error.\r\n");
-        return SDKRTN_MONITOR_SHELL_TYPE_ERROR;                
-    }
+    printf(" --------------------------------------------------\n");    
 
     return SDKRTN_MONITOR_SUCCESS;
+}
+
+/*******************************************************************************
+Function     : FPGA_MonitorClearHfi
+Description  : The entrance function of clearing image   
+Input        : None
+Output       : None
+Return       : 0:sucess other:fail   
+*******************************************************************************/
+UINT32 FPGA_MonitorClearHfi(void)
+{
+    UINT32 ulRet = SDKRTN_MONITOR_ERROR_BASE;
+    ulRet = FPGA_MgmtClearHfiImage( g_strFpgaModule.ulSlotIndex );
+    return ulRet;
 }
 
 /*******************************************************************************
@@ -414,14 +390,14 @@ UINT32 FPGA_MonitorInquireFpgaImageInfo(void)
     FPGA_IMG_INFO pstrImgInfo = { 0 };
 
     ulRet = FPGA_MgmtInquireFpgaImageInfo( g_strFpgaModule.ulSlotIndex, &pstrImgInfo );
-    if ( SDKRTN_PROCESS_SUCCESS != ulRet )
+    if ( SDKRTN_MONITOR_SUCCESS != ulRet )
     {
         LOG_ERROR( "FPGA_MgmtInquireFpgaImageInfo failed ulRet = 0x%x\r\n", ulRet );
         return ulRet;
     }
 
     ulRet = FPGA_MonitorDisplayFpgaImageInfo( g_strFpgaModule.ulSlotIndex, &pstrImgInfo );
-    if ( SDKRTN_PROCESS_SUCCESS != ulRet )
+    if ( SDKRTN_MONITOR_SUCCESS != ulRet )
     {
         LOG_ERROR( "FPGA_MonitorDisplayFpgaImageInfo failed ulRet = 0x%x\r\n", ulRet );
         return ulRet;
@@ -440,7 +416,7 @@ UINT32 FPGA_MonitorInquireLEDStatus(void)
     UINT32 ulRet = SDKRTN_MONITOR_ERROR_BASE;
 
     ulRet = FPGA_MgmtInquireLEDStatus( g_strFpgaModule.ulSlotIndex );
-    if ( SDKRTN_PROCESS_SUCCESS != ulRet )
+    if ( SDKRTN_MONITOR_SUCCESS != ulRet )
     {
         LOG_ERROR( "FPGA_MonitorInquireLEDStatus failed ulRet = 0x%x\r\n", ulRet );
         return ulRet;
@@ -461,7 +437,7 @@ int main( INT32 argc, INT8 *argv[] )
     UINT32 ulRet = SDKRTN_MONITOR_ERROR_BASE;
 
     /* At least input 2 parameters  */
-    if ( argc < INPUT_PARAS_NUM_MIN )
+    if ( argc < FPGA_INPUT_PARAS_NUM_MIN )
     {
         printf( "[***TIPS***] Input parameter number should be 2 at least.\r\n" );
         FPGA_ParsePrintHelpInfo( argv[0], g_pacCommandEntryHelp, sizeof_array( g_pacCommandEntryHelp ) );
@@ -476,8 +452,8 @@ int main( INT32 argc, INT8 *argv[] )
         return ( INT32 )ulRet;
     }
 
-    /* Initialize log */
-    ulRet = FPGA_LogInit(  );
+    /* Initialize libfpgamgmt */
+    ulRet = FPGA_MgmtInit(  );
     if ( SDKRTN_MONITOR_SUCCESS != ulRet )
     {
         return ( INT32 )ulRet;
@@ -496,9 +472,6 @@ int main( INT32 argc, INT8 *argv[] )
     {
         return ( INT32 )ulRet;
     }
-    
-    /* Initialize manage module */
-    FPGA_MonitorProcInit(  );
 
     /* Eccute cmd */
     ulRet = FPGA_MonitorExecuteCmd(  );

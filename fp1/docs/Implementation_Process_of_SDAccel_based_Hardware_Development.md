@@ -90,7 +90,15 @@ The default development tool is Vivado. Therefore, you need to change Vivado to 
 
 Set `XILINX_LIC_SETUP` in the setup.cfg file to the IP address of the license server.
 
+CN North:
 `XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+
+CN South:
+`XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
+
+CN East:
+`XILINX_LIC_SETUP="2100@100.125.17.108:2100@100.125.17.109"`
+
 
 #### Step 3 Configure the version of EDA.
 

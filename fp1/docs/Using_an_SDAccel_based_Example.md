@@ -27,11 +27,16 @@ The SDAccel HDK platform serves to complete the compilation and simulation of th
 
 2.  Configure the license file of EDA.
 
-  Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set **XILINX_LIC_SETUP** to the IP address of the license server (**2100@100.125.1.240:2100@100.125.1.251** in this example). Set **FPGA_DEVELOP_MODE="sdx"** and **VIVADO_VER_REQ="2017.1"**.
+  Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set **XILINX_LIC_SETUP** to the IP address of the license server. Set **FPGA_DEVELOP_MODE="sdx"** and **VIVADO_VER_REQ="2017.1"**.
 
   	FPGA_DEVELOP_MODE="sdx"  
-  	VIVADO_VER_REQ="2017.1"  
-  	XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"
+  	VIVADO_VER_REQ="2017.1"
+	
+	CN North:`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+
+    CN South:`XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
+
+    CN East:`XILINX_LIC_SETUP="2100@100.125.17.108:2100@100.125.17.109"`
 
 ##### Note
   *Only user root* has the right to use the Xilinx license file provided by Huawei.

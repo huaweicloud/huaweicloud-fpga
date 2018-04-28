@@ -24,9 +24,16 @@ After applying for an FPGA image, log in to a VM. The HDK is stored in the `huaw
 
 #### Step 1 Configure the license file of Vivado.
 
-Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set `XILINX_LIC_SETUP` to the IP address of the license server (`2100@100.125.1.240:2100@100.125.1.251` in this example).
+Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set `XILINX_LIC_SETUP` to the IP address of the license server.
 
+CN North:
 `XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+
+CN South:
+`XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
+
+CN East:
+`XILINX_LIC_SETUP="2100@100.125.17.108:2100@100.125.17.109"`
 
 
 ##### Note

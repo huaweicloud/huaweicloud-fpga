@@ -25,11 +25,16 @@ SDAccel HDK主要完成SDAccel开发流程的编译和仿真部分，需要在SD
 
 2.  设置EDA工具License。
 
-  用户打开“huaweicloud-fpga/fp1/”路径下的“setup.cfg”文件，将文件中XILINX_LIC_SETUP的值配置为License服务器的IP地址“2100@100.125.1.240:2100@100.125.1.251”。设置FPGA_DEVELOP_MODE="sdx"；VIVADO_VER_REQ="2017.1"
+  用户打开“huaweicloud-fpga/fp1/”路径下的“setup.cfg”文件，将文件中XILINX_LIC_SETUP的值配置为License服务器的IP地址。设置FPGA_DEVELOP_MODE="sdx"；VIVADO_VER_REQ="2017.1"
 
   	FPGA_DEVELOP_MODE="sdx"  
-  	VIVADO_VER_REQ="2017.1"  
-  	XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"。
+  	VIVADO_VER_REQ="2017.1" 
+	
+  	华北：`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+
+    华南：`XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
+
+    华东：`XILINX_LIC_SETUP="2100@100.125.17.108:2100@100.125.17.109"`
 
 ##### 说明:
   华为提供的Xilinx软件License *仅限root账号* 使用。

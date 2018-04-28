@@ -24,9 +24,16 @@ Example1示例主要实现用户逻辑的版本号读取、数据取反、加法
 
 #### 步骤1 设置Vivado工具License。
 
-用户打开huaweicloud-fpga/fp1/路径下的`setup.cfg`文件，将文件中`XILINX_LIC_SETUP`的值配置为License服务器的IP地址`2100@100.125.1.240:2100@100.125.1.251`。
+用户打开huaweicloud-fpga/fp1/路径下的`setup.cfg`文件，将文件中`XILINX_LIC_SETUP`的值配置为License服务器的IP地址。
 
+华北：
 `XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+
+华南：
+`XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
+
+华东：
+`XILINX_LIC_SETUP="2100@100.125.17.108:2100@100.125.17.109"`
 
 
 **说明：** 华为提供的Xilinx软件License仅限root账号使用。

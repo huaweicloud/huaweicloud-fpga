@@ -51,8 +51,13 @@ class Log(object):
             return
         try:
             self._get_log_file()
+            user = ' '.join(
+                [i for i in [os.getenv('OS_DOMAIN_NAME'),
+                             os.getenv('OS_USER_NAME'),
+                             os.getenv('OS_PROJECT_NAME')]
+                 if i is not None])
             print(time.strftime('[%Y-%m-%d-%H-%M-%S]'),
-                  'tenant [%s]' % os.getenv('OS_TENANT_ID'),
+                  'user [%s]' % user,
                   sys._getframe().f_back.f_code.co_name,
                   ', '.join(args),
                   file=self.log_file)

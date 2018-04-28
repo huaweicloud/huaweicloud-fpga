@@ -14,14 +14,12 @@
 #    under the License.
 
 import argparse
-import os
 import sys
 
 from oslo_utils import encodeutils
 
-from fisclient.common import utils
+from fisclient.common import config, utils
 from fisclient.fisshell import FisShell
-from fisclient.wrapshell import read_config_file, read_password
 
 
 def get_parser():
@@ -93,27 +91,14 @@ def main():
         print('fischeck arguments are OK')
         return
 
-    # read config file
-    read_config_file()
-
-    # read password
-    if args.password is None:
-        try:
-            read_password()
-        except (KeyboardInterrupt, EOFError):
-            exit()
-    else:
-        os.environ['OS_PASSWORD'] = args.password
-
-    # check password and config file
-    fis_shell = FisShell()
-    fis_shell.get_token()
+    # read config and password
     try:
-        fis_shell.client.fis.fpga_image_relation_list(
-            tenant_id=os.getenv('OS_TENANT_ID'),
-        )
-    except Exception as e:
-        utils.exit('Error: %s' % encodeutils.exception_to_unicode(e))
+        config.read_config_and_password(args.password)
+    except (KeyboardInterrupt, EOFError):
+        exit()
+
+    # check config and password
+    FisShell().check_config_and_password()
 
     # OK
     if not kwargs:

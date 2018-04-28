@@ -31,16 +31,16 @@ def _do_resp(resp):
 
 
 @utils.entry(OS_ENTRY_CMDSHELL)
-@utils.arg('--location', metavar='<LOCATION>', required=True,
-           help='The location in the obs bucket of fpga image')
-@utils.arg('--name', metavar='<NAME>', required=True,
-           help='The name of fpga image')
-@utils.arg('--metadata', metavar='<METADATA>', required=True,
-           help='The metadata of fpga image')
-@utils.arg('--description', metavar='<DESCRIPATION>',
-           help='The description of fpga image')
+@utils.arg('--location', metavar='<Bucket:Object>', required=True,
+           help='The location of FPGA image in the OBS')
+@utils.arg('--name', metavar='<String>', required=True,
+           help='The name of FPGA image')
+@utils.arg('--metadata', metavar='<Object>', required=True,
+           help='The metadata of FPGA image')
+@utils.arg('--description', metavar='<String>',
+           help='The description of FPGA image')
 def do_fpga_image_register(fc, lc, args):
-    """register the fpga image"""
+    """Register an FPGA image"""
     kwargs = OrderedDict()
     kwargs['location'] = args.location
     kwargs['name'] = args.name
@@ -74,12 +74,12 @@ def do_fpga_image_register(fc, lc, args):
 
 
 @utils.entry(OS_ENTRY_WRAPSHELL)
-@utils.arg('--fpga-image-id', metavar='<ID>', required=True,
-           help='The id of fpga image')
+@utils.arg('--fpga-image-id', metavar='<UUID>', required=True,
+           help='The ID of FPGA image')
 @utils.arg('--force', dest='force', action='store_true',
-           help='force delete')
+           help='Delete without user confirmation')
 def do_fpga_image_delete(fc, lc, args):
-    """delete the fpga image"""
+    """Delete an FPGA image"""
     kwargs = OrderedDict()
     kwargs['fpga_image_id'] = args.fpga_image_id
     utils.check_param(**kwargs)
@@ -109,12 +109,12 @@ def do_fpga_image_delete(fc, lc, args):
 
 
 @utils.entry(OS_ENTRY_WRAPSHELL)
-@utils.arg('--page', metavar='<PAGE>',
-           help='The page number of list')
-@utils.arg('--size', metavar='<SIZE>',
-           help='The page size of list')
+@utils.arg('--page', metavar='<Int>',
+           help='The page number for pagination query')
+@utils.arg('--size', metavar='<Int>',
+           help='The page size for pagination query')
 def do_fpga_image_list(fc, lc, args):
-    """list the fpga image of tenant"""
+    """Query FPGA images of a tenant"""
     kwargs = OrderedDict()
     if args.page is not None and args.size is not None:
         kwargs['page'] = args.page
@@ -147,12 +147,12 @@ def do_fpga_image_list(fc, lc, args):
 
 
 @utils.entry(OS_ENTRY_WRAPSHELL)
-@utils.arg('--fpga-image-id', metavar='<ID>', required=True,
-           help='The id of fpga image')
-@utils.arg('--image-id', metavar='<ID>', required=True,
-           help='The id of image')
+@utils.arg('--fpga-image-id', metavar='<UUID>', required=True,
+           help='The ID of FPGA image')
+@utils.arg('--image-id', metavar='<UUID>', required=True,
+           help='The ID of image')
 def do_fpga_image_relation_create(fc, lc, args):
-    """create the relation of fpga image and image"""
+    """Create the relation of an FPGA image and an ECS image"""
     kwargs = OrderedDict()
     kwargs['fpga_image_id'] = args.fpga_image_id
     kwargs['image_id'] = args.image_id
@@ -174,12 +174,12 @@ def do_fpga_image_relation_create(fc, lc, args):
 
 
 @utils.entry(OS_ENTRY_WRAPSHELL)
-@utils.arg('--fpga-image-id', metavar='<ID>', required=True,
-           help='The id of fpga image')
-@utils.arg('--image-id', metavar='<ID>', required=True,
-           help='The id of image')
+@utils.arg('--fpga-image-id', metavar='<UUID>', required=True,
+           help='The ID of FPGA image')
+@utils.arg('--image-id', metavar='<UUID>', required=True,
+           help='The ID of image')
 def do_fpga_image_relation_delete(fc, lc, args):
-    """delete the relation of fpga image and image"""
+    """Delete the relation of an FPGA image and an ECS image"""
     kwargs = OrderedDict()
     kwargs['fpga_image_id'] = args.fpga_image_id
     kwargs['image_id'] = args.image_id
@@ -201,16 +201,16 @@ def do_fpga_image_relation_delete(fc, lc, args):
 
 
 @utils.entry(OS_ENTRY_WRAPSHELL)
-@utils.arg('--fpga-image-id', metavar='<ID>',
-           help='The id of fpga image')
-@utils.arg('--image-id', metavar='<ID>',
-           help='The id of image')
-@utils.arg('--page', metavar='<PAGE>',
-           help='The page number of list')
-@utils.arg('--size', metavar='<SIZE>',
-           help='The page size of list')
+@utils.arg('--fpga-image-id', metavar='<UUID>',
+           help='The ID of FPGA image')
+@utils.arg('--image-id', metavar='<UUID>',
+           help='The ID of image')
+@utils.arg('--page', metavar='<Int>',
+           help='The page number for pagination query')
+@utils.arg('--size', metavar='<Int>',
+           help='The page size for pagination query')
 def do_fpga_image_relation_list(fc, lc, args):
-    """list the relation of tenant"""
+    """Query FPGA image relations visible to a tenant"""
     kwargs = OrderedDict()
     if args.image_id is not None:
         kwargs['image_id'] = args.image_id

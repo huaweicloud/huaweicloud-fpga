@@ -31,7 +31,6 @@ from oslo_utils import encodeutils
 import fisclient
 from fisclient.common import utils, log, exceptions
 
-SUPPORTED_VERSIONS = ['1']
 OS_ENTRY_CMDSHELL = 'CMDSHELL'
 OS_ENTRY_WRAPSHELL = 'WRAPSHELL'
 
@@ -39,16 +38,14 @@ OS_ENTRY_WRAPSHELL = 'WRAPSHELL'
 class FisShell(object):
 
     def __init__(self):
-        self.api_version = utils.env('OS_FIS_API_VERSION', default='1')
-        if self.api_version not in SUPPORTED_VERSIONS:
-            self.api_version = '1'
+        self.auth_url = utils.env('OS_AUTH_URL')
+        self.fis_url = utils.env('OS_FIS_URL')
+        self.project_name = utils.env('OS_PROJECT_NAME')
+        self.domain_name = utils.env('OS_DOMAIN_NAME')
+        self.user_name = utils.env('OS_USER_NAME')
+        self.password = utils.env('OS_PASSWORD')
 
-        self.auth_url = utils.env('OS_AUTH_URL', default='')
-        self.fis_url = utils.env('OS_FIS_URL', default='')
-        self.user_id = utils.env('OS_USER_ID', default='')
-        self.tenant_id = utils.env('OS_TENANT_ID', default='')
-        self.password = utils.env('OS_PASSWORD', default='')
-
+        self.api_version = '1'
         self.subcommands = {}
         self.base_parser = self.get_base_parser()
         self.sub_parser = self.get_subcommand_parser(self.api_version)
@@ -89,10 +86,11 @@ class FisShell(object):
                 subparser.add_argument(*args, **kwargs)
             subparser.set_defaults(func=callback)
 
+    @utils.entry(OS_ENTRY_WRAPSHELL)
     @utils.arg('command', metavar='<subcommand>', nargs='?',
                help='Display help for <subcommand>')
     def do_help(self, args, parser):
-        """display help about fis or one of its subcommands"""
+        """Display help about fis or one of its subcommands"""
         command = getattr(args, 'command', '')
 
         if command:
@@ -159,15 +157,15 @@ class FisShell(object):
         args.os_password = self.password
         args.os_project_domain_id = None
         args.os_project_domain_name = None
-        args.os_project_id = self.tenant_id
-        args.os_project_name = None
-        args.os_tenant_id = self.tenant_id
+        args.os_project_id = None
+        args.os_project_name = self.project_name
+        args.os_tenant_id = None
         args.os_tenant_name = None
         args.os_trust_id = None
         args.os_user_domain_id = None
-        args.os_user_domain_name = None
-        args.os_user_id = self.user_id
-        args.os_username = None
+        args.os_user_domain_name = self.domain_name
+        args.os_user_id = None
+        args.os_username = self.user_name or self.domain_name
 
     def get_versioned_client(self, api_version):
         args = Namespace()
@@ -179,12 +177,21 @@ class FisShell(object):
 
     def get_token(self):
         try:
-            self.client.http_client.session.get_token()
+            # get project_id by getting token
+            project_id = self.client.http_client.session.get_project_id()
+            os.environ['OS_TENANT_ID'] = project_id
             self.log_client.log('Success', 'Created. (HTTP 201)')
         except Exception as e:
             msg = encodeutils.exception_to_unicode(e)
             self.log_client.log('Error', re.sub('(\n)+|(\r\n)+', ', ', msg))
             utils.exit('Error: %s' % msg)
+
+    def check_config_and_password(self):
+        self.get_token()
+        try:
+            self.client.fis.fpga_image_relation_list()
+        except Exception as e:
+            exit('Error: %s' % encodeutils.exception_to_unicode(e))
 
     def main(self, argv):
         if not argv:

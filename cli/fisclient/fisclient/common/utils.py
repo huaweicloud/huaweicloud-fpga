@@ -20,6 +20,8 @@ import json
 import os
 import re
 import sys
+import threading
+import time
 
 import prettytable
 import six
@@ -188,3 +190,38 @@ def check_param(**kwargs):
         check_cond = _check_dict.get(key, lambda _: True)
         if not check_cond(value):
             raise exceptions.ParameterErrorException(key, value, 'malformed')
+
+
+class Timer(threading.Thread):
+    """countdown timer"""
+
+    def __init__(self, interval=3600):
+        super(Timer, self).__init__()
+        self.lock = threading.Lock()
+        self.interval = interval
+        self.count = interval
+        self.force_timeup = False
+        self.timeout = False
+
+    def reset(self):
+        self.lock.acquire()
+        self.count = self.interval
+        self.lock.release()
+
+    def countdown(self):
+        self.lock.acquire()
+        self.count -= 1
+        if self.count == 0 or self.force_timeup:
+            self.timeout = True
+            print('\ntime out, please press Enter to exit')
+        self.lock.release()
+
+    def timeup(self):
+        self.force_timeup = True
+
+    def run(self):
+        while True:
+            if self.timeout:
+                return
+            time.sleep(1)
+            self.countdown()

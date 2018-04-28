@@ -19,8 +19,8 @@ import sys
 
 from oslo_utils import encodeutils
 
+from fisclient.common import config
 from fisclient.fisshell import FisShell, OS_ENTRY_CMDSHELL
-from fisclient.wrapshell import read_config_file, read_password
 
 
 def get_parser():
@@ -41,17 +41,11 @@ def main():
     argv = [encodeutils.safe_decode(a) for a in sys.argv[1:]]
     args, left_argv = get_parser().parse_known_args(argv)
 
-    # read config file
-    read_config_file()
-
-    # read password
-    if args.password is None:
-        try:
-            read_password()
-        except (KeyboardInterrupt, EOFError):
-            exit()
-    else:
-        os.environ['OS_PASSWORD'] = args.password
+    # read config and password
+    try:
+        config.read_config_and_password(args.password)
+    except (KeyboardInterrupt, EOFError):
+        exit()
 
     # check password by getting token
     fis_shell = FisShell()

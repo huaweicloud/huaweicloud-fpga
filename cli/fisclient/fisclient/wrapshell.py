@@ -18,107 +18,16 @@ from __future__ import print_function
 import os
 import shlex
 import sys
-import threading
-import time
 
-from getpass import getpass
 from oslo_utils import encodeutils
-from urlparse import urlparse
 
-from fisclient.common import utils
+from fisclient.common import config, utils
 from fisclient.fisshell import FisShell, OS_ENTRY_WRAPSHELL
 
 
 # enable command line editing using GNU readline on Linux
 if sys.platform.startswith('linux'):
     import readline     # noqa: F401
-
-
-CONF_VARIABLE = ('OS_AUTH_URL', 'OS_FIS_URL', 'OS_USER_ID', 'OS_TENANT_ID')
-CLI_PROMPT = '[fisclient] > '
-FIS_CONFIG_FILE = '/etc/cfg.file'
-TIME_LIMIT = 3600
-timeout = False
-
-
-class Timer(threading.Thread):
-    """countdown timer"""
-
-    def __init__(self, interval=60):
-        super(Timer, self).__init__()
-        self.interval = interval
-        self.count = interval
-        self.lock = threading.Lock()
-        self.force_timeup = False
-
-    def reset(self):
-        self.lock.acquire()
-        self.count = self.interval
-        self.lock.release()
-
-    def countdown(self):
-        self.lock.acquire()
-        self.count -= 1
-        if self.count == 0 or self.force_timeup:
-            print('\ntime out, please press Enter to exit')
-            global timeout
-            timeout = True
-        self.lock.release()
-
-    def timeup(self):
-        self.force_timeup = True
-
-    def run(self):
-        while True:
-            if timeout:
-                return
-            time.sleep(1)
-            self.countdown()
-
-
-def read_config_file():
-    # open and read the config file
-    try:
-        config_file = open(FIS_CONFIG_FILE, 'r')
-    except IOError as e:
-        utils.exit('read config file failed: %s' %
-                   encodeutils.exception_to_unicode(e))
-    setting = {}
-    for n, line in enumerate(config_file, 1):
-        line = line.rstrip()
-        if line and not line.startswith('#'):
-            li = [s.strip() for s in line.split('=')]
-            if len(li) == 2 and li[0] in CONF_VARIABLE and li[1]:
-                setting[li[0]] = li[1]
-    config_file.close()
-
-    if len(setting) == len(CONF_VARIABLE):
-        for k, v in setting.items():
-            os.environ[k] = v
-    else:
-        missing = set(CONF_VARIABLE) - set(setting.keys())
-        utils.exit('missing config variable: %s' % ', '.join(missing))
-
-    # set api version, for future use
-    os.environ['OS_FIS_API_VERSION'] = '1'
-
-    # check url and set no_proxy
-    no_proxy = []
-    for url_env in ('OS_AUTH_URL', 'OS_FIS_URL'):
-        o = urlparse(os.getenv(url_env))
-        if o.scheme and o.netloc:
-            version = '/v3' if url_env == 'OS_AUTH_URL' else ''
-            os.environ[url_env] = '%s://%s%s' % (o.scheme, o.netloc, version)
-        else:
-            utils.exit('invalid %s: scheme or netloc is empty' % url_env)
-        no_proxy.append(o.netloc)
-    os.environ['no_proxy'] = ','.join(no_proxy)
-
-
-def read_password():
-    # read password
-    os_password = getpass("please input the password:\n")
-    os.environ["OS_PASSWORD"] = os_password
 
 
 def run_cmd(shell, argv):
@@ -136,8 +45,7 @@ def main():
 
     # read config and password
     try:
-        read_config_file()
-        read_password()
+        config.read_config_and_password()
     except (KeyboardInterrupt, EOFError):
         exit()
 
@@ -146,17 +54,17 @@ def main():
     fis_shell.get_token()
 
     # start timer
-    timer = Timer(TIME_LIMIT)
+    timer = utils.Timer()
     timer.daemon = True
     timer.start()
 
     while True:
         # read user's cmd
         try:
-            cmd = raw_input(CLI_PROMPT)
+            cmd = raw_input('[fisclient] > ')
         except (KeyboardInterrupt, EOFError):
             exit()
-        if timeout:
+        if timer.timeout:
             exit()
 
         # reset timer

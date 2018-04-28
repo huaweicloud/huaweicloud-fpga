@@ -4,22 +4,25 @@
 
 - [1 运行环境要求](#1-运行环境要求)
 - [2 安装](#2-安装)
-- [3 介绍](#3-介绍)
-  - [3.1 命令](#31-命令)
-  - [3.2 超时退出](#32-超时退出)
-  - [3.3 日志记录](#33-日志记录)
-- [4 使用场景](#4-使用场景)
-  - [4.1 查询](#41-查询)
-  - [4.2 删除](#42-删除)
-  - [4.3 关联、解关联和查询关联](#43-关联解关联和查询关联)
-- [5 fis命令详解](#5-fis命令详解)
-  - [5.1 查看帮助信息](#51-查看帮助信息)
-  - [5.2 删除子命令](#52-删除子命令)
-  - [5.3 查询子命令](#53-查询子命令)
-  - [5.4 关联子命令](#54-关联子命令)
-  - [5.5 解关联子命令](#55-解关联子命令)
-  - [5.6 查询关联子命令](#56-查询关联子命令)
+- [3 配置](#3-配置)
+- [4 介绍](#4-介绍)
+  - [4.1 命令](#41-命令)
+  - [4.2 超时退出](#42-超时退出)
+  - [4.3 日志记录](#43-日志记录)
+- [5 使用场景](#5-使用场景)
+  - [5.1 查询](#51-查询)
+  - [5.2 删除](#52-删除)
+  - [5.3 关联、解关联和查询关联](#53-关联解关联和查询关联)
+- [6 fis命令详解](#6-fis命令详解)
+  - [6.1 查看帮助信息](#61-查看帮助信息)
+  - [6.2 删除子命令](#62-删除子命令)
+  - [6.3 查询子命令](#63-查询子命令)
+  - [6.4 关联子命令](#64-关联子命令)
+  - [6.5 解关联子命令](#65-解关联子命令)
+  - [6.6 查询关联子命令](#66-查询关联子命令)
+- [7 区域特定参数](#7-区域特定参数)
 
+<a name="operating-environment-requirements"></a>
 # 1 运行环境要求 #
 **fisclient** 是在以下环境中开发和测试的：
 
@@ -28,37 +31,77 @@
 
 对于其他环境，不保证可用性。
 
+<a name="installation"></a>
 # 2 安装 #
 在安装之前，用户首先要确保已经以 **root** 身份登录弹性云服务器。
 
-## 步骤1 绑定弹性IP ##
-如何为弹性云服务器绑定弹性IP请参见[绑定弹性IP](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783971.html)。
+### 步骤1 绑定弹性IP ###
+- 如何为弹性云服务器绑定弹性IP请参见[为弹性云服务器申请和绑定弹性IP](http://support.huaweicloud.com/usermanual-vpc/zh-cn_topic_0013748738.html)。
 
-## 步骤2 下载源码包 ##
+### 步骤2 下载源码包 ###
 - 执行 **git clone https://github.com/Huawei/huaweicloud-fpga.git** 命令下载 **fisclient** 源码包（位于[FPGA开发套件](https://github.com/Huawei/huaweicloud-fpga)中）。
 
 > 下载 **fisclient** 源码包时，请确保当前目录下没有以 **huaweicloud-fpga** 命名的文件或目录。<br/>
 
+### 步骤3 安装fisclient ###
 - 执行 **cd huaweicloud-fpga/cli/fisclient** 命令切换到 **FPGA开发套件** 的 **huaweicloud-fpga/cli/fisclient** 目录。
 
-> 在 **fisclient** 工具的后续安装过程中，用户需要一直位于 **huaweicloud-fpga/cli/fisclient** 目录下。
+- 执行 **bash install.sh** 命令安装fisclient工具。
 
-## 步骤3 安装 ##
-- 执行 **python setup.py install** 命令安装fisclient工具。
+> 安装过程中会安装 **fisclient** 工具的依赖包，请耐心等待。
 
-> 安装过程中会下载并安装 **fisclient** 工具的依赖包，请耐心等待。
+<a name="configuration"></a>
+# 3 配置 #
+用户通过在Linux操作系统的shell中执行 **fisconfig** 命令进行 **fisclient** 工具的配置。在配置过程中，用户需要输入以下参数：
 
-- 执行 **cp cfg.file /etc** 命令将配置文件 **cfg.file** 复制到 **/etc** 目录下。如何配置 **/etc/cfg.file** 文件请参见[配置/etc/cfg.file文件](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085784016.html)。
+| 参数 | 说明 |
+| ---- | ---- |
+| **IAM Endpoint** | IAM服务的终端节点 |
+| **FIS Endpoint** | FIS服务的终端节点 |
+| **Project Name** | 项目名 |
+| **Account User Name** | 账号用户名 |
 
-# 3 介绍 #
-在完成[配置/etc/resolv.conf文件](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085784015.html)和[配置/etc/cfg.file文件](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085784016.html)后，用户通过在Linux操作系统的shell中执行 **fisclient** 命令进入fisclient登录界面，根据提示信息输入**华为云账户密码**，通过校验后进入fisclient命令行。在fisclient命令行中，用户可以执行相应的命令进行FPGA镜像的查询、删除、关联、解关联和查询关联等操作。
+### 步骤1 配置区域参数 ###
+**IAM Endpoint**，**FIS Endpoint** 和 **Project Name** 参数与用户所在的区域相关，用户可以通过查询[区域特定参数](#region-specific-parameters)获取这些参数。<br/>
+例如在 **华北-北京一** 中，这三个参数应按如下配置：
+
+| 参数 | 取值 |
+| ---- | ---- |
+| **IAM Endpoint** | iam.cn-north-1.myhuaweicloud.com |
+| **FIS Endpoint** | ecs.cn-north-1.myhuaweicloud.com |
+| **Project Name** | cn-north-1 |
+
+### 步骤2 配置用户参数 ###
+**Account User Name** 参数与用户在华为云上的登录方式相关。
+
+- 账号登录
+
+如果用户是以 **账号登录** 方式登录的，则将 **Account User Name** 参数配置为登录时使用的账号名。例如，若用户的账号名为 hwaccount，则 **Account User Name** 参数应配置为 **hwaccount**。
+
+![账号登录](data/account_login_cn.png)
+<br/>
+
+- IAM用户登录
+
+如果用户是以 **IAM用户登录** 方式登录的，则将 **Account User Name** 参数配置为登录时使用的账号名和用户名，格式为“账号名,用户名”（使用英文逗号分隔）。例如，若用户的账号名为 hwaccount，用户名为 hwuser，则 **Account User Name** 参数应配置为 **hwaccount,hwuser**。
+
+![子用户登录](data/iam_login_cn.png)
+
+> 如果用户在登录华为云时没有使用账号名/用户名，可参考[如何查看安全凭证](https://support.huaweicloud.com/usermanual-iam/zh-cn_topic_0079477133.html)来查询自身的账号名和用户名。
+
+### 步骤3 校验参数并保存 ###
+在完成参数配置后，按照提示信息输入用户的华为云密码。如果参数校验通过，**fisclient** 工具会将这些配置保存到 **~/.fiscfg** 文件中。
+
+<a name="introduction"></a>
+# 4 介绍 #
+在完成[配置fisclient工具](#configuration)后，用户通过在Linux操作系统的shell中执行 **fisclient** 命令进入fisclient登录界面，根据提示信息输入相应的 **华为云密码**，通过校验后进入fisclient命令行。在fisclient命令行中，用户可以执行相应的命令进行FPGA镜像的查询、删除、关联、解关联和查询关联等操作。
 <pre>
 [root@ ~]# fisclient
-please input the password:
-[fisclient] >
+Please input the password of "hc***user": 
+[fisclient] > 
 </pre>
 
-## 3.1 命令 ##
+## 4.1 命令 ##
 fisclient命令行支持两种命令：**fis** 和 **quit**。
 
 **fis** 命令用于FPGA镜像的管理。例如，删除FPGA镜像的命令如下：
@@ -69,7 +112,7 @@ Success: 204 No Content
 - **fpga-image-delete** 指定执行fis命令的删除子命令，即删除FPGA镜像。
 - **--fpga-image-id** 和 **--force** 是删除子命令的命令选项。 **--fpga-image-id** 选项指定待删除的FPGA镜像的ID，例如 **000000005d19\*\*\*\*\*\*\*\*30dc17ab02ab**。 **--force** 选项指定执行强制删除操作，即删除前不需要用户确认。
 
-fis命令的详细使用说明请参见[fis命令详解](#5-fis命令详解)。
+fis命令的详细使用说明请参见[fis命令详解](#fis-command-description)。
 
 **quit** 命令用于退出fisclient命令行。
 <pre>
@@ -77,7 +120,7 @@ fis命令的详细使用说明请参见[fis命令详解](#5-fis命令详解)。
 [root@ ~]#
 </pre>
 
-## 3.2 超时退出 ##
+## 4.2 超时退出 ##
 在fisclient命令行中，如果用户在 **3600** 秒内没有执行任何命令，fisclient将自动超时退出。
 <pre>
 [fisclient] > 
@@ -85,26 +128,27 @@ time out, please press Enter to exit
 [root@ ~]#
 </pre>
 
-## 3.3 日志记录 ##
+## 4.3 日志记录 ##
 fisclient会将用户对IAM和fis服务的访问记录保存在 **/var/log/fiscli/** 目录下的相应日志文件中。日志文件按照日期命名，例如 **2017_09_01.log** 文件中记录的是用户在2017年9月1日的访问记录。
 <br/>
-日志信息按照 **时间 租户 操作 [参数] 结果** 的格式进行记录。例如：
+日志信息按照 **时间 用户 操作 [参数] 结果** 的格式进行记录。例如：
 <pre>
-[2017-09-01-08-58-48] tenant [f26e********4e489b611af0910845b3] get_token Success, Created. (HTTP 201)
+[2017-09-01-08-58-48] user [hc***user cn-north-1] get_token Success, Created. (HTTP 201)
 </pre>
-上述信息表示在2017年9月1日8时58分48秒，租户f26e\*\*\*\*\*\*\*\*4e489b611af0910845b3身份校验通过，成功访问IAM服务获取token。
+上述信息表示在2017年9月1日8时58分48秒，用户hc\*\*\*user在cn-north-1区域身份校验通过，成功访问IAM服务获取token。
 <pre>
-[2017-09-01-15-34-40] tenant [f26e********4e489b611af0910845b3] do_fpga_image_list {"page": "1", "size": "8"}, Success, 200 OK
+[2017-09-01-15-34-40] user [hc***user cn-north-1] do_fpga_image_list {"page": "1", "size": "8"}, Success, 200 OK
 </pre>
-上述信息表示在2017年9月1日15时34分40秒，租户f26e\*\*\*\*\*\*\*\*4e489b611af0910845b3执行FPGA镜像查询操作，**page** 参数为1，**size** 为8，成功访问fis服务查询FPGA镜像信息。
+上述信息表示在2017年9月1日15时34分40秒，用户hc\*\*\*user在cn-north-1区域执行FPGA镜像查询操作，**page** 参数为1，**size** 为8，成功访问fis服务查询FPGA镜像信息。
 
-# 4 使用场景 #
-## 4.1 查询 ##
+<a name="application-scenario"></a>
+# 5 使用场景 #
+## 5.1 查询 ##
 在注册FPGA镜像后，用户可以使用fis查询子命令查询自身拥有的FPGA镜像的信息。在确认FPGA镜像的状态是 **active** 后，用户可以使用相应的FPGA镜像ID执行后续的加载、删除、关联等操作。<br/>
 
 > 注意，用户通过fis查询子命令只能查询到**自身拥有的FPGA镜像**的信息。对于购买的和共享的FPGA镜像，用户需要通过**fis查询关联子命令**来查询相应的信息。例如，用户可以参考[查询共享的FPGA镜像](#querying-the-shared-fpga-image)来了解如何查询FPGA共享镜像的信息。
 
-fis查询子命令以一个表格来呈现FPGA镜像信息，并且支持分页查询功能。更多详细信息请参见[查询子命令](#53-查询子命令)。
+fis查询子命令以一个表格来呈现FPGA镜像信息，并且支持分页查询功能。更多详细信息请参见[查询子命令](#query-subcommand)。
 
 ### 示例 ###
 执行以下fis命令查询FPGA镜像：
@@ -122,9 +166,9 @@ Success: 200 OK
 
 因此，用户可以使用该FPGA镜像ID进行后续的加载、删除、关联等操作。
 
-## 4.2 删除 ##
+## 5.2 删除 ##
 删除操作允许FPGA镜像的拥有者执行FPGA镜像的删除操作。当用户不再使用某个注册成功的FPGA镜像，并且希望从FPGA镜像管理模块中删除该FPGA镜像相关的记录时，可以使用fis删除子命令进行FPGA镜像删除操作。此外，如果用户在执行fis查询子命令时发现某个FPGA镜像的状态是 **error** 时，可以使用fis删除子命令删除该FPGA镜像记录。<br/>
-如果FPGA镜像已经和某个弹性云服务器镜像关联，FPGA镜像将被置于“保护”状态（FPGA镜像的 **protected** 属性被置为 **True**），不允许被删除。更多详细信息请参见[删除子命令](#52-删除子命令)。
+如果FPGA镜像已经和某个弹性云服务器镜像关联，FPGA镜像将被置于“保护”状态（FPGA镜像的 **protected** 属性被置为 **True**），不允许被删除。更多详细信息请参见[删除子命令](#deletion-subcommand)。
 
 ### 删除确认 ###
 默认情况下，fisclient为用户提供删除确认功能，在用户执行删除操作时会提示用户输入 **yes** 或 **no** 以确认是否进行删除操作。
@@ -168,20 +212,21 @@ Success: 204 No Content
 
 在上述命令中，**--fpga-image-id** 选项指定待删除的FPGA镜像的ID，**--force** 选项指定执行强制删除操作。如果命令的回显信息为 **Success: 204 No Content**，则表示fis删除子命令执行成功。然而，删除子命令执行成功并不代表FPGA镜像删除成功。用户需要执行查询操作，如果查找不到待删除的FPGA镜像的信息，则表示FPGA镜像删除成功。
 
-## 4.3 关联、解关联和查询关联 ##
+## 5.3 关联、解关联和查询关联 ##
 通过关联操作，用户可以将已成功注册的FPGA镜像提供给其他用户使用，包括如下两种场景：
 
 - 市场镜像场景：将已成功注册的FPGA镜像发布到云市场进行交易。
 - 共享镜像场景：将已成功注册的FPGA镜像共享给指定用户。
 
 通过查询关联操作，用户可以查询其他用户提供的FPGA镜像。通过解关联操作，用户可以取消FPGA镜像的共享。<br/>
-本小节以共享镜像场景为例来说明关联、解关联和查询关联操作的使用。这些子命令的更多详细信息请参见[关联子命令](#54-关联子命令)、[解关联子命令](#55-解关联子命令)和[查询关联子命令](#56-查询关联子命令)。
+本小节以共享镜像场景为例来说明关联、解关联和查询关联操作的使用。这些子命令的更多详细信息请参见[关联子命令](#association-subcommand)、[解关联子命令](#disassociation-subcommand)和[查询关联子命令](#association-query-subcommand)。
 
+<a name="sharing-the-fpga-image"></a>
 ### 共享FPGA镜像 ###
 当用户A想要将自己拥有的一个已注册成功的FPGA镜像共享给用户B时，需要完成以下步骤。以下假设用户A想将ID为 **4010b39c5d4\*\*\*\*\*\*\*\*\*\*f2cf8070c7e** 的 **通用型架构** 的FPGA镜像共享给用户B。 
 
 - 步骤1：从 **通用型架构** 的FPGA弹性云服务器创建一个ECS私有镜像，更多详细信息请参见[创建私有镜像](http://support.huaweicloud.com/usermanual-ims/zh-cn_topic_0030713180.html)。
-- 步骤2：获取创建的ECS私有镜像的镜像ID，更多详细信息请参见[获取镜像ID](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783972.html)。以下假设创建的ECS私有镜像的镜像ID为 **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**。
+- 步骤2：在创建的ECS私有镜像的详情页面中获取镜像ID。以下假设创建的ECS私有镜像的镜像ID为 **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**。
 - 步骤3：关联待共享的FPGA镜像和创建的ECS私有镜像。
 
 用户A需要登录到FPGA弹性云服务器中，运行 **fisclient** 程序，然后执行fis关联子命令来关联FPGA镜像和ECS私有镜像。
@@ -201,10 +246,10 @@ Success: 204 No Content
 
 - 步骤1：接受用户A共享的ECS镜像，更多详细信息请参见[接受共享镜像](http://support.huaweicloud.com/usermanual-ims/zh-cn_topic_0032042420.html)。
 - 步骤2：从用户A处获取共享的FPGA镜像的类型。在本示例中，FPGA镜像的类型是 **通用型架构**。
-- 步骤3：使用共享的ECS镜像创建一个与FPGA镜像相同类型的FPGA弹性云服务器，更多详细信息请参见[使用共享镜像创建FACS](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783967.html)。在本示例中，用户B需要创建一个 **通用型架构** 的FPGA弹性云服务器。
+- 步骤3：使用共享的ECS镜像创建一个与共享的FPGA镜像相同类型的FPGA弹性云服务器，更多详细信息请参见[购买并登录Linux弹性云服务器](https://support.huaweicloud.com/qs-ecs/zh-cn_topic_0092494193.html)。在本示例中，用户B需要创建一个 **通用型架构** 的FPGA弹性云服务器。
 > 确保创建的FPGA弹性云服务器的类型与共享的FPGA镜像的类型相同。
 
-- 步骤4：获取共享的ECS镜像的镜像ID，更多详细信息请参见[获取镜像ID](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783972.html)。在本示例中，共享的ECS镜像的镜像ID是 **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**。
+- 步骤4：在共享的ECS镜像的详情页面中获取镜像ID。在本示例中，共享的ECS镜像的镜像ID是 **404223ca-8\*\*b-4\*\*2-a\*\*e-d187\*\*\*\*61bc**。
 - 步骤5：使用共享的ECS镜像的镜像ID作为参数来查询用户A共享的FPGA镜像。
 
 用户B需要登录到使用用户A共享的ECS镜像创建的FPGA弹性云服务器中，运行 **fisclient** 程序，然后执行fis查询关联子命令（将 **image-id** 参数设置为共享的ECS镜像的镜像ID）来查询用户A共享的FPGA镜像。
@@ -219,6 +264,7 @@ Success: 200 OK
 </pre>
 上述回显信息表示用户A共享的FPGA镜像的ID是 **4010b39c5d4\*\*\*\*\*\*\*\*\*\*f2cf8070c7e**。用户B可以使用该FPGA镜像ID进行后续的加载操作。
 
+<a name="canceling-the-fpga-image-sharing"></a>
 ### 取消FPGA镜像共享 ###
 当用户A想取消给用户B的FPGA镜像共享时，需要完成以下步骤。
 
@@ -232,8 +278,9 @@ Success: 204 No Content
 </pre>
 如果命令的回显信息为 **Success: 204 No Content**，则表示解关联操作执行成功。
 
-# 5 fis命令详解 #
-## 5.1 查看帮助信息 ##
+<a name="fis-command-description"></a>
+# 6 fis命令详解 #
+## 6.1 查看帮助信息 ##
 在fisclient命令行中，执行 **fis help** 命令查看fis命令的帮助信息，执行 **fis help subcommand** 命令查看fis子命令的帮助信息。
 <pre>
 [fisclient] > fis help 
@@ -243,15 +290,15 @@ Command-line interface to the fis API.
 
 positional arguments: 
   &lt;subcommand&gt; 
-    fpga-image-delete   delete the fpga image
-    fpga-image-list     list the fpga image of tenant
+    fpga-image-delete   Delete an FPGA image
+    fpga-image-list     Query FPGA images of a tenant
     fpga-image-relation-create
-                        create the relation of fpga image and image
+                        Create the relation of an FPGA image and an ECS image
     fpga-image-relation-delete
-                        delete the relation of fpga image and image
+                        Delete the relation of an FPGA image and an ECS image
     fpga-image-relation-list
-                        list the relation of tenant
-    help                display help about fis or one of its subcommands
+                        Query FPGA image relations visible to a tenant
+    help                Display help about fis or one of its subcommands
 
 See "fis help COMMAND" for help on a specific command.
 </pre>
@@ -275,11 +322,11 @@ fis命令包含如下6个子命令。
 > fis命令还包含一个注册子命令 **fpga-image-register**，在Linux操作系统的shell中调用，用于注册FPGA镜像。该子命令在用户执行 **AEI_Register.sh** 脚本时将自动调用。用户不需要单独执行该命令实现注册FPGA镜像。
 
 <a name="deletion-subcommand"></a>
-## 5.2 删除子命令 ##
+## 6.2 删除子命令 ##
 删除子命令为用户提供删除FPGA镜像管理模块中的相应FPGA镜像的功能。在成功执行删除操作后，针对被删除的FPGA镜像的加载、关联、删除等操作都将失败。
 
 ### 命令格式 ###
-**fis fpga-image-delete --fpga-image-id** *&lt;ID&gt;* **[--force]**
+**fis fpga-image-delete --fpga-image-id** *&lt;UUID&gt;* **[--force]**
 
 ### 参数说明 ###
 | 参数 | 说明 | 取值 | 备注 |
@@ -324,11 +371,11 @@ Success: 204 No Content
 </pre>
 
 <a name="query-subcommand"></a>
-## 5.3 查询子命令 ##
+## 6.3 查询子命令 ##
 查询子命令以表格的形式呈现租户拥有的FPGA镜像的信息。同时，查询子命令提供分页查询功能。
 
 ### 命令格式 ###
-**fis fpga-image-list** **[--page** *&lt;PAGE&gt;***] [--size** *&lt;SIZE&gt;***]**
+**fis fpga-image-list** **[--page** *&lt;Int&gt;***] [--size** *&lt;Int&gt;***]**
 
 ### 参数说明 ###
 | 参数 | 说明 | 取值 | 备注 |
@@ -390,17 +437,17 @@ Success: 200 OK
 </pre>
 
 <a name="association-subcommand"></a>
-## 5.4 关联子命令 ##
+## 6.4 关联子命令 ##
 关联子命令为用户提供关联FPGA镜像与弹性云服务器镜像的功能。在建立关联关系后，FPGA镜像会被置于“保护”状态，无法被删除。
 
 ### 命令格式 ###
-**fis fpga-image-relation-create --fpga-image-id** *&lt;ID&gt;* **--image-id** *&lt;ID&gt;*
+**fis fpga-image-relation-create --fpga-image-id** *&lt;UUID&gt;* **--image-id** *&lt;UUID&gt;*
  
 ### 参数说明 ###
 | 参数 | 说明 | 取值 | 备注 |
 | --------- | ----------- | ----- | ------- |
 | **--fpga-image-id** | （必选）待关联的FPGA镜像的ID。 | **fpga-image-id**参数是由英文小写字母a-f，数字0-9组成的32位字符串。 | 在查询子命令执行成功后，用户可以在回显信息中查找到相应的FPGA镜像ID。 |
-| **--image-id** | （必选）待关联的弹性云服务器镜像的ID。 | **image-id**参数遵循IMS（镜像服务）的镜像ID限制。 | 如何获取 **image-id** 参数请参见[获取镜像ID](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783972.html) |
+| **--image-id** | （必选）待关联的弹性云服务器镜像的ID。 | **image-id**参数遵循IMS（镜像服务）的镜像ID限制。 | 用户可以在镜像的详情页面中获取镜像ID。 |
 
 > FPGA镜像管理模块在进行关联操作时，要求弹性云服务器镜像的类型是 **private**，即私有镜像。而私有镜像在发布到云市场或进行共享操作后，镜像类型会分别变为 **market** 和 **shared**，从而无法进行关联操作。用户需要将已发布到云市场的镜像下架，或将已共享的镜像取消共享，才能进行关联操作。
 
@@ -442,11 +489,11 @@ Success: 204 No Content
 </pre>
 
 <a name="disassociation-subcommand"></a>
-## 5.5 解关联子命令 ##
+## 6.5 解关联子命令 ##
 解关联子命令为用户提供删除FPGA镜像与弹性云服务器镜像之间的关联关系的功能。在删除关联关系后，如果FPGA镜像没有再与其他的弹性云服务器镜像关联，则不再处于“保护”状态，允许进行删除操作。
 
 ### 命令格式 ###
-**fis fpga-image-relation-delete --fpga-image-id** *&lt;ID&gt;* **--image-id** *&lt;ID&gt;*
+**fis fpga-image-relation-delete --fpga-image-id** *&lt;UUID&gt;* **--image-id** *&lt;UUID&gt;*
 
 ### 参数说明 ###
 | 参数 | 说明 | 取值 | 备注 |
@@ -488,17 +535,17 @@ Success: 204 No Content
 </pre>
 
 <a name="association-query-subcommand"></a>
-## 5.6 查询关联子命令 ##
+## 6.6 查询关联子命令 ##
 查询关联子命令以表格的形式呈现租户可见的FPGA镜像与弹性云服务器镜像的关联关系信息。同时，查询关联子命令提供分页查询功能。
 
 ### 命令格式 ###
-**fis fpga-image-relation-list [--fpga-image-id** *&lt;ID&gt;***]** **[--image-id** *&lt;ID&gt;***]** **[--page** *&lt;PAGE&gt;***] [--size** *&lt;SIZE&gt;***]**
+**fis fpga-image-relation-list [--fpga-image-id** *&lt;UUID&gt;***]** **[--image-id** *&lt;UUID&gt;***]** **[--page** *&lt;Int&gt;***] [--size** *&lt;Int&gt;***]**
 
 ### 参数说明 ###
 | 参数 | 说明 | 取值 | 备注 |
 | --------- | ----------- | ----- | ------- |
 | **--fpga-image-id** | （可选）待查询关联的FPGA镜像的ID。 | **fpga-image-id**参数是由英文小写字母a-f，数字0-9组成的32位字符串。 | 在查询子命令执行成功后，用户可以在回显信息中查找到相应的FPGA镜像ID。 |
-| **--image-id** | （可选）待查询关联的弹性云服务器镜像的ID。 | **image-id**参数遵循IMS（镜像服务）的镜像ID限制。 | 如何获取 **image-id** 参数请参见[获取镜像ID](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0085783972.html) |
+| **--image-id** | （可选）待查询关联的弹性云服务器镜像的ID。 | **image-id**参数遵循IMS（镜像服务）的镜像ID限制。 | 用户可以在镜像的详情页面中获取镜像ID。 |
 | **--page** | （可选）分页查询时的页编号。 | **page**参数是[1,65535)范围内的十进制整数，并且不能包含+号。 | 由用户自行指定。 |
 | **--size** | （可选）分页查询时的页大小。 | **size**参数是[1,100]范围内的十进制整数，并且不能包含+号。 | 由用户自行指定。 |
 
@@ -557,3 +604,29 @@ Success: 200 OK
 | 404223ca-8**b-4**2-a**e-d187****61bc | 00000000********015e97f6408d01cd | OCL_001  | active | True      | 43   | 2017-09-18 02:37:31 | mmult_01    | {"manifest_format_version": "1", "pci_vendor_id": "0x19e5", "pci_device_id": "0xD512", "pci_subsystem_id": "-", "pci_subsystem_vendor_id": "-", "shell_type": "0x121", "shell_version": "0x0001", "hdk_version": "SDx 2017.1", "date": "2017/09/17_18:37:12"}                                                                                                                             |         |
 +--------------------------------------+----------------------------------+----------+--------+-----------+------+---------------------+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------+
 </pre>
+
+
+<a name="region-specific-parameters"></a>
+# 7 区域特定参数 #
+
+| **华北-北京一** ||
+| ------- | ----------- |
+| **IAM Endpoint** | iam.cn-north-1.myhuaweicloud.com |
+| **FIS Endpoint** | ecs.cn-north-1.myhuaweicloud.com |
+| **Project Name** | cn-north-1 |
+
+<br/>
+
+| **华南-广州** ||
+| ------- | ----------- |
+| **IAM Endpoint** | iam.cn-south-1.myhuaweicloud.com |
+| **FIS Endpoint** | ecs.cn-south-1.myhuaweicloud.com |
+| **Project Name** | cn-south-1 |
+
+<br/>
+
+| **华东-上海二** ||
+| ------- | ----------- |
+| **IAM Endpoint** | iam.cn-east-2.myhuaweicloud.com |
+| **FIS Endpoint** | ecs.cn-east-2.myhuaweicloud.com |
+| **Project Name** | cn-east-2 |

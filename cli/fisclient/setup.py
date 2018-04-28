@@ -12,8 +12,11 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-
 from setuptools import setup, find_packages
+
+long_description = 'fisclient is a command-line client for \
+FIS (FPGA Image Service) that brings the command set for \
+FPGA image management together in a single shell'''
 
 requires = [
     'keystoneauth1==2.18.0',
@@ -40,21 +43,33 @@ requires = [
     'pytz==2017.2',
     'prettytable==0.7.2',
     'six==1.9.0',
-    'pbr==1.8.1'
+    'pbr==1.8.1',
 ]
 
 setup(
     name='fisclient',
-    version='1.0.2',
+    version='1.2.0',
     description='FIS API Client',
+    long_description=long_description,
     license='Apache License, Version 2.0',
-    packages=find_packages(),
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Console',
+        'Intended Audience :: FPGA Developers',
+        'License :: OSI Approved :: Apache Software License',
+        'Operating System :: POSIX :: Linux',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7'
+    ],
+    packages=find_packages(exclude=['data']),
+    zip_safe=True,
     install_requires=requires,
     entry_points={
         'console_scripts': [
             'fisclient=fisclient.wrapshell:main',
             'fis=fisclient.cmdshell:main',
-            'fischeck=fisclient.fischeck:main'
+            'fischeck=fisclient.fischeck:main',
+            'fisconfig=fisclient.fisconfig:main'
         ]
     }
 )

@@ -1,5 +1,5 @@
-#    Copyright 2012 OpenStack Foundation
-#    Copyright 2017 Huawei Technologies Co., Ltd.
+# Copyright 2018 Huawei Technologies Co., Ltd.
+# All Rights Reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
@@ -12,12 +12,3 @@
 #    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 #    License for the specific language governing permissions and limitations
 #    under the License.
-
-# NOTE(bcwaldon): this try/except block is needed to run setup.py due to
-# its need to import local code before installing required dependencies
-try:
-    import fisclient.client
-    Client = fisclient.client.Client
-except ImportError:
-    import warnings
-    warnings.warn("Could not import fisclient.client", ImportWarning)

@@ -1,4 +1,4 @@
-# Copyright 2017 Huawei Technologies Co., Ltd.
+# Copyright 2018 Huawei Technologies Co., Ltd.
 # All Rights Reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -14,66 +14,53 @@
 #    under the License.
 
 import argparse
+import os
 import sys
 
-from oslo_utils import encodeutils
-
-from fisclient.common import config, utils
-from fisclient.fisshell import FisShell
+import config
+import encode
+import rest
+import utils
 
 
 def get_parser():
     parser = argparse.ArgumentParser(
         prog='fischeck',
         add_help=False)
-    parser.add_argument('--password',
-                        dest='password',
-                        action='store')
-    parser.add_argument('--args-only',
-                        dest='args_only',
-                        action='store_true')
-    parser.add_argument('--location',
-                        dest='location',
-                        action='store')
     parser.add_argument('--name',
-                        dest='name',
                         action='store')
     parser.add_argument('--metadata',
-                        dest='metadata',
                         action='store')
     parser.add_argument('--description',
-                        dest='description',
+                        action='store')
+    parser.add_argument('--file-name',
                         action='store')
     parser.add_argument('--fpga-image-id',
-                        dest='fpga_image_id',
                         action='store')
     parser.add_argument('--image-id',
-                        dest='image_id',
                         action='store')
     parser.add_argument('--page',
-                        dest='page',
                         action='store')
     parser.add_argument('--size',
-                        dest='size',
                         action='store')
     return parser
 
 
 def main():
     # parse input option
-    argv = [encodeutils.safe_decode(a) for a in sys.argv[1:]]
+    argv = [encode.convert_to_unicode(a) for a in sys.argv[1:]]
     args = get_parser().parse_args(argv)
 
     # read and check args
     kwargs = {}
-    if args.location is not None:
-        kwargs['location'] = args.location
     if args.name is not None:
         kwargs['name'] = args.name
     if args.metadata is not None:
         kwargs['metadata'] = args.metadata
     if args.description is not None:
         kwargs['description'] = args.description
+    if args.file_name is not None:
+        kwargs['file_name'] = args.file_name
     if args.fpga_image_id is not None:
         kwargs['fpga_image_id'] = args.fpga_image_id
     if args.image_id is not None:
@@ -85,26 +72,36 @@ def main():
     try:
         utils.check_param(**kwargs)
     except Exception as e:
-        utils.exit('Error: %s' % encodeutils.exception_to_unicode(e), 2)
+        utils.exit('Error: %s' % encode.exception_to_unicode(e))
 
-    if args.args_only:
-        print('fischeck arguments are OK')
-        return
+    # read and check config file
+    config.read_config_and_verify()
+    access_key = os.getenv('OS_ACCESS_KEY')
+    secret_key = os.getenv('OS_SECRET_KEY')
+    region_id = os.getenv('OS_REGION_ID')
+    bucket_name = os.getenv('OS_BUCKET_NAME')
+    domain_id = os.getenv('OS_DOMAIN_ID')
+    project_id = os.getenv('OS_PROJECT_ID')
+    obs_endpoint = os.getenv('OS_OBS_ENDPOINT')
+    fis_endpoint = os.getenv('OS_FIS_ENDPOINT')
 
-    # read config and password
     try:
-        config.read_config_and_password(args.password)
-    except (KeyboardInterrupt, EOFError):
-        exit()
+        # check bucket
+        utils._check_bucket_acl_location(bucket_name, access_key, secret_key,
+                                         obs_endpoint, region_id, domain_id)
+        # check fis
+        rest.fpga_image_relation_list(access_key, secret_key, project_id,
+                                      region_id, fis_endpoint)
+    except Exception as e:
+        utils.exit('Error: %s' % encode.exception_to_unicode(e))
 
-    # check config and password
-    FisShell().check_config_and_password()
-
-    # OK
-    if not kwargs:
-        print('fischeck password and config file are OK')
+    if kwargs:
+        print('fis argument(s) and config file are OK')
     else:
-        print('fischeck arguments, password and config file are OK')
+        print('fis config file is OK')
+
+    # check intranet dns
+    config.check_intranet_dns(region_id)
 
 
 if __name__ == '__main__':

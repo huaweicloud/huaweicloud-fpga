@@ -8,7 +8,7 @@
 2. [Compiling and Installing the Tool](#tool_setup)
 3. [Using the Tool](#tool_usage)
 4. [Example: Loading an FPGA Image](#load_fpga)
-5. [Uninstalling the Tool](#tool_unistall)
+5. [Uninstalling the Tool](#tool_uninstall)
 
 <a name="about_tool"></a>
 ## FPGA Tools
@@ -84,15 +84,15 @@ After the compilation and installation, you can use the FPGA tool to query the d
 
 [Loading an FPGA Image](./docs/load_an_fpga_image.md)
 
-<a name="tool_unistall"></a>
+<a name="tool_uninstall"></a>
 ## Uninstalling the Tool
 Take the following steps:
 
 Step 1: Before the uninstallation, check that the root permission is obtained.
 
-Step 2: Go to [**fp1**](../../) and run the `bash fpga_tool_unistall.sh` command to uninstall the tool.
+Step 2: Go to [**fp1**](../../) and run the `bash fpga_tool_uninstall.sh` command to uninstall the tool.
 
-	linux-htucef:/home/huaweicloud-fpga/fp1 # bash fpga_tool_unistall.sh 
+	linux-htucef:/home/huaweicloud-fpga/fp1 # bash fpga_tool_uninstall.sh 
 	Entering /home/huaweicloud-fpga/fp1/tools/fpga_tool/build/../src
 	rm -rf /home/huaweicloud-fpga/fp1/tools/fpga_tool/src/../dist/tool_obj 
 	rm -f  /home/huaweicloud-fpga/fp1/tools/fpga_tool/src/../dist/libfpgamgmt.so

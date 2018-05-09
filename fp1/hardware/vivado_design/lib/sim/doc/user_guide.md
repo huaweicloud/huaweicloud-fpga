@@ -1163,11 +1163,14 @@ For details, see [Simulation Platform Quick Start Guide](./quick_start.md).
 
 This example implements user logic version reading, data inversion, and addition functions. You can refer to existing Huawei design components and use this example to learn about the development, simulation, verification, and test processes on the cloud.
 
-Example 2 consists of two test cases: `sv_demo_001` and `sv_demo_002`. The test case `sv_demo_001` covers the read and write access of user DDRs, while the `sv_demo_002` processes the user DMA data stream.
+Example 2 consists of three test cases: `sv_demo_001`,`sv_demo_002` and `sv_demo_003`. The test case `sv_demo_001` covers the read and write access of user DDRs, while the `sv_demo_002` and `sv_demo_003` processes the user DMA data stream.
 
 - `sv_demo_001`: It reads and writes the three external DDRs of the `ULs` (write before read). The write data is a `32bit` random number, and the write address is random (covering the rank 0 and rank 1 of DDRs). If the read data is inconsistent with the write data, an error will be reported. If consistent, **PASS** will be displayed.
 
 - `sv_demo_002`: The incentive sends BDs to `UL` through the CPU model. After receiving BDs, the `UL` initiates a read data request to the CPU model, and then the CPU model returns the data to the `UL` after receiving the request. After receiving packets, the `UL` writes the packets into the CPU model. Then, the CPU model compares the received data with the expected result. If the result is inconsistent, an error will be reported. If consistent, **PASS** will be displayed.
+
+- `sv_demo_003`: The completed function is the same as `sv_demo_002`, except that the stimulus and expected data for `sv_demo_003` is configured in `test.cfg` via a file.
+
 
 <a id="sec-5-2-2" name="sec-5-2-2"></a>
 

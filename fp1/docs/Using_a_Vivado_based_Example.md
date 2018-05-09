@@ -27,7 +27,7 @@ After applying for an FPGA image, log in to a VM. The HDK is stored in the `huaw
 Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set `XILINX_LIC_SETUP` to the IP address of the license server.
 
 CN North:
-`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.245"`
 
 CN South:
 `XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
@@ -68,7 +68,7 @@ Generate a .dcp file, register and load the image, (For details, see "Registerin
 
 `cd huaweicloud-fpga/fp1/software/app/dpdk_app/`  
 `chmod +x build_dpdk_app.sh`  
-`sh build_dpdk_app.sh`  
+`source build_dpdk_app.sh`  
 
 After the compilation is successful, an executable binary file is generated in the `bin/` directory.
 
@@ -172,11 +172,19 @@ After applying for an FPGA image, log in to a VM. The HDK is stored in the `huaw
 
 #### Step 1 Configure the license file of EDA.
 
-Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set `XILINX_LIC_SETUP` to the IP address of the license server (`2100@100.125.1.240:2100@100.125.1.251` in this example).
+Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set `XILINX_LIC_SETUP` to the IP address of the license server.
 
-`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+CN North:
+`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.245"`
+
+CN South:
+`XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
+
+CN East:
+`XILINX_LIC_SETUP="2100@100.125.17.108:2100@100.125.17.109"`
 
 ##### Note
+
 Only user **root** has the right to use the Xilinx license file provided by Huawei.
 
 #### Step 2 Configure the development environment.
@@ -208,7 +216,7 @@ Only user **root** has the right to use the Xilinx license file provided by Huaw
 
 `cd huaweicloud-fpga/fp1/software/app/dpdk_app/`  
 `chmod +x build_dpdk_app.sh`  
-`sh build_dpdk_app.sh`  
+`source build_dpdk_app.sh`  
 
 After the compilation is successful, an executable binary file is generated in the `bin/` directory.
 
@@ -316,11 +324,19 @@ After applying for an FPGA image, log in to a VM. The HDK is stored in the `huaw
 
 #### Step 1 Configure the license file of EDA.
 
-Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set **XILINX_LIC_SETUP** to the IP address of the license server (`2100@100.125.1.240:2100@100.125.1.251` in this example).
+Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set `XILINX_LIC_SETUP` to the IP address of the license server.
 
-`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+CN North:
+`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.245"`
+
+CN South:
+`XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
+
+CN East:
+`XILINX_LIC_SETUP="2100@100.125.17.108:2100@100.125.17.109"`
 
 ##### Note
+
 Only user **root** has the right to use the Xilinx license file provided by Huawei.
 
 #### Step 2 Configure the development environment.
@@ -354,7 +370,7 @@ Run the following commands to configure the hardware development environment:
 
 `cd huaweicloud-fpga/fp1/software/app/dpdk_app/`  
 `chmod +x build_dpdk_app.sh`  
-`sh build_dpdk_app.sh`  
+`source build_dpdk_app.sh`  
 
 After the compilation is successful, an executable binary file is generated in the `bin/` directory.
 

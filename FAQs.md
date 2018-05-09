@@ -99,6 +99,13 @@ Xilinx的FPGA设计工具Vivado，使用时会检查license，并在
 
 **处理方式**：这些文件仅在Vivado软件检查license时使用，并且每次使用都会重新生成，所以建议用户每次使用Vivado工具后，手动或编写脚本删除这3个目录下的所有文件，删除这些文件不会对下一次使用Vivado软件造成影响。
 
+**Q：如何设计出高性能高质量的代码？**
+
+高性能架构FPGA开发请参考https://www.xilinx.com/support/documentation/sw_manuals/xilinx2018_1/ug949-vivado-design-methodology.pdf
+
+通用型架构FPGA开发请参考https://www.xilinx.com/support/documentation/sw_manuals/xilinx2017_4/ug1207-sdaccel-optimization-guide.pdf
+
+
 ## 高危操作
 
 **Q：在OCL SDK操作中执行xbsk test过程中按ctrl+c按键，再次执行xbsk test时会失败**

@@ -24,27 +24,27 @@
 
 <a name="sec_1_2"></a>
 ## 1.2 使用前准备
-在使用FPGA开发套件前，需要完成开发套件的下载、配置文件的修改以及FPGA加速云服务器镜像的配置。套件中包含硬件开发套件、应用开发套件、FPGA镜像管理工具和FPGA镜像加载工具。硬件开发套件存放在[hardware](./fp1/hardware)目录下，包括vivado和SDAccel两种开发工具套件；应用开发套件存放在[software](./fp1/software)目录下，包括实例运行时所需要的运行环境配置文件、驱动、工具以及相关应用程序。
+在使用FPGA开发套件前，必须要执行1.2.1~1.2.3步骤，完成开发套件的获取以及工具的安装及配置等。套件中包含硬件开发套件、应用开发套件、FPGA镜像管理工具和FPGA镜像加载工具。硬件开发套件存放在[hardware](./fp1/hardware)目录下，包括vivado和SDAccel两种开发工具套件；应用开发套件存放在[software](./fp1/software)目录下，包括实例运行时所需要的运行环境配置文件、驱动、工具以及相关应用程序。
 
 <a name="sec_1_2_1"></a>
 ### 1.2.1 开发套件的下载
 
 + 对于https连接执行`git clone https://github.com/Huawei/huaweicloud-fpga.git`命令将开发套件下载到您的本地服务器。
 
-+ 对于ssh连接执行`git@github.com:Huawei/huaweicloud-fpga.git`命令将开发套件下载到您的本地服务器。
++ 对于ssh连接执行`git clone git@github.com:Huawei/huaweicloud-fpga.git`命令将开发套件下载到您的本地服务器。
 
+> 当在弹性云服务器中下载开发套件时，请确保弹性云服务器已经绑定了弹性IP。<br/>
 > 开发套件的下载依赖git工具，请确保在执行下载操作前已安装此软件。
 
 <a name="sec_1_2_2"></a>
-### 1.2.2 修改配置文件并配置镜像
-#### 步骤1 FPGA镜像管理工具的编译和安装
+### 1.2.2 配置内网DNS
+在配置内网DNS后，弹性云服务器可以通过虚拟私有云的内网访问相关云服务，能够为用户提供更稳定、可靠的网络环境。更多详细信息请参见[FACS用户指南](https://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0069154765.html)的“配置内网DNS”章节。
+
+<a name="sec_1_2_3"></a>
+### 1.2.3 FPGA镜像管理工具的安装和配置
 FPGA镜像管理工具fisclient是一款跨平台命令行工具，用于FPGA镜像管理，而镜像管理是进行FPGA镜像加载前的必须步骤。通过fisclient，用户可以实现FPGA镜像的删除、查询等操作。此外，fisclient还提供了FPGA镜像（AEI，Accelerated Engine Image）和弹性云服务器镜像之间关联关系的管理功能。用户在创建AEI和弹性云服务器镜像之间的关联关系后，可以将弹性云服务器镜像发布到云市场或共享给其他用户，从而实现将AEI发布到云市场或共享给其他用户。
 
-管理工具的编译和安装请参见[fisclient README](./cli/fisclient/README_CN.md)安装部分。
-
-#### 步骤2 修改配置文件并配置加速服务器镜像
-在注册FPGA镜像和查询FPGA镜像前，需要完成对配置文件的修改以及FPGA加速服务器镜像的配置，配置的具体方法请参见 
-http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0069154765.html
+> 管理工具的安装和配置请参见[fisclient README](./cli/fisclient/README_CN.md)安装和配置部分。
 
 <a name="sec_2"></a>
 # 2 高性能架构FPGA开发指南
@@ -73,9 +73,10 @@ http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0069154765.html
 [注册FPGA镜像](./fp1/docs/Register_an_FPGA_image_for_a_DPDK_project_cn.md)
 
 #### 步骤2 查询FPGA镜像
-在弹性云服务器中执行`fisclient`命令进入FPGA镜像管理工具fisclient登录界面，根据提示信息输入华为云账户密码，通过校验后进入fisclient命令行。在fisclient命令行中，用户可以执行相应的命令进行FPGA镜像的查询、删除和关联等操作。
+用户可以执行`fis fpga-image-list`命令查询FPGA镜像的信息。在确认FPGA镜像的状态是 **active** 后，用户可以使用相应的FPGA镜像ID执行加载操作。
 
-如何使用工具进行FPGA镜像查询请参见[fisclient README](./cli/fisclient/README_CN.md)查询部分。
+> 更多信息请参见[fisclient README](./cli/fisclient/README_CN.md)查询部分。
+
 <a name="sec_2_2"></a>
 ## 2.2 高性能架构软件开发流程
 如果用户已完成硬件开发，注册了FPGA镜像，则可以按照本章内容完成FPGA用户应用的开发。

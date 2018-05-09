@@ -20,10 +20,7 @@
 <li><a href="#sec-3-3">3.3. <b>schedule_task.sh Operation Instructions</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-4">3.4. <b>AEI_Register.cfg Configuration Description</b></a></li>
-</ul>
-<ul>
-<li><a href="#sec-3-5">3.5. <b>AEI_Register.sh Configuration Description</b></a></li>
+<li><a href="#sec-3-5">3.4. <b>AEI_Register.sh Configuration Description</b></a></li>
 </ul>
 </li>
 <li><a href="#sec-4">4. <b>Others</b></a></li>
@@ -45,7 +42,6 @@ The structure of the **prj** folder of **usr_template** is as follows:
   - README.md (this document)
   - [schedule_task.sh](#sec-2-4)
   - [usr_prj_cfg](#sec-2-5)
-  - [AEI_Register.cfg](#sec-2-6)
   - [AEI_Register.sh](#sec-2-7)
 
 <a id="sec-2" name="sec-2"></a>
@@ -76,11 +72,6 @@ The structure of the **prj** folder of **usr_template** is as follows:
 
 - usr_prj_cfg  
   This file is used to configure user-defined information about the usr_template project. For details, see [usr_prj_cfg Operation Instructions](#sec-3-1).
-
-<a id="sec-2-6" name="sec-2-6"></a>
-
-- AEI_Register.cfg  
-   This file is used to configure the upload mode of the bit file generated during compilation and the name of the OBS bucket. For details, see [AEI_Register.cfg Operation Instructions](#sec-3-4).
 
 <a id="sec-2-7" name="sec-2-7"></a>
 
@@ -155,8 +146,7 @@ The `build.sh` script is used to build a project. The script supports both one-c
 ```
 
   This command is used to complete the **synthesis policy** and **placing and routing** in one-click mode. The whole project runs PASS `only if all steps are implemented successfully`. 
- `Notes: **PR verification** and **.bit file generation** are implemented in AEI_Register.sh. (For details, see [AEI_Register.cfg Operation Instructions](#sec-3-4)).
-  **PR verification** and **.bit file generation** can also be implemented in a single step. For details, see the description in [build.sh Operation Instructions](#sec-3-2).
+ `Notes: **PR verification** and **.bit file generation** can also be implemented in a single step. For details, see the description in [build.sh Operation Instructions](#sec-3-2).
 
 ---
 
@@ -243,24 +233,6 @@ In addition, `schedule_task.sh` supports two execution modes:
   $ sh ./schedule_task.sh 23:00   # run project at 23:00
 ```
 
-<a id="sec-3-4" name="sec-3-4"></a>
-
-### AEI_Register.cfg File Configuration Description
-
-This file is used to configure the upload mode of the .bit file and the name of the user-defined OBS bucket. If you need to modify the file name, run the following command to open
-`AEI_Register.cfg`:
-
-```bash
-  $ vim ./AEI_Register.cfg
-```
-
-Configuration parameters are as follows:
-
-```bash
-  MODE=DPDK                     # There are two upload modes: DPDK and OCL.
-  OBS_BUCKETNAME="obs-fpga"     # Bucket name
-```
-
 <a id="sec-3-5" name="sec-3-5"></a>
 
 ### AEI_Register.sh Command Operation Instructions
@@ -280,14 +252,6 @@ The format of the command for running the **AEI_Register.sh** script is as follo
 **Notes**:
 
 - Running the **AEI_Register.sh** command requires completing the PR verification, .bit file generation, and registration ID generation. It takes some time to finish these three steps.
-
-- During the execution of the **AEI_Register.sh** script, enter the AK, SK, and password as prompted.
-
-- To obtain the Access Key (AK) and Secret Key (SK), take the following steps: Open the Create Access Key page `http://support.hwclouds.com/devg-obs_c++_sdk_doc_zh/zh-cn_topic_0040689446.html`, access the AK and SK according to the instructions on the page, and store them properly for registration.
-
-  1. Enter the AK obtained upon the display of `Input access_key:`.
-  2. Enter the SK obtained upon the display of `Input secret_key:`.
-  3. Enter the HWS account password upon the display of `Input passwd:`.
 
 - The **AEI_Register.sh** script is executed successfully if the following output is displayed:
 

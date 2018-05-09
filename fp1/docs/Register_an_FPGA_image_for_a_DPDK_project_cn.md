@@ -20,15 +20,6 @@
 
 执行`sh build.sh`命令构建工程。
 
-编辑工程脚本目录下的`AEI_Register.cfg`文件。将文件中的**OBS_BUCKETNAME**选项的内容配置为在配置章节中创建的OBS桶名，**MODE**选项使用默认值，无需重新配置。
-
-**说明：**配置章节可参考根目录下面README.md中1.2.2 修改配置文件和配置镜像章节。
-
-配置后的信息如下回显所示。
-
-    MODE=DPDK  
-    OBS_BUCKETNAME=obs-fpga
-
 \----结束
 
 #### 执行注册脚本
@@ -41,19 +32,15 @@ Usage:sh AEI_Register.sh *-n* [AEI_name] *-d* [AEI_Description]
 
 -   *-d*选项用于指定待注册FPGA镜像的AEI描述信息（AEI_Description）。AEI_Description由中文汉字、中文句号逗号、英文大小写字母、数字、中划线、下划线、英文句号逗号、空格组成的字符串，长度为0到255位。
 
-在AEI_Register.sh脚本执行过程中，用户需要根据提示信息输入AK，SK和密码。
-
--  在出现**Input access_key:**信息时，输入在配置章节中 获取OBS配置参数获取的AK。
-
--  在出现**Input secret_key:**信息时，输入在配置章节中 获取OBS配置参数获取的SK。
-
--  在出现**Input passwd:**信息时，输入华为云账户的密码。
 
 在AEI_Register.sh脚本执行成功后，会产生如下的回显信息。
 
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#  
 Register AEI  
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#  
+Uploading FPGA image to OBS
+Upload 46696040 bytes using 2.00751 seconds
+Registering FPGA image to FIS
 Success: 200 OK  
 id: 0000\*\*\*\*\*\*\*\*5568015e3c87835c0326  
 status: saving
@@ -73,29 +60,14 @@ status: saving
 
 **说明：**执行以下命令运行约20分钟左右。
 [root\@ scripts]\# sh AEI_Register.sh -n "DPDK-test" -d "DPDK-desc"  
-fischeck arguments are OK  
-**Input access_key:**  
-**Input secret_key:**  
-45837484 1 objects s3://obs-fpga/  
-verifying the access_key,secret_key successfully  
-**Input passwd:**fischeck password and config file are OK  
-verifying the password and /etc/cfg.file successfully  
-INFO: DPDK Running
-
-... ...
-
-write_bitstream completed successfully
-write_bitstream: Time (s): cpu = 01:12:43 ; elapsed = 00:22:32 . Memory (MB): peak = 10133.406 ; gain = 3079.641 ; free physical = 2149 ; free virtual = 10317
-INFO: [Common 17-206] Exiting Vivado at Sun Apr  8 17:15:03 2018...
-upload: '/home/fp1/hardware/vivado_design/examples/example3/prj/build/checkpoints/to_facs/pr_ul_20180408163826_aei.bin' -> 's3://obs-yx-fpga/pr_ul_20180408163826_aei.bin'  [part 1 of 4, 15MB] [1 of 1]
- 15728640 of 15728640   100% in    0s    21.30 MB/s  done
-upload: '/home/fp1/hardware/vivado_design/examples/example3/prj/build/checkpoints/to_facs/pr_ul_20180408163826_aei.bin' -> 's3://obs-yx-fpga/pr_ul_20180408163826_aei.bin'  [part 2 of 4, 15MB] [1 of 1]
- 15728640 of 15728640   100% in    0s    21.04 MB/s  done
-upload: '/home/fp1/hardware/vivado_design/examples/example3/prj/build/checkpoints/to_facs/pr_ul_20180408163826_aei.bin' -> 's3://obs-yx-fpga/pr_ul_20180408163826_aei.bin'  [part 3 of 4, 15MB] [1 of 1]
- 15728640 of 15728640   100% in    0s    21.44 MB/s  done
-upload: '/home/fp1/hardware/vivado_design/examples/example3/prj/build/checkpoints/to_facs/pr_ul_20180408163826_aei.bin' -> 's3://obs-yx-fpga/pr_ul_20180408163826_aei.bin'  [part 4 of 4, 3MB] [1 of 1]
- 3432084 of 3432084   100% in    0s    11.57 MB/s  done 
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#  
-Register AEI  
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#  
-**Success: 200 OK id: ff808082628ffc7a0162a48d452a760c status: saving**
+fis argument(s) and config file are OK
+INFO: OCL Running
+#############################################################
+Register AEI
+#############################################################
+Uploading FPGA image to OBS
+Upload 46696040 bytes using 2.00751 seconds
+Registering FPGA image to FIS
+Success: 200 OK
+id: ff80808262f26be40162f70699287c18
+status: saving

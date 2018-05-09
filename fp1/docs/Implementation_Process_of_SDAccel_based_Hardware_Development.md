@@ -62,7 +62,6 @@ User operation processes include the simulation development process and the hard
 | Modify configuration files.              | Modify configuration files according to README.md. | Modify configuration files of AEI_Regsiter.sh and fisclient before registering an image. |
 | Register an image.                       | Register an SDAccel image.               | Use AEI_Regsiter.sh to register an SDAccel image with the SDAccel image management module. After the registration, an ID is assigned to the SDAccel image. |
 | Check the image registration status.     | Check whether the SDAccel image is successfully registered. | Use the image ID to check whether the SDAccel image is successfully registered. |
-| Load the image.                          | Load the image.                          | FpgaCmdEntry, the SDAccel image loading tool in the SDK, supports VM FPGA information query, image loading and query, and virtual LED status query. |
 | Go to the execution environment.         | Go to the hardware test environment.     | Go to the hardware test environment.     |
 | Develop host code.                       | Develop host code.                       | Develop host code before performing the hardware test. |
 | Copy the .xclbin file to the execution environment. | Copy the compiled .xclbin file from the compilation environment to the target directory in the execution environment. | Copy the compiled .xclbin file from the compilation environment to the target directory in the execution environment. |
@@ -91,7 +90,7 @@ The default development tool is Vivado. Therefore, you need to change Vivado to 
 Set `XILINX_LIC_SETUP` in the setup.cfg file to the IP address of the license server.
 
 CN North:
-`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.245"`
 
 CN South:
 `XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`

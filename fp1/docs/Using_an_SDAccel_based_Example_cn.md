@@ -29,9 +29,9 @@ SDAccel HDK主要完成SDAccel开发流程的编译和仿真部分，需要在SD
 
   	FPGA_DEVELOP_MODE="sdx"  
   	VIVADO_VER_REQ="2017.1" 
-	
-  	华北：`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
-
+  	
+    华北：`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.245"`
+    
     华南：`XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
 
     华东：`XILINX_LIC_SETUP="2100@100.125.17.108:2100@100.125.17.109"`
@@ -65,9 +65,20 @@ SDAccel HDK主要完成SDAccel开发流程的编译和仿真部分，需要在SD
    具体使用方法请参考[示例介绍](../hardware/sdaccel_design/examples/mmult_hls/README_CN.md)。
 
 5.  仿真example。
+
+    进行mmult的cpu_em仿真编译：
+
+
    ```
     cd $HW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/scripts
-    sh run.sh emu ../prj/bin/host ../prj/bin/xclbin
+    sh run.sh emu ../prj/bin/mmult ../prj/bin/bin_mmult_cpu_emu.xclbin
+   ```
+
+    进行mmult的hw_em仿真编译：
+
+   ```
+    cd $HW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/scripts
+    sh run.sh emu ../prj/bin/mmult ../prj/bin/bin_mmult_hw_emu.xclbin
    ```
 
 ##### 说明:
@@ -133,12 +144,11 @@ SDAccel的SDK平台主要实现对硬件的测试，需要在执行环境下编�
 
 5.  硬件测试。
 
-  执行run.sh完成硬件测试，具体步骤如下：
+  执行run.sh完成硬件的加载与测试，具体步骤如下：
 
   	cd $SW_FPGA_DIR/software/app/sdaccel_app/mmult_hls
-  	sh run.sh mmult bin_dir/bin_mmult_hw.xclbin
+  	sh run.sh mmult $HW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/prj/bin/bin_mmult_hw.xclbin
 
 ##### 说明:
 
   run.sh具体使用请执行sh run.sh -h查看。  
-  *bin_dir*为SDAccel HDK流程**hw模式**编译生成的xclbin文件所在目录。

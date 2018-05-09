@@ -53,7 +53,7 @@ The FPGA HDK is stored in the `huaweicloud-fpga/fp1` directory on a VM by defaul
 Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set `XILINX_LIC_SETUP` to the IP address of the license server.
 
 CN North:
-`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.245"`
 
 CN South:
 `XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`

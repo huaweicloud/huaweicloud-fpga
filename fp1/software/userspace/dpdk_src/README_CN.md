@@ -1,36 +1,35 @@
-### *`This action must performed on VM as root privilege`* ###
+### *`这些操作必须在虚拟机以根用户的方式运行`* ###
 
 [Switch to the English version](./README.md)
 
-*`Files list`*
+*`文件列表`*
 
-* `dpdk-16.04.tar.bz2`: DPDK source code  
-* `securec.tar.bz2`: Security source code  
-* `build_dpdk.sh`: DPDK build script  
+* `dpdk-16.04.tar.bz2`: DPDK源代码
+* `securec.tar.bz2`: 安全函数库源代码
+* `build_dpdk.sh`: DPDK编译脚本
 
-# 1. Uncompress the security library
+# 1. 解压安全函数库源码包
 
 `tar -xjv -f securec.tar.bz2`  
 
-# 2. Build the security library
+# 2. 编译安全函数库
 
 `cd securec/`  
 `sh ./securec_make.sh`  
 
-# 3. Uncompress the DPDK which including the logical PMD
+# 3. 解压DPDK源码包
 
 `cd ..`  
 `tar -xjv -f dpdk-16.04.tar.bz2`
 
-# 4. Build the DPDK
+# 4. 编译DPDK
 
 `cd dpdk-16.04`  
 `make config T=x86_64-native-linuxapp-gcc`  
 `make`  
 `make install T=x86_64-native-linuxapp-gcc`  
 
-### Notes:  
-It will print "Installation cannot run with T defined and DESTDIR undefined" after finish step 4, please feel fine, it is not a problem.
+### 提示:  
+第四步完成后会打印"Installation cannot run with T defined and DESTDIR undefined"，该提示并非错误。
 
-
-If success, under the current directory, it will generate a `x86_64-native-linuxapp-gcc` directory, in which contains the dpdk's include directory and lib directory.
+成功执行后，在当前目录会产生一个`x86_64-native-linuxapp-gcc`文件夹，其中包括DPDK的头文件目录和库目录。

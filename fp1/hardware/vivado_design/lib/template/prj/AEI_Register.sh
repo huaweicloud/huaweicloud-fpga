@@ -65,28 +65,27 @@ if [ "x$AEI_Name" == "x" ];then
     usage
     exit
 fi
-s3cmd_info=`which s3cmd 2> /dev/null`
-if [ "x$s3cmd_info" == "x" ];then
-    echo -e "ERROR:s3cmd tool is not detected, please refer to the FACS User Guide, go to \033[0;35;1mhttp://s3tools.org/download\033[0m to download and intall s3cmd."
-    exit
-fi
+
+
 fis_info=`which fis 2> /dev/null`
 if [ "x$fis_info" == "x" ];then
-    echo -e "ERROR:fis tool is not detected, please refer to the FACS User Guide, go to intall fis."
+    echo -e "ERROR:fis tool is not detected, please refer to the FACS User Guide, go to intall fisclient."
     exit
 fi
 fischeck_info=`which fischeck 2> /dev/null`
 if [ "x$fischeck_info" == "x" ];then
-    echo -e "ERROR:fischeck tool is not detected, please refer to the FACS User Guide, go to intall fischeck."
+    echo -e "ERROR:fischeck tool is not detected, please refer to the FACS User Guide, go to intall fisclient."
     exit
 fi
 
 #####################################################################################################################
-#get the config from the AEI_Register.cfg
 #####################################################################################################################
-source "$script_path/AEI_Register.cfg"
-bucketName=${OBS_BUCKETNAME}
-mode=${MODE}
+if [ "$(echo "$script_path"|grep "hardware/sdaccel_design/")" != "" ];then
+    mode="OCL"
+elif [ "$(echo "$script_path"|grep "hardware/vivado_design/")" != "" ];then
+    mode="DPDK"
+fi
+
 #####################################################################################################################
 #get the metadata from the manifest.txt
 #####################################################################################################################
@@ -137,91 +136,16 @@ else
     echo "Unknown Mode:$mode"
     exit -1
 fi
-########################################################
-#judge the .s3cfg file
-########################################################
-if [ -f ~/.s3cfg ];then
-    host_base=`cat  ~/.s3cfg| grep "host_base"`
-    if [ -z "$host_base" ];then
-        echo "ERROR:the ~/.s3cfg file's configuration is wrong "
-        exit -1
-    fi
-    bucket_location=`cat  ~/.s3cfg| grep "bucket_location"`
-    if [ -z "$bucket_location" ];then
-        echo "ERROR:the ~/.s3cfg file's configuration is wrong "
-        exit -1
-    fi
-else
-    echo "ERROR:the ~/.s3cfg does not exist"
-    exit -1
-fi
-
 
 #####################################################################################################################
 #verifying the fis register arguments
 #####################################################################################################################
-if [ "$bucketName" == "" ];then
-    echo "ERROR: bucketName is invalid"
-    exit -1
-else
-
-    fischeck --args-only --location "$bucketName:$fileName" --name "$AEI_Name" --metadata "$metadata" --description "$AEI_Description"
-    if [ $? != 0 ];then
+fischeck --file-name "$fileName" --name "$AEI_Name" --metadata "$metadata" --description "$AEI_Description"
+if [ $? != 0 ];then
         echo -e "\nverifying the fis register arguments failed"
         exit -1
-    fi
 fi
-#####################################################################################################################
-#verifying the bucketName,access_key,secret_key
-#####################################################################################################################
 
-i_times=3
-while [ $i_times -gt 0 ];do
-    read -p "Input access_key:" -s ACCESS_KEY
-    echo
-    read -p "Input secret_key:" -s SECRET_KEY
-    echo
-    i_times=$(($i_times-1))
-    bucket_error=`s3cmd --ssl --no-check-certificate --access_key="$ACCESS_KEY" --secret_key="$SECRET_KEY" --host-bucket="" du "s3://$bucketName" 2>&1`
-    err_code=$?
-    if [ $err_code == 0 ];then
-        echo -e "\nVerifying the access_key,secret_key successfully"
-        break
-    elif [ $err_code == 12 ];then
-        echo -e "\nThe bucket which named $bucketName is not exist!"
-        exit -1
-    elif [[ $bucket_error =~ .*(AccessDenied).* ]];then
-        echo $bucket_error
-        exit -1
-    elif [ $i_times -ne 0  ];then
-        echo $bucket_error
-        echo
-        continue
-    else
-        echo -e "\nERROR:verifying the secret_key,secret_key fails,please try again."
-        exit -1
-    fi
-done
-
-#####################################################################################################################
-#Used for authenticating the password and /etc/cfg.file
-#####################################################################################################################
-i_times=3
-while [ $i_times -gt 0 ];do
-    read -p "Input passwd:" -s Passwd
-    i_times=$(($i_times-1))
-    fischeck --password "$Passwd"
-    if [ $? == 0 ];then
-        echo -e "\nverifying the password and /etc/cfg.file successfully"
-        break
-    elif [ $i_times -ne 0  ];then
-        echo
-        continue
-    else
-        echo -e "\nERROR:verifying the password and /etc/cfg.file fails, please try again."
-        exit -1
-    fi
-done
 #####################################################################################################################
 #Build
 #####################################################################################################################
@@ -262,27 +186,19 @@ fi
 ######################################################################################################################
 #Upload
 ######################################################################################################################
-if [ "$mode" == "DPDK" ];then
-    s3cmd --ssl --no-check-certificate --access_key=$ACCESS_KEY --secret_key=$SECRET_KEY --host-bucket="" put "$script_path/build/checkpoints/to_facs/$fileName" "s3://$bucketName"
-    rm  $script_path/build/checkpoints/to_facs/${fileName%.*}*
- 
-elif [ "$mode" == "OCL" ];then
-    s3cmd --ssl --no-check-certificate --access_key=$ACCESS_KEY --secret_key=$SECRET_KEY --host-bucket="" put "$dcp_Name" "s3://$bucketName"
-    rm $script_path/../prj/bin/*.bin
-fi
-
-######################################################################################################################
-#Register
-######################################################################################################################
 echo "#############################################################"
 echo "Register AEI"
 echo "#############################################################"
-if [ "$AEI_Description" == "" ];then
-    id_info=`fis --password "$Passwd" fpga-image-register --location "$bucketName:$fileName" --name "$AEI_Name" --metadata "$metadata"`
-else
-    id_info=`fis --password "$Passwd" fpga-image-register --location "$bucketName:$fileName" --name "$AEI_Name" --metadata "$metadata" --description "$AEI_Description"`
+if [ "$mode" == "DPDK" ];then
+    id_info=`fis fpga-image-register --fpga-image-file "$script_path/build/checkpoints/to_facs/$fileName" --name "$AEI_Name" --metadata "$metadata" --description "$AEI_Description"`
+    rm -rf $script_path/build/checkpoints/to_facs/${fileName%.*}*
+
+elif [ "$mode" == "OCL" ];then
+    id_info=`fis fpga-image-register --fpga-image-file "$dcp_Name" --name "$AEI_Name" --metadata "$metadata" --description "$AEI_Description"`
+    rm $script_path/../prj/bin/*.bin
 fi
-echo $id_info
+
+python -c "print '''$id_info'''"
 if [ -n "`echo $id_info|grep "Success:"`" -a $mode == "OCL" ];then
     shell_id=`echo $id_info|sed 's/^.*id:.*\([a-f0-9]\{32\}\).*/\1/g'`
     chmod +x $script_path/../../../lib/scripts/xclbinaddaei

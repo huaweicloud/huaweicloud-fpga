@@ -1,5 +1,13 @@
-# Release 1.0.2
-- 文档优化；
+# Release 1.1.1
+
+- 文档优化
+- AEI注册方式优化；
+
+# Release 1.1.0
+
+- vivado 仿真平台优化；
+- SDAccel 的 xdma驱动优化；
+- 文档优化，新增 User_Development_Guide_for_an_FACS文档；
 - opencl代码解决安全漏洞；
 - example3 src代码优化；
 - dpdk代码优化；

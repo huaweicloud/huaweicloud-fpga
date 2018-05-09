@@ -21,10 +21,7 @@
 <li><a href="#sec-3-3">3.3. <b>schedule_task.sh使用说明</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-3-4">3.4. <b>AEI_Register.cfg文件配置说明</b></a></li>
-</ul>
-<ul>
-<li><a href="#sec-3-5">3.5. <b>AEI_Register.sh文件配置说明</b></a></li>
+<li><a href="#sec-3-5">3.4. <b>AEI_Register.sh文件配置说明</b></a></li>
 </ul>
 </li>
 <li><a href="#sec-4">4. <b>其他</b></a></li>
@@ -46,7 +43,6 @@ usr_prj0的prj文件夹层级结构如下：
   - README_cn.md （本文档）
   - [schedule_task.sh](#sec-2-4)
   - [usr_prj_cfg](#sec-2-5)
-  - [AEI_Register.cfg](#sec-2-6)
   - [AEI_Register.sh](#sec-2-7)
 
 <a id="sec-2" name="sec-2"></a>
@@ -77,11 +73,6 @@ usr_prj0的prj文件夹层级结构如下：
 
 - usr_prj_cfg  
   该文件主要用于配置usr_prj0工程的自定义信息，详细使用说明请见[usr_prj_cfg使用说明](#sec-3-1)。
-
-<a id="sec-2-6" name="sec-2-6"></a>
-
-- AEI_Register.cfg  
-  该文件主要用于配置编译生成的bit文件对应的上传模式和创建OBS桶名，详细使用说明请见[AEI_Register.cfg使用说明](#sec-3-4)。
 
 <a id="sec-2-7" name="sec-2-7"></a>
 
@@ -155,8 +146,7 @@ usr_prj0的prj文件夹层级结构如下：
 ```
 
   该命令将一键式完成**综合**、**布局布线**2个步骤，`所有步骤都successfully`，整个工程执行PASS；  
-  `注：**pr校验**和**bit文件生成**2个步骤是在AEI上传注册中实现的（详细内容参见本文：[AEI_Register.cfg使用说明](#sec-3-4)）；  
-   **pr校验**和**bit文件生成**这2个步骤也可以通过单步执行的方式实现（参见[build.sh使用说明](#sec-3-2)单步执行的说明）。
+  `注：  **pr校验**和**bit文件生成**这2个步骤也可以通过单步执行的方式实现（参见[build.sh使用说明](#sec-3-2)单步执行的说明）。
 
 ---
 
@@ -243,23 +233,6 @@ usr_prj0的prj文件夹层级结构如下：
   $ sh ./schedule_task.sh 23:00   # run project at 23:00
 ```
 
-<a id="sec-3-4" name="sec-3-4"></a>
-
-### AEI_Register.cfg文件配置说明
-
-该文件主要用于配置bit文件对应的上传模式和自定义创建OBS桶名，如需修改该配置，可以按照如下方式打开`AEI_Register.cfg`:
-
-```bash
-  $ vim ./AEI_Register.cfg
-```
-
-详细配置参数如下：
-
-```bash
-  MODE=DPDK                     # 上传模式，可以为'DPDK'或'OCL'，分别对应不同的开发模式
-  OBS_BUCKETNAME="obs-fpga"     # 存储桶名称
-```
-
 <a id="sec-3-5" name="sec-3-5"></a>
 
 ### AEI_Register.sh命令的使用说明
@@ -279,14 +252,6 @@ usr_prj0的prj文件夹层级结构如下：
 **重要说明**:
 
 - 执行AEI_Register.sh命令完成`pr校验`、`bit文件生成`和`注册ID生成`3个步骤，因此该步骤耗时稍长。
-
-- 在AEI_Register.sh脚本执行过程中，用户需要根据提示信息输入AK、SK和密码。
-
-- AK、SK的获取方法：打开创建访问密钥页面`http://support.hwclouds.com/devg-obs_c++_sdk_doc_zh/zh-cn_topic_0040689446.html`，根据页面上的指导访问密钥AK(Access Key)和SK(Secret Key)，妥善保存并用于注册。
-
-  1.在出现“Input access_key:”信息时，`输入获取的AK`。
-  2.在出现“Input secret_key:”信息时，`输入获取的SK`。
-  3.在出现“Input passwd:”信息时，`输入华为云账户的密码`。
 
 - 在AEI_Register.sh脚本执行成功后，会产生如下的回显信息。
 

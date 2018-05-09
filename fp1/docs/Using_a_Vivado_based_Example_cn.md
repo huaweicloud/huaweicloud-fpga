@@ -8,7 +8,7 @@
 
 [使用example3](#c)
 
-**说明：**需要了解这三个example功能等信息的用户可查阅[示例应用指南](../hardware/vivado_design/examples/README_CN.md)。
+**说明：**  需要了解这三个example功能等信息的用户可查阅[示例应用指南](../hardware/vivado_design/examples/README_CN.md)。
 
 <a name="a"></a>
 使用example1
@@ -27,7 +27,7 @@ Example1示例主要实现用户逻辑的版本号读取、数据取反、加法
 用户打开huaweicloud-fpga/fp1/路径下的`setup.cfg`文件，将文件中`XILINX_LIC_SETUP`的值配置为License服务器的IP地址。
 
 华北：
-`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.245"`
 
 华南：
 `XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
@@ -66,7 +66,7 @@ Example1示例主要实现用户逻辑的版本号读取、数据取反、加法
 
 `cd huaweicloud-fpga/fp1/software/app/dpdk_app/`  
 `chmod +x build_dpdk_app.sh`  
-`sh build_dpdk_app.sh`  
+`source build_dpdk_app.sh`  
 
 编译成功后，在当前目录下的`bin/`下生成二进制的可执行文件。
 
@@ -170,9 +170,16 @@ Example2主要实现用户逻辑DMA环回通道和DDR读取功能。
 
 #### 步骤1 设置Vivado工具License。
 
-用户打开huaweicloud-fpga/fp1/路径下的`setup.cfg`文件，将文件中`XILINX_LIC_SETUP`的值配置为License服务器的IP地址`2100@100.125.1.240:2100@100.125.1.251`。
+用户打开huaweicloud-fpga/fp1/路径下的`setup.cfg`文件，将文件中`XILINX_LIC_SETUP`的值配置为License服务器的IP地址。
 
-`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+华北：
+`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.245"`
+
+华南：
+`XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
+
+华东：
+`XILINX_LIC_SETUP="2100@100.125.17.108:2100@100.125.17.109"`
 
 **说明：** 华为提供的Xilinx软件License仅限root账号使用。
 
@@ -206,7 +213,7 @@ Example2主要实现用户逻辑DMA环回通道和DDR读取功能。
 
 `cd huaweicloud-fpga/fp1/software/app/dpdk_app/`  
 `chmod +x build_dpdk_app.sh`  
-`sh build_dpdk_app.sh`  
+`source build_dpdk_app.sh`  
 
 编译成功后，在当前目录下的`bin/`下生成二进制的可执行文件。
 
@@ -311,9 +318,16 @@ Example3主要实现用户逻辑FMMU（Fpga Mermory Manage Unit）功能。
 
 #### 步骤1 设置Vivado工具License。
 
-用户打开huaweicloud-fpga/fp1/路径下的`setup.cfg`文件，将文件中XILINX_LIC_SETUP的值配置为License服务器的IP地址`2100@100.125.1.240:2100@100.125.1.251`。
+用户打开huaweicloud-fpga/fp1/路径下的`setup.cfg`文件，将文件中`XILINX_LIC_SETUP`的值配置为License服务器的IP地址。
 
-`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+华北：
+`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.245"`
+
+华南：
+`XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
+
+华东：
+`XILINX_LIC_SETUP="2100@100.125.17.108:2100@100.125.17.109"`
 
 **说明：** 华为提供的Xilinx软件License仅限root账号使用。
 
@@ -350,7 +364,7 @@ Example3主要实现用户逻辑FMMU（Fpga Mermory Manage Unit）功能。
 
 `cd huaweicloud-fpga/fp1/software/app/dpdk_app/`  
 `chmod +x build_dpdk_app.sh`  
-`sh build_dpdk_app.sh`  
+`source build_dpdk_app.sh`  
 
 编译成功后，在当前目录下的`bin/`下生成二进制的可执行文件。
 

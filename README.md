@@ -24,25 +24,27 @@ The FP1-based FPGA development suite is a cloud FPGA hardware/software developme
 
 <a name="sec_1_2"></a>
 ## 1.2 Preparations
-Before using the FPGA development suite, download the suite, modify the configuration file, and configure an FPGA Accelerated Cloud Server (FACS) image. The hardware development tools are stored in the [hardware](./fp1/hardware) directory, including Vivado and SDAccel development tools. The software development tools are stored in the [software](./fp1/software) directory, including configure files, drivers, tools, and related applications which are needed when running instances. 
+Before using the FPGA development suite, you must perform 1.2.1~1.2.3 steps to complete the development kit acquisition and tool installation and configuration. The hardware development tools are stored in the [hardware](./fp1/hardware) directory, including Vivado and SDAccel development tools. The software development tools are stored in the [software](./fp1/software) directory, including configure files, drivers, tools, and related applications which are needed when running instances. 
 
 <a name="sec_1_2_1"></a>
 ### 1.2.1 Downloading Suite
 
 + For HTTPS connections, run the `git clone https://github.com/Huawei/huaweicloud-fpga.git` command to download the suite.
 
-+ For SSH connections, run the `git@github.com:Huawei/huaweicloud-fpga.git` command to download the suite.
++ For SSH connections, run the `git clone git@github.com:Huawei/huaweicloud-fpga.git` command to download the suite.
 
+> Ensure that the ECS is bound with an EIP before using the ECS to download the development suite.<br/>
 > Ensure that the Git tool is installed before downloading the development suite.
 
 <a name="sec_1_2_2"></a>
-### 1.2.2 Modifying the Configuration File and Configuring an FACS Image
-#### Step 1 Compiling and Installing the FPGA Image Management Tool
+### 1.2.2 Configuring Intranet DNS 
+After the intranet DNS is configured, the ECS can access relevant cloud services through the intranet of the virtual private cloud, providing users with a more stable and reliable network environment. For more information, see the "Configuring Intranet DNS" section in the [FACS User's Guide](https://support.huaweicloud.com/usermanual-fpga/en-us_topic_0069154765.html). 
+
+<a name="sec_1_2_3"></a>
+### 1.2.3 configuring and Installing the FPGA Image Management Tool
 The fisclient is a cross-platform command-line interface (CLI) tool used for FPGA image management, which is mandatory before FPGA image loading. By using fisclient, you can register, delete, and query FPGA images (AEIs), or manage the association between AEIs and elastic cloud server (ECS) images. You can associate an AEI with an ESC image, and release the AEI to the cloud market or share it with other users through the ESC image.
 
-For details, please see the chapter of installation in [fisclient README](./cli/fisclient/README.md).
-### Step 2: Modifying the Configuration File and Configuring an FACS Image
-Before registering and querying an FPGA image, modify the configuration file and configure an FACS image. For details, visit [http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0069154765.html](http://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0069154765.html).
+>For details, please see the chapter of installation and configuration in [fisclient README](./cli/fisclient/README.md).
 
 <a name="sec_2"></a>
 # 2 FPGA Development Guide for High-Performance Architecture
@@ -72,9 +74,9 @@ You can use AEI_Register.sh to register an FPGA image with the image management 
 [Registering an FPGA Image](./fp1/docs/Register_an_FPGA_image_for_a_DPDK_project.md)
 
 #### Step 2 Querying the FPGA Image
-After configuring the files, run the `fisclient` command on the Linux shell to go to the fisclient login screen and enter the HWS account password when prompted. On the fisclient CLI, you can run corresponding commands to query, delete, or associate FPGA images.
+Users can run the `fis fpga-image-list` command to query information about an FPGA image. If the image status is **active**, users can load the image using the image ID.
 
-For details about how to use the fisclient to query the FPGA image, see [fisclient README](./cli/fisclient/README.md).
+> For details about how to use the fisclient to query the FPGA image, see [fisclient README](./cli/fisclient/README.md).
 
 <a name="sec_2_2"></a>
 ## 2.2 Software Development Process

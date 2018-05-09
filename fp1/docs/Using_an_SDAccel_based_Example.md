@@ -31,8 +31,8 @@ The SDAccel HDK platform serves to complete the compilation and simulation of th
 
   	FPGA_DEVELOP_MODE="sdx"  
   	VIVADO_VER_REQ="2017.1"
-	
-	CN North:`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.251"`
+
+    CN North:`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.245"`
 
     CN South:`XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
 
@@ -67,9 +67,19 @@ The SDAccel HDK platform serves to complete the compilation and simulation of th
    For details, see [Examples](../hardware/sdaccel_design/examples/mmult_hls/README.md).
 
 5. Simulate the example.
+
+   cpu_em Simulate:
+
    ```
     cd $HW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/scripts
-    sh run.sh emu ../prj/bin/host ../prj/bin/xclbin
+    sh run.sh emu ../prj/bin/mmult ../prj/bin/bin_mmult_cpu_emu.xclbin
+   ```
+
+   hw_em Simulate:
+
+   ```
+    cd $HW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/scripts
+    sh run.sh emu ../prj/bin/mmult ../prj/bin/bin_mmult_hw_emu.xclbin
    ```
 
 ##### Notes
@@ -135,12 +145,11 @@ The SDAccel SDK platform is used to test hardware. Compile and run the host prog
 
 5. Perform the hardware test.
 
-  Run the **run.sh** command to test hardware. The detailed procedure is as follows:
+  Run the **run.sh** command to load and test hardware. The detailed procedure is as follows:
 
   	cd $SW_FPGA_DIR/software/app/sdaccel_app/mmult_hls
-  	sh run.sh mmult bin_dir/bin_mmult_hw.xclbin
+  	sh run.sh mmult $HW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/prj/bin/bin_mmult_hw.xclbin
 
 ##### Note
 
   For details about how to use **run.sh**, run **sh run.sh -h**. 
-  *bin_dir* is the directory storing the .xclbin file generated during the compilation of the SDAccel HDK process in **hw** mode.

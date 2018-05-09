@@ -161,18 +161,26 @@ HDK的运行流程分为：基于vivado的流程，和基于sdaccel的流程。
   $ source setup.sh
 ```
 
+**注意** ：执行`setup.sh`脚本前必须先装好fislcint工具。
+
 每次执行<kbd>source setup.sh</kbd>命令时，HDK会执行以下三个步骤的检测：
 
 1. 逐一检测所有工具的License是否已配置以及工具是否已安装（工程的初始状态是未安装的）；
 2. 逐一告知工具是否已安装成功；
 3. 打印出所有已安装的工具版本信息。
 
-**注意**：如果是第一次安装本工程或者是完成版本升级，首次设置环境变量，HDK除了进行以上三步检测外还会执行以下步骤：
+**注意** ：如果是第一次安装本工程或者是完成版本升级，首次设置环境变量，HDK除了进行以上三步检测外还会执行以下步骤：
 
 1. 预编译VCSMX仿真库（如果存在VCSMX工具）；
 2. 预编译Questasim仿真库（如果存在Questasim工具）；
 3. 调用Vivado工具生成IP以及DDR仿真模型；
 4. 下载OBS桶中的dcp文件和压缩包，该过程大约需要3~5分钟，请耐心等待。
+ 
+**说明** ：出现以下情况需要重新执行 `source setup.sh`命令： 
+
+1. 重新打开一个终端时；  
+2. 网络中断后重新连接进入平台时；  
+3. 修改`setup.sh`脚本并使修改即时生效时。  
 
 <a id="sec-4-2" name="sec-4-2"></a>
 
@@ -200,7 +208,7 @@ SDx开发模式采用Xilinx的SDAccel架构完成fpga与处理器的数据交互
 
 ### 上传与注册
 
-用户可以依据fpga云服务提供的API以及上传和注册工具，完成bin文件的上传和注册ID的生成，详细注册方法请参考文档[usr_prj0构建指南](./hardware/vivado_design/user/usr_prj0/prj/README_CN.md)中的“AEI_Register.cfg文件配置说明”和“AEI_Register.sh文件配置说明”章节。
+用户可以依据fpga云服务提供的API以及上传和注册工具，完成bin文件的上传和注册ID的生成，详细注册方法请参考文档[usr_prj0构建指南](./hardware/vivado_design/user/usr_prj0/prj/README_CN.md)中的“AEI_Register.sh文件配置说明”章节。
 
 <a id="sec-4-5" name="sec-4-5"></a>
 

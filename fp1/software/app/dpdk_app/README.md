@@ -23,11 +23,11 @@ If not, start from step 1.
 Go to the DPDK source code directory (**fp1/software/userspace/dpdk_src** by default) and build DPDK source code by referring to **README.md**.
 
 # 2. Configuring Compiling Environment 
-Replace `VF_DPDK` with the full path of DPDK source code (**path:*XXX*/fp1/software/userspace/dpdk_src** by default. *XXX* is the path of **fp1**), and export the following variables:
+Replace `VF_DPDK` with the full path of DPDK source code (**path:*XXX*/fp1/software/userspace/dpdk_src** by default. *XXX* is the path of **fp1**), and export the following variables:  
 `export DPDK_OBJECT_HOME=$VF_DPDK/dpdk-16.04/x86_64-native-linuxapp-gcc`    
 `export DPDK_INCLUDE_HOME=$DPDK_OBJECT_HOME/include`  
 `export DPDK_LIB_HOME=$DPDK_OBJECT_HOME/lib`  
-`export SECUREC_HOME=$VF_DPDK/securec`
+`export SECUREC_HOME=$VF_DPDK/securec`  
 `export SECUREC_INCLUDE_HOME=$SECUREC_HOME/include`  
 `export SECUREC_LIB_HOME=$SECUREC_HOME/lib`
 
@@ -76,7 +76,7 @@ If success, it will print the value of DFX registers
 
 ## 6.2 Running `packet_process`
 ### 6.2.1 Preparation
-After step 1 to step 3 are complete, run the following command:  
+After step 2 to step 4 are complete, run the following command:  
 
 `cd bin/`
 
@@ -121,7 +121,7 @@ This command is only supported in example 2 and prints 0x5a5a5a5a.
 
 ## 7.2 Running `packet_process`
 ### 7.2.1 Preparation
-After step 1 to step 3 are complete, run the following command: 
+After step 2 to step 4 are complete, run the following command: 
 
 `cd bin/`  
 

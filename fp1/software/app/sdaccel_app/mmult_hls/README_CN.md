@@ -19,3 +19,13 @@ Note
 --------------------------------
 * SDx must be already installed and then xcpp tool can be available 
 
+
+Compile host and Run the **run.sh** command to test hardware. The detailed procedure is as follows:
+--------------------------------
+
+```
+make
+sh run.sh mmult bin_dir/bin_mmult_hw.xclbin
+
+```
+

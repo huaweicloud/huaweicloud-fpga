@@ -21,3 +21,11 @@ Note
 --------------------------------
 * SDx must be installed to use the xcpp tool.
 
+Compile host and Run the **run.sh** command to test hardware. The detailed procedure is as follows:
+--------------------------------
+
+```
+make
+sh run.sh vadd ./vadd.hw.xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.xclbin
+
+```

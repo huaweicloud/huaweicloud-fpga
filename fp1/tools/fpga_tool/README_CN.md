@@ -7,7 +7,7 @@
 2. [工具的编译和安装](#tool_setup)
 3. [工具的使用](#tool_usage)
 4. [工具使用实例：加载FPGA镜像](#load_fpga)
-5. [工具的卸载](#tool_unistall)
+5. [工具的卸载](#tool_uninstall)
 
 <a name="about_tool"></a>
 ## FPGA镜像加载工具
@@ -82,15 +82,15 @@ FPGA镜像加载工具编译和安装完成后，可在任一目录下调用工�
 
 [加载FPGA镜像](./docs/load_an_fpga_image_cn.md)
 
-<a name="tool_unistall"></a>
+<a name="tool_uninstall"></a>
 ## 工具的卸载
 工具的卸载步骤如下：
 
 步骤1：工具的卸载需要root权限，请在卸载前确认是否已获取此权限。
 
-步骤2：进入[fp1](../../)目录，执行命令`bash fpga_tool_unistall.sh`完成工具的卸载。
+步骤2：进入[fp1](../../)目录，执行命令`bash fpga_tool_uninstall.sh`完成工具的卸载。
 
-	linux-htucef:/home/huaweicloud-fpga/fp1 # bash fpga_tool_unistall.sh 
+	linux-htucef:/home/huaweicloud-fpga/fp1 # bash fpga_tool_uninstall.sh 
 	Entering /home/huaweicloud-fpga/fp1/tools/fpga_tool/build/../src
 	rm -rf /home/huaweicloud-fpga/fp1/tools/fpga_tool/src/../dist/tool_obj 
 	rm -f  /home/huaweicloud-fpga/fp1/tools/fpga_tool/src/../dist/libfpgamgmt.so

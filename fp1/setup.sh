@@ -233,7 +233,7 @@ fi
 fiscfg=$(readlink -f ~/.fiscfg)
 #if the $fiscfg is exist
 if [ ! -f "$fiscfg" ];then
-    echo "ERROR:The $fiscfg does not exist,please check or create it"
+    echo "ERROR:Config file of fisclient does not exist "
     echo
     quit_script=1
 fi
@@ -1038,30 +1038,28 @@ fi
 #check the OBS_URL
 echo "Check the obs url..."
 
-if [ -n "$OBS_URL" ]&&[ -n "`ping -c 1 -W 5 ${OBS_URL#*//} 2>/dev/null| grep 'bytes from'`" ];then
-    echo "WARNING: Feature for config the variable OBS_URL in setup.cfg has been deprecated. Will not be supported in the future, please setup the variable OS_FIS_URL in $fiscfg instead."
-else
-    OBS_URL=`cat $fiscfg |grep "OS_FIS_URL"|tr -d "OS_FIS_URL ="`
-    if [ -n "$OBS_URL" ];then
-        OBS_Domain=`echo $OBS_URL|sed "s/\./ /g"|awk '{print $2}'`
-        if [ -z "$OBS_Domain" ];then
-            echo "ERROR:The configuration of $fiscfg is incorrect,please check it"
-            quit_script=1
-        elif [ "$OBS_Domain" == "cn-north-1" ];then
-            OBS_URL="https://huaweicloud-fpga.obs.myhwclouds.com"
-        else
-            OBS_URL="https://huaweicloud-fpga-$OBS_Domain.obs.myhwclouds.com"
-        fi
 
-        if [ $quit_script != 1 ]&&[ -z "`ping -c 1 -W 5 ${OBS_URL#*//} 2>/dev/null| grep 'bytes from'`" ];then
-            echo "ERROR:Current $OBS_URL couldn't be accessed,please check your configuration or your network"
-            quit_script=1
-        fi
-    else
+OBS_URL=`cat $fiscfg |grep "OS_FIS_ENDPOINT"|tr -d "OS_FIS_ENDPOINT ="`
+if [ -n "$OBS_URL" ];then
+    OBS_Domain=`echo $OBS_URL|sed "s/\./ /g"|awk '{print $2}'`
+    if [ -z "$OBS_Domain" ];then
         echo "ERROR:The configuration of $fiscfg is incorrect,please check it"
         quit_script=1
+    elif [ "$OBS_Domain" == "cn-north-1" ];then
+        OBS_URL="https://huaweicloud-fpga.obs.myhwclouds.com"
+    else
+        OBS_URL="https://huaweicloud-fpga-$OBS_Domain.obs.myhwclouds.com"
     fi
+
+    if [ $quit_script != 1 ]&&[ -z "`ping -c 1 -W 5 ${OBS_URL#*//} 2>/dev/null| grep 'bytes from'`" ];then
+        echo "ERROR:Current $OBS_URL couldn't be accessed,please check your configuration or your network"
+        quit_script=1
+    fi
+else
+    echo "ERROR:The configuration of $fiscfg is incorrect,please check it"
+    quit_script=1
 fi
+
 
 
 #if the URL is empty,quit the script

@@ -12,7 +12,7 @@
 
   | CBB名称                    | CBB功能                       |
   | :----------------------- | :-------------------------- |
-  | asyn_frm_fifo_288x512_sa | 异步帧级FIFO，位宽为288bit，升读为512;  |
+  | asyn_frm_fifo_288x512_sa | 异步帧级FIFO，位宽为288bit，深度为512;  |
   | axi_time_out             | axi协议的valid和ready超时检测模块；    |
   | axi4                     | hpi接口转axi4接口模块；             |
   | axil2hpis_adp            | PCIe bar0/bar5 AXI-L接口适配模块； |

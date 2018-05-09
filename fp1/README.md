@@ -161,6 +161,10 @@ The following are common steps for Vivado and SDAccel development:
   $ source setup.sh
 ```
 
+**Note**
+
+The fislcint tool must be installed before executing the `setup.sh` script。
+
 Each time the <kbd>source setup.sh</kbd> command is executed, the HDK executes the following steps:
 
 1. Check whether the license files of all tools are configured and whether the tools are installed. (By default, the tools and license are not installed.)
@@ -201,7 +205,7 @@ SDx development mode uses the Xilinx SDAccel architecture to exchange data betwe
 
 ### Uploading and Registration
 
-You can upload a .bin file and generate the registration ID based on the APIs and the uploading and registration tools provided by the FAC services. For details, see sections "AEI_Register.cfg Configuration Description" and "AEI_Register.sh Operation Instructions" in [usr_prj0 Compilation Guide](./hardware/vivado_design/user/usr_prj0/prj/README.md).
+You can upload a .bin file and generate the registration ID based on the APIs and the uploading and registration tools provided by the FAC services. For details, see sections "AEI_Register.sh Operation Instructions" in [usr_prj0 Compilation Guide](./hardware/vivado_design/user/usr_prj0/prj/README.md).
 
 <a id="sec-4-5" name="sec-4-5"></a>
 

@@ -38,7 +38,7 @@
 
 <a name="sec_1_2_2"></a>
 ### 1.2.2 配置内网DNS
-在配置内网DNS后，弹性云服务器可以通过虚拟私有云的内网访问相关云服务，能够为用户提供更稳定、可靠的网络环境。更多详细信息请参见[FACS用户指南](https://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0069154765.html)的“配置内网DNS”章节。
+在配置内网DNS后，弹性云服务器可以通过虚拟私有云的内网访问相关云服务，能够为用户提供更稳定、可靠的网络环境。更多详细信息请参见[FACS用户指南](https://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0107356835.html#)的“配置内网DNS”章节。
 
 <a name="sec_1_2_3"></a>
 ### 1.2.3 FPGA镜像管理工具的安装和配置

@@ -16,6 +16,7 @@
 from __future__ import print_function
 
 import collections
+import getpass
 import hashlib
 import json
 import os
@@ -73,6 +74,12 @@ def compute_md5(*args):
     for arg in args:
         m.update(str(arg))
     return m.hexdigest()
+
+
+def check_login_user():
+    user = getpass.getuser()
+    if user != 'root':
+        exit('Please run as root. (Current user is %s)' % user)
 
 
 def _check_bucket_acl_location(bucket_name, ak, sk, host, region_id, domain_id):

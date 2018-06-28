@@ -26,7 +26,7 @@ requires = [
 
 setup(
     name='fisclient',
-    version='2.0.0',
+    version='2.1.0',
     description='FIS API Client',
     long_description=long_description,
     license='Apache License, Version 2.0',

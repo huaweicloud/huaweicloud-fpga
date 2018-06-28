@@ -22,29 +22,25 @@
 # 1 运行环境要求 #
 **fisclient** 是在以下环境中开发和测试的：
 
-- CentOS 7.3
+- FPGA弹性云服务器
+- CentOS 7.3 64 bit
 - Python 2.7
 
 对于其他环境，不保证可用性。
 
 <a name="installation"></a>
 # 2 安装 #
-在安装之前，用户首先要确保已经以 **root** 身份登录弹性云服务器。
+- 步骤1：以 **root** 用户登录弹性云服务器。
 
-### 步骤1 下载源码包 ###
-- 执行 **git clone https://github.com/Huawei/huaweicloud-fpga.git** 命令下载 **fisclient** 源码包。
+- 步骤2：切换到 **FPGA开发套件** 的 **cli/fisclient** 目录。
 
-> 如果用户已经下载了[FPGA开发套件](https://github.com/Huawei/huaweicloud-fpga/blob/master/README_CN.md)，则可以跳过本步骤。<br/>
-> 下载 **fisclient** 源码包时，请确保当前目录下没有以 **huaweicloud-fpga** 命名的文件或目录。
-
-### 步骤2 安装fisclient ###
-- 执行 **cd huaweicloud-fpga/cli/fisclient** 命令切换到 **FPGA开发套件** 的 **huaweicloud-fpga/cli/fisclient** 目录。
-
-- 执行 **bash install.sh** 命令安装fisclient工具。
+- 步骤3：执行 **bash install.sh** 命令安装fisclient工具。
 
 <a name="configuration"></a>
 # 3 配置 #
-用户需要执行 **fis configure** 命令来进行 **fisclient** 工具的配置。<br/>
+用户需要执行 **fis configure** 命令来进行 **fisclient** 工具的配置。
+- 请确保弹性云服务器可以正常访问ECS元数据，更多详细信息请参见[元数据](https://support.huaweicloud.com/usermanual-ecs/zh-cn_topic_0042400609.html)的 **前提条件** 小节。
+- **fisclient** 会为弹性云服务器配置内网DNS。关于内网DNS的更多详细信息请参见[华为云提供的内网DNS](https://support.huaweicloud.com/dns_faq/dns_faq_002.html)。
 
 在配置过程中，用户需要输入以下参数：
 
@@ -52,7 +48,6 @@
 | ---- | ---- |
 | **Access Key** | 接入键标识AK |
 | **Secret Key** | 安全接入键SK |
-| **Region ID** | 用户当前所在的区域 |
 | **Bucket Name** | 用于存放待注册FPGA镜像的OBS桶 |
 
 > **fisclient** 会自动保存用户上一次的有效配置参数。用户在配置过程中，既可以输入新的配置参数，也可以通过输入单个**回车键**来使用上一次的配置参数。<br/>
@@ -70,34 +65,12 @@ Secret Key []: a0vet3Eh********************cIr4meJzYSMe
 当提示输入 **Access Key** 时，请输入用户的**接入键标识（Access Key ID）**。<br/>
 当提示输入 **Secret Key** 时，请输入用户的**安全接入键（Secret Access Key）**。
 
-### 步骤2 配置区域参数 ###
-区域参数 **Region ID** 表示用户在哪一个区域中使用FPGA加速云服务器。<br/>
-
-| 区域 | Region ID |
-| ---- | ---- |
-| **华北-北京一** | **cn-north-1** |
-| **华东-上海二** | **cn-east-2** |
-| **华南-广州** | **cn-south-1** |
-
-> 请注意，错误的Region ID可能仍会使FPGA镜像注册和查询成功，但会使FPGA镜像加载失败。
-
-<pre>
-Choose the Region where you are located.
-Available Regions:
-  (1) cn-north-1
-  (2) cn-east-2
-  (3) cn-south-1
-Region ID []: 1
-</pre>
-
-当提示输入 **Region ID** 时，请输入用户当前所在区域对应的序号。例如，若用户在 **华北-北京一** 使用FPGA加速云服务器，则请输入 **cn-north-1** 对应的序号，即 **1** 。
-
-### 步骤3 配置桶参数 ###
+### 步骤2 配置桶参数 ###
 桶参数 **Bucket Name** 表示存放待注册FPGA镜像的OBS桶。
 
 > 如果用户在当前区域中已经拥有了符合条件的OBS桶，**fisclient** 会罗列出这些桶，用户只需要从中选择一个即可。
 
-- 创建新的OBS桶
+#### 场景1 创建新的OBS桶 ####
 
 <pre>
 Choose or Create a Bucket for storing the FPGA images to be registered.
@@ -118,7 +91,7 @@ Bucket "hello-fpga2" created
 > - 禁止"."和"-"相邻（如"my-.bucket"和"my.-bucket"）
 > - 禁止使用IP地址
 
-- 使用已有的OBS桶
+#### 场景2 使用已有的OBS桶 ####
 
 <pre>
 Choose or Create a Bucket for storing the FPGA images to be registered.
@@ -131,13 +104,12 @@ Bucket Name []: 2
 
 > 当用户期望选择或创建的桶名与Available Bucket(s)列表中OBS桶的序号冲突时，用户可以在桶名前添加一个!符号，使用 **!mybucket** 表示期望选择或创建的桶名为 **mybucket**。
 
-### 步骤4 确认并保存 ###
+### 步骤3 确认并保存 ###
 在用户完成所有参数配置后，**fisclient** 会询问用户是否保存新的配置。
 <pre>
 New settings:
   Access key: a0Vfz5j9********eltR
   Secret Key: a0vet3Eh********************cIr4meJzYSMe
-  Region ID: cn-north-1
   Bucket Name: hello-fpga2
 Save settings? [Y/n]: 
 Configuration saved to "/root/.fiscfg".

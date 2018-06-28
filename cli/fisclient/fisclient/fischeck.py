@@ -47,6 +47,8 @@ def get_parser():
 
 
 def main():
+    utils.check_login_user()
+
     # parse input option
     argv = [encode.convert_to_unicode(a) for a in sys.argv[1:]]
     args = get_parser().parse_args(argv)
@@ -78,14 +80,18 @@ def main():
     config.read_config_and_verify()
     access_key = os.getenv('OS_ACCESS_KEY')
     secret_key = os.getenv('OS_SECRET_KEY')
-    region_id = os.getenv('OS_REGION_ID')
     bucket_name = os.getenv('OS_BUCKET_NAME')
+    region_id = os.getenv('OS_REGION_ID')
     domain_id = os.getenv('OS_DOMAIN_ID')
     project_id = os.getenv('OS_PROJECT_ID')
     obs_endpoint = os.getenv('OS_OBS_ENDPOINT')
+    vpc_endpoint = os.getenv('OS_VPC_ENDPOINT')
     fis_endpoint = os.getenv('OS_FIS_ENDPOINT')
 
     try:
+        # configure intranet dns of ecs
+        config.configure_intranet_dns_ecs(region_id)
+
         # check bucket
         utils._check_bucket_acl_location(bucket_name, access_key, secret_key,
                                          obs_endpoint, region_id, domain_id)
@@ -99,9 +105,6 @@ def main():
         print('fis argument(s) and config file are OK')
     else:
         print('fis config file is OK')
-
-    # check intranet dns
-    config.check_intranet_dns(region_id)
 
 
 if __name__ == '__main__':

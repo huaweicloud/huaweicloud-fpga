@@ -107,18 +107,54 @@ def do_configure(args):
     """Invoke interactive (re)configuration tool"""
     cur_conf = config.read_current_config()
     if args.dump:
-        for key in ('OS_ACCESS_KEY', 'OS_SECRET_KEY', 'OS_REGION_ID', 'OS_BUCKET_NAME'):
+        for key in ('OS_ACCESS_KEY', 'OS_SECRET_KEY', 'OS_BUCKET_NAME', 'OS_REGION_ID'):
             print("%s = %s" % (key, cur_conf.get(key, '')))
         return
 
     access_key_old = cur_conf.get('OS_ACCESS_KEY', '')
     secret_key_old = cur_conf.get('OS_SECRET_KEY', '')
-    region_id_old = cur_conf.get('OS_REGION_ID', '')
     bucket_name_old = cur_conf.get('OS_BUCKET_NAME', '')
+    region_id_old = cur_conf.get('OS_REGION_ID', '')
+    configure_region_id = False
+
     try:
         print('Enter new values or accept defaults in brackets with Enter')
 
-        # loop until access_key, secret_key, region_id are OK
+        # get region_id from ECS metadata
+        print('\nGetting region_id from ECS metadata.')
+        region_id = rest.get_region_id_from_metadata()
+        if region_id:
+            print('You are in region "%s".' % region_id)
+        else:
+            # configure region_id interactively when get it from ECS metadata failed
+            configure_region_id = True
+            print('\n\033[31mNote: If an incorrect Region ID is used, the FPGA image registration and querying may succeed, but the FPGA loading will fail.\033[0m')
+            print('Choose the Region where you are located.')
+            regions = config.endpoints.keys()
+            print('Available Regions:')
+            for i, region in enumerate(regions, 1):
+                print('  (%d) %s' % (i, region))
+            while True:
+                region_id = raw_input('Region ID [%s]: ' % region_id_old).strip() or region_id_old
+                if re.match(u'\d+$', region_id) and 1 <= int(region_id) <= len(regions):
+                    region_id = regions[int(region_id)-1]
+                    break
+                elif region_id in regions:
+                    break
+                elif not region_id:
+                    utils.print_err('Error: empty input')
+                else:
+                    utils.print_err('Error: "%s" is not a valid region' % region_id)
+
+        obs_endpoint = config.get_endpoint(region_id, 'obs')
+        iam_endpoint = config.get_endpoint(region_id, 'iam')
+        vpc_endpoint = config.get_endpoint(region_id, 'vpc')
+        fis_endpoint = config.get_endpoint(region_id, 'fis')
+
+        # configure intranet dns of ecs
+        config.configure_intranet_dns_ecs(region_id)
+
+        # loop until access_key, secret_key are OK
         while True:
             try:
                 print('\nAccess key and Secret key are your identifiers for FIS and OBS.')
@@ -136,28 +172,6 @@ def do_configure(args):
                     else:
                         utils.print_err('Error: empty input')
 
-                print('\n\033[31mNote: If an incorrect Region ID is used, the FPGA image registration and querying may succeed, but the FPGA loading will fail.\033[0m')
-                print('Choose the Region where you are located.')
-                regions = config.endpoints.keys()
-                print('Available Regions:')
-                for i, region in enumerate(regions, 1):
-                    print('  (%d) %s' % (i, region))
-                while True:
-                    region_id = raw_input('Region ID [%s]: ' % region_id_old).strip() or region_id_old
-                    if re.match(u'\d+$', region_id) and 1 <= int(region_id) <= len(regions):
-                        region_id = regions[int(region_id)-1]
-                        break
-                    elif region_id in regions:
-                        break
-                    elif not region_id:
-                        utils.print_err('Error: empty input')
-                    else:
-                        utils.print_err('Error: "%s" is not a valid region' % region_id)
-
-                obs_endpoint = config.get_endpoint(region_id, 'obs')
-                iam_endpoint = config.get_endpoint(region_id, 'iam')
-                fis_endpoint = config.get_endpoint(region_id, 'fis')
-
                 bucket_list = rest.get_bucket_list(access_key, secret_key, obs_endpoint)
                 project = rest.get_project(access_key, secret_key, region_id, iam_endpoint).get('projects', [])
                 if len(project) >= 1:
@@ -167,7 +181,7 @@ def do_configure(args):
                     raise FisException('You do NOT have project in "%s", \033[31mplease '
                                        'choose another region and try again\033[0m' % region_id)
 
-                # break when access_key, secret_key, region_id are OK
+                # break when access_key, secret_key are OK
                 break
             except (FisException, RequestException) as e:
                 msg = encode.exception_to_unicode(e)
@@ -178,7 +192,6 @@ def do_configure(args):
                 utils.print_err('Error: %s' % msg)
                 access_key_old = access_key
                 secret_key_old = secret_key
-                region_id_old = region_id
 
         # loop until bucket_name is OK
         print('\nGetting all your available buckets in "%s".' % region_id)
@@ -211,20 +224,25 @@ def do_configure(args):
                 if _check_and_create_bucket(bucket_name, all_bucket, access_key, secret_key, region_id, obs_endpoint):
                     break
 
+        # configure intranet dns of vpc
+        print('\nChecking private DNS of VPC.')
+        config.configure_intranet_dns_vpc(access_key, secret_key, project_id, region_id, vpc_endpoint)
+
         # save new settings
-        print('\nNew settings:\n  Access key: %s\n  Secret Key: %s\n  Region ID: %s\n  Bucket Name: %s' %
-              (access_key, secret_key, region_id, bucket_name))
+        if not configure_region_id:
+            print('\nNew settings:\n  Access key: %s\n  Secret Key: %s\n  Bucket Name: %s' %
+                  (access_key, secret_key, bucket_name))
+        else:
+            print('\nNew settings:\n  Region ID: %s\n  Access key: %s\n  Secret Key: %s\n  Bucket Name: %s' %
+                  (region_id, access_key, secret_key, bucket_name))
         save_option = raw_input('Save settings? [Y/n]: ').strip() or 'Y'
         if 'yes'.startswith(save_option.lower()):
-            config.save_config(access_key, secret_key, region_id,
-                               bucket_name, domain_id, project_id,
-                               obs_endpoint, iam_endpoint, fis_endpoint)
+            config.save_config(access_key, secret_key, bucket_name,
+                               region_id, domain_id, project_id,
+                               obs_endpoint, iam_endpoint, vpc_endpoint, fis_endpoint)
             print('Configuration saved to "%s".' % os.path.expanduser(config.CONFIG_FILE))
         else:
             print('Changes were NOT saved.')
-
-        # check intranet dns
-        config.check_intranet_dns(region_id)
     except (KeyboardInterrupt, EOFError):
         exit()
 

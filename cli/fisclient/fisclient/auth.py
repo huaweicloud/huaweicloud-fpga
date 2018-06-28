@@ -63,7 +63,7 @@ def _getSignatureKey(key, dateStamp, regionName, serviceName):
 
 
 def sign_request_v4(access_key, secret_key, method, host,
-                    canonical_uri, region='cn-north-1',
+                    canonical_uri, region,
                     service='ecs', params=None, body=b''):
     if not canonical_uri.endswith('/'):
         canonical_uri += '/'

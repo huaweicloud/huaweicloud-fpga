@@ -36,5 +36,3 @@ done
 
 echo -e "\n~~~~~~~~~~~~~~~~ install fisclient ~~~~~~~~~~~~~~~~"
 python setup.py install
-
-echo -e "\n~~~~~~~~~~~~~~~~ install success ~~~~~~~~~~~~~~~~"

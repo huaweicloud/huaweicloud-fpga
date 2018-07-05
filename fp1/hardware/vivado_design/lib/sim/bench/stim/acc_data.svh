@@ -30,7 +30,12 @@ class acc_data;
 
     // Write BD type
     typedef struct packed {
-        bit [127: 0] rsv        ; // [255:128]
+        //bit [127: 0] rsv        ; // [255:128]
+        bit [79:0]   rsv0       ; // [255:176]
+        bit [31: 0]  length     ; // [175:144]
+        bit [5: 0]   rsv1       ; // [143:138]
+        bit [7: 0]   tread_id   ; // [137:130]
+        bit [1: 0]   opcode     ; // [129:128]
         bit [63 : 0] dest_addr  ; // [127: 64]
         bit [63 : 0] src_addr   ; // [63 :  0]
     } acc_head_t;
@@ -43,6 +48,9 @@ class acc_data;
 
     rand  bit [63 : 0]  addr     ;   // 
     bit [63: 0]         dest_addr;   // 
+    bit [31: 0]         local_length   ;   // 
+    bit [7: 0]          local_tread_id ;   // 
+    bit [1: 0]          local_opcode   ;   // 
 
     // Base constraint
     constraint acc_data_base_constraint {
@@ -76,18 +84,26 @@ endfunction : new
 function bit acc_data::compare(input acc_data cmp = null);
     bit [63 : 0]  laddr_s;
     bit [63 : 0]  laddr_d;
+    bit [31: 0]   length   ;    
+    bit [7: 0]    tread_id ;    
+    bit [1: 0]    opcode   ;    
     if (cmp == null) begin
         `tb_error("compare", "Compare fail, the data need to compare can not be null")
         return 0;
     end
-    laddr_s = cmp.addr;
-    laddr_d = cmp.dest_addr;
-    compare = (addr == laddr_s) && (dest_addr == laddr_d);
+    laddr_s   = cmp.addr;
+    laddr_d   = cmp.dest_addr;
+    length    = cmp.local_length;
+    tread_id  = cmp.local_tread_id;
+    opcode    = cmp.local_opcode;
+    
+    compare = (addr == laddr_s) && (dest_addr == laddr_d) && (local_length == length) && (local_tread_id == tread_id) &&(local_opcode == opcode);
 endfunction : compare
 
 function string acc_data::psdisplay(string prefix = "");
     $sformat(psdisplay, {prefix, "------------------------------------", 
-                         "source_addr=0x%x, dest_addr=0x%x"}, addr, dest_addr);
+                         "source_addr=0x%x, dest_addr=0x%x,local_opcode=0x%x,local_tread_id=0x%x,local_length=0x%x,"}, addr, dest_addr,
+                           local_opcode,local_tread_id,local_length);
 endfunction : psdisplay
 
 function void acc_data::dispaly(string prefix = "");
@@ -108,6 +124,9 @@ function int acc_data::unpack_bytes(const ref bit [7 : 0] bytes[]);
     acc_head = {<<8{acc_head}};
     addr     = acc_head.src_addr  ;
     dest_addr= acc_head.dest_addr ;
+    local_opcode   = acc_head.opcode ;
+    local_tread_id = acc_head.tread_id ;
+    local_length   = acc_head.length;
     unpack_bytes = bytes.size();
 endfunction : unpack_bytes
 

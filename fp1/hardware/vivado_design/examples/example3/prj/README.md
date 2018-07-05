@@ -251,6 +251,7 @@ The format of the command for running the **AEI_Register.sh** script is as follo
   # AEI_name is a string of 1 to 64 characters consisting of uppercase and lowercase letters, digits, underscores (_), and hyphens (-).
   # -d specifies the AEI descriptions of the FPGA image to be registered.
   # AEI_Description consists of 0 to 255 characters, including uppercase and lowercase letters, digits, hyphens (-), underscores (_), periods (.), commas (,), and spaces..
+  # **AEI_name** and **AEI_Description** are enclosed in quotation marks,such as `sh AEI_Register.sh -n "DPDK-test" -d "DPDK-desc" `
 ```
 
 **Notes**

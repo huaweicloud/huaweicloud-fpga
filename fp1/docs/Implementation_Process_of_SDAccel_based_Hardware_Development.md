@@ -105,7 +105,7 @@ Set `VIVADO_VER_REQ` in the `setup.cfg` file to the version of the selected tool
 
 To use SDAccel as a development tool, set the parameter of `VIVADO_VER_REQ` as follows:
 
-`VIVADO_VER_REQ="2017.1"`
+`VIVADO_VER_REQ="2017.4.op"`
 
 
 **Notes**

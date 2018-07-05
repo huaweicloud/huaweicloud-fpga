@@ -24,7 +24,7 @@ import hashlib
 def user_age():
     print "\033[36;1muser_info:\033[0m"
     print "python AEI_packager.py $metada_json_path $user_bin_path"
-    sys.exit(0)
+    sys.exit(1)
 
 if len(sys.argv)==1:
     user_age()
@@ -37,7 +37,7 @@ if os.path.exists(sys.argv[1]) and os.path.exists(sys.argv[2]):
     bin_path=sys.argv[2]
 else:
     print "ERROR:the json or bin file is not found"
-    sys.exit(0)
+    sys.exit(1)
 
 aei_bin=os.path.basename(os.path.splitext(bin_path)[0])
 AEI_bin_path=os.path.abspath(os.path.join(os.path.dirname(bin_path),aei_bin+"_aei.bin"))

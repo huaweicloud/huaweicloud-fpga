@@ -193,7 +193,9 @@ task cpu_model_cb::user_process();
         m_axissc_mlbx.get(rsp);
         if (rsp == null) continue;
         // Send data to DUT
-        get_bfmrsp(rsp);
+        get_bfmrsp(rsp); 
+       
+       
     end
 endtask : user_process
 
@@ -207,6 +209,7 @@ function cpu_data cpu_model_cb::generate_bd(ref REQ req);
     head.acc_type = 'd0;
     head.cpu_type = cpu_data::e_CPU_WR_BD;
     head.acc_len  = `ACC_LEN_CFG;
+    head.opcode   = req.opt;
     generate_bd   = head;
     // void'(generate_bd.unpack_bytes(byte_array));
 endfunction : generate_bd
@@ -241,6 +244,9 @@ task cpu_model_cb::send_bd2bfm(ref REQ req);
     DATA_t   byte_array[];
     int      head_len;
     int      data_len;
+    bit[7:0] data_tmp[];
+    bit[7:0] tmp[];
+    string   info;
     bd.data_len+= bd.acc_len*'d32;
     head_len    = bd.pack_bytes(byte_array);
     data_len    = req.data.size();
@@ -251,6 +257,9 @@ task cpu_model_cb::send_bd2bfm(ref REQ req);
     if (bd.acc_len >0) begin
     	acc.addr        = m_acc_addr[m_acc_id];
     	acc.dest_addr   = m_acc_addr[m_acc_id];
+    	acc.local_tread_id   = bd.thread_id;
+    	acc.local_opcode     = bd.opcode;
+    	acc.local_length     = bd.data_len;
     	m_acc[bd.addr]  = acc;
     	m_acc_addr[m_acc_id++] += 'h4096;
     	if (m_acc_id >= `USER_DDR_NUM) m_acc_id = 'd0;
@@ -263,11 +272,31 @@ task cpu_model_cb::send_bd2bfm(ref REQ req);
     // Insert to RM
     data = new();
 `ifndef VIVADO
-    data.data  = req.data;
-`else
-    data.set_data(req.data);
-`endif
-    insert(data);
+    if (bd.opcode == 'd1) begin
+        tmp = new[data_len];
+        for (int i= 0;i<data_len;i++) begin
+            tmp[i] = 'd0;
+        end 
+        data.data  = tmp;
+    end else begin
+        data.data  = req.data;
+    end
+
+`else 
+    if (bd.opcode == 'd1) begin
+        tmp = new[data_len];
+        for (int i= 0;i<data_len;i++) begin
+            tmp[i] = 'd0;
+        end 
+        data.set_data(tmp);
+    end else begin
+        data.set_data(req.data);
+    end
+
+`endif 
+    if (bd.opcode !==2 )  begin
+	insert(data);
+    end
     // Write BD to BFM
     trans      = new();
 `ifndef VIVADO
@@ -308,6 +337,13 @@ task cpu_model_cb::get_datarsp(ref RSP rsp);
             $sformat(info, "%s[Actual Acc] is \n%s\n", info, cmp.psdisplay());
             $sformat(info, "%s------------------------------------\n", info);
             `tb_error("cpu_model_cb", info)
+        end else begin
+            string info = "Hardacc Compare Right:\n";
+            $sformat(info, "%s------------------------------------\n", info);
+            $sformat(info, "%s[Expect Acc] is \n%s\n", info, exp.psdisplay());
+            $sformat(info, "%s[Actual Acc] is \n%s\n", info, cmp.psdisplay());
+            $sformat(info, "%s------------------------------------\n", info);
+            `tb_info("cpu_model_cb", info)
         end
         m_acc.delete(head.addr);
     end else if (m_data.exists(head.addr)) begin

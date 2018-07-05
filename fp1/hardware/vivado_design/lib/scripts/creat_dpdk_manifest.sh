@@ -31,7 +31,7 @@ pci_subsystem_id="-"
 pci_subsystem_vendor_id="-"
 dcp_hash=$dcp_hash
 shell_type="0x101"
-shell_version="0x0028"
+shell_version="0x0029"
 hdk_version="Vivado 2017.2"
 date=`date +%Y/%m/%d_%H:%M:%S`
 _eop

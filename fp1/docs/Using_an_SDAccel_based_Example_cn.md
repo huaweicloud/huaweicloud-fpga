@@ -25,10 +25,10 @@ SDAccel HDK主要完成SDAccel开发流程的编译和仿真部分，需要在SD
 
 2.  设置EDA工具License。
 
-  用户打开“huaweicloud-fpga/fp1/”路径下的“setup.cfg”文件，将文件中XILINX_LIC_SETUP的值配置为License服务器的IP地址。设置FPGA_DEVELOP_MODE="sdx"；VIVADO_VER_REQ="2017.1"
+  用户打开“huaweicloud-fpga/fp1/”路径下的“setup.cfg”文件，将文件中XILINX_LIC_SETUP的值配置为License服务器的IP地址。设置FPGA_DEVELOP_MODE="sdx"；VIVADO_VER_REQ="2017.4.op"
 
   	FPGA_DEVELOP_MODE="sdx"  
-  	VIVADO_VER_REQ="2017.1" 
+  	VIVADO_VER_REQ="2017.4.op" 
   	
     华北：`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.245"`
     
@@ -147,10 +147,10 @@ SDAccel的SDK平台主要实现对硬件的测试，需要在执行环境下编�
   执行run.sh完成硬件的加载与测试，具体步骤如下：
 
   	cd $SW_FPGA_DIR/software/app/sdaccel_app/mmult_hls
-  	sh run.sh mmult $SW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/prj/bin/bin_mmult_hw.xclbin 0
+  	sh run.sh mmult $HW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/prj/bin/bin_mmult_hw.xclbin 0
 
-  上面run.sh脚本末尾的0表示slot号，该号在用户申请环境时得到。比如用户申请了一个带4张FPGA加速卡的虚拟机环境，则slot号为0、1、2、3。  
-  
+上面run.sh脚本末尾的0表示slot号，该号在用户申请环境时得到。比如用户申请了一个带4张FPGA加速卡的虚拟机环境，则slot号为0、1、2、3。
+
 ##### 说明:
 
   run.sh具体使用请执行sh run.sh -h查看。  

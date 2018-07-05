@@ -27,10 +27,10 @@ The SDAccel HDK platform serves to complete the compilation and simulation of th
 
 2.  Configure the license file of EDA.
 
-  Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set **XILINX_LIC_SETUP** to the IP address of the license server. Set **FPGA_DEVELOP_MODE="sdx"** and **VIVADO_VER_REQ="2017.1"**.
+  Open the `setup.cfg` file in `huaweicloud-fpga/fp1/` and set **XILINX_LIC_SETUP** to the IP address of the license server. Set **FPGA_DEVELOP_MODE="sdx"** and **VIVADO_VER_REQ="2017.4.op"**.
 
   	FPGA_DEVELOP_MODE="sdx"  
-  	VIVADO_VER_REQ="2017.1"
+  	VIVADO_VER_REQ="2017.4.op"
 
     CN North:`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.245"`
 
@@ -149,7 +149,6 @@ The SDAccel SDK platform is used to test hardware. Compile and run the host prog
 
   	cd $SW_FPGA_DIR/software/app/sdaccel_app/mmult_hls
   	sh run.sh mmult $HW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/prj/bin/bin_mmult_hw.xclbin 0
-
 
 The 0 at the end of the above run.sh script indicates the slot number, which is obtained when the user requests the environment. 
 For example, if a user applies for a virtual machine environment with 4 FPGA accelerator cards, the slot numbers are 0, 1, 2, and 3.

@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
     	return ret;
     }
 
-    (void)print_oppos_data();
+    (void)print_oppos_data(g_port_id);
 
     (void)pci_bar2_uninit_env();
 

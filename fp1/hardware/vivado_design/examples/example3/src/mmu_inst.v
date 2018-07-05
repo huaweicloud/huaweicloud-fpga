@@ -133,6 +133,15 @@ localparam  U_DLY       = 0             ;
 wire  [31:0]                                 cpu_data_out_tx            ;
 wire  [31:0]                                 cpu_data_out_rx            ;
 
+    //with mmu_rx
+wire                                         bd2rx_s_axis_rq_tlast      ;
+wire  [511:0]                                bd2rx_s_axis_rq_tdata      ;
+wire  [59:0]                                 bd2rx_s_axis_rq_tuser      ;
+wire  [63:0]                                 bd2rx_s_axis_rq_tkeep      ;
+wire                                         bd2rx_s_axis_rq_tready     ;
+wire                                         bd2rx_s_axis_rq_tvalid     ;
+
+
 //*********************************************************************************************************************
 //    process
 //*********************************************************************************************************************   
@@ -172,6 +181,14 @@ u_mmu_tx_inst
     .bd2k_s_axis_rq_tkeep           ( bd2k_s_axis_rq_tkeep      ),
     .bd2k_s_axis_rq_tready          ( bd2k_s_axis_rq_tready     ),
     .bd2k_s_axis_rq_tvalid          ( bd2k_s_axis_rq_tvalid     ),
+
+    //with mmu_rx
+    .bd2rx_s_axis_rq_tlast          ( bd2rx_s_axis_rq_tlast     ),
+    .bd2rx_s_axis_rq_tdata          ( bd2rx_s_axis_rq_tdata     ),
+    .bd2rx_s_axis_rq_tuser          ( bd2rx_s_axis_rq_tuser     ),
+    .bd2rx_s_axis_rq_tkeep          ( bd2rx_s_axis_rq_tkeep     ),
+    .bd2rx_s_axis_rq_tready         ( bd2rx_s_axis_rq_tready    ),
+    .bd2rx_s_axis_rq_tvalid         ( bd2rx_s_axis_rq_tvalid    ),
 
     //receive hard acc & pkt : axi stream interface
     .sh2ul_dmam1_tdata              ( sh2ul_dmam1_tdata         ),
@@ -234,6 +251,13 @@ u_mmu_rx_inst
     .ker2mmu_bd_tkeep               (ker2mmu_bd_tkeep           ),
     .ker2mmu_bd_tvalid              (ker2mmu_bd_tvalid          ),
     .mmu2ker_bd_tready              (mmu2ker_bd_tready          ),                              
+    //BD signal with mmu_tx
+    .bd2rx_s_axis_rq_tlast          ( bd2rx_s_axis_rq_tlast     ),
+    .bd2rx_s_axis_rq_tdata          ( bd2rx_s_axis_rq_tdata     ),
+    .bd2rx_s_axis_rq_tuser          ( bd2rx_s_axis_rq_tuser     ),
+    .bd2rx_s_axis_rq_tkeep          ( bd2rx_s_axis_rq_tkeep     ),
+    .bd2rx_s_axis_rq_tready         ( bd2rx_s_axis_rq_tready    ),
+    .bd2rx_s_axis_rq_tvalid         ( bd2rx_s_axis_rq_tvalid    ),
 
     //axi4 read addr with DDR CTRL	                                          
     .axi4m_ddr_arid                 (axi4m_ddr_arid             ),  

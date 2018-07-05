@@ -30,6 +30,7 @@ module reg_mmu_rx  #
 
                  input        [31:0]              reg_mmu_rxbd_sta            ,
                  input        [31:0]              reg_mmu_rxpkt_sta           ,
+                 input        [31:0]              reg_mmu_rxpkt_sta1          ,
                  
                  input        [31:0]              reg_mmu_rxbd_err            ,
                  input        [31:0]              reg_mmu_rxpkt_err           ,
@@ -44,6 +45,12 @@ module reg_mmu_rx  #
                  input                            reg_mmu_txpkt_en            , 
                  input                            reg_mmu_rxbd_en             , 
                  input                            reg_mmu_rdcmd_en            , 
+                 input                            reg_add_hacc_en             , 
+                 input                            reg_write_ddr_bd            , 
+                 input                            axis_fifo_rd                , 
+                 input                            bd2rx_axis_fifo_rd          , 
+                 input                            read_op_vld                 , 
+                 input                            write_op_vld                , 
     
                  //with cpu
                  input                            cnt_reg_clr                 ,
@@ -77,6 +84,7 @@ wire       [31:0]           cpu_data_out83        ;
 //sta
 wire       [31:0]           cpu_data_out100       ;
 wire       [31:0]           cpu_data_out101       ;
+wire       [31:0]           cpu_data_out102       ;
 
 //cnt
 wire       [31:0]           cpu_data_out180       ;
@@ -86,6 +94,12 @@ wire       [31:0]           cpu_data_out183       ;
 wire       [31:0]           cpu_data_out184       ;
 wire       [31:0]           cpu_data_out185       ;
 wire       [31:0]           cpu_data_out186       ;
+wire       [31:0]           cpu_data_out187       ;
+wire       [31:0]           cpu_data_out188       ;
+wire       [31:0]           cpu_data_out189       ;
+wire       [31:0]           cpu_data_out18a       ;
+wire       [31:0]           cpu_data_out18b       ;
+wire       [31:0]           cpu_data_out18c       ;
 
 /*********************************************************************************************************************\
     process
@@ -240,6 +254,20 @@ ro_reg_inst
      .din                ( reg_mmu_rxpkt_sta        )        
      );
 
+ro_reg_inst
+        #(
+        .ADDR_WIDTH(24),
+        .VLD_WIDTH(32)                                    
+         )
+     inst_reg_mmu_rxpkt_sta1                                    
+     (
+     .cpu_data_out       ( cpu_data_out102          ),   
+     .cpu_addr           ( cpu_addr                 ),   
+     .its_addr           ( {REG_MMU_RX_ID,3'd0,9'h102}),   
+     .din                ( reg_mmu_rxpkt_sta1       )        
+     );
+
+
 
 cnt32_reg_inst
          #(
@@ -346,6 +374,103 @@ inst_reg_mmu_txpkt_cnt
      .cnt_reg_clr        ( cnt_reg_clr              )      
      );
 
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_reg_axis_fifo_rd_cnt
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_out187          ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {REG_MMU_RX_ID,3'd0,9'h187}),     
+     .cnt_reg_inc        ( axis_fifo_rd         ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_reg_bd2rx_axis_fifo_rd_cnt
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_out188          ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {REG_MMU_RX_ID,3'd0,9'h188}),     
+     .cnt_reg_inc        ( bd2rx_axis_fifo_rd         ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_reg_read_op_vld_cnt
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_out189          ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {REG_MMU_RX_ID,3'd0,9'h189}),     
+     .cnt_reg_inc        ( read_op_vld         ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_reg_write_op_vld_cnt
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_out18a          ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {REG_MMU_RX_ID,3'd0,9'h18a}),     
+     .cnt_reg_inc        ( write_op_vld         ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_reg_add_hacc_en_cnt
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_out18b          ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {REG_MMU_RX_ID,3'd0,9'h18b}),     
+     .cnt_reg_inc        ( reg_add_hacc_en         ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_reg_write_ddr_bd_cnt
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_out18c          ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {REG_MMU_RX_ID,3'd0,9'h18c}),     
+     .cnt_reg_inc        ( reg_write_ddr_bd         ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+
+
+
+
+
+
+
 always @ (posedge clk_sys or posedge rst)
 begin
     if (rst == 1'b1)
@@ -386,6 +511,7 @@ begin
        casez(cpu_addr[6:0])
            7'h00: cpu_data_out_sts <= cpu_data_out100;
            7'h01: cpu_data_out_sts <= cpu_data_out101;
+           7'h02: cpu_data_out_sts <= cpu_data_out102;
 
          default: cpu_data_out_sts <= 32'd0;
        endcase
@@ -406,6 +532,12 @@ begin
            7'd4: cpu_data_out_cnt <= cpu_data_out184;
            7'd5: cpu_data_out_cnt <= cpu_data_out185;
            7'd6: cpu_data_out_cnt <= cpu_data_out186;
+           7'd7: cpu_data_out_cnt <= cpu_data_out187;
+           7'd8: cpu_data_out_cnt <= cpu_data_out188;
+           7'd9: cpu_data_out_cnt <= cpu_data_out189;
+           7'd10: cpu_data_out_cnt <= cpu_data_out18a;
+           7'd11: cpu_data_out_cnt <= cpu_data_out18b;
+           7'd12: cpu_data_out_cnt <= cpu_data_out18c;
          
          default: cpu_data_out_cnt <= 32'd0;
        endcase

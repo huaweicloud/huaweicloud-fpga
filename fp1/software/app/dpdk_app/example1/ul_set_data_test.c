@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
     	return ret;
     }
 
-    (void)set_oppos_data(g_value);
+    (void)set_oppos_data(g_port_id, g_value);
 
     (void)pci_bar2_uninit_env();
 

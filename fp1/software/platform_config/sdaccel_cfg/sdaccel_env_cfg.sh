@@ -31,9 +31,9 @@ realpath=$(readlink -f $script_path)
 
 echo $realpath
 FPGADESIGN_PATH=${realpath}/../../..
-XDMADRV_PATH=${FPGADESIGN_PATH}/software/kernel_drivers/xdma_driver/driver/xclng/xdma
-USERHAL_PATH=${FPGADESIGN_PATH}/software/userspace/sdaccel/driver/xclhal/source
-USERHALLIB_PATH=${USERHAL_PATH}/../../../lib/runtime/platforms/hal/driver
+XOCLDRV_PATH=${FPGADESIGN_PATH}/software/kernel_drivers/xocl/driver/xclng/drm/xocl
+USERHAL_PATH=${FPGADESIGN_PATH}/software/userspace/sdaccel/driver/xclgemhal/driver/xclng/user_gem
+USERHALLIB_PATH=${USERHAL_PATH}/../../../../../lib/runtime/platforms/hal/driver
 echo "dma drv  path is ${DMADRV_PATH}"
 if [ -z $XILINX_SDX ]
 then 
@@ -41,25 +41,25 @@ then
     exit
 fi
 
-#check xdma driver is installed or not
-DRIVER=xdma
+#check XOCL driver is installed or not
+DRIVER=xocl
 
 echo -e "\nCompile and installing...\n"
 
-cd ${XDMADRV_PATH}
+cd ${XOCLDRV_PATH}
 make clean
 
-echo -e "\nXdma driver is compling..."
-XDMA_COMLOG=`make |egrep -w 'err|ERR|error|ERROR'`
-if [[ -n "$XDMA_COMLOG" ]]; then
-    echo "ERROR: xdma driver compiled error, please check first!"
+echo -e "\nXocl driver is compling..."
+XOCL_COMLOG=`make |egrep -w 'err|ERR|error|ERROR'`
+if [[ -n "$XOCL_COMLOG" ]]; then
+    echo "ERROR: XOCL driver compiled error, please check first!"
     exit 1
 fi
 
 MODULE_INFO=`lsmod | grep $DRIVER 2>&1`
 if [[ -z "$MODULE_INFO" ]]; then
     echo "Warning: $DRIVER driver is not exist, will install first."
-    insmod xdma.ko
+    insmod xocl.ko
     echo "$DRIVER driver is installed now!"
 else
     echo ""

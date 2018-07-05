@@ -1,4 +1,4 @@
-# Example 3 Simulation User Guide
+﻿# Example 3 Simulation User Guide
 
 [切换到中文版](./README_CN.md)
 
@@ -26,12 +26,21 @@
 <li><a href="#sec-1-6">1.6. <b>Viewing Logs</b></a></li>
 </ul>
 <ul>
-<li><a href="#sec-1-7">1.7. <b>Test Case Description</b></a>
+<li><a href="#sec-1-7">1.7. <b>Description of Test Cases</b></a>
 <ul>
-<li><a href="#sec-1-7-1">1.7.1. Test Case sv_demo_001 Description</a></li>
+<li><a href="#sec-1-7-1">1.7.1. Description of Test Case sv_demo_001</a></li>
 </ul>
 <ul>
-<li><a href="#sec-1-7-2">1.7.2. Test Case sv_demo_002 Description</a></li>
+<li><a href="#sec-1-7-2">1.7.2. Description of Test Case sv_demo_002</a></li>
+</ul>
+<ul>
+<li><a href="#sec-1-7-3">1.7.3. Description of Test Case sv_demo_003</a></li>
+</ul>
+<ul>
+<li><a href="#sec-1-7-1">1.7.1. Description of Test Case sv_demo_004</a></li>
+</ul>
+<ul>
+<li><a href="#sec-1-7-1">1.7.1. Description of Test Case sv_demo_005</a></li>
 </ul>
 </li>
 </ul>
@@ -59,7 +68,7 @@
 The compilation, running, and debugging of Example 3 are implemented through Makefile. Before compiling, simulating, and debugging test cases, switch to the **simulation root directory**. Run the following command to switch to the simulation root directory. (Unless otherwise specified, perform the following operations in the **simulation root directory**.)
 
 ```bash
-    $ cd $WORK_DIR/hardware/vivado_desgin/examples/example3/sim
+    $ cd $WORK_DIR/hardware/vivado_design/examples/example3/sim
 ```
 
 <a id="sec-1-1" name="sec-1-1"></a>
@@ -164,9 +173,9 @@ If the compilation is successful but execution errors occur, you can enter the c
 
 <a id="sec-1-7" name="sec-1-7"></a>
 
-### **Test Case Description**
+### **Description of Test Cases**
 
-Example 3 contains two test cases: `sv_demo_001` and `sv_demo_002`.
+Example 3 contains five test cases: `sv_demo_001`, `sv_demo_002`, `sv_demo_003`, `sv_demo_004`, and `sv_demo_005`.
 
 The two test cases have the following functions:
 
@@ -177,32 +186,85 @@ The definition of the register is stored in the `./common/common_reg.svh` file.
 
 <a id="sec-1-7-1" name="sec-1-7-1"></a>
 
-#### **Test Case sv_demo_001 Description**
+#### **Description of Test Case sv_demo_001**
 
 The test case `sv_demo_001` reads the version register, checks the test register, and reads/writes the three external DDR interfaces of the UL.
 
     Details are as follows:
     sv_demo_001 delivers read/write operations to the three external DDR interfaces of the UL in sequence.
     Then, it is determined whether the read content is equal to the written content.
-    If they are the same, PASS is displayed. If not, FAIL is displayed and the simulation ends.
+    If they are the same, **PASS** is displayed. If not, FAIL is displayed and the simulation ends.
 
 <a id="sec-1-7-2" name="sec-1-7-2"></a>
 
-### **Test Case sv_demo_002 Description**
+#### **Description of Test Case sv_demo_002**
 
-The test case `sv_demo_002` reads the version register, checks the test register, and performs the **DMA test** for the UL.
+The test case `sv_demo_002` reads the version register, checks the test register, and performs the **DMA test** for the UL. Compared with sv_demo_002 in example 2, sv_demo_002 in example 3 needs to construct Hardacc by using the **ACC_LEN_CFG** macro specified in [Modifying Simulation Configuration](./Modifying Simulation Configuration). For details about Hardacc, see [User Development Guide for an FACS](../../../../../ User_Development_Guide_for_an_FACS).
 
     Details are as follows:
     The test case sv_demo_002 builds packets and BDs through the simulation platform and sends them to the UL through the AXI4-Stream interface connected to the UL.
     After the UL processes packets, the packets are returned to the simulation platform without any changes and BDs are generated.
     The simulation platform compares packets sent and received. If they are the same, PASS is displayed. If not, FAIL is displayed and the simulation ends.
 
+<a id="sec-1-7-3" name="sec-1-7-3"></a>
+
+#### Description of Test Case sv_demo_003
+
+The function of `sv_demo_003` is the same as that of `sv_demo_002`, but incentives and expected data of `sv_demo_003` are configured in the `./tests/sv/sv_demo_003/test.cfg` file.
+
+    Details are as follows:
+    sv_demo_003 parses and constructs packets and BDs through the file configured in `test.cfg`, and sends them to UL through the AXI4-Stream interface.
+    After being processed by UL, the packets are returned to the simulation platform without any changes and BDs are generated.
+    The simulation platform compares packets sent and received. If they are the same, **PASS** is displayed. If they are different, **FAIL** is displayed and the simulation ends.
+
+<a id="sec-1-7-4" name="sec-1-7-4"></a>
+
+#### Description of Test Case sv_demo_004
+
+`sv_demo_004` reads the version register, checks the test register, and performs **DMA read-only test** for UL.
+
+    Details are as follows:
+    sv_demo_004 constructs packets and BDs through the simulation platform and sends them to UL through the AXI4-Stream interface.
+    After being processed by UL, Hardacc, BDs, and packets read are returned to the simulation platform.
+    The simulation platform compares Hardacc and packets sent and received. If they are the same, **PASS** is displayed. If they are different, **FAIL** is displayed and the simulation ends.
+
+<a id="sec-1-7-5" name="sec-1-7-5"></a>
+
+#### Description of Test Case sv_demo_005
+
+`sv_demo_005` reads the version register, checks the test register, and performs **DMA read-only test** for UL.
+
+    Details are as follows:
+    sv_demo_005 constructs packets and BDs through the simulation platform and sends them to UL through the AXI4-Stream interface.
+    After being processed by UL, Hardacc and BDs are returned to the simulation platform.
+    The simulation platform compares Hardacc sent and received. If they are the same, **PASS** is displayed. If they are different, **FAIL** is displayed and the simulation ends.
+
 <a id="sec-2" name="sec-2"></a>
 
 ## **User-Defined Tests**
 
 <a id="sec-2-1" name="sec-2-1"></a>
+### **Modifying Simulation Configuration**
+The `project_settings.cfg` file in the `scripts` directory specifies user-defined simulation macros and library files. **USER_LIBS** and **SIM_MACRO** are the user-defined library file and simulation macro. The two parameters are not required if there are no files or macros.
+Do not modify the value of **ACC_LEN_CFG** in the **SIM_MACRO** simulation macro of example 3.
 
+```bash
+  $ vi ./scripts/project_settings.cfg
+  
+  SIM_MACRO=" USE_DDR_MODEL 
+              ACC_LEN_CFG=1
+  # '#' means comments
+  # Example:
+  # MACRO1
+  # MACRO2
+  "
+  USER_LIBS="
+  # '#' means comments
+  # Example:
+  # FILE_PATH1/FILE_NAME1
+  # FILE_PATH2/FILE_NAME2
+  "
+```
 ### **Compiling User Test Cases**
 
 The directory of the example simulation folder is as follows:
@@ -257,7 +319,7 @@ It is recommended that basic test cases be stored in the `./tests/sv/base` direc
             // STEP1: Check version
             // ----------------------------------------
             `tb_info(m_inst_name, {"\n----------------------------------------\n",
-                                " STEP1: Checking DUV Infomation\n",
+                                " STEP1: Checking DUV Information\n",
                                 "----------------------------------------\n"})
             m_tb_env.m_reg_gen.read(g_reg_ver_time, ver_time);
             m_tb_env.m_reg_gen.read(g_reg_ver_type, ver_type);
@@ -299,7 +361,7 @@ User test configurations are used to determine the incentives and configurations
 ```bash
     // Use '//' or '#' to for comment, which will not be sent to Testbench.
 
-    // The format of the parameter transfer is +xxx_name=yyyyy, where xxx_name is the parameter name, and yyyyy is the parameter content (*Note: There are no spaces at either end of ‘=’.*)
+    // The format of the parameter transfer is +xxx_name=yyyyy, where xxx_name is the parameter name, and yyyyy is the parameter content (*Note: There are no spaces at either end of '='.*)
     // The parameter content can be a decimal number (123, 456), a hexadecimal number ('hxxx), a string (abcd, "xxyyzz"), and a sequence.
     // If the sequence is a combination of multiple parameters, separate them with a comma or 'semicolon'. (For example, 123,456,'h678,aaa)
 
@@ -354,4 +416,3 @@ To compile and execute the test case `xxx_test`, run the following commands:
 ```
 
 [1]: "Users need to install VCS and QuestaSim tools by themselves."
-

@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
         return ret;
     }
 
-    (void)pci_bar2_read_regs(&g_bar2_addr, sizeof(g_bar2_addr)/sizeof(unsigned int), &bar2_data);
+    (void)pci_bar2_read_regs(g_port_id, &g_bar2_addr, sizeof(g_bar2_addr)/sizeof(unsigned int), &bar2_data);
     printf("addr: 0x%08x, data: 0x%08x\r\n", g_bar2_addr, bar2_data);
 
     (void)pci_bar2_uninit_env();

@@ -24,7 +24,7 @@ The FP1-based FPGA development suite is a cloud FPGA hardware/software developme
 
 <a name="sec_1_2"></a>
 ## 1.2 Preparations
-Before using the FPGA development suite, you must perform 1.2.1~1.2.3 steps to complete the development kit acquisition and tool installation and configuration. The hardware development tools are stored in the [hardware](./fp1/hardware) directory, including Vivado and SDAccel development tools. The software development tools are stored in the [software](./fp1/software) directory, including configure files, drivers, tools, and related applications which are needed when running instances. 
+Before using the FPGA development suite, you must perform 1.2.1~1.2.2 steps to complete the development kit acquisition and tool installation and configuration. The hardware development tools are stored in the [hardware](./fp1/hardware) directory, including Vivado and SDAccel development tools. The software development tools are stored in the [software](./fp1/software) directory, including configure files, drivers, tools, and related applications which are needed when running instances. 
 
 <a name="sec_1_2_1"></a>
 ### 1.2.1 Downloading Suite
@@ -37,11 +37,7 @@ Before using the FPGA development suite, you must perform 1.2.1~1.2.3 steps to c
 > Ensure that the Git tool is installed before downloading the development suite.
 
 <a name="sec_1_2_2"></a>
-### 1.2.2 Configuring Intranet DNS 
-After the intranet DNS is configured, the ECS can access relevant cloud services through the intranet of the virtual private cloud, providing users with a more stable and reliable network environment. For more information, see the "Configuring Intranet DNS" section in the [FACS User's Guide](https://support.huaweicloud.com/usermanual-fpga/en-us_topic_0069154765.html). 
-
-<a name="sec_1_2_3"></a>
-### 1.2.3 configuring and Installing the FPGA Image Management Tool
+### 1.2.2 configuring and Installing the FPGA Image Management Tool
 The fisclient is a cross-platform command-line interface (CLI) tool used for FPGA image management, which is mandatory before FPGA image loading. By using fisclient, you can register, delete, and query FPGA images (AEIs), or manage the association between AEIs and elastic cloud server (ECS) images. You can associate an AEI with an ESC image, and release the AEI to the cloud market or share it with other users through the ESC image.
 
 >For details, please see the chapter of installation and configuration in [fisclient README](./cli/fisclient/README.md).
@@ -126,6 +122,9 @@ When a general-purpose architecture is used, the FPGA development is divided to 
 
 <a name="sec_3_1"></a>
 ## 3.1 Hardware Development Process
+
+> If the kernel compilation has been implemented offline , and the corresponding xclbin file generation is done, please refer to the link as [SDAccel-based offline development online usage process description](./fp1/docs/SDAccel-based_offline_development_online_use_process_guidance.md).
+
 When a general-purpose architecture is used, the hardware development is based on the SDAccel tools. This development process guides users to create, compile, and simulate a project, generate an .xclbin file, and register an FPGA image (AEI). After the hardware development, if you need to develop your own applications based on the registered FPGA image, see section [3.2](#sec_3_2).
 
 ![](./fp1/docs/media/SDAccel_hdk_root.jpg)

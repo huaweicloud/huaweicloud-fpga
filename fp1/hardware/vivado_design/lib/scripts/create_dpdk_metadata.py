@@ -21,6 +21,8 @@ import time
 file_time=os.path.getctime(sys.argv[1])
 create_time=time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(file_time))
 json_path=os.path.abspath(os.path.join(os.path.dirname(sys.argv[1]),"../../reports/metadata.json"))
+if os.path.exists(json_path):
+    os.remove(json_path)
 
 #**********************************
 #get shell id and hdk_version

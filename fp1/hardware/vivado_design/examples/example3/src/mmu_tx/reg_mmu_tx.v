@@ -32,7 +32,7 @@ module reg_mmu_tx #
                  //cfg
                  output       [10:0]              reg_mmu_tx_online_beat      ,
                  //sta
-                 input  wire  [4:0]               tx_bd_sta                   ,
+                 input  wire  [5:0]               tx_bd_sta                   ,
                  input  wire  [10:0]              mmu_tx_online_beat          ,
                  input        [31:0]              reg_mmu_tx_pkt_sta          ,
                  //err
@@ -52,6 +52,9 @@ module reg_mmu_tx #
                  input                            stxqm2inq_fifo_rd           ,
                  input                            ppm2stxm_rxffc_wr           ,
                  input                            tx2kernel_bd_wen            ,
+                 input                            mmu_tx2rx_bd_wen            ,
+                 input                            mmu_tx2rx_wr_bd_wen         ,
+                 input                            mmu_tx2rx_rd_bd_wen         ,
 
                  input                            reg_axis_receive_cnt_en     ,
                  input                            reg_hacc_receive_cnt_en     ,
@@ -126,6 +129,9 @@ wire       [31:0]           cpu_data_pf_out194       ;
 wire       [31:0]           cpu_data_pf_out195       ;
 wire       [31:0]           cpu_data_pf_out196       ;
 wire       [31:0]           cpu_data_pf_out197       ;
+wire       [31:0]           cpu_data_pf_out198       ;
+wire       [31:0]           cpu_data_pf_out199       ;
+wire       [31:0]           cpu_data_pf_out19a       ;
 
 //********************************************************************************************************************
 //    cfg
@@ -366,7 +372,7 @@ ro_reg_inst
      .cpu_data_out       ( cpu_data_pf_out10e       ),   
      .cpu_addr           ( cpu_addr                 ),   
      .its_addr           ( {MMU_TX_CM_ID,3'd0,9'h10e}),   
-     .din                ( {5'd0,mmu_tx_online_beat,11'd0,tx_bd_sta}                )    
+     .din                ( {5'd0,mmu_tx_online_beat,10'd0,tx_bd_sta}                )    
      ); 
 
 //********************************************************************************************************************
@@ -735,6 +741,54 @@ inst_reg_axi4_send_wlast_cnt_en3
      .cnt_reg_inc        ( reg_axi4_send_wlast_cnt_en[3]),     
      .cnt_reg_clr        ( cnt_reg_clr              )      
      );     
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_mmu_tx2rx_bd_wen
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_pf_out198       ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {MMU_TX_CM_ID,3'd0,9'h198}),     
+     .cnt_reg_inc        ( mmu_tx2rx_bd_wen         ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_mmu_tx2rx_wr_bd_wen
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_pf_out199       ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {MMU_TX_CM_ID,3'd0,9'h199}),     
+     .cnt_reg_inc        ( mmu_tx2rx_wr_bd_wen      ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+cnt32_reg_inst
+         #(
+         .ADDR_WIDTH(24)                                        
+          )
+inst_mmu_tx2rx_rd_bd_wen
+     (
+     .clks               ( clk_sys                  ),     
+     .reset              ( rst                      ),     
+     .cpu_data_out       ( cpu_data_pf_out19a       ),     
+     .cpu_addr           ( cpu_addr                 ),     
+     .its_addr           ( {MMU_TX_CM_ID,3'd0,9'h19a}),     
+     .cnt_reg_inc        ( mmu_tx2rx_rd_bd_wen      ),     
+     .cnt_reg_clr        ( cnt_reg_clr              )      
+     );
+
+
+
 //********************************************************************************************************************
 always @ (posedge clk_sys or posedge rst)
 begin
@@ -820,6 +874,9 @@ begin
            7'h15: cpu_data_out_cnt_pf <= cpu_data_pf_out195;           
            7'h16: cpu_data_out_cnt_pf <= cpu_data_pf_out196;           
            7'h17: cpu_data_out_cnt_pf <= cpu_data_pf_out197;           
+           7'h18: cpu_data_out_cnt_pf <= cpu_data_pf_out198;           
+           7'h19: cpu_data_out_cnt_pf <= cpu_data_pf_out199;           
+           7'h1a: cpu_data_out_cnt_pf <= cpu_data_pf_out19a;           
          default: cpu_data_out_cnt_pf <= 32'd0;
        endcase
     end

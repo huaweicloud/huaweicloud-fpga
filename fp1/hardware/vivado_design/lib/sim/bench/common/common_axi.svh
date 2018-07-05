@@ -68,9 +68,9 @@ typedef enum {
 // AXI Operation type
 
 typedef enum {
-    e_AXI_OPT_RD = 'd0,
-    e_AXI_OPT_WR = 'd1,
-    e_AXI_OPT_NA
+    e_AXI_OPT_NA = 'd0,
+    e_AXI_OPT_RD = 'd1,
+    e_AXI_OPT_WR = 'd2
 } axi_opt_t;
 
 bit g_axi_cov_en = 'd1;

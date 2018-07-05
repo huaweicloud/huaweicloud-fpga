@@ -50,10 +50,11 @@
 #define PCI_RES_DEV_PRE "/sys/bus/pci/devices"
 #define WRITE_MAX_REGS_COUNT        (256)
 #define READ_MAX_REGS_COUNT         (256)
+#define MAX_VF_COUNT                (8)
 
-static int g_pci_barx_res_fd[MAX_BAR_NUM] = { -1 };
-static char* g_pci_barx_acce_addr[MAX_BAR_NUM] = { NULL };
-static long int g_pci_barx_size[MAX_BAR_NUM] = { 0 };
+static int g_pci_barx_res_fd[MAX_VF_COUNT][MAX_BAR_NUM] = { -1 };
+static char* g_pci_barx_acce_addr[MAX_VF_COUNT][MAX_BAR_NUM] = { NULL };
+static long int g_pci_barx_size[MAX_VF_COUNT][MAX_BAR_NUM] = { 0 };
 
 /*
  * pci_barx_init_env: init pci barx resource device
@@ -75,28 +76,28 @@ int pci_barx_init_env(int vf_idx, int bar_idx) {
 
     (void)snprintf_s(pci_barx_res_dev, PATH_MAX, PATH_MAX-1, "%s/%s/resource%d", PCI_RES_DEV_PRE, acc_pci_bdf, bar_idx);
     
-    g_pci_barx_res_fd[bar_idx] = open(pci_barx_res_dev, O_RDWR);
-    if( g_pci_barx_res_fd[bar_idx] < 0 ) {
+    g_pci_barx_res_fd[vf_idx][bar_idx] = open(pci_barx_res_dev, O_RDWR);
+    if( g_pci_barx_res_fd[vf_idx][bar_idx] < 0 ) {
         perror("open");
         return -EIO;
     }
 
-    g_pci_barx_size[bar_idx] = lseek(g_pci_barx_res_fd[bar_idx], 0L, SEEK_END);
-    if (-1 == g_pci_barx_size[bar_idx]) {
+    g_pci_barx_size[vf_idx][bar_idx] = lseek(g_pci_barx_res_fd[vf_idx][bar_idx], 0L, SEEK_END);
+    if (-1 == g_pci_barx_size[vf_idx][bar_idx]) {
         printf("get the resource2 file size error\r\n");
-        close(g_pci_barx_res_fd[bar_idx]);
+        close(g_pci_barx_res_fd[vf_idx][bar_idx]);
         return -EIO;
     }
-    if (-1 == lseek(g_pci_barx_res_fd[bar_idx], 0L, SEEK_SET)) {
+    if (-1 == lseek(g_pci_barx_res_fd[vf_idx][bar_idx], 0L, SEEK_SET)) {
         printf("seek the resource2 file to start error\r\n");
-        close(g_pci_barx_res_fd[bar_idx]);
+        close(g_pci_barx_res_fd[vf_idx][bar_idx]);
         return -EIO;
     }
 
-    g_pci_barx_acce_addr[bar_idx] = mmap(NULL, g_pci_barx_size[bar_idx], PROT_READ | PROT_WRITE,MAP_SHARED, g_pci_barx_res_fd[bar_idx], 0);
-    if ((void*)-1 == g_pci_barx_acce_addr[bar_idx]) {
+    g_pci_barx_acce_addr[vf_idx][bar_idx] = mmap(NULL, g_pci_barx_size[vf_idx][bar_idx], PROT_READ | PROT_WRITE,MAP_SHARED, g_pci_barx_res_fd[vf_idx][bar_idx], 0);
+    if ((void*)-1 == g_pci_barx_acce_addr[vf_idx][bar_idx]) {
         perror("mmap");
-        close(g_pci_barx_res_fd[bar_idx]);
+        close(g_pci_barx_res_fd[vf_idx][bar_idx]);
         exit(-1);
     }
 	
@@ -105,22 +106,36 @@ int pci_barx_init_env(int vf_idx, int bar_idx) {
 
 int pci_barx_uninit_env(int bar_idx) {
     int res = 0;
+    int cnt = 0;
 
-    res = munmap(g_pci_barx_acce_addr[bar_idx], g_pci_barx_size[bar_idx]);
-    if (-1 == res){
-        perror("munmap");
-    }
-    g_pci_barx_acce_addr[bar_idx] = NULL;
-    
-    res = close(g_pci_barx_res_fd[bar_idx]);
-    if (-1 == res){
-        perror("close");
+    for(cnt = 0; cnt < 8; cnt++) {
+
+        if(g_pci_barx_res_fd[cnt][bar_idx] == -1) {
+            continue;
+        }
+
+        if(g_pci_barx_acce_addr[cnt][bar_idx] == NULL) {
+            continue;
+        }
+        
+        res = munmap(g_pci_barx_acce_addr[cnt][bar_idx], g_pci_barx_size[cnt][bar_idx]);
+        if (-1 == res){
+            perror("munmap");
+        }
+        g_pci_barx_acce_addr[cnt][bar_idx] = NULL;
+        
+        res = close(g_pci_barx_res_fd[cnt][bar_idx]);
+        if (-1 == res){
+            perror("close");
+        }
+
+        g_pci_barx_res_fd[cnt][bar_idx] = -1;
     }
 
     return 0;
 }
 
-int pci_barx_write_regs(unsigned int* write_addrs, unsigned int* write_values, unsigned int write_addrs_num, int bar_idx)
+int pci_barx_write_regs(int vf_idx, unsigned int* write_addrs, unsigned int* write_values, unsigned int write_addrs_num, int bar_idx)
 {
     unsigned int idx = 0;
 
@@ -129,12 +144,12 @@ int pci_barx_write_regs(unsigned int* write_addrs, unsigned int* write_values, u
         return -1;
     }
     for (idx = 0; idx < write_addrs_num; ++idx) {
-        *((unsigned int*)(g_pci_barx_acce_addr[bar_idx] + write_addrs[idx])) = write_values[idx];
+        *((unsigned int*)(g_pci_barx_acce_addr[vf_idx][bar_idx] + write_addrs[idx])) = write_values[idx];
     }
     return 0;
 }
 
-int pci_barx_read_regs(unsigned int* read_addrs, unsigned int read_addrs_num, unsigned int* read_values, int bar_idx)
+int pci_barx_read_regs(int vf_idx, unsigned int* read_addrs, unsigned int read_addrs_num, unsigned int* read_values, int bar_idx)
 {
     unsigned int idx = 0;
 
@@ -144,7 +159,7 @@ int pci_barx_read_regs(unsigned int* read_addrs, unsigned int read_addrs_num, un
     }
 
     for (idx = 0; idx < read_addrs_num; ++idx) {
-        read_values[idx] = *((unsigned int*)(g_pci_barx_acce_addr[bar_idx] + read_addrs[idx]));
+        read_values[idx] = *((unsigned int*)(g_pci_barx_acce_addr[vf_idx][bar_idx] + read_addrs[idx]));
     }
 
     return 0;
@@ -163,12 +178,12 @@ int pci_bar2_uninit_env(void)
     return pci_barx_uninit_env(2);
 }
 
-int pci_bar2_write_regs(unsigned int* write_addrs, unsigned int* write_values, unsigned int write_addrs_num)
+int pci_bar2_write_regs(int vf_idx, unsigned int* write_addrs, unsigned int* write_values, unsigned int write_addrs_num)
 {
-    return pci_barx_write_regs(write_addrs, write_values, write_addrs_num, 2);
+    return pci_barx_write_regs(vf_idx, write_addrs, write_values, write_addrs_num, 2);
 }
 
-int pci_bar2_read_regs(unsigned int* read_addrs, unsigned int read_addrs_num, unsigned int* read_values)
+int pci_bar2_read_regs(int vf_idx, unsigned int* read_addrs, unsigned int read_addrs_num, unsigned int* read_values)
 {
-    return pci_barx_read_regs(read_addrs, read_addrs_num, read_values, 2);
+    return pci_barx_read_regs(vf_idx, read_addrs, read_addrs_num, read_values, 2);
 }

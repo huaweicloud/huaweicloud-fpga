@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
         return ret;
     }
 
-    (void)pci_bar2_write_regs(&g_bar2_addr, &g_bar2_data, sizeof(g_bar2_addr)/sizeof(unsigned int));
+    (void)pci_bar2_write_regs(g_port_id, &g_bar2_addr, &g_bar2_data, sizeof(g_bar2_addr)/sizeof(unsigned int));
 
     (void)pci_bar2_uninit_env();
 

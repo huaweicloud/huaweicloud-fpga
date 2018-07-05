@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
     	return ret;
     }
 	
-    (void)print_add_result_data();
+    (void)print_add_result_data(g_port_id);
 	
     (void)pci_bar2_uninit_env();
     

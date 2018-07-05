@@ -57,69 +57,69 @@ DDR_ADDR ddrs[4] = {
 
 #define VAL_DISABLE_ISO_EN      (0x00000000)
 
-int print_demo1_version() {
+int print_demo1_version(int vf_idx) {
     unsigned int addr[] = {REG_PF_DEMO1_VERSION_NEW};
     unsigned int val[] = {0};
 
-    (void)pci_bar2_read_regs(addr, sizeof(addr)/sizeof(unsigned int), val);
+    (void)pci_bar2_read_regs(vf_idx, addr, sizeof(addr)/sizeof(unsigned int), val);
 
     printf("version: 0x%08x\r\n", val[0]);
     return 0;
 }
 
-int print_oppos_data() {
+int print_oppos_data(int vf_idx) {
     unsigned int addr[] = {REG_PF_OPPOS_DATA_NEW};
     unsigned int val[] = {0};
     
-    (void)pci_bar2_read_regs(addr, sizeof(addr)/sizeof(unsigned int), val);
+    (void)pci_bar2_read_regs(vf_idx, addr, sizeof(addr)/sizeof(unsigned int), val);
 
     printf("oppos: 0x%08x\r\n", val[0]);
     return 0;
 }
 
-int set_oppos_data(unsigned int value) {
+int set_oppos_data(int vf_idx, unsigned int value) {
     unsigned int addr[] = {REG_PF_OPPOS_DATA_NEW};
     unsigned int val[] = {value};
     
-    (void)pci_bar2_write_regs(addr, val, sizeof(addr)/sizeof(unsigned int));
+    (void)pci_bar2_write_regs(vf_idx, addr, val, sizeof(addr)/sizeof(unsigned int));
     return 0;
 }
 
-int print_add_result_data() {
+int print_add_result_data(int vf_idx) {
     unsigned int addr[] = {REG_PF_DEMO1_SUM_RDATA_NEW};
     unsigned int val[] = {0};
     
-    (void)pci_bar2_read_regs(addr, sizeof(addr)/sizeof(unsigned int), val);
+    (void)pci_bar2_read_regs(vf_idx, addr, sizeof(addr)/sizeof(unsigned int), val);
         
     printf("add result: 0x%08x\r\n", val[0]);
     return 0;
 }
 
-int set_add_data(unsigned int data0, unsigned int data1) {
+int set_add_data(int vf_idx, unsigned int data0, unsigned int data1) {
     unsigned int addr[] = {REG_PF_DEMO1_ADDER_CFG_WDATA0_NEW, REG_PF_DEMO1_ADDER_CFG_WDATA1_NEW};
     unsigned int val[] = {data0, data1};
     
-    (void)pci_bar2_write_regs(addr, val, sizeof(addr)/sizeof(unsigned int));
+    (void)pci_bar2_write_regs(vf_idx, addr, val, sizeof(addr)/sizeof(unsigned int));
 
     return 0;
 }
 
-int set_ddr_data(unsigned int num, unsigned int addr, unsigned int value) {
+int set_ddr_data(int vf_idx, unsigned int num, unsigned int addr, unsigned int value) {
     unsigned int val[] = {0x03};
     unsigned int cmd_reg_value[] = {0};
     unsigned int idx = 0;
     struct timeval wait_time = {0, 10};
         
-    (void)pci_bar2_write_regs(&(ddrs[num].addr), &addr, 1);
-    (void)pci_bar2_write_regs(&(ddrs[num].write_data), &value, 1);
-    (void)pci_bar2_write_regs(&(ddrs[num].cmd), val, 1);
+    (void)pci_bar2_write_regs(vf_idx, &(ddrs[num].addr), &addr, 1);
+    (void)pci_bar2_write_regs(vf_idx, &(ddrs[num].write_data), &value, 1);
+    (void)pci_bar2_write_regs(vf_idx, &(ddrs[num].cmd), val, 1);
 
     /* 
      * according to agreement of logic handshake, after command register is assigned, 
      * software can do next step until register reset to 0.
     */
     do {
-        (void)pci_bar2_read_regs(&ddrs[num].cmd, 1, cmd_reg_value);
+        (void)pci_bar2_read_regs(vf_idx, &ddrs[num].cmd, 1, cmd_reg_value);
         if (0 == cmd_reg_value[0]) {
             return 0;
         }
@@ -131,24 +131,24 @@ int set_ddr_data(unsigned int num, unsigned int addr, unsigned int value) {
     return -EIO;
 }
 
-int print_ddr_data(unsigned int num, unsigned int addr) {
+int print_ddr_data(int vf_idx, unsigned int num, unsigned int addr) {
     unsigned int val[] = {0x02};
     unsigned int value[] = {0};
     unsigned int cmd_reg_value[] = {0};
     unsigned int idx = 0;
     struct timeval wait_time = {0, 10};
 
-    (void)pci_bar2_write_regs(&(ddrs[num].addr), &addr, 1);
-    (void)pci_bar2_write_regs(&(ddrs[num].cmd), val, 1);
+    (void)pci_bar2_write_regs(vf_idx, &(ddrs[num].addr), &addr, 1);
+    (void)pci_bar2_write_regs(vf_idx, &(ddrs[num].cmd), val, 1);
     
     /* 
      * according to agreement of logic handshake, after command register is assigned, 
      * software can do next step until register reset to 0.
     */
     do {
-        (void)pci_bar2_read_regs(&ddrs[num].cmd, 1, cmd_reg_value);
+        (void)pci_bar2_read_regs(vf_idx, &ddrs[num].cmd, 1, cmd_reg_value);
         if (0 == cmd_reg_value[0]) {
-            (void)pci_bar2_read_regs(&(ddrs[num].read_data), 1, value);
+            (void)pci_bar2_read_regs(vf_idx, &(ddrs[num].read_data), 1, value);
             printf("Value: 0x%08x\r\n", value[0]);
             return 0;
         }

@@ -44,10 +44,10 @@ typedef struct {
     unsigned int read_data;
 }DDR_ADDR;
 
-int print_demo1_version();
-int print_oppos_data();
-int set_oppos_data(unsigned int value);
-int print_add_result_data();
-int set_add_data(unsigned int data0, unsigned int data1);
-int set_ddr_data(unsigned int num, unsigned int addr, unsigned int value);
-int print_ddr_data(unsigned int num, unsigned int addr);
+int print_demo1_version(int vf_idx);
+int print_oppos_data(int vf_idx);
+int set_oppos_data(int vf_idx, unsigned int value);
+int print_add_result_data(int vf_idx);
+int set_add_data(int vf_idx, unsigned int data0, unsigned int data1);
+int set_ddr_data(int vf_idx, unsigned int num, unsigned int addr, unsigned int value);
+int print_ddr_data(int vf_idx, unsigned int num, unsigned int addr);

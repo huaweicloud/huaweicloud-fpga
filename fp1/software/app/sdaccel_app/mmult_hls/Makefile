@@ -19,15 +19,16 @@ HOST_SRCS = test-cl.cpp
 HOST_EXE_DIR=./
 HOST_EXE = mmult
 HOST_CFLAGS = -Wall -DFPGA_DEVICE -DC_KERNEL 
-HOST_LFLAGS = -std=c++11
+HOST_LFLAGS = -std=c++14
 
 
-XDEVICE=xilinx:huawei-vu9p-fp1:4ddr-xpr:4.1
+XDEVICE=huawei_vu9p_dynamic_fp1_5_0
 HOST_CFLAGS+=-DTARGET_DEVICE=\"${XDEVICE}\"
 
 HOST_CFLAGS += -I${XILINX_SDX}/runtime/include/1_2
-HOST_LFLAGS += -L${XILINX_SDX}/runtime/lib/x86_64 -lxilinxopencl -lstdc++
- 
+HOST_LFLAGS += -L${XILINX_SDX}/runtime/lib/x86_64
+HOST_LFLAGS += -L${XILINX_SDX}/lib/lnx64.o/ -lxilinxopencl -lrt -pthread -lstdc++ -lboost_filesystem
+
 OBJECTS := $(HOST_SRCS:.cpp=.o)
 
 .PHONY: all

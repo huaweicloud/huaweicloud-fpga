@@ -29,6 +29,8 @@ Usage:sh AEI_Register.sh *-n* [AEI_name] *-d* [AEI_Description]
 
 -   *-d*选项用于指定待注册FPGA镜像的AEI描述信息（AEI_Description）。AEI_Description由中文汉字、中文句号逗号、英文大小写字母、数字、中划线、下划线、英文句号逗号、空格组成的字符串，长度为0到255位。
 
+-   AEI_name和AEI_Description参数需要分别用引号括起来，例如  sh AEI_Register.sh -n "ocl-test" -d "ocl-desc"
+  
 在AEI_Register.sh脚本执行成功后，会产生如下的回显信息。
 
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#  

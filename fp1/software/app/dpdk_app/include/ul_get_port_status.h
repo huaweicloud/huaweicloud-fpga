@@ -47,3 +47,4 @@ typedef enum _bind_status_ {
  int pci_port_status_init_env();
  int pci_slot_id_to_port_id(unsigned int slot_id, unsigned int *port_id);
  int get_device_dbdf_by_port_id(unsigned int port_id, char* dbdf);
+ int pci_port_id_to_slot_id(unsigned int port_id, unsigned int *slot_id);

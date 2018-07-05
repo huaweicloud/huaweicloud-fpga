@@ -38,25 +38,25 @@ function var_chk
         exit
     fi
     
-    VALID_KERNEL_NAME=`echo ${KERNEL_NAME} |grep ".xclbin"`
+    VALID_KERNEL_NAME=`echo ${KERNEL_NAME} |grep .xclbin`
     if [ -z ${KERNEL_NAME} ]
     then 
-        echo -e "Errorï¼škernel is not found, please check!\n"
+        echo -e "Error£ºkernel is not found, please check!\n"
         exit
     elif [ "${VALID_KERNEL_NAME}" = "" ] 
     then
-    	echo -e "Errorï¼škernel is not a xclbin file, please check!\n"
+    	echo -e "Error£ºkernel is not a xclbin file, please check!\n"
         exit
     fi
     
     VALID_SLOT_ID=`echo ${SLOT_ID}| sed -n "/^[0-9]\+$/p"`
     if [ -z ${SLOT_ID} ]
     then 
-        echo -e "Errorï¼šslot id is not found, please check!\n"
+        echo -e "Error£ºslot id is not found, please check!\n"
         exit
     elif [ "${VALID_SLOT_ID}" = "" ]
     then
-        echo -e "Errorï¼šslot id is not a number, please check!\n"
+        echo -e "Error£ºslot id is not a number, please check!\n"
         exit
     fi
 }
@@ -68,13 +68,18 @@ then
 fi
 
 XILINX_SDX_PATH=${XILINX_SDX}
+
 unset XILINX_SDX
+unset XILINX_SDACCEL
+unset XCL_EMULATION_MODE
 
-export LD_LIBRARY_PATH=${XILINX_SDX_PATH}/runtime/lib/x86_64/:${XILINX_SDX_PATH}/lib/lnx64.o/
-export XILINX_OPENCL=$(pwd)/../../../userspace/sdaccel/lib/
-export XCL_PLATFORM=hal
+export LD_LIBRARY_PATH=${XILINX_SDX_PATH}/runtime/lib/x86_64:${XILINX_SDX_PATH}/lib/lnx64.o/Default:${XILINX_SDX_PATH}/lib/lnx64.o
+export XILINX_OPENCL=$(pwd)/../../../userspace/sdaccel/lib
+#export PATH=${XILINX_SDX_PATH}/runtime/bin
+#export XCL_PLATFORM=hal
+#echo "LD lib path is ${LD_LIBRARY_PATH}"
 
-DRIVER=xdma
+DRIVER=xocl
 check_driver()
 {
     MODULE_INFO=`lsmod | grep $DRIVER 2>&1`
@@ -92,7 +97,7 @@ function Usage
 	echo "Usage: run.sh [option]                                            "
 	echo "Options:                                                          "
 	echo "sh run.sh HOSTEXE XCLBIN SLOT_ID                 Running HW Test  "
-    echo "-----------------------------example------------------------------"
+    echo "-----------------------------examples-----------------------------"
 	echo "running mmult on card 0:                                          "
     echo "sh run.sh mmult /home/fp1/hardware/sdaccel_design/examples/mmult_hls/prj/bin/bin_mmult_hw.xclbin 0"
     echo "running mmult on card 1:                                          "

@@ -159,9 +159,14 @@ if [ "$mode" == "DPDK" ];then
     fi
     #create metadata.json
     python $script_path/../../../lib/scripts/create_dpdk_metadata.py "$script_path/build/checkpoints/to_facs/$fileName"
+    if [ $? -ne 0 ];then
+        exit -1
+    fi
     #packager aei.bin
     python $script_path/../../../lib/scripts/AEI_packager.py "$script_path/build/reports/metadata.json" "$script_path/build/checkpoints/to_facs/$fileName"
-
+    if [ $? -ne 0 ];then
+        exit -1
+    fi
     fileName=${fileName%.*}_aei.bin
     metadata=`cat $script_path/build/reports/metadata.json`
     
@@ -173,8 +178,14 @@ elif [ "$mode" == "OCL" ];then
     fi
     #create metadata.json
     python $script_path/../../../lib/scripts/create_sdaccel_metadata.py $dcp_Name
+    if [ $? -ne 0 ];then
+        exit -1
+    fi
     #packager aei.bin
     python $script_path/../../../lib/scripts/AEI_packager.py "$script_path/../prj/log/metadata.json" "$script_path/../prj/bin/${fileName%.*}.bin"
+    if [ $? -ne 0 ];then
+        exit -1
+    fi
     
     xclbin_name=$dcp_Name
     dcp_Name="$script_path/../prj/bin/${fileName%.*}_aei.bin"
@@ -201,6 +212,6 @@ fi
 python -c "print '''$id_info'''"
 if [ -n "`echo $id_info|grep "Success:"`" -a $mode == "OCL" ];then
     shell_id=`echo $id_info|sed 's/^.*id:.*\([a-f0-9]\{32\}\).*/\1/g'`
-    chmod +x $script_path/../../../lib/scripts/xclbinaddaei
-    $script_path/../../../lib/scripts/xclbinaddaei $xclbin_name $shell_id >/dev/null 2>&1 
+    chmod +x $script_path/../../../lib/scripts/xclbinaddaei.py
+    python $script_path/../../../lib/scripts/xclbinaddaei.py $xclbin_name $shell_id >/dev/null 2>&1
 fi

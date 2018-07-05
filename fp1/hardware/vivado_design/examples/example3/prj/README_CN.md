@@ -248,6 +248,7 @@ Example3的prj文件夹层级结构如下：
   # AEI_name是由英文大小写字母、数字、下划线、中划线组成的字符串，长度为1到64位，用户自行设计即可。
   # -d选项指定待注册的FPGA镜像（AEI）描述信息。
   # AEI_Description由中文汉字、中文句号逗号、英文大小写字母、数字、中划线、下划线、英文句号逗号、空格组成的字符串，长度为0到255位，用户自行设计即可。
+  # AEI_name和AEI_Description参数需要分别用引号括起来，例如sh AEI_Register.sh -n "DPDK-test" -d "DPDK-desc"。
 ```
 
 **重要说明**:

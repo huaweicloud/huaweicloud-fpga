@@ -38,6 +38,13 @@ module  mmu_rx_inst#
                  input   [63:0]                         ker2mmu_bd_tkeep           ,
                  input                                  ker2mmu_bd_tvalid          ,
                  output                                 mmu2ker_bd_tready          ,                               
+                 //with mmu_tx
+                 input                                  bd2rx_s_axis_rq_tlast      ,
+                 input   [511:0]                        bd2rx_s_axis_rq_tdata      ,
+                 input   [59:0]                         bd2rx_s_axis_rq_tuser      ,
+                 input   [63:0]                         bd2rx_s_axis_rq_tkeep      ,
+                 output                                 bd2rx_s_axis_rq_tready     ,
+                 input                                  bd2rx_s_axis_rq_tvalid     ,
 
                  //axi4 read addr with DDR CTRL	                                                 
                  output  [4*DDR_NUM-1:0]                axi4m_ddr_arid             ,  
@@ -86,6 +93,10 @@ wire      [1:0]                   ve_ff_rport                ;
 wire      [511:0]                 ve_ff_rdata                ;
 wire      [3:0]                   ve_ff_empty                ;              
 
+wire                              mmu_tx2rx_bd_wr            ; 
+wire      [539:0]                 mmu_tx2rx_bd_wdata         ;
+wire                              mmu_tx2rx_bd_afull         ; 
+
 wire      [DDR_NUM-1:0]           rcmd_ff_full               ;       
 wire      [DDR_NUM-1:0]           rcmd_ff_wen                ;
 
@@ -106,10 +117,17 @@ wire      [31:0]                  reg_mmu_rxbd_sta           ;
 wire      [31:0]                  reg_mmu_rxbd_err           ; 
 wire                              reg_mmu_rxbd_en            ; 
 wire                              reg_mmu_rdcmd_en           ; 
+wire                              axis_fifo_rd               ; 
+wire                              bd2rx_axis_fifo_rd         ; 
+wire                              read_op_vld                ; 
+wire                              write_op_vld               ; 
 
 wire      [3:0]                   reg_mmu_rxpkt_en           ; 
 wire                              reg_mmu_txpkt_en           ; 
+wire                              reg_add_hacc_en            ; 
+wire                              reg_write_ddr_bd           ; 
 wire      [31:0]                  reg_mmu_rxpkt_sta          ; 
+wire      [31:0]                  reg_mmu_rxpkt_sta1         ; 
 wire      [31:0]                  reg_mmu_rxpkt_err          ; 
                  
 wire      [3:0]                   bucket_inc_wr              ; 
@@ -199,13 +217,19 @@ mmu_rx_pkt u_mmu_rx_pkt
    .bucket_inc_wr            (bucket_inc_wr          ),                                                  
    .bucket_inc_wdata         (bucket_inc_wdata       ),                                                 
    .bucket_af                (bucket_af              ),                                                  
+   .mmu_tx2rx_bd_wr          (mmu_tx2rx_bd_wr        ),                                                  
+   .mmu_tx2rx_bd_wdata       (mmu_tx2rx_bd_wdata     ),                                                  
+   .mmu_tx2rx_bd_afull       (mmu_tx2rx_bd_afull     ),                                                  
 
    .reg_tmout_us_cfg         (reg_tmout_us_cfg       ), 
    .reg_mmu_rx_cfg           (reg_mmu_rx_cfg         ),
    .reg_timer_1us_cfg        (reg_timer_1us_cfg      ),
    .reg_mmu_rxpkt_en         (reg_mmu_rxpkt_en       ),        
    .reg_mmu_txpkt_en         (reg_mmu_txpkt_en       ),     
+   .add_hacc_en_5dly         (reg_add_hacc_en        ),     
+   .write_ddr_rd_bd_5dly     (reg_write_ddr_bd       ),     
    .reg_mmu_rxpkt_sta        (reg_mmu_rxpkt_sta      ),
+   .reg_mmu_rxpkt_sta1       (reg_mmu_rxpkt_sta1     ),
    .reg_mmu_rxpkt_err        (reg_mmu_rxpkt_err      ),
         
    .ul2sh_pkt_tlast          (ul2sh_pkt_tlast        ),
@@ -226,6 +250,14 @@ mmu_rx_bd u_mmu_rx_bd
     .ker2mmu_bd_tkeep        (ker2mmu_bd_tkeep      ),
     .ker2mmu_bd_tvalid       (ker2mmu_bd_tvalid     ),
     .mmu2ker_bd_tready       (mmu2ker_bd_tready     ),                               
+
+    //BD signal with mmu_tx
+    .bd2rx_s_axis_rq_tlast   (bd2rx_s_axis_rq_tlast ),
+    .bd2rx_s_axis_rq_tdata   (bd2rx_s_axis_rq_tdata ),
+    .bd2rx_s_axis_rq_tuser   (bd2rx_s_axis_rq_tuser ),
+    .bd2rx_s_axis_rq_tkeep   (bd2rx_s_axis_rq_tkeep ),
+    .bd2rx_s_axis_rq_tready  (bd2rx_s_axis_rq_tready),
+    .bd2rx_s_axis_rq_tvalid  (bd2rx_s_axis_rq_tvalid),
                               
     .eoc_tag_ren             (eoc_tag_ren           ), 
     .eoc_tag_rdata           (eoc_tag_rdata         ),
@@ -243,6 +275,13 @@ mmu_rx_bd u_mmu_rx_bd
     .bucket_inc_wr           (bucket_inc_wr         ),                                                  
     .bucket_inc_wdata        (bucket_inc_wdata      ),                                                 
     .bucket_af               (bucket_af             ),                                                  
+    .mmu_tx2rx_bd_wr         (mmu_tx2rx_bd_wr       ),                                                  
+    .mmu_tx2rx_bd_wdata      (mmu_tx2rx_bd_wdata    ),                                                  
+    .mmu_tx2rx_bd_afull      (mmu_tx2rx_bd_afull     ),                                                  
+    .axis_fifo_rd            (axis_fifo_rd           ),                                                  
+    .bd2rx_axis_fifo_rd      (bd2rx_axis_fifo_rd     ),                                                  
+    .read_op_vld_dly         (read_op_vld            ),                                                  
+    .write_op_vld_dly        (write_op_vld           ),                                                  
  
     .reg_mmu_rxbd_sta        (reg_mmu_rxbd_sta      ), 
     .reg_mmu_rxbd_err        (reg_mmu_rxbd_err      ),  
@@ -265,11 +304,18 @@ u_reg_mmu_rx
              .clk_sys                  (clk_sys                ),
              .rst                      (rst                    ),
              .reg_mmu_txpkt_en         (reg_mmu_txpkt_en       ),     
+             .reg_add_hacc_en          (reg_add_hacc_en        ),     
+             .reg_write_ddr_bd         (reg_write_ddr_bd       ),     
+             .axis_fifo_rd             (axis_fifo_rd           ),                                                  
+             .bd2rx_axis_fifo_rd       (bd2rx_axis_fifo_rd     ),                                                  
+             .read_op_vld              (read_op_vld            ),                                                  
+             .write_op_vld             (write_op_vld           ),                                                  
              .reg_mmu_rxbd_en          (reg_mmu_rxbd_en        ),
              .reg_mmu_rdcmd_en         (reg_mmu_rdcmd_en       ),   
              .reg_mmu_rxpkt_en         (reg_mmu_rxpkt_en       ),
              .reg_mmu_rxbd_sta         (reg_mmu_rxbd_sta       ),
              .reg_mmu_rxpkt_sta        (reg_mmu_rxpkt_sta      ),
+             .reg_mmu_rxpkt_sta1       (reg_mmu_rxpkt_sta1     ),
              .reg_mmu_rxbd_err         (reg_mmu_rxbd_err       ),
              .reg_eoc_tag_ff_stat      (reg_eoc_tag_ff_stat    ),                          
              .reg_mmu_rxpkt_err        (reg_mmu_rxpkt_err      ),

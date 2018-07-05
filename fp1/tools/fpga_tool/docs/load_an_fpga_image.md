@@ -5,6 +5,8 @@ Loading an FPGA Image
 
 FpgaCmdEntry, FPGA image loading tool, supports FPGA information query, image loading, loading status query ，virtual LED status query and image clearing.
 
+Note: For different types of instances, the number of FPGA devices is different. Here is an example with only one FPGA device.
+
 Loading Procedure
 ---------------------
 

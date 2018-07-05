@@ -38,7 +38,7 @@ function var_chk
         exit
     fi
     
-    VALID_KERNEL_NAME=`echo ${KERNEL_NAME} |grep ".xclbin"`
+    VALID_KERNEL_NAME=`echo ${KERNEL_NAME} |grep .xclbin`
     if [ -z ${KERNEL_NAME} ]
     then 
         echo -e "Error：kernel is not found, please check!\n"
@@ -68,13 +68,16 @@ then
 fi
 
 XILINX_SDX_PATH=${XILINX_SDX}
+
 unset XILINX_SDX
+unset XILINX_SDACCEL
+unset XCL_EMULATION_MODE
 
-export LD_LIBRARY_PATH=${XILINX_SDX_PATH}/runtime/lib/x86_64/:${XILINX_SDX_PATH}/lib/lnx64.o/
+export LD_LIBRARY_PATH=${XILINX_SDX_PATH}/runtime/lib/x86_64:${XILINX_SDX_PATH}/lib/lnx64.o/Default:${XILINX_SDX_PATH}/lib/lnx64.o
 export XILINX_OPENCL=$(pwd)/../../../userspace/sdaccel/lib/
-export XCL_PLATFORM=hal
+#export XCL_PLATFORM=hal
 
-DRIVER=xdma
+DRIVER=xocl
 check_driver()
 {
     MODULE_INFO=`lsmod | grep $DRIVER 2>&1`
@@ -92,7 +95,7 @@ function Usage
 	echo "Usage: run.sh [option]                                            "
 	echo "Options:                                                          "
 	echo "sh run.sh HOSTEXE XCLBIN SLOT_ID                 Running HW Test  "
-    echo "-----------------------------example------------------------------"
+    echo "-----------------------------examples-----------------------------"
 	echo "running vadd on card 0:                                           "
     echo "sh run.sh vadd /home/fp1/hardware/sdaccel_design/examples/vadd_cl/prj/bin/bin_vadd_hw.xclbin 0"
     echo "running vadd on card 1:                                           "

@@ -24,7 +24,7 @@
 
 <a name="sec_1_2"></a>
 ## 1.2 使用前准备
-在使用FPGA开发套件前，必须要执行1.2.1~1.2.3步骤，完成开发套件的获取以及工具的安装及配置等。套件中包含硬件开发套件、应用开发套件、FPGA镜像管理工具和FPGA镜像加载工具。硬件开发套件存放在[hardware](./fp1/hardware)目录下，包括vivado和SDAccel两种开发工具套件；应用开发套件存放在[software](./fp1/software)目录下，包括实例运行时所需要的运行环境配置文件、驱动、工具以及相关应用程序。
+在使用FPGA开发套件前，必须要执行1.2.1~1.2.2步骤，完成开发套件的获取以及工具的安装及配置等。套件中包含硬件开发套件、应用开发套件、FPGA镜像管理工具和FPGA镜像加载工具。硬件开发套件存放在[hardware](./fp1/hardware)目录下，包括vivado和SDAccel两种开发工具套件；应用开发套件存放在[software](./fp1/software)目录下，包括实例运行时所需要的运行环境配置文件、驱动、工具以及相关应用程序。
 
 <a name="sec_1_2_1"></a>
 ### 1.2.1 开发套件的下载
@@ -37,11 +37,7 @@
 > 开发套件的下载依赖git工具，请确保在执行下载操作前已安装此软件。
 
 <a name="sec_1_2_2"></a>
-### 1.2.2 配置内网DNS
-在配置内网DNS后，弹性云服务器可以通过虚拟私有云的内网访问相关云服务，能够为用户提供更稳定、可靠的网络环境。更多详细信息请参见[FACS用户指南](https://support.huaweicloud.com/usermanual-fpga/zh-cn_topic_0107356835.html#)的“配置内网DNS”章节。
-
-<a name="sec_1_2_3"></a>
-### 1.2.3 FPGA镜像管理工具的安装和配置
+### 1.2.2 FPGA镜像管理工具的安装和配置
 FPGA镜像管理工具fisclient是一款跨平台命令行工具，用于FPGA镜像管理，而镜像管理是进行FPGA镜像加载前的必须步骤。通过fisclient，用户可以实现FPGA镜像的删除、查询等操作。此外，fisclient还提供了FPGA镜像（AEI，Accelerated Engine Image）和弹性云服务器镜像之间关联关系的管理功能。用户在创建AEI和弹性云服务器镜像之间的关联关系后，可以将弹性云服务器镜像发布到云市场或共享给其他用户，从而实现将AEI发布到云市场或共享给其他用户。
 
 > 管理工具的安装和配置请参见[fisclient README](./cli/fisclient/README_CN.md)安装和配置部分。
@@ -125,6 +121,9 @@ FPGA镜像加载工具的编译和安装请参见[fpga_tool README](./fp1/tools/
 
 <a name="sec_3_1"></a>
 ## 3.1 通用型架构硬件开发流程
+
+> 如果用户已于线下实现kernel的编译工作，并生成相应的xclbin文件，后续操作请参见[基于SDAccel的线下开发线上使用流程说明](./fp1/docs/SDAccel-based_offline_development_online_use_process_guidance_cn.md)。
+
 用户在选择通用型架构时，硬件开发是基于SDAccel的流程。本流程可以指导用户完成工程创建、工程编译、工程仿真、生成xclbin文件，最终完成FPGA镜像（AEI，Accelerated Engine Image）的注册。用户在完成硬件开发后，如果需要基于已注册的FPGA镜像开发自己的应用，请参见3.2节内容。
 
 ![](./fp1/docs/media/SDAccel_hdk_root_cn.jpg)

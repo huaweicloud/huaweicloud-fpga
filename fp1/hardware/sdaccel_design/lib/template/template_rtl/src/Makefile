@@ -22,9 +22,8 @@ EXE_PATH := ../prj/bin
 EXE := ${EXE_PATH}/XXX
 LOG_DIR=./../prj/log
 
-
-XPFM = xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.xpfm
-XPFM_PATH := ../../../lib/platform/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1
+XPFM=huawei_vu9p_dynamic_fp1_5_0.xpfm
+XPFM_PATH := ./../../../lib/platform/huawei_vu9p_dynamic_fp1_5_0/
 KERNEL_NAME = XXX
 TARGET = hw_emu
 
@@ -35,7 +34,7 @@ XO := ${KERNEL_NAME}.${TARGET}.$(basename ${XPFM}).xo
 FLAGS := -Wall  
 
 INC  := -I${XILINX_SDX}/runtime/include/1_2
-LIBS := -L${XILINX_SDX}/runtime/lib/x86_64 -lxilinxopencl -lstdc++
+LIBS := -L$(XILINX_SDX)/lib/lnx64.o -L${XILINX_SDX}/runtime/lib/x86_64 -lxilinxopencl -lOpenCL -pthread -lstdc++
 
 
 ifeq (${TARGET}, hw)
@@ -62,7 +61,7 @@ $(EXE): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(FLAGS)
 
 $(XCLBIN): $(XO)
-	$(CLCC) -f $(XPFM_PATH)/$(XPFM) --link $(XO) -t $(TARGET) -o $(XCLBIN)
+	$(CLCC) -f $(XPFM_PATH)/$(XPFM) --link $(XO) -t $(TARGET) -o $(XCLBIN) --temp_dir ./tempd --log_dir ./logd --report_dir ./repd
 	
 $(XO):
 	vivado -mode batch -nojournal -notrace -nolog -source  gen_xo.tcl -tclargs $(XO) $(KERNEL_NAME) $(TARGET) $(basename ${XPFM})
@@ -72,22 +71,21 @@ xconfig : emconfig.json
 emconfig.json:
 	emconfigutil -f $(XPFM_PATH)/$(XPFM)  --od $(EXE_PATH)
 		
-#
-#rm -fr packaged_kernel_$(KERNEL_NAME)_$(TARGET)_$(basename ${XPFM})/
-#rm -fr tmp_kernel_pack_$(KERNEL_NAME)_$(TARGET)_$(basename ${XPFM})/
 clean:
 	rm -rf *.o *.d *.xo ${LOG_DIR}/* $(EXE) emconfig.json $(XO_FILE) $(XCLBIN)  
-	rm -fr packaged_kernel_*/
-	rm -fr tmp_kernel_pack_*/
 	rm -fr $(EXE_PATH)/*
-	rm -fr .Xil/ 
+	rm -fr .Xil/ iprepo address_map.xml dr.bd.tcl
+	rm -fr packaged_kernel_*/ *.ltx _* *.bit
+	rm -fr tmp_kernel_pack_*/
+	rm -fr _xocc* *.dat 
+	rm -rf tempd logd repd
 
 .PHONY: all
 
 .DEFAULT_GOAL := all
 
 help:
-	@echo "Compile  emulation using default huawei:vu9p-fp1:4ddr-xpr:4.1 DSA"
+	@echo "Compile  emulation using default huawei:vu9p_dynamic:fp1:5_0 DSA"
 	@echo "make"
 	@echo ""
 	@echo "Compile XCLBIN file"

@@ -52,6 +52,14 @@ module mmu_tx_inst #
     input                                    bd2k_s_axis_rq_tready    ,
     output   wire                            bd2k_s_axis_rq_tvalid    ,
 
+    //with mmu_rx
+    output                                   bd2rx_s_axis_rq_tlast    ,
+    output          [511:0]                  bd2rx_s_axis_rq_tdata    ,
+    output          [59:0]                   bd2rx_s_axis_rq_tuser    ,
+    output   wire   [63:0]                   bd2rx_s_axis_rq_tkeep    ,
+    input                                    bd2rx_s_axis_rq_tready   ,
+    output   wire                            bd2rx_s_axis_rq_tvalid   ,
+
     //receive hard acc & pkt : axi stream interface
     input           [511:0]                  sh2ul_dmam1_tdata        , 
     input           [74:0]                   sh2ul_dmam1_tuser        ,
@@ -100,17 +108,21 @@ module mmu_tx_inst #
     signals
 \********************************************************************************************************************/
 wire                                         hacc_wr                    ;           
-wire  [10:0]                                 hacc_waddr                 ;        
+wire  [8:0]                                  hacc_waddr                 ;        
 wire  [87:0]                                 hacc_wdata                 ;       
 wire                                         online_feedback_en         ;
+wire                                         reg_mmu_tx_cnt_en          ;    
 wire                                         wr_ddr_rsp_en              ;    
 wire  [10:0]                                 wr_ddr_rsp_sn              ; 
 
 wire                                         stxqm2inq_fifo_rd          ;           
 wire                                         ppm2stxm_rxffc_wr          ;           
 wire                                         tx2kernel_bd_wen           ; 
+wire                                         mmu_tx2rx_bd_wen           ; 
+wire                                         mmu_tx2rx_wr_bd_wen        ; 
+wire                                         mmu_tx2rx_rd_bd_wen        ; 
 
-wire  [4:0]                                  tx_bd_sta                  ;
+wire  [5:0]                                  tx_bd_sta                  ;
 wire  [10:0]                                 mmu_tx_online_beat         ;
 wire  [10:0]                                 reg_mmu_tx_online_beat     ;
 
@@ -164,18 +176,31 @@ mmu_tx_bd u_mmu_tx_bd
     .bd2k_s_axis_rq_tkeep           ( bd2k_s_axis_rq_tkeep      ),
     .bd2k_s_axis_rq_tready          ( bd2k_s_axis_rq_tready     ),
     .bd2k_s_axis_rq_tvalid          ( bd2k_s_axis_rq_tvalid     ),
+
+    //with mmu_rx
+    .bd2rx_s_axis_rq_tlast          ( bd2rx_s_axis_rq_tlast     ),
+    .bd2rx_s_axis_rq_tdata          ( bd2rx_s_axis_rq_tdata     ),
+    .bd2rx_s_axis_rq_tuser          ( bd2rx_s_axis_rq_tuser     ),
+    .bd2rx_s_axis_rq_tkeep          ( bd2rx_s_axis_rq_tkeep     ),
+    .bd2rx_s_axis_rq_tready         ( bd2rx_s_axis_rq_tready    ),
+    .bd2rx_s_axis_rq_tvalid         ( bd2rx_s_axis_rq_tvalid    ),
+
     //with mmu_tx_pkt 
     .hacc_wr                        ( hacc_wr                   ),     
     .hacc_waddr                     ( hacc_waddr                ),
     .hacc_wdata                     ( hacc_wdata                ),
     .online_feedback_en             ( online_feedback_en        ),     
     .wr_ddr_rsp_en                  ( wr_ddr_rsp_en             ),     
+    .reg_mmu_tx_cnt_en              ( reg_mmu_tx_cnt_en         ),     
     .wr_ddr_rsp_sn                  ( wr_ddr_rsp_sn             ),
     
     //dfx 
     .stxqm2inq_fifo_rd              ( stxqm2inq_fifo_rd         ),
     .ppm2stxm_rxffc_wr              ( ppm2stxm_rxffc_wr         ),
     .tx2kernel_bd_wen               ( tx2kernel_bd_wen          ),
+    .mmu_tx2rx_bd_wen               ( mmu_tx2rx_bd_wen          ),
+    .mmu_tx2rx_wr_bd_wen            ( mmu_tx2rx_wr_bd_wen       ),
+    .mmu_tx2rx_rd_bd_wen            ( mmu_tx2rx_rd_bd_wen       ),
     .tx_bd_sta                      ( tx_bd_sta                 ),
     .mmu_tx_online_beat             ( mmu_tx_online_beat        ),
     .reg_mmu_tx_online_beat         ( reg_mmu_tx_online_beat    )        
@@ -295,10 +320,14 @@ u_reg_mmu_tx
     .reg_mmu_tx_online_beat         ( reg_mmu_tx_online_beat    ),
 
     //cnt
+    .reg_mmu_tx_cnt_en              ( reg_mmu_tx_cnt_en         ),
     .wr_ddr_rsp_en                  ( wr_ddr_rsp_en             ),
     .stxqm2inq_fifo_rd              ( stxqm2inq_fifo_rd         ),
     .ppm2stxm_rxffc_wr              ( ppm2stxm_rxffc_wr         ),
     .tx2kernel_bd_wen               ( tx2kernel_bd_wen          ),
+    .mmu_tx2rx_bd_wen               ( mmu_tx2rx_bd_wen          ),
+    .mmu_tx2rx_wr_bd_wen            ( mmu_tx2rx_wr_bd_wen       ),
+    .mmu_tx2rx_rd_bd_wen            ( mmu_tx2rx_rd_bd_wen       ),
 
     .reg_axis_receive_cnt_en        ( reg_axis_receive_cnt_en   ),
     .reg_hacc_receive_cnt_en        ( reg_hacc_receive_cnt_en   ),

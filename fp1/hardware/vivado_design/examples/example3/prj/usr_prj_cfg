@@ -41,7 +41,7 @@ USR_TOP=ul_pr_top
 ## for more details about strategy  Arguments,please use "sh fpga_design_run.sh -s_strategy_help" in ../../../lib/scripts/                                                                                       
 #######################################################################################################################
 
-USR_SYN_STRATEGY=DEFAULT
+USR_SYN_STRATEGY=AlternateRoutability
 
 #######################################################################################################################
 ## The user-defined implementation strategy.
@@ -77,7 +77,7 @@ USR_SYN_STRATEGY=DEFAULT
 ## for more details about strategy  Arguments,please use "sh fpga_design_run.sh -i_strategy_help" in ../../../lib/scripts/                                       
 #######################################################################################################################
 
-USR_IMPL_STRATEGY=DEFAULT
+USR_IMPL_STRATEGY=ExplorePostRoutePhysOpt
 
 #######################################################################################################################
 ## The user-defined constraints.

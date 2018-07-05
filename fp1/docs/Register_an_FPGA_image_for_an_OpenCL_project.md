@@ -30,6 +30,7 @@ Usage:sh AEI_Register.sh *-n* [AEI_name] *-d* [AEI_Description]
 
 -   *-d* specifies the AEI description (**AEI_Description**) of the FPGA image to be registered.  AEI_Description consists of 0 to 255 characters, including uppercase and lowercase letters, digits, hyphens (-), underscores (_), periods (.), commas (,), and spaces.
 
+-   AEI_name and AEI_Description are enclosed in quotation marks,such as `sh AEI_Register.sh -n "ocl-test" -d "ocl-desc" ` 
 
 The **AEI_Register.sh** script is executed successfully if the following output is displayed:
 

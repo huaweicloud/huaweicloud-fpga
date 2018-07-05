@@ -103,7 +103,7 @@ SDAccel平台提供两种方法以便用户创建工程。
 
 如果以SDAccel作为开发工具，请配置参数`VIVADO_VER_REQ`如下：
 
-`VIVADO_VER_REQ="2017.1"`
+`VIVADO_VER_REQ="2017.4.op"`
 
 
 **说明:**

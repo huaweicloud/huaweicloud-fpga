@@ -28,15 +28,12 @@ script_path=${script%/*}
 realpath=$(readlink -f $script_path)
 
 #set environment value
-#SDX_SETUPFILE="/software/Xilinx/SDx_2017.1/SDx/2017.1/settings64.sh"
-#if [ ! -f $SDX_SETUPFILE ]
 if [ -z $XILINX_SDX ]
 then 
     echo -e "Xilinx SDx is not found! Please check it first!\n"
     exit
 fi
 
-#source $SDX_SETUPFILE 
 function Usage
 {
 	echo "-------------------------------------------------------"
@@ -169,6 +166,4 @@ else
     done
 	echo "error: *** No rules to compile."
     echo "Input -h or --help for details!"
-	#echo "Input err!"
-	#echo " *** No arguments to compile, input -h or --help for details!"
 fi

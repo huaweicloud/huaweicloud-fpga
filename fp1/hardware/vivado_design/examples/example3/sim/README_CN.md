@@ -36,6 +36,12 @@
 <ul>
 <li><a href="#sec-1-7-3">1.7.3. 测试用例sv_demo_003说明</a></li>
 </ul>
+<ul>
+<li><a href="#sec-1-7-1">1.7.1. 测试用例sv_demo_004说明</a></li>
+</ul>
+<ul>
+<li><a href="#sec-1-7-1">1.7.1. 测试用例sv_demo_005说明</a></li>
+</ul>
 </li>
 </ul>
 </li>
@@ -169,9 +175,9 @@ Example支持一键式运行，即一键式自动完成编译以及运行，可�
 
 ### **测试用例说明**
 
-Example3中包含了三个测试用例`sv_demo_001`，`sv_demo_002`，`sv_demo_003`。
+Example3中包含了五个测试用例`sv_demo_001`，`sv_demo_002`，`sv_demo_003`，`sv_demo_004`，`sv_demo_005`。
 
-三个测试用例均包括如下功能：
+五个测试用例均包括如下功能：
 
 1.读取`版本号`UL寄存器；
 2.对UL的`输入数据取反`测试寄存器进行检测；
@@ -193,7 +199,7 @@ Example3中包含了三个测试用例`sv_demo_001`，`sv_demo_002`，`sv_demo_0
 
 #### 测试用例sv_demo_002说明
 
-测试用例`sv_demo_002`除了完成版本寄存器读取与测试寄存器的检测外还对UL进行了**DMA测试**，它需要构造Hardacc，Hardacc可详见[用户开发指南](../../../../..//docs/User_Development_Guide_for_an_FACS_cn.pdf),仿真平台实现对应Hardacc功能是通过下述章节[修改仿真配置](./修改仿真配置)中所示的添加ACC_LEN_CFG宏实现，具体实现内容可参考cpu_mode_cb.sv文件。
+测试用例`sv_demo_002`除了完成版本寄存器读取与测试寄存器的检测外还对UL进行了**DMA环回测试**，它与example2中sv_demo_002的区别是它需要构造Hardacc，也就是下述章节**修改仿真配置**中ACC_LEN_CFG宏添加，Hardacc描述详见[用户开发指南](../../../../../docs/User_Development_Guide_for_an_FACS_cn.docx)。
 
     详细过程如下：
     sv_demo_002会通过仿真平台构造报文与BD并通过与UL相连的AXI4-Stream接口发送给UL。
@@ -210,6 +216,28 @@ Example3中包含了三个测试用例`sv_demo_001`，`sv_demo_002`，`sv_demo_0
     sv_demo_003通过`test.cfg`中配置的文件解析并构造报文与BD并通过与UL相连的AXI4-Stream接口发送给UL。
     UL处理后会将报文原封不动的返回仿真平台并产生BD。
     仿真平台比对发送与接收的报文，如果相等则会打印PASS，否则打印FAIL并终止仿真。
+    
+<a id="sec-1-7-4" name="sec-1-7-4"></a>
+
+#### 测试用例sv_demo_004说明
+
+测试用例`sv_demo_004`除了完成版本寄存器读取与测试寄存器的检测外还对UL进行了纯**DMA读测试**。
+
+    详细过程如下：
+    sv_demo_004会通过仿真平台构造报文与BD并通过与UL相连的AXI4-Stream接口发送给UL。
+    UL处理后会将Hardacc和BD返回仿真平台，以及读出的报文返回仿真平台。
+    仿真平台比对发送与接收的Hardacc以及报文，如果相等则会打印PASS，否则打印FAIL并终止仿真。
+    
+<a id="sec-1-7-5" name="sec-1-7-5"></a>
+
+#### 测试用例sv_demo_005说明
+
+测试用例`sv_demo_005`除了完成版本寄存器读取与测试寄存器的检测外还对UL进行了纯**DMA写测试**。
+
+    详细过程如下：
+    sv_demo_005会通过仿真平台构造报文与BD并通过与UL相连的AXI4-Stream接口发送给UL。
+    UL处理后会将Hardacc和BD返回仿真平台。
+    仿真平台比对发送与接收的Hardacc，如果相等则会打印PASS，否则打印FAIL并终止仿真。
 
 <a id="sec-2" name="sec-2"></a>
 

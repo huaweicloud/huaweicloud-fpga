@@ -30,6 +30,14 @@ module  mmu_rx_bd
                  input                           ker2mmu_bd_tvalid          ,
                  output                          mmu2ker_bd_tready          ,                               
 
+                 //with mmu_tx
+                 input                           bd2rx_s_axis_rq_tlast      ,
+                 input   [511:0]                 bd2rx_s_axis_rq_tdata      ,
+                 input   [59:0]                  bd2rx_s_axis_rq_tuser      ,
+                 input   [63:0]                  bd2rx_s_axis_rq_tkeep      ,
+                 output                          bd2rx_s_axis_rq_tready     ,
+                 input                           bd2rx_s_axis_rq_tvalid     ,
+
                  //eoc tag info with mmu_rx_pkt 
                  input   [3:0]                   eoc_tag_ren                , 
                  output  [3:0]                   eoc_tag_rdata              ,
@@ -47,6 +55,10 @@ module  mmu_rx_bd
                  output  [3:0]                   bucket_inc_wr              ,
                  output  [13:0]                  bucket_inc_wdata           ,
                  input   [3:0]                   bucket_af                  ,               
+                 //write operation BD
+                 output  reg                     mmu_tx2rx_bd_wr            ,
+                 output  reg [539:0]             mmu_tx2rx_bd_wdata         ,
+                 input                           mmu_tx2rx_bd_afull         , 
 
                 //with axim 
                  input   [3:0]                   rcmd_ff_full_que           ,       
@@ -54,6 +66,10 @@ module  mmu_rx_bd
                  output  [71:0]                  rcmd_ff_wdata              ,  
                  
                  //with cpu 
+                 output  reg                     axis_fifo_rd               ,
+                 output  reg                     bd2rx_axis_fifo_rd         ,
+                 output  reg                     read_op_vld_dly            ,
+                 output  reg                     write_op_vld_dly           ,
                  output                          reg_mmu_rxbd_en            ,
                  output                          reg_mmu_rdcmd_en           ,
                  output  [31:0]                  reg_mmu_rxbd_sta           ,
@@ -65,19 +81,26 @@ module  mmu_rx_bd
 /*********************************************************************************************************************\
     signals
 \*********************************************************************************************************************/
-reg                                 axis_fifo_rd                    ;
+//reg                                 axis_fifo_rd                    ;
 reg                                 axis_fifo_rd_1dly               ;
 wire    [539:0]                     axis_fifo_rdata_conver          ;
 wire    [539:0]                     axis_fifo_rdata                 ;
 reg     [539:0]                     axis_fifo_rdata_1dly            ;
 wire                                axis_fifo_emp                   ;
 
+wire                                bd2rx_axis_fifo_emp             ;
+//reg                                 bd2rx_axis_fifo_rd              ;
+wire    [539:0]                     bd2rx_axis_fifo_rdata_conver    ;
+wire    [539:0]                     bd2rx_axis_fifo_rdata           ;
+wire                                read_op_vld                     ;
+wire                                write_op_vld                    ;
+
 wire    [1:0]                       ddr_id                          ;
-wire    [31:0]                      length                          ;
+reg     [31:0]                      length                          ;
 wire    [31:0]                      lenth                           ;
 
 wire    [35:0]                      fddr_des_addr                   ;                     
-wire    [35:0]                      fddr_des_addr_base              ;                     
+reg     [35:0]                      fddr_des_addr_base              ;                     
 
 reg     [11:0]                      fddr_des_laddr                  ;
 reg     [5:0]                       fddr_des_haddr_l6b              ;
@@ -120,12 +143,14 @@ reg                                 online_af                       ;
 reg                                 rcmd_ff_full                    ;
 
 wire                                fifo_err                        ;            
+wire                                bd2rx_fifo_err                  ;            
 wire                                chn_seq_parity_err              ;            
 wire    [3:0]                       eoc_tag_parity_err              ;            
 
 wire    [3:0]                       overflow                        ;            
 wire    [3:0]                       underflow                       ;            
 wire    [1:0]                       fifo_status                     ;            
+wire    [1:0]                       bd2rx_fifo_status               ;            
 
 wire                                rcmd_ff_wen                     ;
 reg                                 reg_len_err                     ;
@@ -172,19 +197,66 @@ begin
     end
 end
 
+//------------------------------------------------------------------------------
+always@(posedge clk_sys or posedge rst)
+begin
+    if(rst == 1'd1)begin
+        bd2rx_axis_fifo_rd <= 1'd0;    
+    end
+    else if((bd2rx_axis_fifo_emp == 1'd0)&&(cache_ff == 1'd0) &&
+            (bd2rx_axis_fifo_rd == 1'd0)&&(cut_flag==1'b0) && 
+            (mmu_tx2rx_bd_afull == 1'b0))begin
+        bd2rx_axis_fifo_rd <= 1'd1;    
+    end
+    else begin
+        bd2rx_axis_fifo_rd <= 1'd0;    
+    end
+end
+
+
 generate
     for (j = 0; j<64; j=j+1 ) begin : LITTLE2BIG_GEN
         assign axis_fifo_rdata[(63-j)*8+7: (63-j)*8 ] = axis_fifo_rdata_conver[j*8+7:j*8];
+        assign bd2rx_axis_fifo_rdata[(63-j)*8+7: (63-j)*8 ] = bd2rx_axis_fifo_rdata_conver[j*8+7:j*8];
     end
 endgenerate
 
 assign axis_fifo_rdata[539:512] = axis_fifo_rdata_conver[539:512];
+assign bd2rx_axis_fifo_rdata[539:512] = bd2rx_axis_fifo_rdata_conver[539:512];
+assign read_op_vld = bd2rx_axis_fifo_rd & (bd2rx_axis_fifo_rdata[225:224] == 2'd1);
+assign write_op_vld = bd2rx_axis_fifo_rd & (bd2rx_axis_fifo_rdata[225:224] == 2'd2);
 
-assign fddr_des_addr_base = axis_fifo_rdata[327:292];
-assign length             = axis_fifo_rdata[359:328]; 
- 
+always@(posedge clk_sys or posedge rst)
+begin
+    if(rst == 1'd1)begin
+        read_op_vld_dly <= 1'd0;    
+        write_op_vld_dly <= 1'd0;    
+    end
+    else begin
+        read_op_vld_dly <= read_op_vld;    
+        write_op_vld_dly <= write_op_vld;    
+    end
+end
+
+
 assign ddr_id   = fddr_des_addr[35:34]; 
 
+
+always@(*)
+begin
+    if(read_op_vld == 1'b1)begin
+        length = bd2rx_axis_fifo_rdata[359:328];    
+        fddr_des_addr_base = bd2rx_axis_fifo_rdata[327:292];    
+    end
+    else begin
+        length = axis_fifo_rdata[359:328];    
+        fddr_des_addr_base = axis_fifo_rdata[327:292];    
+    end
+end    
+
+
+
+//------------------------------------------------------------------------------
 /*********************************************************************************************************************\
    gen read command
 \*********************************************************************************************************************/
@@ -247,14 +319,14 @@ begin
         normal_cmd_wen <= 1'd0;
     end
     else begin
-        normal_cmd_wen <= axis_fifo_rd&(((len_h20b==20'd1)&&(len_l12b==12'd0))||(len_h20b==20'd0));
+        normal_cmd_wen <= (axis_fifo_rd | read_op_vld)&(((len_h20b==20'd1)&&(len_l12b==12'd0))||(len_h20b==20'd0));
     end
 end    
 
 assign long_cmd_wen = cut_en;
 assign rcmd_ff_wen   = normal_cmd_wen | long_cmd_wen;  
 
-assign cut_start = ((axis_fifo_rd==1'b1)&(((len_h20b==20'd1)&&(len_l12b!=12'd0))||(len_h20b>20'd1))); 
+assign cut_start = (((axis_fifo_rd==1'b1) | (read_op_vld==1'b1))&(((len_h20b==20'd1)&&(len_l12b!=12'd0))||(len_h20b>20'd1))); 
 
 always@(posedge clk_sys or posedge rst)
 begin
@@ -275,7 +347,7 @@ begin
     if(rst == 1'd1)begin
         left_llen <= 12'd0;
     end
-    else if (axis_fifo_rd == 1'b1) begin
+    else if ((axis_fifo_rd == 1'b1) || (read_op_vld == 1'b1)) begin
         left_llen <= len_l12b;
     end
     else;
@@ -286,7 +358,7 @@ begin
     if(rst == 1'd1)begin
         left_hlen <= 20'd0;
     end
-    else if(axis_fifo_rd==1'b1)begin
+    else if((axis_fifo_rd==1'b1) || (read_op_vld==1'b1))begin
         left_hlen <= len_h20b;
     end
     else if((cut_flag == 1'b1)&&(cache_ff==1'b0))begin
@@ -300,12 +372,12 @@ begin
     if(rst == 1'd1)begin
         left_hlen_tmp <= 20'd0;
     end
-    else if(((axis_fifo_rd==1'b1)&&(len_h20b==20'd0))
+    else if((((axis_fifo_rd==1'b1) || (read_op_vld==1'b1))&&(len_h20b==20'd0))
            || ((cut_flag == 1'b1)&&(cache_ff==1'b0)&&
               ((left_hlen == 20'd1)&&(left_llen!=12'd0))))begin
         left_hlen_tmp <= 20'd0;
     end
-    else if(((axis_fifo_rd==1'b1)&&(len_h20b!=20'd0))
+    else if((((axis_fifo_rd==1'b1) || (read_op_vld==1'b1))&&(len_h20b!=20'd0))
            || ((cut_flag == 1'b1)&&(cache_ff==1'b0)&&
               ((left_hlen == 20'd2)&&(left_llen==12'd0))))begin
         left_hlen_tmp <= 20'd1;
@@ -321,7 +393,7 @@ begin
     else if(cut_start ==1'b1)begin
         left_llen_tmp <= 12'd0;
     end
-    else if(axis_fifo_rd ==1'b1)begin
+    else if((axis_fifo_rd==1'b1) || (read_op_vld==1'b1))begin
         left_llen_tmp <= len_l12b;
     end
     else if((cut_flag == 1'b1)&&(cache_ff==1'b0)&&
@@ -339,17 +411,18 @@ begin
     if(rst == 1'd1)begin
         fddr_des_laddr <= 12'd0;
     end
-    else if(axis_fifo_rd==1'b1)begin
+    else if((axis_fifo_rd==1'b1) || (read_op_vld==1'b1))begin
         fddr_des_laddr <= fddr_des_addr_base[11:0];
     end   
     else;
 end
+
 always@(posedge clk_sys or posedge rst)
 begin
     if(rst == 1'd1)begin
         fddr_des_haddr_l6b <= 6'd0;
     end
-    else if(axis_fifo_rd==1'b1)begin
+    else if((axis_fifo_rd==1'b1) || (read_op_vld==1'b1))begin
         fddr_des_haddr_l6b <= fddr_des_addr_base[17:12];
     end   
     else if((cut_flag == 1'b1)&&(cache_ff==1'b0))begin
@@ -363,7 +436,7 @@ begin
     if(rst == 1'd1)begin
         fddr_des_haddr_h16b <= 16'd0;
     end
-    else if(axis_fifo_rd==1'b1)begin
+    else if((axis_fifo_rd==1'b1) || (read_op_vld==1'b1))begin
         fddr_des_haddr_h16b <= fddr_des_addr_base[33:18];
     end   
     else if((cut_flag == 1'b1)&&(cache_ff==1'b0)&&(fddr_des_haddr_l6b==6'h3f))begin
@@ -377,7 +450,7 @@ begin
     if(rst == 1'd1)begin
         fddr_des_haddr_h2b <= 2'd0;
     end
-    else if(axis_fifo_rd==1'b1)begin
+    else if((axis_fifo_rd==1'b1) || (read_op_vld==1'b1))begin
         fddr_des_haddr_h2b <= fddr_des_addr_base[35:34];
     end   
     else;
@@ -422,14 +495,38 @@ begin
        axis_fifo_rd_1dly <= 1'b0 ;
     end
     else begin
-       axis_fifo_rd_1dly <= axis_fifo_rd ;
+       axis_fifo_rd_1dly <= axis_fifo_rd | read_op_vld;
+    end
+end
+
+
+
+always@(posedge clk_sys)
+begin
+    if(read_op_vld == 1'b1)begin
+        axis_fifo_rdata_1dly <= bd2rx_axis_fifo_rdata ;
+    end
+    else begin
+        axis_fifo_rdata_1dly <= axis_fifo_rdata ;
+    end
+end
+
+always@(posedge clk_sys or posedge rst)
+begin
+    if(rst == 1'd1)begin
+       mmu_tx2rx_bd_wr <= 1'b0 ;
+    end
+    else begin
+       mmu_tx2rx_bd_wr <= write_op_vld;
     end
 end
 
 always@(posedge clk_sys)
 begin
-    axis_fifo_rdata_1dly <= axis_fifo_rdata ;
+    mmu_tx2rx_bd_wdata <= bd2rx_axis_fifo_rdata ;
 end
+
+
 
 always@(posedge clk_sys or posedge rst)
 begin
@@ -437,7 +534,7 @@ begin
        reg_len_err <= 1'b0 ;
     end
     else begin
-       reg_len_err <= axis_fifo_rd & (~(|length));
+       reg_len_err <= (axis_fifo_rd | read_op_vld) & (~(|length));
     end
 end
 
@@ -447,10 +544,10 @@ assign chn_seq_wen      = axis_fifo_rd_1dly;
 assign chn_seq_wdata    = ddr_id ;
 
 
-assign reg_mmu_rxbd_err = {9'd0,chn_seq_ff_stat,reg_len_err,fifo_err,chn_seq_parity_err,eoc_tag_parity_err,underflow,overflow};
-assign reg_mmu_rxbd_sta = {10'd0,cache_ff,axis_fifo_emp,fifo_status,chn_seq_full,chn_seq_empty,eoc_tag_full,eoc_tag_empty,ve_ff_aff,ve_ff_empty};
+assign reg_mmu_rxbd_err = {8'd0,bd2rx_fifo_err,chn_seq_ff_stat,reg_len_err,fifo_err,chn_seq_parity_err,eoc_tag_parity_err,underflow,overflow};
+assign reg_mmu_rxbd_sta = {5'd0,cut_flag,mmu_tx2rx_bd_afull,bd2rx_axis_fifo_emp,bd2rx_fifo_status,cache_ff,axis_fifo_emp,fifo_status,chn_seq_full,chn_seq_empty,eoc_tag_full,eoc_tag_empty,ve_ff_aff,ve_ff_empty};
 
-assign reg_mmu_rxbd_en  = axis_fifo_rd; 
+assign reg_mmu_rxbd_en  = axis_fifo_rd_1dly; 
 assign reg_mmu_rdcmd_en = rcmd_ff_wen; 
 
 /*********************************************************************************************************************\
@@ -479,6 +576,33 @@ raxi_rc512_fifo rx_bd
     .rc_rd_data_cnt         (                       ),
     .fifo_status            (fifo_status            ),
     .fifo_err               (fifo_err               ),
+    .rc_rx_cnt              (                       ),
+    .rc_rx_drop_cnt         (                       )
+    );
+
+raxi_rc512_fifo tx2rx_bd
+    (
+    .pcie_clk               (clk_sys                ),
+    .pcie_rst               (rst                    ),
+    .pcie_link_up           (1'd1                   ),
+    .user_clk               (clk_sys                ),
+    .user_rst               (rst                    ),
+    
+    .m_axis_rc_tdata        (bd2rx_s_axis_rq_tdata  ),
+    .m_axis_rc_tuser        (75'd0                  ),
+    .m_axis_rc_tlast        (bd2rx_s_axis_rq_tlast  ),
+    .m_axis_rc_tkeep        (bd2rx_s_axis_rq_tkeep  ),
+    .m_axis_rc_tvalid       (bd2rx_s_axis_rq_tvalid ),
+    .m_axis_rc_tready       (bd2rx_s_axis_rq_tready ),
+
+    .rc_rx_ef               (bd2rx_axis_fifo_emp         ),
+    .rc_rx_rd               (bd2rx_axis_fifo_rd           ),
+    .rc_rx_rdata            (bd2rx_axis_fifo_rdata_conver ),
+    
+    .rc_wr_data_cnt         (                       ),
+    .rc_rd_data_cnt         (                       ),
+    .fifo_status            (bd2rx_fifo_status      ),
+    .fifo_err               (bd2rx_fifo_err         ),
     .rc_rx_cnt              (                       ),
     .rc_rx_drop_cnt         (                       )
     );

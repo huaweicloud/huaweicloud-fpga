@@ -370,7 +370,11 @@ fi
 # Autoscan can be bypassed by user to avoid searching the directory.
 # It is recommonded that user should enable 'SOFT_AUTO_SCAN' to find the software install infoamtion if not too many softwares installed
 if [ "x$SOFT_AUTO_SCAN" == "xyes" ] ; then
-    find $soft_dir/ -type f -name "vsim" -o -type f -name "vivado" -o -type f -name "vcs" -o -type l -name "verdi" > $WORK_DIR/.tmp
+    if [ "x$vivado_ver_req" == "x2017.4.op" ] ; then
+        find $soft_dir/ -type f -name "vsim" -o -type f -name "sdx" -o -type f -name "vcs" -o -type l -name "verdi" > $WORK_DIR/.tmp
+    else
+        find $soft_dir/ -type f -name "vsim" -o -type f -name "vivado" -o -type f -name "vcs" -o -type l -name "verdi" > $WORK_DIR/.tmp
+    fi
 else
     # Redirect all software install directory into '.tmp' file
     echo "$VIVADO_INS_DIR" >  $WORK_DIR/.tmp
@@ -414,7 +418,11 @@ if [ "x$vivado_info" == "x" ] ; then
     if [ $fpga_dev_mode -eq 0 -a $FPGA_DEVELOP_MODE == "vivado" ] ; then
         vivado_info=`cat $WORK_DIR/.find_tmp | grep vivado | grep $vivado_ver_req | grep -v unwrapped | sort -r`
     else
-        vivado_info=`cat $WORK_DIR/.find_tmp | grep vivado | grep $vivado_ver_req | grep -v unwrapped | grep SDx | sort -r`
+        if [ "x$vivado_ver_req" == "x2017.1" ] ; then
+            vivado_info=`cat $WORK_DIR/.find_tmp | grep vivado | grep $vivado_ver_req | grep -v unwrapped | grep SDx | sort -r`
+        else
+            vivado_info=`cat $WORK_DIR/.find_tmp | grep sdx | grep $vivado_ver_req | grep -v unwrapped | grep SDx | sort -r`        
+        fi
     fi
     info_show_e "\e[0;33m have not been set \e[0m"
     info_show_e "\e[0;32mStart setup vivado env \e[0m"
@@ -474,7 +482,11 @@ fi
 # Check vivado version
 vivado_ver=`vivado -version | grep Vivado | awk {'print $2'}`
 if [ $fpga_dev_mode -eq 1 -o $FPGA_DEVELOP_MODE != "vivado" ] ; then
-    vivado_ver_req="$vivado_ver_req"_sdx
+    if [ "x$vivado_ver_req" == "x2017.1" ] ; then
+        vivado_ver_req="$vivado_ver_req"_sdx
+    else
+        vivado_ver_req="$vivado_ver_req"
+    fi
 fi
 if [ x$vivado_ver != "xv$vivado_ver_req" ] ; then
     echo "Error: Vivado version not matched, only support vivado$vivado_ver_req!"
@@ -1095,15 +1107,27 @@ if [ "$dev_mode_name" == "Vivado" ];then
     declare -a download_file_name=("dcp" "ddr")
 
 elif [  "$dev_mode_name" == "SDAccel" ];then
-    declare -a download_file_list=("xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.tar.gz"
-                                    "xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.sha256"
-                                )
-    version_name=version_note_sdaccel.txt
-    shell_mode=hardware/sdaccel_design
-    local_shell_file=xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.dsa
-    local_shell_dir=$WORK_DIR/hardware/sdaccel_design/lib/platform/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1
-    declare -a local_file_sha256=("`cat $local_shell_dir/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.dsa $local_shell_dir/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.spfm $local_shell_dir/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.xpfm 2>/dev/null|sha256sum|awk '{print $1}'`")
-    declare -a download_file_name=("dsa" "pfm")
+    if [ "x$vivado_ver_req" == "x2017.4.op" ] ; then
+        declare -a download_file_list=("huawei_vu9p_dynamic_fp1_5_0.tar.gz"
+                                        "huawei_vu9p_dynamic_fp1_5_0.sha256"
+                                    )
+        version_name=version_note_sdaccel.txt
+        shell_mode=hardware/sdaccel_design
+        local_shell_file=huawei_vu9p_dynamic_fp1_5_0.dsa
+        local_shell_dir=$WORK_DIR/hardware/sdaccel_design/lib/platform/huawei_vu9p_dynamic_fp1_5_0
+        declare -a local_file_sha256=("`cat $local_shell_dir/huawei_vu9p_dynamic_fp1_5_0.dsa $local_shell_dir/huawei_vu9p_dynamic_fp1_5_0.spfm $local_shell_dir/huawei_vu9p_dynamic_fp1_5_0.xpfm 2>/dev/null|sha256sum|awk '{print $1}'`")
+        declare -a download_file_name=("dsa" "pfm")
+    else
+        declare -a download_file_list=("xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.tar.gz"
+                                        "xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.sha256"
+                                    )
+        version_name=version_note_sdaccel.txt
+        shell_mode=hardware/sdaccel_design
+        local_shell_file=xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.dsa
+        local_shell_dir=$WORK_DIR/hardware/sdaccel_design/lib/platform/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1
+        declare -a local_file_sha256=("`cat $local_shell_dir/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.dsa $local_shell_dir/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.spfm $local_shell_dir/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.xpfm 2>/dev/null|sha256sum|awk '{print $1}'`")
+        declare -a download_file_name=("dsa" "pfm")
+    fi
 fi
 
 obs_version_note=`curl -k -s --retry 3 $obs_shell_dir/hardware/$version_name`
@@ -1176,7 +1200,11 @@ if [ $to_download_file -eq 1 -a $quit_script != 1 ];then
                                         "`cat ddra_72b_top.dcp ddrb_72b_top.dcp ddrd_72b_top.dcp ddra_72b_top_sim.v ddrb_72b_top_sim.v ddrc_72b_top_sim.v ddrd_72b_top_sim.v 2>/dev/null |sha256sum| awk '{print $1}'`"                          
     )
         elif [ "$dev_mode_name" == "SDAccel"  ];then
-            declare -a download_file_sha256=("`cat $local_shell_dir/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.dsa $local_shell_dir/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.spfm $local_shell_dir/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.xpfm 2>/dev/null|sha256sum |awk '{print $1}'`")
+            if [ "x$vivado_ver_req" == "x2017.4.op" ] ; then
+                declare -a download_file_sha256=("`cat $local_shell_dir/huawei_vu9p_dynamic_fp1_5_0.dsa $local_shell_dir/huawei_vu9p_dynamic_fp1_5_0.spfm $local_shell_dir/huawei_vu9p_dynamic_fp1_5_0.xpfm 2>/dev/null|sha256sum |awk '{print $1}'`")
+            else
+                declare -a download_file_sha256=("`cat $local_shell_dir/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.dsa $local_shell_dir/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.spfm $local_shell_dir/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.xpfm 2>/dev/null|sha256sum |awk '{print $1}'`")
+            fi
         fi
         for ((i=0;i<${#download_file_sha256[*]};i++))
         do

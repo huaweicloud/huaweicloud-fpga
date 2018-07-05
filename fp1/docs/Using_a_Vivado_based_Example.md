@@ -12,6 +12,8 @@ Using a Vivado-Based Example
 
 For users who need to understand the functions of the three examples, see [Example Application Guide](../hardware/vivado_design/examples/README.md).
 
+Users who need to understand the FPGA Acceleration Cloud Service Development Guide can refer to the [User Development Guide] (./User_Development_Guide_for_an_FACS.docx).
+
 The following parameter `-s 0` is the device slot number for selecting the running case. 
 The slot number is determined when the user requests the virtual machine. The default value is 0.
 For example, if a user applies for a virtual machine environment with 4 FPGA accelerator cards, the slot numbers are 0, 1, 2, and 3.
@@ -116,7 +118,7 @@ For example, `./ul_set_data_test -s 0 -i 0xaa55`.
 **Information similar to the following is displayed:** 
 
 	[root@CentOS7 bin]# ./ul_set_data_test -s 0 -i 0xaa55  
-	[root@CentOS7 bin]# ./ul_get_data_test  
+	[root@CentOS7 bin]# ./ul_get_data_test -s 0  
 	oppos: 0xffff55aa
 
 ##### Example 3 Test the adder.
@@ -163,6 +165,19 @@ Run the following command to print the DFx status:
 		[0x00024628]: 0x00000000  - rxm: reg_axi_dis_cnt
 		[0x0002462c]: 0x00000000  - rxm: reg_axi_rc_cnt
 	 -------- Dump logic regs end -------- 
+
+##### Example 5 Read UL logic register
+
+`./ul_read_bar2_data -s XXX -a AAA`  
+
+AAA is the address which you want to read.
+
+##### Example 6 Write UL logic register
+
+`./ul_write_bar2_data -s XXX -a AAA -d DDD`  
+
+AAA is the address to be written, and DDD is the actual data to be written.
+
 
 Example 2 Operation Instructions
 ------------
@@ -298,6 +313,15 @@ Currently, four 16GB 2RX8 DDRs are provided for users. The DDR read/write test i
 ##### Note
 Users can use the **– h** parameter to obtain help information in the following steps.
 
+**Command Parameters**  
+
+| Parameter | Description                              |
+| --------- | ---------------------------------------- |
+| **-s**    | slot ID. (The scope is [0, 7]) The default value is 0. |
+| **-n**    | DDR ID. The default value is 0.  |
+| **-a**    | DDR address |
+| **-d**    | DDR write data |
+
 ##### Step 1 Set the DDR value.
 
 Run the **./ul_write_ddr_data -s 0 -n 0 -a** *addr* **-d** *data* command.
@@ -400,46 +424,29 @@ After the compilation is successful, an executable binary file is generated in t
 ##### Note
 Users can use the **– h** parameter to obtain help information in the following steps.
 
-##### Step 1 Run the packet_process process.
+##### Step 1 Read or Write FPGA DDR Test.
 
-`./packet_process -s 0 -d 8192 -q 0 -l 512 -n 102400099 -f`  
+`./fpga_ddr_rw -s 0 -t 1 -p 1000 -m 1 -l 131072 -r 0`  
+
+Launch one thread to read 1000 packages from fpga ddr of slot 0, package len is 131072 byte and fpga ddr read addr is 0.
+
+`./fpga_ddr_rw -s 0 -t 1 -p 1000 -m 2 -l 131072 -w 0`  
+
+Launch one thread to write 1000 packages to fpga ddr of slot 0, package len is 131072 byte and fpga ddr write addr is 0.
+
+`./fpga_ddr_rw -s 0 -t 1 -p 1000 -m 0 -l 131072 -w 0 -r 0`  
+
+Launch one thread to loopback 1000 packages with fpga ddr of slot 0, package len is 131072 byte, fpga ddr read addr and fpga ddr write addr is both 0.
 
 **Command Parameters**  
 
 | Parameter | Description                              |
 | --------- | ---------------------------------------- |
-| **-d**    | Indicates the queue depth. The value can be 1024, 2048, 4096, and 8192. The default value is 8192. |
-| **-s**    | slot ID. (The scope is [0, 7]) The default value is 0.  |
-| **-q**    | Indicates the queues to be sent. The value range is [0,7]. The default value is 0. You can select multiple queues and use commas to separate them, for example, -q 0,1,5. |
-| **-l**    | Indicates the length of a single packet in the packets to be sent. The value range is [64,1048576]. The default value is 64. |
-| **-n**    | Indicates the number of packets to be sent. The value range is [1,4294966271]. The default value is 128. |
-| **-f**    | Enables the FMMU function, which must be enabled for FMMU logic function test. If this parameter is not specified, this function is disabled by default. |
-| **-x**    | Indicates the number of cycles used for stress test. The value range is [1,64511]. The default value is 1. |
-| **-h**    | Displays the help information.           |
-
-**Information similar to the following is displayed:** 
-
-	[root@CentOS7 bin]# ./packet_process -s 0 -d 8192 -q 0 -l 512 -n 102400099 -f
-	available cpu number: 24, cpu mask parameter: -cffffff
-	...
-	----------------TEST TIME 0 for port 0----------------
-	Not find mempool sec_mp_bd_0_0, create it
-	mempool sec_mp_bd_0_0 has 2048 available entries
-	Not find mempool sec_mp_data_0_0, create it
-	mempool sec_mp_data_0_0 has 4096 available entries
-	---------------- test for port 0, queue 0, [FMMU]  ----------------
-	PMD: acc_dev_rx_burst()-418: port id: 0, queue id: 0: g_s_rx_total=10000384, g_s_rx_time=733990(us)
-	PMD: acc_dev_rx_burst()-418: port id: 0, queue id: 0: g_s_rx_total=10000384, g_s_rx_time=733935(us)
-	PMD: acc_dev_rx_burst()-418: port id: 0, queue id: 0: g_s_rx_total=10000384, g_s_rx_time=740312(us)
-	PMD: acc_dev_rx_burst()-418: port id: 0, queue id: 0: g_s_rx_total=10000279, g_s_rx_time=764110(us)
-	PMD: acc_dev_rx_burst()-418: port id: 0, queue id: 0: g_s_rx_total=10000053, g_s_rx_time=764071(us)
-	PMD: acc_dev_rx_burst()-418: port id: 0, queue id: 0: g_s_rx_total=10000129, g_s_rx_time=764130(us)
-	PMD: acc_dev_rx_burst()-418: port id: 0, queue id: 0: g_s_rx_total=10000489, g_s_rx_time=764277(us)
-	PMD: acc_dev_rx_burst()-418: port id: 0, queue id: 0: g_s_rx_total=10000970, g_s_rx_time=764283(us)
-	PMD: acc_dev_rx_burst()-418: port id: 0, queue id: 0: g_s_rx_total=10000384, g_s_rx_time=764199(us)
-	PMD: acc_dev_rx_burst()-418: port id: 0, queue id: 0: g_s_rx_total=10000031, g_s_rx_time=764029(us)
-	port 0, queue 0 run_business_tx_thread_route finish, time 7740224(us)
-	port 0, queue 0 run_business_rx_thread_route finish, time 7740980(us)
-	----------------port 0, queue 0 rx_packet_len 544, packet_num: 102400099, performance = 57 gbps----------------
-	port 0, queue 0 TX/RX all success, all process 102400099 packets
-	...
+| -t xxx    | xxx: thread num. The value should be [1, 10]. The default value is **1**. |
+| -s xxx    | xxx: slot id. The default value is **0**. |
+| -p xxx    | xxx: package num. The default value is **1000**. |
+| -m xxx    | xxx: mode. The value range should be [0(loopback), 1(read), 2(write)]. The default value is **1**. |
+| -l xxx    | xxx: package len. The value should be [1, 512*1024].The default value is **64**. |
+| -r xxx    | xxx: fpga ddr read addr. The value should be [0, 64*1024*1024*1024). The maximum value is **64*1024*1024*1024**. |
+| -w xxx    | xxx: fpga ddr write addr. The value should be [0, 64*1024*1024*1024). The maximum value is **64*1024*1024*1024**. |
+| -h        | This parameter prints help information.  |

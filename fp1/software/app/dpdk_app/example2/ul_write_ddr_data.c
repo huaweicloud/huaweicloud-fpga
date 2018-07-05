@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
     	return ret;
     }
 
-    (void)set_ddr_data(g_ddr_num, g_ddr_addr, g_value);
+    (void)set_ddr_data(g_port_id, g_ddr_num, g_ddr_addr, g_value);
 
     (void)pci_bar2_uninit_env();
 

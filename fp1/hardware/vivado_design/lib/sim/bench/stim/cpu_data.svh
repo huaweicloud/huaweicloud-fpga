@@ -24,8 +24,8 @@ class cpu_data;
 
     //----------------------------------
     // Usertype define
-    //----------------------------------
- 
+    //---------------------------------
+
     // CPU Data type
 
     typedef enum {
@@ -40,7 +40,9 @@ class cpu_data;
     typedef struct packed {
         bit [7  : 0] prty       ; // [255:248]
         bit [7  : 0] bdcode     ; // [247:240]
-        bit [15 : 0] rsv        ; // [239:224]
+        bit [5  : 0] rsv        ; // [239:234]
+        bit [7  : 0] thread_id  ; // [233:226]
+        bit [1  : 0] opcode     ; // [225:224]
         bit [7  : 0] acc_len    ; // [223:216]
         bit [7  : 0] acc_type   ; // [215:208]
         bit [47 : 0] ve_info    ; // [207:160]
@@ -89,6 +91,8 @@ class cpu_data;
     bit [7 : 0]         acc_type ;
     bit                 done_flag;
     bit [7 : 0]         acc_len  ;
+    bit [7  : 0]        thread_id; 
+    bit [1  : 0]        opcode   ; 
 
     // Base constraint
     constraint cpu_data_base_constraint {
@@ -132,6 +136,8 @@ function int cpu_data::pack_bytes(ref bit [7 : 0] bytes[]);
             bd_head = 'd0;
             bd_head.acc_type  = acc_type ;
             bd_head.acc_len   = acc_len ;
+            bd_head.thread_id = thread_id ;
+            bd_head.opcode    = opcode ;
             bd_head.ve_info   = ve_info  ;
             bd_head.data_len  = data_len ;
             bd_head.src_addr  = addr     ;
@@ -172,6 +178,8 @@ function int cpu_data::unpack_bytes(const ref bit [7 : 0] bytes[]);
             head     = {>>8{bytes}};
             bd_head  = {<<8{head}};
             acc_len  = bd_head.acc_len ;
+            thread_id = bd_head.thread_id;
+            opcode   = bd_head.opcode;
             acc_type = bd_head.acc_type  ;
             ve_info  = bd_head.ve_info   ;
             data_len = bd_head.data_len  ;

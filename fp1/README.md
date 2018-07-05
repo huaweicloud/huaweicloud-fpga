@@ -151,7 +151,7 @@ The following are common steps for Vivado and SDAccel development:
 
 - Configure **VIVADO_VER_REQ**:
 
-  If SDAccel is used, set **VIVADO_VER_REQ="2017.1"**.
+  If SDAccel is used, set **VIVADO_VER_REQ="2017.4.op"**.
   If Vivado is used, set **VIVADO_VER_REQ="2017.2"**.
   **VIVADO_VER_REQ="2017.2"** is the default configuration.
 

@@ -40,7 +40,7 @@ KERNEL_INCS =
  
 
 #set target device for XCLBIN
-XDEVICE=xilinx:huawei-vu9p-fp1:4ddr-xpr:4.1
+XDEVICE=huawei_vu9p_dynamic_fp1_5_0
 XDEVICE_REPO_PATH=
 KEEP_TEMP=1
 KERNEL_DEBUG=
@@ -50,11 +50,14 @@ HOST_CFLAGS+=-DTARGET_DEVICE=\"${XDEVICE}\"
 ifeq (${SDA_FLOW},cpu_emu)
     CLCC_OPT += -t sw_emu
     XCLBIN = ${XCLBIN_NAME}_cpu_emu.xclbin
+    XO = ${XCLBIN_NAME}_cpu_emu.xo
 else ifeq (${SDA_FLOW},hw_emu)
     CLCC_OPT += -t hw_emu
     XCLBIN = ${XCLBIN_NAME}_hw_emu.xclbin
+    XO = ${XCLBIN_NAME}_hw_emu.xo
 else ifeq (${SDA_FLOW},hw)
     XCLBIN = ${XCLBIN_NAME}_hw.xclbin
+    XO = ${XCLBIN_NAME}_hw.xo
     CLCC_OPT += -t hw
 endif
 
@@ -68,12 +71,11 @@ else
     DEVICE_REPO_OPT = --xp prop:solution.device_repo_paths=${XDEVICE_REPO_PATH} 
 endif
 
-PLATFORM_PATH=./../../../lib/platform/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1/xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.xpfm
-#HOST_LFLAGS += ${XILINX_SDACCEL}/lib/lnx64.o/libstdc++.so.6
+PLATFORM_PATH=./../../../lib/platform/huawei_vu9p_dynamic_fp1_5_0/huawei_vu9p_dynamic_fp1_5_0.xpfm
 HOST_CFLAGS += -I${XILINX_SDX}/runtime/include/1_2
 HOST_LFLAGS += -L${XILINX_SDX}/runtime/lib/x86_64 -lxilinxopencl -lstdc++
-#CLCC_OPT += $(CLCC_OPT_LEVEL) ${DEVICE_REPO_OPT} --xdevice ${XDEVICE} -o ${XCLBIN} ${KERNEL_DEFS} ${KERNEL_INCS}
-CLCC_OPT += $(CLCC_OPT_LEVEL) ${DEVICE_REPO_OPT} -f ${PLATFORM_PATH} -o ${XCLBIN} ${KERNEL_DEFS} ${KERNEL_INCS}
+CLCC_OPT += $(CLCC_OPT_LEVEL) ${DEVICE_REPO_OPT} -f ${PLATFORM_PATH} ${KERNEL_DEFS} ${KERNEL_INCS}
+
 ifeq (${KEEP_TEMP},1)
     CLCC_OPT += -s
 endif
@@ -109,7 +111,7 @@ hw_em: xconfig host xbin_hw_em
 hw: host xbin_hw
 
 estimate: 
-	${CLCC} -c -t hw_emu -f ${PLATFORM_PATH} --report estimate ${KERNEL_SRCS}
+	${CLCC} -c -t hw_emu -f ${PLATFORM_PATH} --report estimate ${KERNEL_SRCS} --temp_dir ./tempd --log_dir ./logd --report_dir ./repd
 
 xconfig : emconfig.json
 
@@ -120,19 +122,22 @@ ${HOST_EXE_DIR}/${HOST_EXE} : ${OBJECTS}
 	${CC} ${HOST_LFLAGS} ${OBJECTS} -o $@ 
 
 ${XCLBIN}:
-	${CLCC} ${CLCC_OPT} ${KERNEL_SRCS}
+	${CLCC} -c ${CLCC_OPT} ${KERNEL_SRCS} -o $(XO) --temp_dir ./tempd --log_dir ./logd --report_dir ./repd
+	${CLCC} -l ${CLCC_OPT} $(XO) -o $(XCLBIN) --temp_dir ./tempd --log_dir ./logd --report_dir ./repd
 
 %.o: %.cpp
 	${CC} ${HOST_CFLAGS} -c $< -o $@
 
 clean:
-	${RM} -rf ${HOST_EXE} ${OBJECTS} ${XCLBIN} ${LOG_DIR}/* ${HOST_EXE_DIR}/emconfig.json _xocc_*.dir .Xil ${HOST_EXE_DIR}/${HOST_EXE} ${HOST_EXE_DIR}/* _xocc_*  TempConfig *.log *.jou sdaccel_profile_summary.*
+	${RM} -rf ${HOST_EXE} ${OBJECTS} ${XO} ${XCLBIN} ${LOG_DIR}/* ${HOST_EXE_DIR}/emconfig.json _* iprepo .Xil
+	${RM} -rf ${HOST_EXE_DIR}/${HOST_EXE} ${HOST_EXE_DIR}/* *.dat
+	${RM} -rf *.o *.d tempd logd repd apsys*.xml dr.* ${XDEVICE}.hpfm dsa.xml
 
 help:
-	@echo "Compile  emulation using default huawei:vu9p-fp1:4ddr-xpr:4.1 DSA"
+	@echo "Compile  emulation using default huawei:vu9p_dynamic:fp1:5_0 DSA"
 	@echo "make  cpu_em"
 	@echo ""
-	@echo "Compile hardware emulation using default huawei:vu9p-fp1:4ddr-xpr:4.1 DSA"
+	@echo "Compile hardware emulation using default huawei:vu9p_dynamic:fp1:5_0 DSA"
 	@echo "make   hw_em"
 	@echo ""
 	@echo "Compile host executable only"
@@ -141,8 +146,8 @@ help:
 	@echo "Compile XCLBIN file for system run only"
 	@echo "make xbin_hw"
 	@echo ""
-	@echo "Compile CPU emulation using huawei:vu9p-fp1:4ddr-xpr:4.1 DSA"
-	@echo "make  XDEVICE=huawei:vu9p-fp1:4ddr-xpr:4.1 run_cpu_em"
+	@echo "Compile CPU emulation using huawei:vu9p_dynamic:fp1:5_0 DSA"
+	@echo "make  XDEVICE=huawei_vu9p_dynamic_fp1_5_0 run_cpu_em"
 	@echo ""
 	@echo "Clean working diretory"
 	@echo "make  clean"

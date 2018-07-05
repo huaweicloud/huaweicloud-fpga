@@ -72,7 +72,7 @@ int main(int argc, char* argv[]) {
 
 
     printf("Set [0x%08x]:[0x%08x] to REG_PF_DEMO1_ADDER_CFG_WDATA0:REG_PF_DEMO1_ADDER_CFG_WDATA1 \r\n", g_add_values[0],g_add_values[1]);
-    (void)set_add_data(g_add_values[0], g_add_values[1]);
+    (void)set_add_data(g_port_id, g_add_values[0], g_add_values[1]);
 
     (void)pci_bar2_uninit_env();
     

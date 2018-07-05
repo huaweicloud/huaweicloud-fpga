@@ -47,13 +47,13 @@
 
 int pci_barx_init_env(int vf_idx, int bar_idx);
 int pci_barx_uninit_env(int bar_idx);
-int pci_barx_write_regs(unsigned int* write_addrs, unsigned int* write_values, unsigned int write_addrs_num, int bar_idx);
-int pci_barx_read_regs(unsigned int* read_addrs, unsigned int read_addrs_num, unsigned int* read_values, int bar_idx);
+int pci_barx_write_regs(int vf_idx, unsigned int* write_addrs, unsigned int* write_values, unsigned int write_addrs_num, int bar_idx);
+int pci_barx_read_regs(int vf_idx, unsigned int* read_addrs, unsigned int read_addrs_num, unsigned int* read_values, int bar_idx);
 
 /* Keep these interface for compatibility */
 int pci_bar2_init_env(int vf_idx);
 int pci_bar2_uninit_env(void);
-int pci_bar2_write_regs(unsigned int* write_addrs, unsigned int* write_values, unsigned int write_addrs_num);
-int pci_bar2_read_regs(unsigned int* read_addrs, unsigned int read_addrs_num, unsigned int* read_values);
+int pci_bar2_write_regs(int vf_idx, unsigned int* write_addrs, unsigned int* write_values, unsigned int write_addrs_num);
+int pci_bar2_read_regs(int vf_idx, unsigned int* read_addrs, unsigned int read_addrs_num, unsigned int* read_values);
 
 #endif

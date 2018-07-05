@@ -253,6 +253,27 @@ int pci_port_status_init_env() {
 	return 0;
 }
 /*
+ * pci_port_id_to_slot_id: convert port id to slot id.
+*/
+int pci_port_id_to_slot_id(unsigned int port_id, unsigned int *slot_id) {
+    int ret = 0;
+    char bdf_port[PATH_MAX] = { 0 };
+
+    ret = get_device_dbdf_by_port_id(port_id, bdf_port);
+    if(ret) {
+        printf("call get_device_dbdf_by_port_id fail .\n");
+        return ret;
+    }
+
+    ret = FPGA_PciGetSlotByBdf(bdf_port, slot_id);
+    if(ret) {
+        printf("call FPGA_PciGetSlotByBdf fail .\n");
+        return ret;
+    }
+
+    return 0;
+}
+/*
  * pci_slot_id_to_port_id: convert slot id to port id.
 */
 int pci_slot_id_to_port_id(unsigned int slot_id, unsigned int *port_id) {
@@ -289,7 +310,7 @@ int pci_slot_id_to_port_id(unsigned int slot_id, unsigned int *port_id) {
             return 0;
         }
     }
-    printf("\033[1;31;40mnot find this device, please check slot_id = %d\033[0m\r\n", slot_id);
+    //printf("\033[1;31;40mnot find this device, please check slot_id = %d\033[0m\r\n", slot_id);
     
     return -2;
 }

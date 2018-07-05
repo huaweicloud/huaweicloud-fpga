@@ -22,7 +22,6 @@ Note
 * SDx must be installed to use the xcpp tool.
 
 Compile host and Run the **run.sh** command to test hardware. The detailed procedure is as follows:
---------------------------------
 
 ```
 make

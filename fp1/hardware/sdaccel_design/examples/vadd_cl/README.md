@@ -2,7 +2,7 @@
 
 [切换到中文版](./README_CN.md)
 
-This document describes the CL standardization of the vadd_rtl vector addition.
+This document describes the CL standardization of the vadd_rtl vector plus.
 
 # Directory Structure
 [vadd_cl](#vadd_cl_dir)/
@@ -14,7 +14,7 @@ This document describes the CL standardization of the vadd_rtl vector addition.
 - src
 - scripts
 
-# File and Folder Description
+# File and Folder Descriptions
 - prj
 
   - prj/bin
@@ -30,7 +30,7 @@ This is the user simulation directory.
 
 - src
 
-This directory stores host source code and kernel source code.
+This directory stores the host source code and kernel source code.
 
 
 - scripts

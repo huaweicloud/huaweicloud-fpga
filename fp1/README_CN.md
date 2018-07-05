@@ -151,7 +151,7 @@ HDK的运行流程分为：基于vivado的流程，和基于sdaccel的流程。
 
 - 配置VIVADO_VER_REQ：
 
-  如果使用SDAccel开发，配置为：VIVADO_VER_REQ="2017.1"。
+  如果使用SDAccel开发，配置为：VIVADO_VER_REQ="2017.4.op"。
   如果使用vivado开发，配置为：VIVADO_VER_REQ="2017.2"。
   默认配置为2017.2。
 

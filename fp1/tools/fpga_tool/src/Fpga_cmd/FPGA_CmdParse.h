@@ -41,7 +41,7 @@
 #define COMMAND_HELP_INFO                   'h'
 #define COMMAND_HELP_INFO1                  '?'
 
-#define HFI_TOOL_VERSION  "v104"
+#define HFI_TOOL_VERSION  "v105"
 
 #define INPUT_PARAS_NUM_MIN                     2
 #define INPUT_PARAS_FOR_PARSE_MIN               3

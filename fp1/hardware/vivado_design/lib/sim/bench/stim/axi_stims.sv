@@ -173,6 +173,13 @@ task axi_stims::gen_packet();
     id     = 'd0;
     result = 'd1;
     addr  += 'h1000;
+    if (m_cfg.axi_opt == 2) begin
+    	opt  = e_AXI_OPT_WR;
+    end else if (m_cfg.axi_opt == 1) begin
+         opt  = e_AXI_OPT_RD;
+    end else begin
+    	opt  = e_AXI_OPT_NA;
+    end  
     assert(result) begin
         `tb_debug(m_inst_name, "Randomize success!")
         m_item.id    = id   ;

@@ -6,11 +6,13 @@
 
 * **bin/**: stores compiled applications and scripts that start or stop logs.
 * **example1/**: stores source code of example 1. 
-* **example2/**: stores source code of example 2 and example 3.
+* **example2/**: stores source code of example 2.
+* **example3/**: stores source code of example 3.
 * **execute_objs/**: stores OBJs compiled from source code in **example1/** and **example2/**.
 * **func/**: stores source code for common main function.
 * **func_objs/**: stores OBJs compiled from source code in **func/**.
 * **include/**: stores header files.
+* **lib/**: stores dynamic link library files.
 * **tools/**: stores source code of tools (read or write register).
 
 # 1. Building DPDK Source Code and Application  
@@ -31,8 +33,6 @@ XXX below is the slot id of device which you want to run the test, 0 as default.
 
 `./ul_set_data_test -s XXX -i 0xaa55`  
 `./ul_get_data_test -s XXX`
-
-If success, it will print 0xffff55aa
 
 ## 2.3 Running the Summator
 
@@ -66,7 +66,6 @@ AAA is the address to be written, and DDD is the actual data to be written.
 
 ## 3.2 Running `packet_process`
 ### 3.2.1 Preparation
-After step 2 to step 4 are complete, run the following command:  
 
 `cd bin/`
 
@@ -95,7 +94,6 @@ After the command is executed successfully, the TX/RX thread will send /recv 102
 | -l xxx    | xxx: length for each packet to TX and RX. (The scope is [64, 1048576]. The default value is **64**.) |  
 | -n xxx    | xxx: number of packets to TX and RX. (**128** by default. The maximum value is **4294966271**.) |  
 | -x xxx    | xxx: loop time for a full TX/RX transaction. (The scope is [1, 64511]. The default value is **1**.) |  
-| -f        | This parameter enables the FMMU function. (FMMU is disabled by default, and supports only example 3.) |  
 | -h        | This parameter prints help information.  |  
 
 ## 3.3 Running the DDR Checker
@@ -109,37 +107,33 @@ This command is only supported in example 2 and prints 0x5a5a5a5a.
 
 `sysctl -w vm.nr_hugepages=8192`  
 
-## 4.2 Running `packet_process`
+## 4.2 Running `fpga_ddr_rw`
 ### 4.2.1 Preparation
-After step 2 to step 4 are complete, run the following command: 
 
 `cd bin/`  
 
-### 4.2.2 Starting or Stopping Logs
+### 4.2.2 Read or Write FPGA DDR Test
 
-Run the following command to save logs to **/var/log/fpga/dpdk.log**:
+`./fpga_ddr_rw -s 0 -t 1 -p 1000 -m 1 -l 131072 -r 0`  
 
-`sh start_dpdk_log.sh`
+Launch one thread to read 1000 packages from fpga ddr of slot 0, package len is 131072 byte and fpga ddr read addr is 0.
 
-Run the following command to stop logs:
+`./fpga_ddr_rw -s 0 -t 1 -p 1000 -m 2 -l 131072 -w 0`  
 
-`sh shut_down_dpdk_log.sh`
+Launch one thread to write 1000 packages to fpga ddr of slot 0, package len is 131072 byte and fpga ddr write addr is 0.
 
-### 4.2.3 TX and RX Test
+`./fpga_ddr_rw -s 0 -t 1 -p 1000 -m 0 -l 131072 -w 0 -r 0`  
 
-`./packet_process -s XXX -q 0,1,2,7 -l 512 -n 102400099 -f`  
-
-Select queue index `0, 1, 2, and 7` of `slot XXX` to transmit and receive `102400099` packets with a packet length of `512`.
-After the command is executed successfully, the TX/RX thread will send/recv 102400099 packets.
+Launch one thread to loopback 1000 packages with fpga ddr of slot 0, package len is 131072 byte, fpga ddr read addr and fpga ddr write addr is both 0.
 
 | Parameter | Description                              |  
 | --------- | ---------------------------------------- |  
-| -d xxx    | xxx: queue depth. The value should be **1024**, **2048**, **4096**, or **8192**. The default value is **8192**. |  
-| -s xxx    | xxx: slot ID. (The scope is [0, 7]. The default value is **0**.) |  
-| -q xxx    | xxx: queue ID. The value range should be [0, 7]. The default value is **0**. |  
-| -l xxx    | xxx: length for each packet to TX and RX. (The scope is [64, 1048576]. The default value is **64**.) |  
-| -n xxx    | xxx: number of packets to TX and RX. (**128** by default. The maximum value is **4294966271**.) |  
-| -x xxx    | xxx: loop time for a full TX/RX transaction. (The scope is [1, 64511]. The default value is **1**.) |  
-| -f        | This parameter enables the FMMU function. (FMMU is disabled by default, and supports only example 3.) |  
+| -t xxx    | xxx: thread num. The value should be [1, 10]. The default value is **1**. |  
+| -s xxx    | xxx: slot id. The default value is **0**. |  
+| -p xxx    | xxx: package num. The default value is **1000**. |  
+| -m xxx    | xxx: mode. The value range should be [0(loopback), 1(read), 2(write)]. The default value is **0**. |  
+| -l xxx    | xxx: package len. The default value is **64**. The value should be [1, 4*1024*1024]. |  
+| -r xxx    | xxx: fpga ddr read addr. The value should be [0, 64*1024*1024*1024). The maximum value is **64*1024*1024*1024**. |   
+| -w xxx    | xxx: fpga ddr write addr. The value should be [0, 64*1024*1024*1024). The maximum value is **64*1024*1024*1024**. |   
 | -h        | This parameter prints help information.  |  
 

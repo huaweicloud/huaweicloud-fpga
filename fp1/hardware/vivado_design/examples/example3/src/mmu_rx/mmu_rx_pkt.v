@@ -23,7 +23,7 @@ module  mmu_rx_pkt
                  input                                  rst                        ,
                 
                  //eoc tag info with mmu_rx_pkt 
-                 output         [3:0]                   eoc_tag_ren                , 
+                 output  wire   [3:0]                   eoc_tag_ren                , 
                  input          [3:0]                   eoc_tag_rdata              ,
                  input          [3:0]                   eoc_tag_empty              ,
                  
@@ -36,6 +36,9 @@ module  mmu_rx_pkt
                  input          [511:0]                 ve_ff_rdata                ,
                  input          [3:0]                   ve_ff_empty                ,     
                 
+                 input                                  mmu_tx2rx_bd_wr            ,
+                 input          [539:0]                 mmu_tx2rx_bd_wdata         ,
+                 output                                 mmu_tx2rx_bd_afull         , 
                  //PKT signal with Kernel  
                  output         [3:0]                   pkt_back_full_que          ,       
                  input          [3:0]                   pkt_back_wen_que           ,
@@ -59,7 +62,10 @@ module  mmu_rx_pkt
                  input          [7:0]                   reg_timer_1us_cfg          ,
                  output  reg    [3:0]                   reg_mmu_rxpkt_en           ,
                  output  reg                            reg_mmu_txpkt_en           ,
+                 output  reg                            write_ddr_rd_bd_5dly       ,
+                 output  reg                            add_hacc_en_5dly           ,
                  output         [31:0]                  reg_mmu_rxpkt_sta          ,
+                 output         [31:0]                  reg_mmu_rxpkt_sta1         ,
                  output         [31:0]                  reg_mmu_rxpkt_err             
   
                  );
@@ -68,40 +74,49 @@ module  mmu_rx_pkt
     signals
 \*********************************************************************************************************************/
 wire      [3:0]                   pkt_back_empty          ;              
-wire      [3:0]                   pkt_back_rd             ;       
+reg       [4:0]                   pkt_back_rd             ;       
 wire      [540*4-1:0]             pkt_back_rdata          ;
+wire      [7:0]                   mmu_tx2rx_bd_fifo_stat  ;              
 
 reg                               pkt_back_rd_1dly        ;
 reg                               pkt_back_rd_2dly        ;
 reg                               pkt_back_rd_3dly        ;
 reg                               pkt_back_rd_4dly        ;
 
-wire      [3:0]                   tb_rr4_nef              ;
-wire                              tb_rr4_req              ;
-reg                               tb_rr4_req_1dly         ;
-reg                               tb_rr4_req_2dly         ;
-reg                               tb_rr4_req_3dly         ;
-reg                               tb_rr4_ack              ;
+reg                               write_ddr_rd_bd_1dly    ;
+reg                               write_ddr_rd_bd_2dly    ;
+reg                               write_ddr_rd_bd_3dly    ;
+reg                               write_ddr_rd_bd_4dly    ;
+//reg                               write_ddr_rd_bd_5dly    ;
 
-reg                               tb_rr4_ack_1dly         ;
-reg                               tb_rr4_ack_2dly         ;
-(*max_fanout=100*)reg                               tb_rr4_ack_3dly         ;
+//wire      [3:0]                   tb_rr4_nef              ;
+wire      [7:0]                   tb_rr8_nef              ;
+wire                              tb_rr8_req              ;
+reg                               tb_rr8_req_1dly         ;
+reg                               tb_rr8_req_2dly         ;
+reg                               tb_rr8_req_3dly         ;
+reg                               tb_rr8_ack              ;
 
-wire      [1:0]                   tb_rr4_qnum             ;
+reg                               tb_rr8_ack_1dly         ;
+reg                               tb_rr8_ack_2dly         ;
+(*max_fanout=100*)reg                               tb_rr8_ack_3dly         ;
+
+wire      [2:0]                   tb_rr8_qnum             ;
+wire      [4:0]                   eoc_tag_ren_tmp         ;
 
 wire      [1:0]                   cur_que                 ;
 
-wire      [3:0]                   que_eoc_bitmap          ;
-reg       [3:0]                   que_eoc_bitmap_1dly     ;
-reg       [3:0]                   que_eoc_bitmap_2dly     ;
+wire      [4:0]                   que_eoc_bitmap          ;
+reg       [4:0]                   que_eoc_bitmap_1dly     ;
+reg       [4:0]                   que_eoc_bitmap_2dly     ;
 wire      [3:0]                   rr4_nef_mask            ;
 reg       [3:0]                   reg_ddr_tmout_err       ;
 reg       [3:0]                   rr4_timeout_en          ;
-wire      [3:0]                   rr4_ff_vld              ;
-(*max_fanout=50*) reg       [3:0]                   que_soc_flag            ;
+wire      [4:0]                   rr4_ff_vld              ;
+(*max_fanout=50*) reg       [4:0]                   que_soc_flag            ;
 
 reg                               rxff_ren                ;     
-reg                               rr4_req_nvld            ;     
+reg                               rr8_req_nvld            ;     
 wire                              que_eoc_flag_set        ;     
 wire                              que_eoc_flag_clr        ;     
 reg                               que_eoc_flag            ;     
@@ -128,12 +143,17 @@ wire                              ae2ve_pkt_ff            ;
 
 reg                               down_flag               ;
 
+wire      [539:0]                 mmu_tx2rx_bd_rdata      ;
+reg       [511:0]                 mmu_tx2rx_bd_rdata_lock ;
 reg       [511:0]                 header_lock[3:0]        ;
 reg       [511:0]                 header_sel              ;
+reg       [511:0]                 header_sel_1dly         ;
 wire      [511:0]                 header                  ;
 wire      [6:0]                   gen_mode                ;
 reg       [3:0]                   eoc_eop                 ;  
 wire                              eoc_eop_sel             ;  
+wire      [31:0]                  len_in_hardacc          ;
+reg       [31:0]                  len_in_hardacc_1dly     ;
 
 wire      [63:0]                  des_addr                ;
 wire      [12:0]                  des_addr_l13b           ;
@@ -145,17 +165,18 @@ reg       [11:0]                  de_laddr[3:0]           ;
 
 reg                               ve_ff_rd_1dly           ; 
 (*max_fanout=50*) reg                               ve_ff_rd_2dly           ; 
-reg       [1:0]                   tb_rr4_qnum_1dly        ;
-(*max_fanout=50*) reg       [1:0]                   tb_rr4_qnum_2dly        ;
-(*max_fanout=50*) reg       [1:0]                   tb_rr4_qnum_3dly        ;
-(*max_fanout=50*) reg       [1:0]                   tb_rr4_qnum_4dly        ;
+reg       [2:0]                   tb_rr8_qnum_1dly        ;
+(*max_fanout=50*) reg       [2:0]                   tb_rr8_qnum_2dly        ;
+(*max_fanout=50*) reg       [2:0]                   tb_rr8_qnum_3dly        ;
+(*max_fanout=50*) reg       [2:0]                   tb_rr8_qnum_4dly        ;
 
 wire      [3:0]                   que_lock_en             ;    
 wire      [3:0]                   que_inc_en              ;    
                  
 wire      [9:0]                   bucket_wline_tmp[3:0]   ;  
 reg       [9:0]                   bucket_wline[3:0]   ;  
-reg       [3:0]                   bucket_dec_wend         ;
+reg       [4:0]                   bucket_dec_wend_tmp     ;
+wire      [3:0]                   bucket_dec_wend         ;
 reg       [3:0]                   bucket_dec_wr           ;
 reg       [9:0]                   bucket_dec_wdata[3:0]   ;
 
@@ -175,9 +196,11 @@ reg                               add_hacc_en_1dly        ;
 reg                               add_hacc_en_2dly        ;     
 reg                               add_hacc_en_3dly        ;     
 reg                               add_hacc_en_4dly        ;     
-reg                               add_hacc_en_5dly        ;     
+//reg                               add_hacc_en_5dly        ;     
 wire                              add_hacc_0use           ;
 wire                              add_hacc_1use           ;
+
+wire                              mmu_tx2rx_bd_empty      ;
 
 genvar i ;
 genvar j ;
@@ -189,9 +212,11 @@ genvar q ;
 /*********************************************************************************************************************\
     process
 \*********************************************************************************************************************/
-assign que_eoc_bitmap = eoc_tag_rdata; 
+assign que_eoc_bitmap[3:0] = eoc_tag_rdata; 
+assign que_eoc_bitmap[4] = 1'b0; 
 
-assign rr4_ff_vld     = ~pkt_back_empty;
+//assign rr4_ff_vld     = ~pkt_back_empty;
+assign rr4_ff_vld     = ~({mmu_tx2rx_bd_empty,pkt_back_empty});
 
 assign cur_que        = chn_seq_rdata;
 
@@ -203,27 +228,28 @@ generate
     end
 endgenerate
 
-assign tb_rr4_nef =  rr4_ff_vld&(~rr4_nef_mask);
+assign tb_rr8_nef =  {3'd0,rr4_ff_vld[4],rr4_ff_vld[3:0]&(~rr4_nef_mask)};
  
-assign tb_rr4_req =  (~rr4_req_nvld)&(|tb_rr4_nef)
-                    &(~tb_rr4_req_1dly)&(~tb_rr4_req_2dly)&(~tb_rr4_req_3dly);
+
+assign tb_rr8_req =  (~rr8_req_nvld)&(|tb_rr8_nef)
+                    &(~tb_rr8_req_1dly)&(~tb_rr8_req_2dly)&(~tb_rr8_req_3dly);
 
 always@(posedge clk_sys or posedge rst)
 begin
     if(rst == 1'd1)begin
-        tb_rr4_req_1dly <= 1'b0;
-        tb_rr4_req_2dly <= 1'b0;
-        tb_rr4_req_3dly <= 1'b0;
+        tb_rr8_req_1dly <= 1'b0;
+        tb_rr8_req_2dly <= 1'b0;
+        tb_rr8_req_3dly <= 1'b0;
     end
     else begin
-        tb_rr4_req_1dly <= tb_rr4_req;
-        tb_rr4_req_2dly <= tb_rr4_req_1dly;
-        tb_rr4_req_3dly <= tb_rr4_req_2dly;
+        tb_rr8_req_1dly <= tb_rr8_req;
+        tb_rr8_req_2dly <= tb_rr8_req_1dly;
+        tb_rr8_req_3dly <= tb_rr8_req_2dly;
     end
 end
 
-assign que_eoc_flag_set =   que_eoc_bitmap[tb_rr4_qnum] &tb_rr4_ack;
-assign que_eoc_flag_clr = (~que_eoc_bitmap[tb_rr4_qnum])&tb_rr4_ack;
+assign que_eoc_flag_set =   que_eoc_bitmap[tb_rr8_qnum[1:0]] &tb_rr8_ack & (~tb_rr8_qnum[2]);
+assign que_eoc_flag_clr = (~que_eoc_bitmap[tb_rr8_qnum[1:0]])&tb_rr8_ack & (~tb_rr8_qnum[2]);
 
 always@(posedge clk_sys or posedge rst)
 begin
@@ -259,32 +285,51 @@ begin
     end
 end
 
-assign rxff_reop = (|pkt_back_rd) & pkt_reop;
-assign add_hacc_0use  = rxff_reop & tb_rr4_ack & que_eoc_bitmap[tb_rr4_qnum];  
-assign add_hacc_1use  = rxff_reop & (~tb_rr4_ack)&que_eoc_flag;  
+assign rxff_reop = (|pkt_back_rd[3:0]) & pkt_reop;
+assign add_hacc_0use  = rxff_reop & tb_rr8_ack & que_eoc_bitmap[tb_rr8_qnum[1:0]] & (~tb_rr8_qnum[2]);  
+assign add_hacc_1use  = rxff_reop & (~tb_rr8_ack)&que_eoc_flag;  
+assign eoc_tag_ren = eoc_tag_ren_tmp[3:0];
+assign bucket_dec_wend = bucket_dec_wend_tmp[3:0];
+    
+always@(posedge clk_sys or posedge rst)
+begin
+    if(rst == 1'd1)begin
+        mmu_tx2rx_bd_rdata_lock <= 512'd0;
+    end
+    else if(pkt_back_rd[4]==1'b1) begin
+        mmu_tx2rx_bd_rdata_lock <= mmu_tx2rx_bd_rdata[511:0];
+    end 
+    else;   
+end
+    
+
 
 always@(posedge clk_sys or posedge rst)
 begin
     if(rst == 1'd1)begin
         rxff_reop_1dly <= 1'b0;
         rxff_reop_2dly <= 1'b0;
+        que_eoc_bitmap_1dly <= 5'hf;
+        que_eoc_bitmap_2dly <= 5'hf;
     end
     else begin    
         rxff_reop_1dly <= rxff_reop ;
         rxff_reop_2dly <= rxff_reop_1dly;
+        que_eoc_bitmap_1dly <= que_eoc_bitmap;
+        que_eoc_bitmap_2dly <= que_eoc_bitmap_1dly;
     end
 end
-
+  
 always@(posedge clk_sys or posedge rst)
 begin
     if(rst == 1'd1)begin
-        rr4_req_nvld <= 1'b0;
+        rr8_req_nvld <= 1'b0;
     end
-    else if (rxff_reop_2dly == 1'b1) begin    
-        rr4_req_nvld <= 1'b0;
+    else if ((rxff_reop_2dly == 1'b1) || (pkt_back_rd[4] == 1'b1)) begin    
+        rr8_req_nvld <= 1'b0;
     end
-    else if(tb_rr4_req == 1'b1) begin
-        rr4_req_nvld <= 1'b1;
+    else if(tb_rr8_req == 1'b1) begin
+        rr8_req_nvld <= 1'b1;
     end
 end
 
@@ -293,30 +338,29 @@ begin
     if(rst == 1'd1)begin
         rxff_ren <= 1'b0;
     end
-    else if (rxff_reop == 1'b1) begin
+    else if ((rxff_reop == 1'b1) || (pkt_back_rd[4] == 1'b1))begin
         rxff_ren <= 1'b0;
     end
-    else if(tb_rr4_req == 1'b1) begin
+    else if(tb_rr8_req == 1'b1) begin
         rxff_ren <= 1'b1;
     end
     else;
 end
 
-
 generate
-    for (n = 0; n<4; n=n+1 ) begin : GEN_FIFO_REN
+    for (n = 0; n<5; n=n+1 ) begin : GEN_FIFO_REN
 
-    assign pkt_back_rd[n] = (tb_rr4_qnum == n) ? ((~ae2ve_pkt_ff)&(~pkt_back_empty[n])&rxff_ren):1'b0;
 
-    always@(posedge clk_sys or posedge rst)
+    always@( * )
     begin
-        if(rst == 1'd1)begin
-            que_eoc_bitmap_1dly[n] <= 1'b1;
-            que_eoc_bitmap_2dly[n] <= 1'b1;
+        if((n == 4) && (tb_rr8_qnum == n))begin
+            pkt_back_rd[n] = ((~ae2ve_pkt_ff)&(~mmu_tx2rx_bd_empty)&rxff_ren);
+        end
+        else if((n < 4) && (tb_rr8_qnum == n))begin
+            pkt_back_rd[n] = (~ae2ve_pkt_ff)&(~pkt_back_empty[n])&rxff_ren;
         end
         else begin
-            que_eoc_bitmap_1dly[n] <= que_eoc_bitmap[n];
-            que_eoc_bitmap_2dly[n] <= que_eoc_bitmap_1dly[n];
+            pkt_back_rd[n] = 1'b0;
         end
     end
          
@@ -325,27 +369,27 @@ generate
         if(rst == 1'd1)begin
             que_soc_flag[n] <= 1'b1;
         end
-        else if((que_eoc_bitmap[n] == 1'b1)&&(tb_rr4_ack ==1'b1)&&(tb_rr4_qnum ==n)) begin
+        else if((que_eoc_bitmap[n] == 1'b1)&&(tb_rr8_ack ==1'b1)&&(tb_rr8_qnum ==n)) begin
             que_soc_flag[n] <= 1'b1;
         end
-        else if((tb_rr4_ack ==1'b1)&&(tb_rr4_qnum ==n)) begin
+        else if((tb_rr8_ack ==1'b1)&&(tb_rr8_qnum ==n)) begin
             que_soc_flag[n] <= 1'b0;
         end
         else;
     end        
       
-    assign eoc_tag_ren[n] = (tb_rr4_qnum == n) ? tb_rr4_ack : 1'b0;
+    assign eoc_tag_ren_tmp[n] = (tb_rr8_qnum == n) ? tb_rr8_ack : 1'b0;
   
     always@(posedge clk_sys or posedge rst)
     begin
         if(rst == 1'd1)begin
-            bucket_dec_wend[n] <= 1'b1;
+            bucket_dec_wend_tmp[n] <= 1'b1;
         end
-        else if (tb_rr4_qnum_4dly == n) begin
-            bucket_dec_wend[n] <= pkt_reop_4dly&pkt_back_rd_4dly;
+        else if (tb_rr8_qnum_4dly == n) begin
+            bucket_dec_wend_tmp[n] <= pkt_reop_4dly&pkt_back_rd_4dly;
         end
         else begin
-            bucket_dec_wend[n] <= 1'b0;
+            bucket_dec_wend_tmp[n] <= 1'b0;
         end 
     end 
      
@@ -354,11 +398,12 @@ endgenerate
 
 always@(*) 
 begin 
-   case(tb_rr4_qnum)
-      2'd1 :  pkt_reop = pkt_back_rdata[540*1+519];  
-      2'd2 :  pkt_reop = pkt_back_rdata[540*2+519];   
-      2'd3 :  pkt_reop = pkt_back_rdata[540*3+519];   
-      default:pkt_reop = pkt_back_rdata[540*0+519];
+   case(tb_rr8_qnum)
+      3'd0 :  pkt_reop = pkt_back_rdata[540*0+519];
+      3'd1 :  pkt_reop = pkt_back_rdata[540*1+519];  
+      3'd2 :  pkt_reop = pkt_back_rdata[540*2+519];   
+      3'd3 :  pkt_reop = pkt_back_rdata[540*3+519];   
+      default:pkt_reop = 1'b0;
    endcase
 end   
 
@@ -380,11 +425,12 @@ end
 
 always@(posedge clk_sys)
 begin 
-   case(tb_rr4_qnum)
-      2'd1 :  rxff_rdata <= pkt_back_rdata[540*2-1:540*1];  
-      2'd2 :  rxff_rdata <= pkt_back_rdata[540*3-1:540*2];   
-      2'd3 :  rxff_rdata <= pkt_back_rdata[540*4-1:540*3];   
-      default:rxff_rdata <= pkt_back_rdata[540*1-1:540*0];
+   case(tb_rr8_qnum)
+      3'd0 :  rxff_rdata <= pkt_back_rdata[540*1-1:540*0];
+      3'd1 :  rxff_rdata <= pkt_back_rdata[540*2-1:540*1];  
+      3'd2 :  rxff_rdata <= pkt_back_rdata[540*3-1:540*2];   
+      3'd3 :  rxff_rdata <= pkt_back_rdata[540*4-1:540*3];   
+      default:rxff_rdata <= 540'd0;
    endcase
 end   
 
@@ -396,10 +442,10 @@ begin
 end   
 
 
-assign ve_ff_rd        = tb_rr4_ack&que_soc_flag[tb_rr4_qnum]; 
-assign ve_ff_rport     = tb_rr4_qnum; 
+assign ve_ff_rd        = tb_rr8_ack&que_soc_flag[tb_rr8_qnum[1:0]] & (~tb_rr8_qnum[2]); 
+assign ve_ff_rport     = tb_rr8_qnum[1:0]; 
 
-assign chn_seq_ren_tmp = tb_rr4_ack&que_eoc_bitmap[tb_rr4_qnum]; 
+assign chn_seq_ren_tmp = tb_rr8_ack&que_eoc_bitmap[tb_rr8_qnum[1:0]] & (~tb_rr8_qnum[2]); 
 
 always@(posedge clk_sys or posedge rst)
 begin
@@ -451,32 +497,32 @@ end
 always@(posedge clk_sys or posedge rst)
 begin
     if(rst == 1'd1)begin
-       tb_rr4_ack      <= 1'b0;
-       tb_rr4_ack_1dly <= 1'b0;
-       tb_rr4_ack_2dly <= 1'b0;
-       tb_rr4_ack_3dly <= 1'b0;
+       tb_rr8_ack      <= 1'b0;
+       tb_rr8_ack_1dly <= 1'b0;
+       tb_rr8_ack_2dly <= 1'b0;
+       tb_rr8_ack_3dly <= 1'b0;
     end
     else begin
-       tb_rr4_ack      <= tb_rr4_req;
-       tb_rr4_ack_1dly <= tb_rr4_ack;
-       tb_rr4_ack_2dly <= tb_rr4_ack_1dly;
-       tb_rr4_ack_3dly <= tb_rr4_ack_2dly;
+       tb_rr8_ack      <= tb_rr8_req;
+       tb_rr8_ack_1dly <= tb_rr8_ack & (~tb_rr8_qnum[2]);
+       tb_rr8_ack_2dly <= tb_rr8_ack_1dly;
+       tb_rr8_ack_3dly <= tb_rr8_ack_2dly;
     end
 end
 
 always@(posedge clk_sys or posedge rst)
 begin
     if(rst == 1'd1)begin
-       tb_rr4_qnum_1dly <= 2'd0; 
-       tb_rr4_qnum_2dly <= 2'd0;
-       tb_rr4_qnum_3dly <= 2'd0;
-       tb_rr4_qnum_4dly <= 2'd0;
+       tb_rr8_qnum_1dly <= 3'd0; 
+       tb_rr8_qnum_2dly <= 3'd0;
+       tb_rr8_qnum_3dly <= 3'd0;
+       tb_rr8_qnum_4dly <= 3'd0;
     end
     else begin
-       tb_rr4_qnum_1dly <= tb_rr4_qnum;
-       tb_rr4_qnum_2dly <= tb_rr4_qnum_1dly;
-       tb_rr4_qnum_3dly <= tb_rr4_qnum_2dly;
-       tb_rr4_qnum_4dly <= tb_rr4_qnum_3dly;
+       tb_rr8_qnum_1dly <= tb_rr8_qnum;
+       tb_rr8_qnum_2dly <= tb_rr8_qnum_1dly;
+       tb_rr8_qnum_3dly <= tb_rr8_qnum_2dly;
+       tb_rr8_qnum_4dly <= tb_rr8_qnum_3dly;
     end
 end
 
@@ -487,8 +533,8 @@ assign des_addr_l13b = {1'd0,des_addr[11:0]} + 13'd32;
 generate
     for (i = 0; i<4; i=i+1 ) begin : GEN_DES_ADDR
    
-    assign que_lock_en[i] = ((ve_ff_rd_2dly ==1'b1)&&(tb_rr4_qnum_2dly ==i)); 
-    assign que_inc_en[i]  = ((tb_rr4_ack_2dly ==1'b1)&&(tb_rr4_qnum_2dly ==i));
+    assign que_lock_en[i] = ((ve_ff_rd_2dly ==1'b1)&&(tb_rr8_qnum_2dly[1:0] ==i)&&(tb_rr8_qnum_2dly[2] == 1'b0)); 
+    assign que_inc_en[i]  = ((tb_rr8_ack_2dly ==1'b1)&&(tb_rr8_qnum_2dly[1:0] ==i)&&(tb_rr8_qnum_2dly[2] == 1'b0));
 
     always@(posedge clk_sys or posedge rst)
     begin
@@ -563,36 +609,45 @@ generate
 endgenerate
 
 always@(*)
+begin
+    case(tb_rr8_qnum_3dly)
+       3'd0 :  header_sel = header_lock[0];
+       3'd1 :  header_sel = header_lock[1];  
+       3'd2 :  header_sel = header_lock[2];   
+       3'd3 :  header_sel = header_lock[3];   
+       default:header_sel = mmu_tx2rx_bd_rdata_lock;
+    endcase
+end   
+
+always@(posedge clk_sys)
+begin
+    header_sel_1dly <= header_sel;
+end
+
+
+always@(*)
 begin 
-   case(tb_rr4_qnum_3dly)
-      2'd1 :  header_sel = header_lock[1];  
-      2'd2 :  header_sel = header_lock[2];   
-      2'd3 :  header_sel = header_lock[3];   
-      default:header_sel = header_lock[0];
+   case(tb_rr8_qnum_3dly)
+      3'd0 :  de_addr_sel = de_addr[0];   
+      3'd1 :  de_addr_sel = de_addr[1];  
+      3'd2 :  de_addr_sel = de_addr[2];   
+      3'd3 :  de_addr_sel = de_addr[3];   
+      default:de_addr_sel = mmu_tx2rx_bd_rdata_lock[127:64];
    endcase
 end   
 
 always@(*)
 begin 
-   case(tb_rr4_qnum_3dly)
-      2'd1 :  de_addr_sel = de_addr[1];  
-      2'd2 :  de_addr_sel = de_addr[2];   
-      2'd3 :  de_addr_sel = de_addr[3];   
-      default:de_addr_sel = de_addr[0];
+   case(tb_rr8_qnum_3dly)
+      3'd0 :  down_flag = eoc_eop[0];  
+      3'd1 :  down_flag = eoc_eop[1];  
+      3'd2 :  down_flag = eoc_eop[2];   
+      3'd3 :  down_flag = eoc_eop[3];   
+      default:down_flag = write_ddr_rd_bd_4dly;
    endcase
 end   
 
-always@(*)
-begin 
-   case(tb_rr4_qnum_3dly)
-      2'd1 :  down_flag = eoc_eop[1];  
-      2'd2 :  down_flag = eoc_eop[2];   
-      2'd3 :  down_flag = eoc_eop[3];   
-      default:down_flag = eoc_eop[0];
-   endcase
-end   
-
-assign eoc_eop_sel = down_flag;
+assign eoc_eop_sel = down_flag & (~tb_rr8_qnum_3dly[2]);
 
 //==================================================================================
 // ae to ve write signal
@@ -604,22 +659,40 @@ begin
         pkt_back_rd_2dly <= 1'b0;
         pkt_back_rd_3dly <= 1'b0;
         pkt_back_rd_4dly <= 1'b0;
+
+        write_ddr_rd_bd_1dly <= 1'b0;
+        write_ddr_rd_bd_2dly <= 1'b0;
+        write_ddr_rd_bd_3dly <= 1'b0;
+        write_ddr_rd_bd_4dly <= 1'b0;
+        write_ddr_rd_bd_5dly <= 1'b0;
     end
     else begin
-        pkt_back_rd_1dly <= (|pkt_back_rd);
+        pkt_back_rd_1dly <= (|pkt_back_rd[3:0]);
         pkt_back_rd_2dly <= pkt_back_rd_1dly;
         pkt_back_rd_3dly <= pkt_back_rd_2dly;
         pkt_back_rd_4dly <= pkt_back_rd_3dly;
+
+        write_ddr_rd_bd_1dly <= pkt_back_rd[4];
+        write_ddr_rd_bd_2dly <= write_ddr_rd_bd_1dly;
+        write_ddr_rd_bd_3dly <= write_ddr_rd_bd_2dly;
+        write_ddr_rd_bd_4dly <= write_ddr_rd_bd_3dly;
+        write_ddr_rd_bd_5dly <= write_ddr_rd_bd_4dly;
     end
 end
 
+ 
 always@(posedge clk_sys or posedge rst)
 begin
     if(rst == 1'd1)begin
         ae2ve_pkt_wen <= 1'b0;
     end
     else begin
-        ae2ve_pkt_wen <= pkt_back_rd_4dly  | tb_rr4_ack_3dly | add_hacc_en_4dly | add_hacc_en_5dly;
+        ae2ve_pkt_wen <= pkt_back_rd_4dly | 
+                         tb_rr8_ack_3dly | 
+                         write_ddr_rd_bd_4dly | 
+                         write_ddr_rd_bd_5dly | 
+                         add_hacc_en_4dly | 
+                         add_hacc_en_5dly;
     end
 end
 
@@ -652,12 +725,30 @@ end
 assign header = {header_sel[511:217],down_flag,8'd0,header_sel[175:128],32'd0,de_addr_sel,header_sel[63:0]};
 assign gen_mode = 7'd64 - {1'b0,header_sel[333:328]};
 
+assign len_in_hardacc = header_sel[359:328] + 32'd32;
+
+always@(posedge clk_sys or posedge rst)
+begin
+    if(rst == 1'd1)begin
+        len_in_hardacc_1dly <= 32'd0;
+    end 
+    else begin
+        len_in_hardacc_1dly <= len_in_hardacc;
+    end
+end
+
+
+//539-523:odd
+//522-520:rsv
+//519:eoc
+//518:pkt_err
+//517-512:mod
 always@(posedge clk_sys )
 begin
-    if ((tb_rr4_ack_3dly == 1'b1)||(add_hacc_en_4dly == 1'b1)) begin
+    if ((tb_rr8_ack_3dly == 1'b1)||(add_hacc_en_4dly == 1'b1) || (write_ddr_rd_bd_4dly == 1'b1)) begin
        ae2ve_pkt_wdata_rev <= 28'd0;
     end
-    else if (add_hacc_en_5dly == 1'b1) begin
+    else if ((add_hacc_en_5dly == 1'b1) || (write_ddr_rd_bd_5dly == 1'b1)) begin
        ae2ve_pkt_wdata_rev <= {20'd0,2'd2,6'd32};
     end
     else if((pkt_reop_4dly == 1'b1)&&(eoc_eop_sel == 1'b1)&&(pkt_back_rd_4dly==1'b1)) begin
@@ -668,16 +759,20 @@ begin
     end
 end
 
+ 
 always@(posedge clk_sys )
 begin
-    if (tb_rr4_ack_3dly == 1'b1) begin
+    if (tb_rr8_ack_3dly == 1'b1) begin
        ae2ve_pkt_wdata_512b <= {header[511:217],1'b0,header[215:0]};
     end
-    else if (add_hacc_en_4dly == 1'b1) begin
+    else if ((add_hacc_en_4dly == 1'b1) || (write_ddr_rd_bd_4dly == 1'b1)) begin
        ae2ve_pkt_wdata_512b <= {header_sel[511:217],down_flag,8'd0,header_sel[175:128],32'd0,header_sel[127:0]};
     end
+    else if (write_ddr_rd_bd_5dly == 1'b1) begin
+       ae2ve_pkt_wdata_512b <= {256'd0,header_sel_1dly[399:384],64'd0,len_in_hardacc_1dly,6'd0,header_sel_1dly[233:224],28'd0,header_sel_1dly[327:292],28'd0,header_sel_1dly[291:256]};
+    end
     else if (add_hacc_en_5dly == 1'b1) begin
-       ae2ve_pkt_wdata_512b <= {256'd0,header_sel[399:384],112'd0,28'd0,header_sel[327:292],28'd0,header_sel[291:256]};
+       ae2ve_pkt_wdata_512b <= {256'd0,header_sel[399:384],64'd0,len_in_hardacc,6'd0,header_sel[233:224],28'd0,header_sel[327:292],28'd0,header_sel[291:256]};
     end
     else begin
        ae2ve_pkt_wdata_512b <= rxff_rdata_3dly[511:0] ;
@@ -703,7 +798,7 @@ generate
         if(rst == 1'd1)begin
             bucket_dec_wr[k] <= 1'b0;
         end
-        else if(tb_rr4_qnum_4dly == k[1:0]) begin
+        else if((tb_rr8_qnum_4dly[1:0] == k[1:0]) && (tb_rr8_qnum_4dly[2] == 1'b0)) begin
             bucket_dec_wr[k] <= pkt_back_rd_4dly;  
         end
         else begin
@@ -746,8 +841,9 @@ begin
     end
 end
 
-assign reg_mmu_rxpkt_sta = {3'd0, eoc_tag_empty,chn_seq_empty,cur_que,que_eoc_bitmap,fifo_status,bucket_af,pkt_back_full_que,pkt_back_empty,tb_rr4_nef}; 
-assign reg_mmu_rxpkt_err = {14'd0,reg_ddr_tmout_err,fifo_err,reg_tmout_us_err,reg_bucket_err,empty_full_err};      
+assign reg_mmu_rxpkt_sta = {1'd0,ae2ve_pkt_ff,tb_rr8_nef[4],eoc_tag_empty,chn_seq_empty,cur_que,que_eoc_bitmap[3:0],fifo_status,bucket_af,pkt_back_full_que,pkt_back_empty,tb_rr8_nef[3:0]}; 
+assign reg_mmu_rxpkt_sta1 = {23'd0,que_eoc_flag,rr8_req_nvld,tb_rr8_req,mmu_tx2rx_bd_afull,mmu_tx2rx_bd_empty,mmu_tx2rx_bd_fifo_stat[3:0]}; 
+assign reg_mmu_rxpkt_err = {11'd0,mmu_tx2rx_bd_fifo_stat[6:4],reg_ddr_tmout_err,fifo_err,reg_tmout_us_err,reg_bucket_err,empty_full_err};      
 /*********************************************************************************************************************\
     timeout
 \*********************************************************************************************************************/
@@ -763,6 +859,7 @@ begin
         unit_cnt <= unit_cnt +20'd1;
     end
 end
+
 always@(posedge clk_sys or posedge rst)
 begin
     if(rst == 1'd1)begin
@@ -819,14 +916,15 @@ endgenerate
 /*********************************************************************************************************************\
     instance
 \*********************************************************************************************************************/
-rr4 u_rr4_p1
+
+rr8 u_rr8_p1
     (
     //clock and reset signal
        .clks                  (clk_sys             ),   
        .reset                 (rst                 ),   
-       .req                   (tb_rr4_nef          ),   
-       .req_vld               (tb_rr4_req          ),   
-       .rr_bit                (tb_rr4_qnum         )
+       .req                   (tb_rr8_nef          ),   
+       .req_vld               (tb_rr8_req          ),   
+       .rr_bit                (tb_rr8_qnum         )
     );
 
 generate
@@ -919,5 +1017,32 @@ raxi_rq512_fifo u_ae2ve_fifo
     .rq_tx_cnt              (                       )
     );
 
+sfifo_cbb_enc # (
+        .FIFO_PARITY          ( "FALSE"             ),
+        .PARITY_DLY           ( "FALSE"             ),
+        .FIFO_DO_REG          ( 0                   ), 
+        .RAM_DO_REG           ( 0                   ),
+        .FIFO_ATTR            ( "ahead"             ),
+        .FIFO_WIDTH           ( 540                 ),
+        .FIFO_DEEP            ( 9                   ),
+        .AFULL_OVFL_THD       ( 450                 ),
+        .AFULL_UNFL_THD       ( 450                 ),
+        .AEMPTY_THD           ( 8                   ) 
+        )
+U_mmu_tx2rx_bd_fifo  (
+        .clk_sys              ( clk_sys             ),
+        .reset                ( rst                 ),
+        .wen                  ( mmu_tx2rx_bd_wr     ),
+        .wdata                ( mmu_tx2rx_bd_wdata  ),
+        .ren                  ( pkt_back_rd[4]     ),
+        .rdata                ( mmu_tx2rx_bd_rdata  ),
+        .full                 (                     ),
+        .empty                ( mmu_tx2rx_bd_empty  ),
+        .usedw                (                     ),
+        .afull                ( mmu_tx2rx_bd_afull  ), 
+        .aempty               (                     ),
+        .parity_err           (                     ),
+        .fifo_stat            ( mmu_tx2rx_bd_fifo_stat ) 
+        );
 
 endmodule

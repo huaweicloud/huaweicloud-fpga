@@ -33,7 +33,7 @@ module  tx_bd
 
                  //with mmu_tx_pkt 
                  input                            hacc_wr                  ,     
-                 input           [10:0]           hacc_waddr               ,
+                 input           [8:0]            hacc_waddr               ,
                  input           [87:0]           hacc_wdata               ,
                  input                            online_feedback_en       ,     
                  input                            wr_ddr_rsp_en            ,     
@@ -42,15 +42,25 @@ module  tx_bd
                  //with kernel
                  input                            kernel2tx_afull          ,
                  output  reg                      tx2kernel_bd_wen         ,
-                 output  wire    [511:0]          tx2kernel_bd_wdata       ,
+                 output  reg     [511:0]          tx2kernel_bd_wdata       ,
+
+                 //with kernel
+                 input                            mmu_rx2tx_afull          ,
+                 output  reg                      mmu_tx2rx_bd_wen         ,
+                 output  wire    [511:0]          mmu_tx2rx_bd_wdata       ,
 
                  //dfx
-                 output  wire    [4:0]            tx_bd_sta                ,
+                 output  reg                      mmu_tx2rx_wr_bd_wen      ,
+                 output  reg                      mmu_tx2rx_rd_bd_wen      ,
+                 output  wire    [5:0]            tx_bd_sta                ,
                  output  reg     [10:0]           mmu_tx_online_beat       ,
                  input           [10:0]           reg_mmu_tx_online_beat           
                 );
 
 //------------------------------------------------------------------------------
+reg   [7:0]            thread_id             ;
+reg   [1:0]            opcode                ;
+reg   [1:0]            opcode_1dly           ;
 reg   [7:0]            acc_type              ;
 reg   [47:0]           ve_info               ;
 reg   [63:0]           des_addr              ;
@@ -60,6 +70,9 @@ reg   [26:0]           len_latch_h           ;
 reg   [4:0]            len_latch_l           ;
 reg   [19:0]           len_left_high         ;
 reg   [11:0]           len_left_low          ;
+reg   [26:0]           real_len_latch_h      ;
+reg   [4:0]            real_len_latch_l      ;
+wire  [31:0]           real_len_latch        ;
 reg                    hardacc_flag          ;
 reg                    sod_cmd_flag          ;
 reg                    eod_cmd_flag          ;
@@ -70,6 +83,7 @@ reg                    ddr_rsp_ren           ;
 reg                    stxqm2inq_fifo_rd_1dly;
 reg                    stxqm2inq_fifo_rd_2dly;
 reg                    ddr_rsp_ren_1dly      ;
+reg                    ddr_rsp_ren_2dly      ;
 reg   [8:0]            bd_online_cnt         ;
 reg                    pkt_online_rdy        ;
 reg                    bd_online_rdy         ;
@@ -77,10 +91,10 @@ reg                    bd_online_rdy         ;
 wire  [31:0]           len_latch             ;
 wire  [287:0]          stxqm2inq_fifo_wdata  ;
 wire                   bd_ram_wen            ;
-wire  [207:0]          bd_ram_wdata          ;
+wire  [217:0]          bd_ram_wdata          ;
 wire  [8:0]            bd_ram_waddr          ;
 wire  [8:0]            bd_ram_raddr          ;
-wire  [207:0]          bd_ram_rdata          ;
+wire  [217:0]          bd_ram_rdata          ;
 wire  [8:0]            hcc_raddr             ;
 wire  [87:0]           hcc_rdata             ;
 wire  [10:0]           ddr_rsp_rdata         ;
@@ -88,6 +102,7 @@ wire                   ddr_rsp_empty         ;
 wire                   ddr_rsp_afull         ;
 wire  [255:0]          ppm2stxm_rxffc_wdata_p;
 wire  [511:0]          tx2kernel_bd_wdata_p  ;
+wire  [511:0]          tx2kernel_bd_wdata_tmp;
 wire                   rd_pkt_cmd_acc        ;
 wire                   rd_pkt_cmd_eod        ;
 wire                   stxqm2inq_fifo_rd_en  ;
@@ -100,16 +115,18 @@ begin
         stxqm2inq_fifo_rd_1dly <= 1'd0;
         stxqm2inq_fifo_rd_2dly <= 1'd0;
         ddr_rsp_ren_1dly       <= 1'd0;
+        ddr_rsp_ren_2dly       <= 1'd0;
     end
     else begin
         stxqm2inq_fifo_rd_1dly <= stxqm2inq_fifo_rd     ;
         stxqm2inq_fifo_rd_2dly <= stxqm2inq_fifo_rd_1dly;
         ddr_rsp_ren_1dly       <= ddr_rsp_ren           ;
+        ddr_rsp_ren_2dly       <= ddr_rsp_ren_1dly           ;
     end
 end
 
 //------------------------------------------------------------------------------
-assign tx_bd_sta = {ddr_rsp_afull,stxm2ppm_rxffc_ff,inq2stxqm_fifo_emp,kernel2tx_afull,ddr_rsp_empty};
+assign tx_bd_sta = {mmu_rx2tx_afull,ddr_rsp_afull,stxm2ppm_rxffc_ff,inq2stxqm_fifo_emp,kernel2tx_afull,ddr_rsp_empty};
 
 assign stxqm2inq_fifo_wdata = {stxqm2inq_fifo_rdata[287:256],
                                stxqm2inq_fifo_rdata[7  :0]  ,
@@ -180,7 +197,7 @@ assign ppm2stxm_rxffc_wdata = {ppm2stxm_rxffc_wdata_p[7  :0]  ,
                                ppm2stxm_rxffc_wdata_p[128 + 127:128 + 120]
                               };
 
-assign  tx2kernel_bd_wdata  = {tx2kernel_bd_wdata_p[7:0    ],tx2kernel_bd_wdata_p[15:8   ],
+assign  tx2kernel_bd_wdata_tmp  = {tx2kernel_bd_wdata_p[7:0    ],tx2kernel_bd_wdata_p[15:8   ],
                                tx2kernel_bd_wdata_p[23:16  ],tx2kernel_bd_wdata_p[31:24  ],
                                tx2kernel_bd_wdata_p[39:32  ],tx2kernel_bd_wdata_p[47:40  ],
                                tx2kernel_bd_wdata_p[55:48  ],tx2kernel_bd_wdata_p[63:56  ],
@@ -218,6 +235,8 @@ assign  tx2kernel_bd_wdata  = {tx2kernel_bd_wdata_p[7:0    ],tx2kernel_bd_wdata_
 always@(posedge clk_sys)
 begin
     if (stxqm2inq_fifo_rd == 1'b1) begin
+        thread_id<= stxqm2inq_fifo_wdata[233:226];
+        opcode   <= stxqm2inq_fifo_wdata[225:224];
         acc_type <= stxqm2inq_fifo_wdata[215:208];
         ve_info  <= stxqm2inq_fifo_wdata[207:160];
         des_addr <= stxqm2inq_fifo_wdata[127:64] ;
@@ -226,8 +245,14 @@ begin
     else;
 end
 
+always@(posedge clk_sys)
+begin
+    opcode_1dly   <= opcode;
+end
+
+
 assign rd_pkt_cmd_acc = ppm2stxm_rxffc_wdata_p[255];
-assign rd_pkt_cmd_eod = ppm2stxm_rxffc_wdata_p[253];
+assign rd_pkt_cmd_eod = ppm2stxm_rxffc_wdata_p[253] | (opcode == 2'd1);
 
 always@(posedge clk_sys or posedge rst)
 begin
@@ -282,13 +307,31 @@ begin
     end
 end
 
-always@(posedge clk_sys)
+always@(posedge clk_sys or posedge rst)
 begin
-    len_latch_h <= stxqm2inq_fifo_wdata[159:133] - 27'd1;
-    len_latch_l <= stxqm2inq_fifo_wdata[132:128];
+    if(rst == 1'd1)begin
+        len_latch_h <= 27'd0;
+        len_latch_l <= 5'd0;
+    end
+    else if ((stxqm2inq_fifo_wdata[225:224] == 2'd1) && (stxqm2inq_fifo_rd == 1'b1)) begin
+        len_latch_h <= 27'd0;
+        len_latch_l <= 5'd0;
+    end
+    else begin
+        len_latch_h <= stxqm2inq_fifo_wdata[159:133] - 27'd1;
+        len_latch_l <= stxqm2inq_fifo_wdata[132:128];
+    end
 end
 
+always@(posedge clk_sys)
+begin
+    real_len_latch_h <= stxqm2inq_fifo_wdata[159:133] - 27'd1;
+    real_len_latch_l <= stxqm2inq_fifo_wdata[132:128];
+end
+
+
 assign len_latch = {len_latch_h,len_latch_l};
+assign real_len_latch = {real_len_latch_h,real_len_latch_l};
 
 always@(posedge clk_sys)
 begin
@@ -359,7 +402,7 @@ begin
     else if((ppm2stxm_rxffc_wr == 1'd1)&&(stxqm2inq_fifo_rd_2dly == 1'b0))begin
         sod_cmd_flag <= 1'd0;
     end
-    else if((stxqm2inq_fifo_rd_2dly == 1'b1))begin
+    else if((stxqm2inq_fifo_rd_2dly == 1'b1) && (opcode_1dly != 2'd1))begin
         sod_cmd_flag <= 1'd1;
     end
     else ;
@@ -430,11 +473,11 @@ begin
     else ;
 end
 
-assign ppm2stxm_rxffc_wdata_p = {hardacc_flag,sod_cmd_flag,eod_cmd_flag,5'd0,rd_len,2'd0,ram_sn,8'd0,
+assign ppm2stxm_rxffc_wdata_p = {hardacc_flag,sod_cmd_flag,eod_cmd_flag,5'd0,rd_len,opcode,ram_sn,8'd0,
                                acc_type,ve_info,19'd0,rd_len,64'd0,rd_src_addr};
 
 assign bd_ram_wen           = stxqm2inq_fifo_rd_1dly;
-assign bd_ram_wdata         = {len_latch,ve_info,des_addr,src_addr};
+assign bd_ram_wdata         = {thread_id,opcode,real_len_latch,ve_info,des_addr,src_addr};
 assign bd_ram_waddr         = ram_sn;
 
 always@(posedge clk_sys or posedge rst)
@@ -442,7 +485,7 @@ begin
     if(rst == 1'd1)begin
         ddr_rsp_ren <= 1'd0;
     end
-    else if((ddr_rsp_empty == 1'd0)&&(kernel2tx_afull == 1'd0)&&(ddr_rsp_ren == 1'd0))begin
+    else if((ddr_rsp_empty == 1'd0)&&(kernel2tx_afull == 1'd0)&&(mmu_rx2tx_afull == 1'd0)&&(ddr_rsp_ren == 1'd0))begin
         ddr_rsp_ren <= 1'd1;
     end
     else begin
@@ -453,17 +496,39 @@ end
 assign bd_ram_raddr  = ddr_rsp_rdata[8:0];
 assign hcc_raddr     = ddr_rsp_rdata[8:0];
 
+//tx2kernel_bd_wdata_p[225:224]:
+//2'd1:read operation
+//2'd2:write operation
+//2'd0 or 2'd3 : process operation(same old example3)
 always@(posedge clk_sys or posedge rst)
 begin
     if(rst == 1'd1)begin
         tx2kernel_bd_wen <= 1'd0;
+        mmu_tx2rx_bd_wen <= 1'd0;
+        mmu_tx2rx_wr_bd_wen <= 1'd0;
+        mmu_tx2rx_rd_bd_wen <= 1'd0;
     end
     else begin
-        tx2kernel_bd_wen <= ddr_rsp_ren_1dly;
+        tx2kernel_bd_wen <= ddr_rsp_ren_2dly & (tx2kernel_bd_wdata_p[225] == tx2kernel_bd_wdata_p[224]);
+        mmu_tx2rx_bd_wen <= ddr_rsp_ren_2dly & (tx2kernel_bd_wdata_p[225] != tx2kernel_bd_wdata_p[224]);
+        mmu_tx2rx_wr_bd_wen <= ddr_rsp_ren_2dly & (tx2kernel_bd_wdata_p[225:224] == 2'd2);
+        mmu_tx2rx_rd_bd_wen <= ddr_rsp_ren_2dly & (tx2kernel_bd_wdata_p[225:224] == 2'd1);
     end
 end
 
-assign tx2kernel_bd_wdata_p = {112'd0,hcc_rdata[87:72],24'd0,bd_ram_rdata[207:176],hcc_rdata[71:0],80'd0,bd_ram_rdata[175:0]};
+always@(posedge clk_sys or posedge rst)
+begin
+    if(rst == 1'd1)begin
+        tx2kernel_bd_wdata <= 512'd0;
+    end
+    else begin
+        tx2kernel_bd_wdata <= tx2kernel_bd_wdata_tmp;
+    end
+end
+
+assign mmu_tx2rx_bd_wdata = tx2kernel_bd_wdata;
+
+assign tx2kernel_bd_wdata_p = {112'd0,hcc_rdata[87:72],24'd0,bd_ram_rdata[207:176],hcc_rdata[71:0],22'd0,bd_ram_rdata[217:208],48'd0,bd_ram_rdata[175:0]};
 
 always@(posedge clk_sys or posedge rst)
 begin
@@ -482,9 +547,9 @@ end
 //------------------------------------------------------------------------------
 sdpramb_sclk
         #(
-        .WRITE_WIDTH          ( 208                 ), 
+        .WRITE_WIDTH          ( 218                 ), 
         .WRITE_DEPTHBIT       ( 9                   ), 
-        .READ_WIDTH           ( 208                 ), 
+        .READ_WIDTH           ( 218                 ), 
         .READ_DEPTHBIT        ( 9                   )  
         ) u_bd_dram
         (
@@ -508,7 +573,7 @@ sdpramb_sclk
         .clock                ( clk_sys             ),
         .enable               ( 1'b1                ),
         .wren                 ( hacc_wr             ),
-        .wraddress            ( hacc_waddr[8:0]     ),
+        .wraddress            ( hacc_waddr          ),
         .data                 ( hacc_wdata          ),
         .rdaddress            ( hcc_raddr           ),
         .q                    ( hcc_rdata           )

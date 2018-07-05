@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
     printf(" -------- Dump logic regs begin -------- \n");
     printf("\tReg addr      Value         Description\n");
     for(i = 0; i < sizeof(regs)/sizeof(reg_mask_stru); i++) {
-        (void)pci_barx_read_regs(&regs[i].reg, 1, &value, (int)DEBUG_DFX_MAP_BAR);
+        (void)pci_barx_read_regs(g_port_id, &regs[i].reg, 1, &value, (int)DEBUG_DFX_MAP_BAR);
         printf("\t[0x%08x]: 0x%08x  - %s\n", regs[i].reg, value & regs[i].mask, regs[i].desc);
     }
     printf(" -------- Dump logic regs end -------- \n");

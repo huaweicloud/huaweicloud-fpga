@@ -26,6 +26,11 @@ import time
 xclbin_path=os.path.abspath(sys.argv[1])
 xclbin_name=os.path.basename(os.path.splitext(xclbin_path)[0])
 
+json_path=os.path.abspath(os.path.join(os.path.dirname(xclbin_path),"../log/metadata.json"))
+if os.path.exists(json_path):
+    os.remove(json_path)
+
+
 #read xclbin get the xml index
 
 xcl_magic_word='\xFF\xFF\xFF\xFF\x00\x00\x00\xBB\x11\x22\x00\x44'
@@ -42,7 +47,10 @@ if bin_stream_len%4 != 0:
     bin_stream_len += add_lens
     bin_stream += '\x00'*add_lens
 
-xml_stream=f.read()
+xml_len=f.read().index("</project>")
+f.seek(xcl_header_len+bit_len,0)
+xml_len +=10
+xml_stream=f.read(xml_len)
 f.close()
 
 #creat bin file
@@ -54,12 +62,16 @@ del bin_stream
 #*********************************
 # get xclbin_timestamp and clock_freq
 #*********************************
+try:
+    dom = xml.dom.minidom.parseString(xml_stream)
+    item=dom.getElementsByTagName('platform')[0]
+    xclbin_timestamp=item.getAttribute('featureRomTime')
 
-dom = xml.dom.minidom.parseString(xml_stream)
-item=dom.getElementsByTagName('platform')[0]
-xclbin_timestamp=item.getAttribute('featureRomTime')
+    itemlist=dom.getElementsByTagName('clock')
+except:
+    print "ERROR:get xclbin_timestamp and clock_freq fail"
+    sys.exit(1)
 
-itemlist=dom.getElementsByTagName('clock')
 for x in itemlist:
     #print x.getAttribute('port')
     if x.getAttribute('port')=="DATA_CLK":
@@ -101,7 +113,6 @@ metadata['pci_subsystem_vendor_id']="0x10ee"
 metadata['hdk_version']=hdk_version
 metadata['create_time']=create_time
 
-json_path=os.path.abspath(os.path.join(os.path.dirname(xclbin_path),"../log/metadata.json"))
 meta=json.dumps(metadata)
 with open(json_path,"w") as f:
     f.write(meta)

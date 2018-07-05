@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
         return ret;
     }
 
-    (void)print_demo1_version();
+    (void)print_demo1_version(g_port_id);
 
     (void)pci_bar2_uninit_env();
 

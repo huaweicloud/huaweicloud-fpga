@@ -138,8 +138,8 @@ If the project is installed for the first time or the version is upgraded, in ad
 
 1. Precompile the VCSMX simulation library (if the VCSMX tool exists).
 2. Precompile the QuestaSim simulation library (if the QuestaSim tool exists).
-3. Use the Vivado tool to generate an IP and a DDR simulation model.
-4. Download the .dcp file and compressed package of shell logic from the OBS bucket. This process takes about three to five minutes.
+3. Use the Vivado tool to generate an IP and a DDR simulation model，OpenCL calls SDX tools and DSA and other compressed packages.
+4. Download the .dcp file and compressed package from the OBS bucket.OpenCL downloads DSA files and archives in OBS buckets.This process takes about three to five minutes.
 
 <a id="sec-3-3" name="sec-3-3"></a>
 

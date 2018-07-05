@@ -70,14 +70,14 @@ int main(int argc, char* argv[])
   #define TARGET_DEVICE GET_STRING(SDX_PLATFORM)
     std::cout << "============================" << std::endl;
 #endif
-    
-    if(argc != 2) {
+    int slot_id;
+    if(argc != 3) {
 		std::cout << "Usage: " << argv[0] <<" <xclbin>" << std::endl;
 		return EXIT_FAILURE;
 	}
 
     char* xclbinFilename = argv[1];
-
+    
     size_t vector_size_bytes = sizeof(int) * LENGTH;
     //Source Memories
     std::vector<unsigned int> source_a(LENGTH);
@@ -103,9 +103,28 @@ int main(int argc, char* argv[])
 
     //Getting ACCELERATOR Devices and selecting 1st such device
     std::vector<cl::Device> devices;
+    std::vector<cl::Device> device_user;
     platform.getDevices(CL_DEVICE_TYPE_ACCELERATOR, &devices);
     std::cout<<"========device size : "<<devices.size()<<std::endl;
-    cl::Device device = devices[0];
+    
+    //selected user specified device as target
+    if ((argv[2] == 0) || (strlen(argv[2]) == 0))
+    {    
+        printf("Slot NO. is null!\n");
+        exit(0);
+    }
+    slot_id=atoi(argv[2]);
+    printf("Slot NO. is %d\n",slot_id);
+	
+    if (((int)devices.size() - 1) < slot_id)
+    {
+        printf("Error: Slot NO. is out of range!\n");
+        exit(0);
+    }
+
+    //cl::Device device = devices[0];
+    cl::Device device = devices[slot_id];
+	
     std::cout << "Device: " << device.getInfo<CL_DEVICE_NAME>() << "\n";
 
     //Creating Context and Command Queue for selected Device
@@ -124,10 +143,10 @@ int main(int argc, char* argv[])
     // Creating Program from Binary File
     cl::Program::Binaries bins;
     bins.push_back({buf,nb});
-    devices.resize(1);
-    cl::Program program(context, devices, bins);
+    //devices.resize(1);
+    device_user.push_back(device);
+    cl::Program program(context, device_user, bins);
     
-
     //Creating Kernel and Functor of Kernel
     int err1;
     cl::Kernel kernel(program, "krnl_vadd", &err1);

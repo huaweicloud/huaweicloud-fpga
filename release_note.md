@@ -1,3 +1,46 @@
+
+# FPGA 加速云服务实例特性概述
+
+
+* 每个用户可以依据自己的加速类型灵活选择高性能实例(DPDK)或者通用性(opencl)实例。  
+
+* 每个用户可以申请带1张、2张、4张和8张VU9P的FPGA加速卡。
+
+* 每个FPGA加速卡用户可以使用的接口如下：
+  - `1个pcie gen3 x16 `接口    
+  - `4个ddr4` RDIMM接口
+
+* PCIE支持的特性：
+  * 高性能实例：
+    - `1个 PF `(physical function)
+    - `1个 VF` (Virtual function)
+    - 每个VF支持`8`个队列   
+  * 通用性实例：
+    - `2个PF`(physical function)
+
+* 用户逻辑和静态逻辑之间的接口特性:
+  * 高性能实例：
+    - 静态逻辑到用户逻辑之间的DMA数据通道是`512 bit`位宽的AXI4-Stream接口
+    - 用户逻辑到静态逻辑之间的DMA数据通道是`512 bit`位宽的AXI4-Stream接口
+    - 静态逻辑到用户逻辑之间的DMA BD（Buffer Description）通道是`256 bit`位宽的AXI4-Stream接口
+    - 用户逻辑到静态逻辑之间的DMA BD（Buffer Description）通道是`256 bit`位宽的AXI4-Stream接口
+    - 寄存器访问和bar空间映射使用的是`32 bit`位宽的AXI4-Lite接口
+    - DDR的接口使用的是`512 bit`位宽的AXI4接口
+  * 通用性实例：
+    - 用户逻辑和静态逻辑之间的数据通道是`512 bit`位宽的AXI4-MM接口
+    - 用户逻辑和静态逻辑之间的控制通道是`32 bit`位宽的AXI4-Lite接口
+
+
+* DDR接口划分：
+  - 1个DDR控制器放置在静态逻辑部分
+  - 3个DDR控制器放置在用户逻辑部分
+  - 支持用户最多使用`4个DDR控制器`
+
+# Release 1.1.2
+
+- 支持1:N多卡场景
+- 文档优化
+
 # Release 1.1.1
 
 - 文档优化
@@ -23,33 +66,7 @@
 - 这是Huawei Cloud FPGA设计实例的首个公开版本。有关该版本功能的详细信息，可以在以下的**FPGA 设计实例特性概述**以及**FPGA 设计实例特性详述**章节中找到。
 
 ---
-# FPGA 设计实例特性概述
-
-* 每个FPGA用户可以使用的接口如下：
-  - `1个pcie gen3 x16 `接口    
-  - `4个ddr4` RDIMM接口
-
-* PCIE支持的特性：
-  - `1个 PF `(physical function)
-  - `1个 VF` (Virtual function)
-  - 每个VF支持`8`个队列  
-
-* 用户逻辑和静态逻辑之间支持的接口特性：
-  - 静态逻辑到用户逻辑之间的DMA数据通道是`512 bit`位宽的AXI4-Stream接口
-  - 用户逻辑到静态逻辑之间的DMA数据通道是`512 bit`位宽的AXI4-Stream接口
-  - 静态逻辑到用户逻辑之间的DMA BD（Buffer Description）通道是`256 bit`位宽的AXI4-Stream接口
-  - 用户逻辑到静态逻辑之间的DMA BD（Buffer Description）通道是`256 bit`位宽的AXI4-Stream接口
-  - 寄存器访问和bar空间映射使用的是AXI4-Lite接口
-  - DDR的接口使用的是`512 bit`位宽的AXI4接口
-
-* DDR接口划分：
-  - 1个DDR控制器放置在静态逻辑部分
-  - 3个DDR控制器放置在用户逻辑部分
-  - 支持用户最多使用`4个DDR控制器`
-
-
----
-# FPGA 设计实例特性详述
+# FPGA实例特性详述
 
 # 目录
 
@@ -132,15 +149,8 @@
 
 * 支持`一键式`创建用户目录
 
-* SHELL的md5校验
+* SHELL的SHA256校验
 
-
-## 待优化特性
- * 无
-
-
-## 已知问题
- * 无
 
 ---
 
@@ -192,13 +202,6 @@
 * 支持预编译Xilinx仿真库
   - 支持预编译Xilinx的仿真库（包含unisims、unimacro以及secureip等）以提高仿真编译的速度
 
-
-## 待优化特性
-* C/C++语言支持
-
-## 已知问题
-* 无
-
 ---
 
 
@@ -208,14 +211,7 @@
 
 ## 概述
 
-在`fpga_design/software/`下，有一个app 工程子目录，用户可以通过一些脚本代码(应用程序)编译应用工程，对工程进行特性或功能测试。详细测试方法，用户可以参考该目录下面的readme进行测试。
-
-## 待优化特性
-
-* 无
-
-## 已知问题
-* 无
+在`fp1/software/`下，有一个app 工程子目录，用户可以通过一些脚本代码(应用程序)编译应用工程，对工程进行特性或功能测试。详细测试方法，用户可以参考该目录下面的readme进行测试。
 
 ---
 
@@ -224,8 +220,9 @@
 # 工具环境
 
 * 支持的工具和环境如下：
-  - Linux `centos 7.3`
+  - Linux `centos 7.3`  
   - Xilinx `Vivado 2017.2` 
+  - Xilinx `SDAccel 2017.1` 
 
 ---
 
@@ -233,9 +230,15 @@
 
 # license要求
 * 需要的license如下      
-  - Xilinx Vivado 2017.2   
-  - encryption tool  Version 2  
-
+  - SysGen  
+  - PartialReconfiguration  
+  - Simulationt  
+  - Analyzer  
+  - HLS  
+  - ap_opencl  
+  - XCVU9P  
+  - EncryptedWriter_v2  
+  - xcvu9p_bitgen  
 ---
 <a name="即将支持特性"></a>
 

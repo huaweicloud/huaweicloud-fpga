@@ -37,7 +37,7 @@ function usage
     echo "   -i | -I | -impl           Only run implementation "
     echo "   -p | -P | -pr             Only run pr_verify "
     echo "   -b | -B | -bit            Only run bitgen "
-    echo "   -e | -E | -encrypt        Do not encrypt "
+    echo "   -e | -E | -encrypt        Encrypting RTL Files "
     echo "   -t [num]                  Build after [num] seconds"
     echo " "
     echo "   -s_strategy_help          Synthesis Supported values include: "
@@ -299,7 +299,7 @@ syhth_en=1
 impl_en=1
 pr_en=0
 bit_en=0
-encrypt_en=1
+encrypt_en=0
 delay_time=0
 #######################################################################################################################
 ## Get the script parameter and running function or change the parameter value
@@ -323,7 +323,7 @@ while [ "$1" != "" ]; do
                                         ;;
         -b | -B | -bit )                bit_en=1
                                         ;;
-        -e | -E | -encrypt )            encrypt_en=0
+        -e | -E | -encrypt )            encrypt_en=1
                                         ;;
         -t )                            shift
                                         delay_time=$1

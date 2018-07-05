@@ -132,8 +132,8 @@
 
 1. 预编译VCSMX仿真库（如果存在VCSMX工具）；
 2. 预编译Questasim仿真库（如果存在Questasim工具）；
-3. 调用Vivado工具生成IP以及DDR仿真模型；
-4. 下载OBS桶中的dcp文件和压缩包（shell逻辑部分），该过程大约需要3~5分钟，请耐心等待。
+3. DPDK调用Vivado工具生成IP以及DDR仿真模型，OpenCL调用SDx工具及DSA等压缩包；
+4. DPDK下载OBS桶中的dcp文件和压缩包，OpenCL下载OBS桶中的DSA文件和压缩包，该过程大约需要3~5分钟，请耐心等待。
 
 <a id="sec-3-3" name="sec-3-3"></a>
 

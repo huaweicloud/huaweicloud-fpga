@@ -1,25 +1,24 @@
-## Vector Addition Example
+## 矢量相加实例
 ===============================
 
 [Switch to the English version](./README.md)
 
-This is a simple example of vector addition.
-The purpose of this code is to introduce the user to application development
+这是一个opencl 矢量相加的实例，基于opencl c实现kernel。
 
-## Files in the Example
+## 该实例包含以下文件
 ---------------------
-### Application host code
+### App层host代码
 
 - vadd.cpp
 - vadd.h
 
-### kernel code
+### kernel代码
 
 - krnl_vadd.cl
 
-## Compilation File
-Makefile: Makefile for compiling  application.
-if you want compile the program by yourself, please use
+## 编译脚本文件
+Makefile: 用于编译应用程序的脚本。
+如果你想自己编译程序，请执行以下命令：
 ​	
 	make help
 ​		

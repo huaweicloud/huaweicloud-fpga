@@ -19,7 +19,8 @@ else
 	script=$(pwd)/$0
 fi
 script=$(readlink -f $script)
-CUR_PATH=${script%/*}
+CUR_PATH="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+CUR_PATH_BUILD=${script%/*}
 DPDK_DIR=${CUR_PATH}/../../userspace/dpdk_src
 
 # 1. build dpdk-16.04 and securec
@@ -47,5 +48,6 @@ fi
 # 4. set running env path
 export LD_LIBRARY_PATH=${CUR_PATH}/../../userspace/dpdk_src/dpdk-16.04/x86_64-native-linuxapp-gcc/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=${CUR_PATH}/../../userspace/dpdk_src/securec/lib:$LD_LIBRARY_PATH
-
+export LD_LIBRARY_PATH=/usr/lib64/:$LD_LIBRARY_PATH
+cd ${CUR_PATH_BUILD}/
 echo "==================build dpdk app success============="

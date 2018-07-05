@@ -147,8 +147,10 @@ SDAccel的SDK平台主要实现对硬件的测试，需要在执行环境下编�
   执行run.sh完成硬件的加载与测试，具体步骤如下：
 
   	cd $SW_FPGA_DIR/software/app/sdaccel_app/mmult_hls
-  	sh run.sh mmult $HW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/prj/bin/bin_mmult_hw.xclbin
+  	sh run.sh mmult $SW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/prj/bin/bin_mmult_hw.xclbin 0
 
+  上面run.sh脚本末尾的0表示slot号，该号在用户申请环境时得到。比如用户申请了一个带4张FPGA加速卡的虚拟机环境，则slot号为0、1、2、3。  
+  
 ##### 说明:
 
   run.sh具体使用请执行sh run.sh -h查看。  

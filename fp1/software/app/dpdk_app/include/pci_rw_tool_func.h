@@ -45,8 +45,6 @@
 /* Max bar number */
 #define MAX_BAR_NUM                 (3)
 
-int find_special_device_dbdf(char* str_vendor_id, char* str_device_id, unsigned int idx, char* bdf);
-
 int pci_barx_init_env(int vf_idx, int bar_idx);
 int pci_barx_uninit_env(int bar_idx);
 int pci_barx_write_regs(unsigned int* write_addrs, unsigned int* write_values, unsigned int write_addrs_num, int bar_idx);

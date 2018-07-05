@@ -262,7 +262,8 @@ namespace xclxdma {
         std::string mBinfile;
         ELARecordList mRecordList;
         std::vector<MemoryManager *> mDDRMemoryManager;
-        xclDeviceInfo2 mDeviceInfo;
+        xclDeviceInfo2 mDeviceInfo;        
+        int slot_id;
 
     public:
         static const unsigned TAG;

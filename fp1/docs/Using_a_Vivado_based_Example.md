@@ -9,7 +9,12 @@ Using a Vivado-Based Example
 [Example 3 Operation Instructions](#Example 3 Operation Instructions)
 
 ##### Note 
+
 For users who need to understand the functions of the three examples, see [Example Application Guide](../hardware/vivado_design/examples/README.md).
+
+The following parameter `-s 0` is the device slot number for selecting the running case. 
+The slot number is determined when the user requests the virtual machine. The default value is 0.
+For example, if a user applies for a virtual machine environment with 4 FPGA accelerator cards, the slot numbers are 0, 1, 2, and 3.
 
 Example 1 Operation Instructions
 -------
@@ -89,28 +94,28 @@ You can use the **– h** parameter, such as `./ul_get_version -h`, to obtain he
 
 ##### Example 1 Print the logic version number.
 
-`./ul_get_version`
+`./ul_get_version -s 0`
 
 **Information similar to the following is displayed:**
 
-	[root@CentOS7 bin]# ./ul_get_version 
+	[root@CentOS7 bin]# ./ul_get_version -s 0 
 	version: 0x20171108
 
 ##### Example 2 Test the inverter.
 
 **1. Set the input register of the inverter by entering a string up to 32 bits.**
 
-Run the **./ul_set_data_test -i** *num* command.
+Run the **./ul_set_data_test -s 0 -i** *num* command.
 
-For example, `./ul_set_data_test -i 0xaa55`.  
+For example, `./ul_set_data_test -s 0 -i 0xaa55`.  
 
 **2. Read the inverter register, and check that the value is the bitwise inversion of the string previously entered.**
 
-`./ul_get_data_test`  
+`./ul_get_data_test -s 0`  
 
 **Information similar to the following is displayed:** 
 
-	[root@CentOS7 bin]# ./ul_set_data_test -i 0xaa55  
+	[root@CentOS7 bin]# ./ul_set_data_test -s 0 -i 0xaa55  
 	[root@CentOS7 bin]# ./ul_get_data_test  
 	oppos: 0xffff55aa
 
@@ -118,30 +123,30 @@ For example, `./ul_set_data_test -i 0xaa55`.
 
 **1. Set the adder register.** 
 
-Run the **./ul_set_data_add -i** *augend* -i *addend* command.
+Run the **./ul_set_data_add -s 0 -i** *augend* -i *addend* command.
 
-For example, `./ul_set_data_add -i 0x11111111 -i 0x5a5a5a5a`.  
+For example, `./ul_set_data_add -s 0 -i 0x11111111 -i 0x5a5a5a5a`.  
 
 **2. Read the adder register.**
 
-`./ul_get_data_add_result`  
+`./ul_get_data_add_result -s 0`  
 
 **Information similar to the following is displayed:**  
 
-	[root@CentOS7 bin]# ./ul_set_data_add -i 0x11111111 -i 0x5a5a5a5a
+	[root@CentOS7 bin]# ./ul_set_data_add -s 0 -i 0x11111111 -i 0x5a5a5a5a
 	Set [0x11111111]:[0x5a5a5a5a] to REG_PF_DEMO1_ADDER_CFG_WDATA0:REG_PF_DEMO1_ADDER_CFG_WDATA1 
-	[root@CentOS7 bin]# ./ul_get_data_add_result
+	[root@CentOS7 bin]# ./ul_get_data_add_result -s 0
 	add result: 0x6b6b6b6b
 
 ##### Example 4 Test the DFx.
 
 Run the following command to print the DFx status:
 
-`./dump_dfx_regs`  
+`./dump_dfx_regs -s 0`  
 
 **Information similar to the following is displayed:**
 
-	[root@CentOS7 bin]# ./dump_dfx_regs 
+	[root@CentOS7 bin]# ./dump_dfx_regs -s 0 
 	 -------- Dump logic regs begin -------- 
 		Reg addr      Value         Description
 		[0x00018200]: 0x00000000  - txqm: reg_bdqm_err
@@ -242,14 +247,14 @@ Users can use the **– h** parameter to obtain help information in the followin
 
 ##### Step 1 Run the packet_process process.
 
-`./packet_process -d 8192 -q 0 -l 512 -n 102400099`  
+`./packet_process -s 0 -d 8192 -q 0 -l 512 -n 102400099`  
 
 **Command Parameters**  
 
 | Parameter | Description                              |
 | --------- | ---------------------------------------- |
 | **-d**    | Indicates the queue depth. The value can be 1024, 2048, 4096, and 8192. The default value is 8192. |
-| **-p**    | Indicates the VF device that is used. The default value is 0. |
+| **-s**    | slot ID. (The scope is [0, 7]) The default value is 0. |
 | **-q**    | Indicates the queues to be sent. The value range is [0,7]. The default value is 0. You can select multiple queues and use commas to separate them, for example, -q 0,1,5. |
 | **-l**    | Indicates the length of a single packet in the packets to be sent. The value range is [64,1048576]. The default value is 64. |
 | **-n**    | Indicates the number of packets to be sent. The value range is [1,4294966271]. The default value is 128. |
@@ -258,7 +263,7 @@ Users can use the **– h** parameter to obtain help information in the followin
 
 **Information similar to the following is displayed:**  
 
-	[root@CentOS7 bin]# ./packet_process -d 8192 -q 0 -l 512 -n 102400099
+	[root@CentOS7 bin]# ./packet_process -s 0 -d 8192 -q 0 -l 512 -n 102400099
 	available cpu number: 24, cpu mask parameter: -cffffff
 	...
 	----------------TEST TIME 0 for port 0----------------
@@ -295,19 +300,19 @@ Users can use the **– h** parameter to obtain help information in the followin
 
 ##### Step 1 Set the DDR value.
 
-Run the **./ul_write_ddr_data -n 0 -a** *addr* **-d** *data* command.
+Run the **./ul_write_ddr_data -s 0 -n 0 -a** *addr* **-d** *data* command.
 
-For example, `./ul_write_ddr_data -n 0 -a 0x1000 -d 0x12345678`.  
+For example, `./ul_write_ddr_data -s 0 -n 0 -a 0x1000 -d 0x12345678`.  
 
 ##### Step 2 Set the DDR value.
-Run the **./ul_read_ddr_data -n 0 -a** *addr* command.
+Run the **./ul_read_ddr_data -s 0 -n 0 -a** *addr* command.
 
-For example, `./ul_read_ddr_data -n 0 -a 0x1000`.  
+For example, `./ul_read_ddr_data -s 0 -n 0 -a 0x1000`.  
 
 **Information similar to the following is displayed:**
 
-	[root@CentOS7 bin]# ./ul_write_ddr_data -n 0 -a 0x1000 -d 0x12345678
-	[root@CentOS7 bin]# ./ul_read_ddr_data -n 0 -a 0x1000
+	[root@CentOS7 bin]# ./ul_write_ddr_data -s 0 -n 0 -a 0x1000 -d 0x12345678
+	[root@CentOS7 bin]# ./ul_read_ddr_data -s 0 -n 0 -a 0x1000
 	Value: 0x12345678
 
 
@@ -397,14 +402,14 @@ Users can use the **– h** parameter to obtain help information in the followin
 
 ##### Step 1 Run the packet_process process.
 
-`./packet_process -d 8192 -q 0 -l 512 -n 102400099 -f`  
+`./packet_process -s 0 -d 8192 -q 0 -l 512 -n 102400099 -f`  
 
 **Command Parameters**  
 
 | Parameter | Description                              |
 | --------- | ---------------------------------------- |
 | **-d**    | Indicates the queue depth. The value can be 1024, 2048, 4096, and 8192. The default value is 8192. |
-| **-p**    | Indicates the VF device that is used. The default value is 0. |
+| **-s**    | slot ID. (The scope is [0, 7]) The default value is 0.  |
 | **-q**    | Indicates the queues to be sent. The value range is [0,7]. The default value is 0. You can select multiple queues and use commas to separate them, for example, -q 0,1,5. |
 | **-l**    | Indicates the length of a single packet in the packets to be sent. The value range is [64,1048576]. The default value is 64. |
 | **-n**    | Indicates the number of packets to be sent. The value range is [1,4294966271]. The default value is 128. |
@@ -414,7 +419,7 @@ Users can use the **– h** parameter to obtain help information in the followin
 
 **Information similar to the following is displayed:** 
 
-	[root@CentOS7 bin]# ./packet_process -d 8192 -q 0 -l 512 -n 102400099 -f
+	[root@CentOS7 bin]# ./packet_process -s 0 -d 8192 -q 0 -l 512 -n 102400099 -f
 	available cpu number: 24, cpu mask parameter: -cffffff
 	...
 	----------------TEST TIME 0 for port 0----------------

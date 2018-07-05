@@ -36,7 +36,9 @@
 #include <assert.h>
 #include "regs_func.h"
 #include "pci_rw_tool_func.h"
-#define	STR_PARSE_ARG	"n:a:d:p:h"
+#include "ul_get_port_status.h"
+
+#define	STR_PARSE_ARG	"n:a:d:s:h"
 
 static int parse_arg(int argc, char* argv[]);
 static void help();
@@ -44,6 +46,7 @@ static unsigned int g_ddr_num = 0;
 static unsigned int g_ddr_addr = 0;
 static unsigned int g_value = 0;
 static unsigned int g_port_id = 0;
+static unsigned int g_slot_id = 0;
 
 int main(int argc, char* argv[]) {
 	int ret = 0;
@@ -51,16 +54,28 @@ int main(int argc, char* argv[]) {
 	if (0 != parse_arg(argc, argv)) {
 		return -EINVAL;
 	}
-    
-	ret = pci_bar2_init_env(g_port_id);
-	if (ret != 0) {
-		printf("%s: pci_bar2_init_env failed(%d)\r\n", __FUNCTION__, ret);
+
+    ret = pci_port_status_init_env();
+    if(ret != 0) {
+        printf("%s: pci_port_status_init_env failed(%d)\r\n", __FUNCTION__, ret);
 		return ret;
-	}
-	
-	(void)set_ddr_data(g_ddr_num, g_ddr_addr, g_value);
-	
-	(void)pci_bar2_uninit_env();
+    }
+
+    ret = pci_slot_id_to_port_id(g_slot_id, &g_port_id);
+    if(ret != 0) {
+        printf("%s: convert_slot_to_port failed(%d)\r\n", __FUNCTION__, ret);
+		return ret;
+    }
+    
+    ret = pci_bar2_init_env(g_port_id);
+    if (ret != 0) {
+    	printf("%s: pci_bar2_init_env failed(%d)\r\n", __FUNCTION__, ret);
+    	return ret;
+    }
+
+    (void)set_ddr_data(g_ddr_num, g_ddr_addr, g_value);
+
+    (void)pci_bar2_uninit_env();
 
 	return ret;
 }
@@ -92,10 +107,10 @@ static int parse_arg(int argc, char* argv[]) {
                 break;
             }
 
-            case 'p': {
+            case 's': {
                 assert(NULL != optarg);
                 arg_val = optarg;
-                g_port_id = strtoul(arg_val, NULL, 0);
+                g_slot_id = strtoul(arg_val, NULL, 0);
                 break;
             }
             
@@ -128,9 +143,9 @@ parse_error:
 static void help() {
     printf(
         "-----------------------------------------------------------------------------------\r\n"
-        "argument format: [-n ddr_num] [-a ddr_addr] [-d ddr_wdata] [-p port_index]\r\n"
+        "argument format: [-n ddr_num] [-a ddr_addr] [-d ddr_wdata] [-s slot_id]\r\n"
         "\tddr_num: [0, 3]; ddr_addr: [0, 0x8000000), ddr_wdata: [0, 0xFFFFFFFF]\r\n"
-        "\tport_indx: the VF's index, 0 as default\r\n"
+        "\tslot_id: the VF's slot id, 0 as default\r\n"
         "\t-h: print help\r\n"
         "-----------------------------------------------------------------------------------\r\n"
         );

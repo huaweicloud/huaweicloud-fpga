@@ -1,24 +1,22 @@
-# Vector Addition Example with kernel RTL
+# 这是一个opencl 矢量相加的实例，基于rtl实现kernel
 ============================================
 
 [Switch to the English version](./README.md)
 
-This is a simple example of vector addition. The kernel is used RTL
-The prupose of this
- code is to introduce the user to application development
+这是一个opencl 矢量相加的实例，基于rtl实现kernel。
 
-## Files in the Example
+## 该实例包含以下文件
 ----------------------
-### Application host code
+### App层host代码
 
 - host.cpp
 - xcl.cpp 
 
-### kernel code
+### kernel代码
 - hdl/*
 
-### Compilation File
-Makefile: Makefile for compiling  application.
-if you want cpmpile the program by yourself, please use
+### 编译脚本
+Makefile: 用于编译应用程序的脚本。
+如果你想自己编译程序，请执行以下命令：
 
 	make help

@@ -732,6 +732,143 @@ UINT32 FPGA_PciEnableSlotsBar( UINT32 ulSlotIndex, UINT32 ulBarNum, UINT32 *pulB
     return SDKRTN_PCI_SUCCESS;
 }
 
+/*******************************************************************************
+Function     : FPGA_PciJointDBDF
+Description  : Joint the DBDF
+Input        : UINT32 ulSlot
+Output       : INT8 *pcDbdf
+Return       : 0:sucess other:fail
+*******************************************************************************/
+UINT32 FPGA_PciJointDBDF( INT8 *pcDbdf, FpgaResourceMap *pstMap )
+{
+    INT32 lLen = -1;
+    INT32 lRet = -1;
+    INT8 acDBDF[DBDF_LEN]= {0};
+    
+    if ( NULL == pcDbdf )
+    {
+        LOG_ERROR( "FPGA_PciGetDBDF pcDirName is NULL" );
+        return SDKRTN_PCI_INPUT_ERROR;
+    }
+
+    if ( NULL == pstMap )
+    {
+        LOG_ERROR( "FPGA_PciGetDBDF pstMap is NULL" );
+        return SDKRTN_PCI_INPUT_ERROR;
+    }
+
+    /* Read data of the formatted string */
+    lLen = snprintf_s( acDBDF, sizeof(acDBDF), sizeof(acDBDF)-1, PCI_DEV_FMT, pstMap->usDomain, pstMap->ucBus, pstMap->ucDev, pstMap->ucFunc );
+    if ( ( 0 == lLen ) || ( ( size_t ) lLen >= sizeof( acDBDF ) ) )
+    {
+        LOG_ERROR( "FPGA_PciGetDBDF snprintf_s failed %d", lLen );
+        return SDKRTN_PCI_SSCANF_ERROR;
+    }
+
+    lRet = strncpy_s(pcDbdf, DBDF_LEN, acDBDF, DIR_NAME_MAX);
+    if ( EOK != lRet )
+    {
+         LOG_ERROR( "FPGA_PciGetDBDF strncpy failed %d", lLen );
+         return SDKRTN_PCI_STRNCPY_ERROR;
+    }
+    pcDbdf[DIR_NAME_MAX] = '\0';
+
+    return SDKRTN_PCI_SUCCESS;
+}
+
+
+/*******************************************************************************
+Function     : FPGA_PciGetBdfBySlot
+Description  : Get dbdf by slot
+Input        : UINT32 ulSlot
+Output       : INT8 *pcDbdf
+Return       : 0:sucess other:fail
+*******************************************************************************/
+UINT32 FPGA_PciGetBdfBySlot( UINT32 ulSlot, INT8 *pcDbdf )
+{
+    UINT32 ulRet = SDKRTN_PCI_ERROR_BASE;
+    FpgaResourceMap astrFpgaArray[FPGA_SLOT_MAX] = {{ 0 }};
+    
+    if ( FPGA_SLOT_MAX <= ulSlot )
+    {
+        LOG_ERROR( "Input slot[%d] is overrange", ulSlot );
+        return SDKRTN_PCI_INPUT_ERROR;
+    }
+
+    if ( NULL == pcDbdf )
+    {
+        LOG_ERROR( "Input bdf is null" );
+        return SDKRTN_PCI_INPUT_ERROR;
+    }
+
+    /* Rescan all fpga devices */
+    ulRet = FPGA_PciScanAllSlots( astrFpgaArray, FPGA_SLOT_MAX - 1 );
+    if ( SDKRTN_PCI_SUCCESS != ulRet )
+    {
+        LOG_ERROR( "Scan all slot failed, err code %x", ulRet);
+        return ulRet;
+    }
+
+    /* Get dbdf */
+    ulRet = FPGA_PciJointDBDF( pcDbdf, &astrFpgaArray[ulSlot] );
+    if ( SDKRTN_PCI_SUCCESS != ulRet )
+    {
+        LOG_ERROR( "Get BDF failed, err code %x", ulRet);
+        return ulRet;
+    }
+
+    return SDKRTN_PCI_SUCCESS;    
+}
+
+/*******************************************************************************
+Function     : FPGA_PciGetSlotByBdf
+Description  : Get Slot by Bdf
+Input        : INT8 *pcDbdf
+Output       : UINT32 *pulSlot
+Return       : 0:sucess other:fail
+*******************************************************************************/
+UINT32 FPGA_PciGetSlotByBdf( INT8 *pcDbdf, UINT32 *pulSlot )
+{
+    UINT32 ulRet = SDKRTN_PCI_ERROR_BASE;
+    UINT32 i = 0;
+    INT8 acTempBDF[DBDF_LEN]= {0};
+    
+    FpgaResourceMap astrFpgaArray[FPGA_SLOT_MAX] = {{ 0 }};
+
+    if ( ( NULL == pcDbdf ) ||  ( NULL == pulSlot ) )
+    {
+        LOG_ERROR( "Input pointer is null" );
+        return SDKRTN_PCI_INPUT_ERROR;
+    }
+
+    /* Rescan all fpga devices */
+    ulRet = FPGA_PciScanAllSlots( astrFpgaArray, FPGA_SLOT_MAX - 1 );
+    if ( SDKRTN_PCI_SUCCESS != ulRet )
+    {
+        LOG_ERROR( "Scan all slot failed, err code %x", ulRet);
+        return ulRet;
+    }
+
+    /* Get the slot */
+    for ( i = 0; i < FPGA_SLOT_MAX; i++ )
+    {
+        ulRet = FPGA_PciJointDBDF( acTempBDF, &astrFpgaArray[i] );
+        if ( SDKRTN_PCI_SUCCESS != ulRet )
+        {
+            LOG_ERROR( "Get BDF failed, err code %x", ulRet);
+            continue;
+        }
+        
+        if ( 0 == strncmp( pcDbdf, acTempBDF, DIR_NAME_MAX ) )
+        {
+            *pulSlot = i;
+            return SDKRTN_PCI_SUCCESS;
+        }
+    }
+
+    LOG_ERROR( "Did not found the slot of BDF:%s", pcDbdf );   
+    return SDKRTN_PCI_GET_SLOT_ERROR;
+}
 
 #ifdef    __cplusplus
 }

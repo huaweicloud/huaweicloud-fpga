@@ -207,10 +207,10 @@ namespace xclxdma {
              tprocessout = FPGAMGMT_TMOUT_COUNT;
              std::cout<<"start inquire info \n"<<std::endl;
              std::memset(&prloadinfo,0,sizeof(tagFPGA_IMG_INFO));
-             
+             std::cout<<"Loading device slot is : "<<slot_id<<std::endl;
 		do
 		{
-			nRet = fpgamgmt_obj.m_FPGA_MgmtInquireFpgaImageInfo( 0, &prloadinfo);
+			nRet = fpgamgmt_obj.m_FPGA_MgmtInquireFpgaImageInfo( slot_id, &prloadinfo);
                    
 			if (nRet)
 			{
@@ -246,7 +246,7 @@ namespace xclxdma {
             return -1;
         }
         
-		nRet = fpgamgmt_obj.m_FPGA_MgmtLoadHfiImage(0, xclbin_aeiid );
+		nRet = fpgamgmt_obj.m_FPGA_MgmtLoadHfiImage(slot_id, xclbin_aeiid );
 		if (nRet)
 		{
 			std::cout<<"FPGA_MgmtLoadHfiImage : error, "<<__LINE__<<" : Loading pr image failed!"<<std::endl;
@@ -257,7 +257,7 @@ namespace xclxdma {
              tprocessout = FPGAMGMT_TMOUT_COUNT;
 		do
 		{
-			nRet = fpgamgmt_obj.m_FPGA_MgmtInquireFpgaImageInfo( 0, &prloadinfo);
+			nRet = fpgamgmt_obj.m_FPGA_MgmtInquireFpgaImageInfo( slot_id, &prloadinfo);
 			if (nRet)
 			{
 				std::cout<<"Ops_status_processing : error, "<<__LINE__<<" : Inquire Fpga image info failed!"<<std::endl;
@@ -287,7 +287,7 @@ namespace xclxdma {
 		{
 			std::cout<<"Loading pr image completed!"<<std::endl;
 
-                   if (fpgamgmt_obj.m_FPGA_MgmtOpsMutexRlock( 0, &prlock))
+                   if (fpgamgmt_obj.m_FPGA_MgmtOpsMutexRlock( slot_id, &prlock))
                    {
                            std::cout << "ERROR: get pr_lock statue failed!\n";
                            std::cout << "pr_lock value is :"<<prlock<<std::endl; 
@@ -732,6 +732,8 @@ namespace xclxdma {
                                                       mOclRegionProfilingNumberSlots(XPAR_AXI_PERF_MON_2_NUMBER_SLOTS),
                                                       mMgtMap(0)
     {
+        slot_id = index;
+        //
         mDataMover = new DataMover(mBoardNumber, 2 /* 1 channel each dir */);
         char file_name_buf[128];
 		std::memset(file_name_buf, 0, 128);

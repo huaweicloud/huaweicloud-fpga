@@ -193,7 +193,7 @@ Example3中包含了三个测试用例`sv_demo_001`，`sv_demo_002`，`sv_demo_0
 
 #### 测试用例sv_demo_002说明
 
-测试用例`sv_demo_002`除了完成版本寄存器读取与测试寄存器的检测外还对UL进行了**DMA测试**。
+测试用例`sv_demo_002`除了完成版本寄存器读取与测试寄存器的检测外还对UL进行了**DMA测试**，它需要构造Hardacc，Hardacc可详见[用户开发指南](../../../../..//docs/User_Development_Guide_for_an_FACS_cn.pdf),仿真平台实现对应Hardacc功能是通过下述章节[修改仿真配置](./修改仿真配置)中所示的添加ACC_LEN_CFG宏实现，具体实现内容可参考cpu_mode_cb.sv文件。
 
     详细过程如下：
     sv_demo_002会通过仿真平台构造报文与BD并通过与UL相连的AXI4-Stream接口发送给UL。

@@ -116,8 +116,10 @@ typedef struct _stBusinessArg_ {
 
 typedef struct _stBusinessArgs_ {
     uint32_t    port_used;
+    uint32_t    slot_used;
     uint32_t    queue_used;
     uint32_t    port_ids[VFS_MAX_NUM_EVERY_PF];
+    uint32_t    slot_ids[VFS_MAX_NUM_EVERY_PF];
     uint32_t    queue_idxs[QUEUES_MAX_NUM_EVERY_IP];
     uint32_t    packet_len;
     uint32_t    packet_num;

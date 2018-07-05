@@ -36,13 +36,15 @@
 #include <assert.h>
 #include "regs_func.h"
 #include "pci_rw_tool_func.h"
+#include "ul_get_port_status.h"
 
-#define	STR_PARSE_ARG	"p:h"
+#define	STR_PARSE_ARG	"s:h"
 
 static int parse_arg(int argc, char* argv[]);
 static void help();
 
 static unsigned int g_port_id = 0;
+static unsigned int g_slot_id = 0;
 
 int main(int argc, char* argv[]) {
 	int ret = 0;
@@ -50,16 +52,28 @@ int main(int argc, char* argv[]) {
 	if (0 != parse_arg(argc, argv)) {
 		return -EINVAL;
 	}
-    
-	ret = pci_bar2_init_env(g_port_id);
-	if (ret != 0) {
-		printf("%s: pci_bar2_init_env failed(%d)\r\n", __FUNCTION__, ret);
+
+    ret = pci_port_status_init_env();
+    if(ret != 0) {
+        printf("%s: pci_port_status_init_env failed(%d)\r\n", __FUNCTION__, ret);
 		return ret;
-	}
-	
-	(void)print_oppos_data();
-	
-	(void)pci_bar2_uninit_env();
+    }
+
+    ret = pci_slot_id_to_port_id(g_slot_id, &g_port_id);
+    if(ret != 0) {
+        printf("%s: convert_slot_to_port failed(%d)\r\n", __FUNCTION__, ret);
+    	return ret;
+    }
+
+    ret = pci_bar2_init_env(g_port_id);
+    if (ret != 0) {
+    	printf("%s: pci_bar2_init_env failed(%d)\r\n", __FUNCTION__, ret);
+    	return ret;
+    }
+
+    (void)print_oppos_data();
+
+    (void)pci_bar2_uninit_env();
 
 	return 0;
 }
@@ -70,10 +84,10 @@ static int parse_arg(int argc, char* argv[]) {
         
 	while ((ch=getopt(argc, argv, STR_PARSE_ARG)) != -1) {
         switch (ch) {
-            case 'p': {
+            case 's': {
                 assert(NULL != optarg);
                 arg_val = optarg;
-                g_port_id = strtoul(arg_val, NULL, 0);
+                g_slot_id = strtoul(arg_val, NULL, 0);
                 break;
             }
             
@@ -94,8 +108,8 @@ parse_error:
 static void help() {
     printf(
         "-----------------------------------------------------------------------------------\r\n"
-        "argument format: [-p port_index]\r\n"
-        "\tport_index: the VF's index, 0 as default\r\n"
+        "argument format: [-s slot_id]\r\n"
+        "\tslot_id: the VF's slot id, 0 as default\r\n"
         "\t-h: print help\r\n"
         "-----------------------------------------------------------------------------------\r\n"
         );

@@ -1,32 +1,32 @@
-Vector Addition Example 
+Kernel基于rtl语言实现的矢量相加实例
 ============================================
 
 [Switch to the English version](./README.md)
 
-This is a simple example of vector addition. The kernel is used RTL
-The prupose of this
- code is to introduce the user to application development
+这是一个基于opencl的矢量相加实例，其kernel部分基于rtl语言实现. 
 
-Files in the Example
+示例文件
 ----------------------
-Application host code
+应用层host代码
 
 - host.cpp
 - xcl.cpp 
 
-Compilation File
+编译脚本
 --------------------------------
-* Makefile : Makefile for compiling application
+* Makefile : 编译应用层（host代码）的编译脚本
 
-Note
+** 说明 **
 --------------------------------
-* SDx must be already installed and then xcpp tool can be available 
+* 必须已经安装SDx，然后才能使用xcpp工具 
 
-Compile host and Run the **run.sh** command to test hardware. The detailed procedure is as follows:
+先编译host代码然后执行 **run.sh** 命令来测试该用例，具体的操作命令如下：
 --------------------------------
 
 ```
 make
-sh run.sh vadd ./vadd.hw.xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.xclbin
+sh run.sh vadd ../../../../hardware/sdaccel_design/examples/vadd_rtl/prj/bin/vadd.hw.xilinx_huawei-vu9p-fp1_4ddr-xpr_4_1.xclbin 0
 
 ```
+
+上面run.sh脚本末尾的0表示slot号，该号在用户申请环境时得到。比如用户申请了一个带4张FPGA加速卡的虚拟机环境，则slot号为0、1、2、3。

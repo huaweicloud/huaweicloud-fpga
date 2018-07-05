@@ -23,7 +23,7 @@ pci_device_id="0xD512"
 pci_subsystem_id="-"
 pci_subsystem_vendor_id="-"
 shell_type="0x121"
-shell_version="0x0005"
+shell_version="0x0006"
 hdk_version="SDx 2017.1"
 date=`date +%Y/%m/%d_%H:%M:%S`
 _eop

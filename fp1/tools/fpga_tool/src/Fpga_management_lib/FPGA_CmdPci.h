@@ -44,7 +44,7 @@
 
 
 #define DIR_NAME_MAX                          12                        /* lenth of directory */
-
+#define DBDF_LEN                              16
 
 /************************* Define error code ************************************/
 #define PCI_MODULE_ERROR                        5
@@ -67,7 +67,9 @@
 #define SDKRTN_PCI_VENDOR_ID_ERROR              ( SDKRTN_PCI_ERROR_BASE + 0xF )
 #define SDKRTN_PCI_READ_ERROR                   ( SDKRTN_PCI_ERROR_BASE + 0x10 )
 #define SDKRTN_PCI_INVALID_VALUE_ERROR          ( SDKRTN_PCI_ERROR_BASE + 0x11 )
-#define SDKRTN_PCI_MEMSET_ERROR          ( SDKRTN_PCI_ERROR_BASE + 0x12 )
+#define SDKRTN_PCI_MEMSET_ERROR                 ( SDKRTN_PCI_ERROR_BASE + 0x12 )
+#define SDKRTN_PCI_STRNCPY_ERROR                ( SDKRTN_PCI_ERROR_BASE + 0x13 )
+#define SDKRTN_PCI_GET_SLOT_ERROR               ( SDKRTN_PCI_ERROR_BASE + 0x14 )
 
 typedef struct tagFPGA_PCI_BAR_INFO
 {

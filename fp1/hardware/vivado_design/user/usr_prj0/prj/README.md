@@ -134,7 +134,7 @@ The `build.sh` script is used to build a project. The script supports both one-c
 | [-i] or [-I] or [-impl]    | Run the implementation policy in a single step. |
 | [-p] or [-P] or [-pr]      | Run the PR verification in a single step. |
 | [-b] or [-B] or [-bit]     | Run the target file generation in a single step. |
-| [-e] or [-E] or [-encrypt] | No encryption for the synthesis policy.  |
+| [-e] or [-E] or [-encrypt] | Encryption for the synthesis policy.  |
 | [-h] or [-H] or [-help]    | Help for **build.sh**                    |
 | [-s_strategy_help]         | Help for synthesis policy                |
 | [-i_strategy_help]         | Help for implementation policy           |

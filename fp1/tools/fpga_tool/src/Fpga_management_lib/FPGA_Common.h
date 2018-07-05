@@ -179,5 +179,7 @@ UINT32 FPGA_PciScanAllSlots( FpgaResourceMap straFpgaArray[], UINT32 ulSize );
 UINT32 FPGA_MgmtOpsMutexRlock( UINT32 ulSlotId, INT32 * plFd );
 UINT32 FPGA_MgmtOpsMutexWlock( UINT32 ulSlotId, INT32 * plFd );
 UINT32 FPGA_MgmtOpsMutexUnlock( INT32 lFd );
+UINT32 FPGA_PciGetBdfBySlot( UINT32 ulSlot, INT8 *pcDbdf );
+UINT32 FPGA_PciGetSlotByBdf( INT8 *pcDbdf, UINT32 *pulSlot );
 
 #endif

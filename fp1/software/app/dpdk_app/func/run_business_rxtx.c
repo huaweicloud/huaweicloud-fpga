@@ -329,7 +329,7 @@ int run_business_thread(pstBusinessThreadArgs p_business_thread_args) {
 
             CPU_ZERO(&mask);
             (void)CPU_SET(cpu_rx, &mask);   //lint !e160
-            if (sched_setaffinity(0, sizeof(mask), &mask) <0) {
+            if (pthread_setaffinity_np(rx_task_id, sizeof(mask), &mask) <0) {
                 printf("sched_setaffinity RX thread failed");
                 goto error;
             }
@@ -356,7 +356,7 @@ int run_business_thread(pstBusinessThreadArgs p_business_thread_args) {
 
             CPU_ZERO(&mask);
             (void)CPU_SET(cpu_tx, &mask);       //lint !e160
-            if (sched_setaffinity(0, sizeof(mask), &mask) <0) {
+            if (pthread_setaffinity_np(tx_task_id, sizeof(mask), &mask) <0) {
                 printf("sched_setaffinity TX thread failed");
                 goto error;
             }

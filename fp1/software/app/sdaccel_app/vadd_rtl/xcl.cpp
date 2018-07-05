@@ -92,14 +92,14 @@ char* xcl_create_and_set(const char* str) {
 	return ret;
 }
 
-xcl_world xcl_world_single_vendor(const char* vendor_name) {
+xcl_world xcl_world_single_vendor(const char* vendor_name, unsigned int slot_id) {
 	int err;
 	xcl_world world;
 	cl_uint num_platforms;
-
+      cl_device_id devices[16];
 	char *xcl_mode = getenv("XCL_EMULATION_MODE");
 	char *xcl_target = getenv("XCL_TARGET");
-
+      cl_uint device_count = 0;
 	/* Fall back mode if XCL_EMULATION_MODE is not set is "hw" */
 	if(xcl_mode == NULL) {
 		world.mode = xcl_create_and_set("hw");
@@ -187,7 +187,15 @@ xcl_world xcl_world_single_vendor(const char* vendor_name) {
 	}
 
 	err = clGetDeviceIDs(world.platform_id, CL_DEVICE_TYPE_ALL,
-	                     1, &world.device_id, NULL);
+	                     16, devices, &device_count);
+
+      if (((unsigned int)device_count - 1) < slot_id)
+      {
+          printf("Error: Slot NO. is out of range!\n");
+          exit(0);
+      }
+      world.device_id = devices[slot_id];
+      
 	if (err != CL_SUCCESS) {
 		printf("Error: could not get device ids\n");
 		exit(EXIT_FAILURE);
@@ -234,8 +242,8 @@ xcl_world xcl_world_single_vendor(const char* vendor_name) {
 	return world;
 }
 
-xcl_world xcl_world_single() {
-	return xcl_world_single_vendor("Xilinx");
+xcl_world xcl_world_single(unsigned int slot_id) {
+	return xcl_world_single_vendor("Xilinx",slot_id);
 }
 
 void xcl_release_world(xcl_world world) {

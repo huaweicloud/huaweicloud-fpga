@@ -8,7 +8,13 @@
 
 [使用example3](#c)
 
-**说明：**  需要了解这三个example功能等信息的用户可查阅[示例应用指南](../hardware/vivado_design/examples/README_CN.md)。
+**说明：**  
+
+需要了解这三个example功能等信息的用户可查阅[示例应用指南](../hardware/vivado_design/examples/README_CN.md)。
+
+
+下文中的参数`-s 0`为选择运行用例的设备槽位号，槽位号由用户申请虚拟机时确定，默认为0
+比如用户申请了一个带4张FPGA加速卡的虚拟机环境，则slot号为0、1、2、3。
 
 <a name="a"></a>
 使用example1
@@ -86,28 +92,28 @@ Example1示例主要实现用户逻辑的版本号读取、数据取反、加法
 
 ##### 例子1 打印逻辑的版本号。
 
-`./ul_get_version`
+`./ul_get_version -s 0`
 
 **输出打印结果示例**  （版本号以实际查询出的结果为准）。
 
-	[root@CentOS7 bin]# ./ul_get_version 
+	[root@CentOS7 bin]# ./ul_get_version -s 0
 	version: 0x20171108
 
 ##### 例子2 测试取反寄存器
 
 **1. 设置取反器输入寄存器，输入一个不超过32bit的数据**
 
-运行命令为./ul_set_data_test -i *num*
+运行命令为./ul_set_data_test -s 0 -i *num*
 
 例如`./ul_set_data_test -i 0xaa55`  
 
 **2. 读取取反器结果寄存器，读取的数值为上一步中输入数值的取反值。**
 
-`./ul_get_data_test`  
+`./ul_get_data_test -s`  
 
 **输出打印结果示例** 
 
-	[root@CentOS7 bin]# ./ul_set_data_test -i 0xaa55  
+	[root@CentOS7 bin]# ./ul_set_data_test -s 0 -i 0xaa55  
 	[root@CentOS7 bin]# ./ul_get_data_test  
 	oppos: 0xffff55aa
 
@@ -115,30 +121,30 @@ Example1示例主要实现用户逻辑的版本号读取、数据取反、加法
 
 **1. 设置加法器加数寄存器** 
 
-运行命令为./ul_set_data_add -i *augend* -i *addend*
+运行命令为./ul_set_data_add -s 0 -i *augend* -i *addend*
 
-例如`./ul_set_data_add -i 0x11111111 -i 0x5a5a5a5a`  
+例如`./ul_set_data_add -s 0 -i 0x11111111 -i 0x5a5a5a5a`  
 
 **2. 读取加法器结果寄存器。**
 
-`./ul_get_data_add_result`  
+`./ul_get_data_add_result -s 0`  
 
 **输出打印结果示例**  
 
-	[root@CentOS7 bin]# ./ul_set_data_add -i 0x11111111 -i 0x5a5a5a5a
+	[root@CentOS7 bin]# ./ul_set_data_add -s 0 -i 0x11111111 -i 0x5a5a5a5a
 	Set [0x11111111]:[0x5a5a5a5a] to REG_PF_DEMO1_ADDER_CFG_WDATA0:REG_PF_DEMO1_ADDER_CFG_WDATA1 
-	[root@CentOS7 bin]# ./ul_get_data_add_result
+	[root@CentOS7 bin]# ./ul_get_data_add_result -s 0
 	add result: 0x6b6b6b6b
 
 ##### 例子4 测试打印DFX寄存器。
 
 运行打印DFX寄存器命令。
 
-`./dump_dfx_regs`  
+`./dump_dfx_regs -s 0`  
 
 **输出打印结果示例**  （实际结果值以逻辑当前寄存器状态为准）
 
-	[root@CentOS7 bin]# ./dump_dfx_regs 
+	[root@CentOS7 bin]# ./dump_dfx_regs -s 0 
 	 -------- Dump logic regs begin -------- 
 		Reg addr      Value         Description
 		[0x00018200]: 0x00000000  - txqm: reg_bdqm_err
@@ -238,14 +244,14 @@ Example2主要实现用户逻辑DMA环回通道和DDR读取功能。
 
 ##### 步骤1 执行packet_process进程。
 
-`./packet_process -d 8192 -q 0 -l 512 -n 102400099`  
+`./packet_process -s 0 -d 8192 -q 0 -l 512 -n 102400099`  
 
 **本例可用命令参数说明**  
 
 | 参数     | 说明                                       |
 | ------ | ---------------------------------------- |
 | **-d** | 设置队列深度，有效值是1024、2048、4096、8192，默认值是8192。 |
-| **-p** | 指定VF设备号，默认为0。                            |
+| **-s** | 端口号，数值范围由用户申请的FPGA卡个数确定，具体见上面关于-s参数的说明，默认为 0                            |
 | **-q** | 指定队列发送：有效值为[0，7]，默认为0，可以通过逗号进行多选（如 -q 0,1,5）。 |
 | **-l** | 表示发送包的单包数据长度：有效值为[64，1048576]，默认值为64。    |
 | **-n** | 表示发送包的个数：有效值为[1，4294966271]，默认为128。      |
@@ -254,7 +260,7 @@ Example2主要实现用户逻辑DMA环回通道和DDR读取功能。
 
 **输出打印结果示例**  
 
-	[root@CentOS7 bin]# ./packet_process -d 8192 -q 0 -l 512 -n 102400099
+	[root@CentOS7 bin]# ./packet_process -s 0 -d 8192 -q 0 -l 512 -n 102400099
 	available cpu number: 24, cpu mask parameter: -cffffff
 	...
 	----------------TEST TIME 0 for port 0----------------
@@ -289,19 +295,19 @@ Example2主要实现用户逻辑DMA环回通道和DDR读取功能。
 
 ##### 步骤1 设置DDR值。
 
-运行命令为./ul_write_ddr_data -n 0 -a *addr* -d *data*
+运行命令为./ul_write_ddr_data -s 0 -n 0 -a *addr* -d *data*
 
-例如`./ul_write_ddr_data -n 0 -a 0x1000 -d 0x12345678`  
+例如`./ul_write_ddr_data -s 0 -n 0 -a 0x1000 -d 0x12345678`  
 
 ##### 步骤2 读取DDR值。
-运行命令为./ul_read_ddr_data -n 0 -a *addr*
+运行命令为./ul_read_ddr_data -s 0 -n 0 -a *addr*
 
-例如`./ul_read_ddr_data -n 0 -a 0x1000`  
+例如`./ul_read_ddr_data -s 0 -n 0 -a 0x1000`  
 
 **输出打印结果示例**  （实际结果值以逻辑当前寄存器状态为准）
 
-	[root@CentOS7 bin]# ./ul_write_ddr_data -n 0 -a 0x1000 -d 0x12345678
-	[root@CentOS7 bin]# ./ul_read_ddr_data -n 0 -a 0x1000
+	[root@CentOS7 bin]# ./ul_write_ddr_data -s 0 -n 0 -a 0x1000 -d 0x12345678
+	[root@CentOS7 bin]# ./ul_read_ddr_data -s 0 -n 0 -a 0x1000
 	Value: 0x12345678
 
 <a name="c"></c>
@@ -390,14 +396,14 @@ Example3主要实现用户逻辑FMMU（Fpga Mermory Manage Unit）功能。
 
 ##### 步骤1 执行packet_process进程。
 
-`./packet_process -d 8192 -q 0 -l 512 -n 102400099 -f`  
+`./packet_process -s 0 -d 8192 -q 0 -l 512 -n 102400099 -f`  
 
 **本例可用命令参数说明**  
 
 | 参数     | 说明                                       |
 | ------ | ---------------------------------------- |
 | **-d** | 设置队列深度，有效值是1024、2048、4096、8192，默认值是8192。 |
-| **-p** | 指定VF设备号，默认为0。                            |
+| **-s** | 端口号，数值范围由用户申请的FPGA卡个数确定，具体见上面关于-s参数的说明，默认为 0                             |
 | **-q** | 指定队列发送：有效值为[0，7]，默认为0，可以通过逗号进行多选（如 -q 0,1,5）。 |
 | **-l** | 表示发送包的单包数据长度：有效值为[64，1048576]，默认值为64。    |
 | **-n** | 表示发送包的个数：有效值为[1，4294966271]，默认为128。      |
@@ -407,7 +413,7 @@ Example3主要实现用户逻辑FMMU（Fpga Mermory Manage Unit）功能。
 
 **输出打印结果示例** 
 
-	[root@CentOS7 bin]# ./packet_process -d 8192 -q 0 -l 512 -n 102400099 -f
+	[root@CentOS7 bin]# ./packet_process -s 0 -d 8192 -q 0 -l 512 -n 102400099 -f
 	available cpu number: 24, cpu mask parameter: -cffffff
 	...
 	----------------TEST TIME 0 for port 0----------------

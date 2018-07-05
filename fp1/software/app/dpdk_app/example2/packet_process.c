@@ -50,6 +50,7 @@
 #include <pthread.h>
 #include "new_bd.h"
 #include "run_business_rxtx.h"
+#include "ul_get_port_status.h"
 #include "securec.h"
 
 /* Seconds wait before DPDK memory init, 
@@ -66,6 +67,7 @@ static uint16_t g_s_queue_desc_nb_valid_values[] = {
 
 stBusinessArgs g_business_args;
 stBusinessThreadArgs g_business_thread_args[VFS_MAX_NUM_EVERY_PF][QUEUES_MAX_NUM_EVERY_IP];
+uint32_t cpu_bind = 1;
 
 static void help();
 static void set_default_args();
@@ -82,7 +84,7 @@ static int parse_comma_string(char* str, uint32_t* output_array_values, uint32_t
 static int packet_primary(uint32_t port_id);
 static int packet_secondary(uint32_t port_id);
 static int packet_process(void);
-
+static int convert_slot_to_port() ;
 /**
 * @brief DPDK init and logic queue init
 * @param[in] argc parameter number
@@ -112,6 +114,10 @@ int main(int argc, char* argv[]) {
 
     if (0 != check_args_step_one()) {
         help();
+        return -1;
+    }
+
+    if (0 != convert_slot_to_port()) {
         return -1;
     }
 
@@ -201,7 +207,7 @@ static void dev_info_dump(struct rte_eth_dev_info* dev_info) {
 * @return 0 for OK, -1 for error
 * @note
 */
-#define STR_PARSE_ARG   "d:p:q:l:n:x:fh"
+#define STR_PARSE_ARG   "d:s:q:l:n:x:fh"
 static int parse_arg(int argc, char* argv[]) {
     char*   arg_val = NULL;
     int     ch = 0;
@@ -220,12 +226,12 @@ static int parse_arg(int argc, char* argv[]) {
                 }
                 break;
             }
-            case 'p': {
+            case 's': {
                 assert(NULL != optarg);
                 arg_val = optarg;
-                if (0 != parse_comma_string(arg_val, g_business_args.port_ids, 
-                                            sizeof(g_business_args.port_ids)/sizeof(uint32_t), 
-                                            &g_business_args.port_used)) {
+                if (0 != parse_comma_string(arg_val, g_business_args.slot_ids, 
+                                            sizeof(g_business_args.slot_ids)/sizeof(uint32_t), 
+                                            &g_business_args.slot_used)) {
                     goto parse_error;
                 }
                 break;
@@ -296,10 +302,11 @@ parse_error:
 /*initialize the global variables and set the default values*/
 static void set_default_args() {
     (void)memset_s(&g_business_args, sizeof(g_business_args), 0, sizeof(g_business_args));
-    g_business_args.port_used = 1;
+    g_business_args.slot_used = 1;
     g_business_args.queue_used = 1;
     (void)memset_s(g_business_args.port_ids, sizeof(g_business_args.port_ids), 0, sizeof(g_business_args.port_ids));
-    g_business_args.port_ids[0] = 1;
+    (void)memset_s(g_business_args.slot_ids, sizeof(g_business_args.slot_ids), 0, sizeof(g_business_args.slot_ids));
+    g_business_args.slot_ids[0] = 1;
     (void)memset_s(g_business_args.queue_idxs, sizeof(g_business_args.queue_idxs), 0, sizeof(g_business_args.queue_idxs));
     g_business_args.queue_idxs[0] = 1;
     g_business_args.packet_len = PACKET_LEN_DEFAULT;
@@ -314,6 +321,31 @@ static void set_default_args() {
     g_business_args.thread_flag = DPDK_BIND;
 }
 
+static int convert_slot_to_port() {
+    uint32_t idx = 0;
+    int ret = 0;
+    unsigned int port_id;
+
+    ret = pci_port_status_init_env();
+    if(ret) {
+        printf("call pci_port_status_init_env fail .\n");
+        return ret;
+    }
+    
+    for(idx = 0; idx < VFS_MAX_NUM_EVERY_PF; idx++) {
+        if(1 == g_business_args.slot_ids[idx]) {
+            ret = pci_slot_id_to_port_id(idx, &port_id);
+            if(ret) {
+                printf("call pci_slot_id_to_port_id fail.\n");
+                return ret;
+            }
+            g_business_args.port_ids[port_id] = 1;
+            g_business_args.port_used++;
+        }
+    }
+
+    return 0;
+}
 static int check_args_step_one() {
 
     /* check the validity of  queue_desc_nb*/
@@ -379,7 +411,7 @@ static void help() {
         "-----------------------------------------------------------------------------------\r\n"
         "argument format:\n"
         "\t-d xxx   xxx: queue depth, should be 1024 or 2048 or 4096 or 8192, 8192 as default\r\n"
-        "\t-p xxx   xxx: port id, logic only support vf0;\r\n"
+        "\t-s xxx   xxx: slot id, 0 as default;\r\n"
         "\t-q xxx   xxx: queue idx, should be [0, 7], 0 as default;\r\n"
         "\t-l xxx   xxx: length for each packet to tx and rx (length's scope is [64, %u], 64 as default); \r\n"
         "\t-n xxx   xxx: number of packet to tx and rx; (128 as default, max=(%lu))\r\n"
@@ -426,7 +458,6 @@ static int parse_comma_string(char* str, uint32_t* output_array_values, uint32_t
 static int packet_secondary(uint32_t port_id) {
     int status = 0;
     uint32_t queue = 0;
-    uint32_t cpu_bind = 1;
     pthread_t task_id = 0;
     struct rte_mempool* bd_mp = NULL;
     struct rte_mempool* data_mp = NULL;
@@ -533,7 +564,6 @@ static int packet_secondary(uint32_t port_id) {
 }
 
 static int packet_primary(uint32_t port_id) {
-    uint16_t loop_time = 0;
     int status = 0;
     int socket_id = 0;
     uint32_t queue_idx = 0;
@@ -601,27 +631,7 @@ static int packet_primary(uint32_t port_id) {
         printf("\033[1;31;40mrte_eth_dev_start failed %u\033[0m\r\n",status);
         return -1;
     }
-
-    for (loop_time = 0; loop_time < g_business_args.loop_time; loop_time++){
-        printf("\033[1;32;40m----------------TEST TIME %u for port %u----------------\033[0m\r\n", loop_time, port_id);
-        status = packet_secondary(port_id);
-        if (0 != status){
-            return -1;
-        }
-
-        /* Waiting for the end of the thread */
-        for (queue_idx = 0; queue_idx < QUEUES_MAX_NUM_EVERY_IP; queue_idx++) {
-            /* queue is out of using */
-            if (0 == g_business_args.queue_idxs[queue_idx]) {
-                continue;
-            }
-
-            /* Do not care about the return value of thread here currently. */
-            (void)pthread_join(g_business_thread_args[port_id][queue_idx].task_id, NULL);
-        }
-
-    }
-
+    
     return 0;
 }
 
@@ -630,7 +640,9 @@ static int packet_process(void){
     uint32_t port_id = 0;
     char dev_name[256] = {0};
     uint8_t dev_count = 0;
-
+    uint16_t loop_time = 0;
+    uint32_t queue_idx = 0;
+    
     for (port_id = 0; port_id < VFS_MAX_NUM_EVERY_PF; port_id++) {
         /* port is out of using */
         if (0 == g_business_args.port_ids[port_id]) {
@@ -638,6 +650,39 @@ static int packet_process(void){
         }
 
         (void)packet_primary(port_id);
+    }
+
+    for (loop_time = 0; loop_time < g_business_args.loop_time; loop_time++){
+        printf("\033[1;32;40m----------------TEST TIME %u----------------\033[0m\r\n", loop_time);
+
+        for (port_id = 0; port_id < VFS_MAX_NUM_EVERY_PF; port_id++) {
+
+            /* port is out of using */
+            if (0 == g_business_args.port_ids[port_id]) {
+                continue;
+            }
+            status = packet_secondary(port_id);
+            if (0 != status){
+                return -1;
+            }
+        }
+
+        for (port_id = 0; port_id < VFS_MAX_NUM_EVERY_PF; port_id++) {
+            /* port is out of using */
+            if (0 == g_business_args.port_ids[port_id]) {
+                continue;
+            }
+            /* Waiting for the end of the thread */
+            for (queue_idx = 0; queue_idx < QUEUES_MAX_NUM_EVERY_IP; queue_idx++) {
+                /* queue is out of using */
+                if (0 == g_business_args.queue_idxs[queue_idx]) {
+                    continue;
+                }
+
+                /* Do not care about the return value of thread here currently. */
+                (void)pthread_join(g_business_thread_args[port_id][queue_idx].task_id, NULL);
+            }
+        }
     }
 
     /* Resource free */

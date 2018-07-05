@@ -28,6 +28,38 @@ fi
 
 HOSTEXE_NAME=./${HOSTEXE##*/}
 KERNEL_NAME=$2
+SLOT_ID=$3
+
+function var_chk
+{
+    if [ -z ${HOSTEXE} ]
+    then 
+        echo -e "host app is not found! Please check it first!\n"
+        exit
+    fi
+    
+    VALID_KERNEL_NAME=`echo ${KERNEL_NAME} |grep ".xclbin"`
+    if [ -z ${KERNEL_NAME} ]
+    then 
+        echo -e "Error：kernel is not found, please check!\n"
+        exit
+    elif [ "${VALID_KERNEL_NAME}" = "" ] 
+    then
+    	echo -e "Error：kernel is not a xclbin file, please check!\n"
+        exit
+    fi
+    
+    VALID_SLOT_ID=`echo ${SLOT_ID}| sed -n "/^[0-9]\+$/p"`
+    if [ -z ${SLOT_ID} ]
+    then 
+        echo -e "Error：slot id is not found, please check!\n"
+        exit
+    elif [ "${VALID_SLOT_ID}" = "" ]
+    then
+        echo -e "Error：slot id is not a number, please check!\n"
+        exit
+    fi
+}
 
 if [ -z $XILINX_SDX ]
 then 
@@ -57,19 +89,21 @@ check_driver
 function Usage
 {
 	echo "------------------------------------------------------------------"
-	echo "Usage: run.sh [option]                                 "
-	echo "Options:                                               "
-	echo "sh run.sh HOSTEXE TARGET_XCLBIN           Running CPU/HW Emulation "
+	echo "Usage: run.sh [option]                                            "
+	echo "Options:                                                          "
+	echo "sh run.sh HOSTEXE XCLBIN SLOT_ID                 Running HW Test  "
     echo "-----------------------------example------------------------------"
-    echo "sh run.sh mmult /home/fp1/hardware/sdaccel_design/examples/mmult_hls/prj/bin/bin_mmult_hw.xclbin"
-    echo "                               or                                 "
-    echo "sh run.sh mmult ./bin_mmult_hw.xclbin"
+	echo "running mmult on card 0:                                          "
+    echo "sh run.sh mmult /home/fp1/hardware/sdaccel_design/examples/mmult_hls/prj/bin/bin_mmult_hw.xclbin 0"
+    echo "running mmult on card 1:                                          "
+    echo "sh run.sh mmult ./bin_mmult_hw.xclbin 1                           "
 	echo "------------------------------------------------------------------"
 }
 
 if [ "$1" == "" -o "$1" == "-h" -o "$1" == "--help" ];then
     Usage
 else
+    var_chk
     cd ${HOSTEXE_PATH}
-    ${HOSTEXE_NAME} ${KERNEL_NAME}
+    ${HOSTEXE_NAME} ${KERNEL_NAME} ${SLOT_ID}
 fi

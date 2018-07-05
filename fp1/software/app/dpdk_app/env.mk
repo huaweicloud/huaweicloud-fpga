@@ -35,6 +35,7 @@ DIR_INC = $(MAKEROOT)/include
 DIR_FUNC_SRC = $(MAKEROOT)/func
 DIR_EXAMPLE1_SRC = $(MAKEROOT)/example1
 DIR_EXAMPLE2_SRC = $(MAKEROOT)/example2
+DIR_TOOLS_SRC = $(MAKEROOT)/tools
 DIR_FUNC_OBJS = $(MAKEROOT)/func_objs
 DIR_EXECUTE_OBJS = $(MAKEROOT)/execute_objs
 DIR_BINS = $(MAKEROOT)/bin
@@ -45,7 +46,8 @@ CFLAGS += -g -fPIC -std=gnu99 -D_GNU_SOURCE -D__VU9P__ $(SECUREC_CFLAGS) $(DPDK_
 
 DPDK_LDFLAGS = -L$(DPDK_LIB_HOME) -lethdev -lrte_mbuf -lrte_mempool -lrte_ring -lrte_eal -lrte_pmd_acc
 SECUREC_LDFLAGS = -L$(SECUREC_LIB_HOME) -lsecurec
-LDFLAGS += -g -fPIC -lpthread -lrt -ldl -fstack-protector -Wl,-z,relro -Wl,-z,noexecstack $(SECUREC_LDFLAGS) $(DPDK_LDFLAGS)
+SLOT_LDFLAGS = -L/usr/lib64/ -lfpgamgmt
+LDFLAGS += -g -fPIC -lpthread -lrt -ldl -fstack-protector -Wl,-z,relro -Wl,-z,noexecstack $(SECUREC_LDFLAGS) $(DPDK_LDFLAGS) $(SLOT_LDFLAGS)
 
 
 

@@ -35,7 +35,7 @@ export MAKEROOT := $(shell pwd)
 
 include ${MAKEROOT}/env.mk
 
-MAKE_DIRS := ${DIR_FUNC_SRC} ${DIR_EXAMPLE1_SRC} ${DIR_EXAMPLE2_SRC}
+MAKE_DIRS := ${DIR_FUNC_SRC} ${DIR_EXAMPLE1_SRC} ${DIR_EXAMPLE2_SRC} ${DIR_TOOLS_SRC}
 
 define	build_obj
 for SUBDIR in $(MAKE_DIRS); do		\

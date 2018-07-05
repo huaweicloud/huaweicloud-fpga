@@ -627,11 +627,11 @@ namespace xcldev {
 #endif
         std::cout << "Run DMA test on device 0 with 32 KB blocks of buffer\n";
         std::cout << "  " << exe << " dmatest -d 0 -b 0x2000\n";
-        std::cout << "Read 256 bytes from DDR starting at 0x1000 into file read.out\n";
-        std::cout << "  " << exe << " mem --read -a 0x1000 -i 256 -o read.out\n";
+        std::cout << "Read 256 bytes from DDR starting at 0x1000 on device 0 into file read.out\n";
+        std::cout << "  " << exe << " mem --read -d 0 -a 0x1000 -i 256 -o read.out\n";
         std::cout << "  " << "Default values for address is 0x0, size is DDR size and file is memread.out\n";
-        std::cout << "Write 256 bytes to DDR starting at 0x1000 with byte 0xaa \n";
-        std::cout << "  " << exe << " mem --write -a 0x1000 -i 256 -e 0xaa\n";
+        std::cout << "Write 256 bytes to DDR starting at 0x1000 with byte 0xaa on device 0 \n";
+        std::cout << "  " << exe << " mem --write -d 0 -a 0x1000 -i 256 -e 0xaa\n";
         std::cout << "  " << "Default values for address is 0x0, size is DDR size and pattern is 0x0\n";
 #ifdef _MGMT_
         std::cout << "Read AXI Performance Monitor counters on the base platform (applicable only if APMs are available on base platform)\n";

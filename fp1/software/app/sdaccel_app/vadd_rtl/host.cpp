@@ -45,7 +45,11 @@ int main(int argc, char** argv)
     int *source_input2      = (int *) malloc(vector_size_bytes);
     int *source_hw_results  = (int *) malloc(vector_size_bytes);
     int *source_sw_results  = (int *) malloc(vector_size_bytes);
-
+    unsigned int slot_id;
+    if (argc != 3){
+        printf("%s <inputfile>\n", argv[0]);
+        return EXIT_FAILURE;
+    }
     // Create the test data and Software Result 
     for(int i = 0 ; i < size ; i++){
         source_input1[i] = i;
@@ -54,9 +58,17 @@ int main(int argc, char** argv)
         source_hw_results[i] = 0;
     }
 
+    if ((argv[2] == 0) || (strlen(argv[2]) == 0))
+    {    
+        printf("Slot NO. is null!\n");
+        exit(0);
+    }
+    slot_id=atoi(argv[2]);
+    printf("Slot NO. is %d\n",slot_id);
+  	
 //OPENCL HOST CODE AREA START
     //Create Program and Kernel
-    xcl_world world = xcl_world_single();
+    xcl_world world = xcl_world_single(slot_id);
     cl_program program = xcl_import_binary(world, "vadd");
     cl_kernel krnl_vadd = xcl_get_kernel(program, "krnl_vadd_rtl");
 

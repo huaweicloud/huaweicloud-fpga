@@ -1,31 +1,34 @@
-Matrix Multiplication Example with C Kernel
+Kernel基于c语言实现的矩阵乘法实例
 ================================
 [Switch to the English version](./README.md)
 
-This is an implementation of performing matrix multiplication of two 16x16 matrices and getting the result back in 16x16 matrix. 
-The main algorithm characteristics of this application are:
+这是一个基于opencl的16*16矩阵乘法实例，其kernel部分基于c语言实现. 
 
-Files in the Example
+此示例主要包含:
+
+示例文件
 ---------------------
-Application host code
+应用层host代码
 
 * test-cl.cpp
 
-Compilation File
+编译脚本
 --------------------------------
-* Makefile : Makefile for compiling application
+* Makefile : 编译应用层（host代码）的编译脚本
 
-Note
+** 说明 **
 --------------------------------
-* SDx must be already installed and then xcpp tool can be available 
+* 必须已经安装SDx，然后才能使用xcpp工具 
 
-
-Compile host and Run the **run.sh** command to test hardware. The detailed procedure is as follows:
+先编译host代码后执行 **run.sh** 命令来测试该用例，具体的操作命令如下：
 --------------------------------
 
-```
+```bash
 make
-sh run.sh mmult bin_dir/bin_mmult_hw.xclbin
+sh run.sh mmult ../../../../hardware/sdaccel_design/examples/mmult_hls/prj/bin/bin_mmult_hw.xclbin 0
 
 ```
 
+** 说明 **
+
+上面run.sh脚本末尾的0表示slot号，该号在用户申请环境时得到。比如用户申请了一个带4张FPGA加速卡的虚拟机环境，则slot号为0、1、2、3。

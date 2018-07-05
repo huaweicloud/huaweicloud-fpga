@@ -134,7 +134,7 @@ Example1的prj文件夹层级结构如下：
 | [-i] or [-I] or [-impl]    | 单步执行实现       |
 | [-p] or [-P] or [-pr]      | 单步执行pr校验     |
 | [-b] or [-B] or [-bit]     | 单步执行目标文件生成   |
-| [-e] or [-E] or [-encrypt] | 综合不选择加密      |
+| [-e] or [-E] or [-encrypt] | 综合选择加密，默认不加密      |
 | [-t] [num]                 | num秒之后开始执行|
 | [-h] or [-H] or [-help]    | build.sh帮助说明 |
 | [-s_strategy_help]         | 综合策略帮助说明     |

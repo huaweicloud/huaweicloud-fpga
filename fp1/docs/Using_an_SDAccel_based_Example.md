@@ -148,7 +148,11 @@ The SDAccel SDK platform is used to test hardware. Compile and run the host prog
   Run the **run.sh** command to load and test hardware. The detailed procedure is as follows:
 
   	cd $SW_FPGA_DIR/software/app/sdaccel_app/mmult_hls
-  	sh run.sh mmult $HW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/prj/bin/bin_mmult_hw.xclbin
+  	sh run.sh mmult $HW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/prj/bin/bin_mmult_hw.xclbin 0
+
+
+The 0 at the end of the above run.sh script indicates the slot number, which is obtained when the user requests the environment. 
+For example, if a user applies for a virtual machine environment with 4 FPGA accelerator cards, the slot numbers are 0, 1, 2, and 3.
 
 ##### Note
 

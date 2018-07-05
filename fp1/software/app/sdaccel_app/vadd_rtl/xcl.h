@@ -54,7 +54,7 @@ typedef struct {
  *   A struct containing the platform_id, device_id, context, and command
  *   queue.
  */
-xcl_world xcl_world_single();
+xcl_world xcl_world_single(unsigned int slot_id);
 
 /* xcl_release_world
  *

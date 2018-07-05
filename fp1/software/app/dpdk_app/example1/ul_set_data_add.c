@@ -36,12 +36,14 @@
 #include <assert.h>
 #include "regs_func.h"
 #include "pci_rw_tool_func.h"
+#include "ul_get_port_status.h"
 
 static int parse_arg(int argc, char* argv[]);
 static void help();
 
 static unsigned int g_add_values[2] = {0};
 static unsigned int g_port_id = 0;
+static unsigned int g_slot_id = 0;
 
 int main(int argc, char* argv[]) {
 	int ret = 0;
@@ -49,23 +51,35 @@ int main(int argc, char* argv[]) {
 	if (0 != parse_arg(argc, argv)) {
 		return -EINVAL;
 	}
-    
-	ret = pci_bar2_init_env(g_port_id);
-	if (ret != 0) {
-		printf("%s: pci_bar2_init_env failed(%d)\r\n", __FUNCTION__, ret);
-		return ret;
-	}
-	
-	
-	printf("Set [0x%08x]:[0x%08x] to REG_PF_DEMO1_ADDER_CFG_WDATA0:REG_PF_DEMO1_ADDER_CFG_WDATA1 \r\n", g_add_values[0],g_add_values[1]);
-	(void)set_add_data(g_add_values[0], g_add_values[1]);
 
-	(void)pci_bar2_uninit_env();
+    ret = pci_port_status_init_env();
+    if(ret != 0) {
+        printf("%s: pci_port_status_init_env failed(%d)\r\n", __FUNCTION__, ret);
+		return ret;
+    }
+
+    ret = pci_slot_id_to_port_id(g_slot_id, &g_port_id);
+    if(ret != 0) {
+        printf("%s: convert_slot_to_port failed(%d)\r\n", __FUNCTION__, ret);
+		return ret;
+    }
+    
+    ret = pci_bar2_init_env(g_port_id);
+    if (ret != 0) {
+    	printf("%s: pci_bar2_init_env failed(%d)\r\n", __FUNCTION__, ret);
+    	return ret;
+    }
+
+
+    printf("Set [0x%08x]:[0x%08x] to REG_PF_DEMO1_ADDER_CFG_WDATA0:REG_PF_DEMO1_ADDER_CFG_WDATA1 \r\n", g_add_values[0],g_add_values[1]);
+    (void)set_add_data(g_add_values[0], g_add_values[1]);
+
+    (void)pci_bar2_uninit_env();
     
 	return 0;
 }
 
-#define	STR_PARSE_ARG	"i:p:h"
+#define	STR_PARSE_ARG	"i:s:h"
 static int parse_arg(int argc, char* argv[]) {
 	char*   arg_val = NULL;
 	int     ch;
@@ -83,10 +97,10 @@ static int parse_arg(int argc, char* argv[]) {
                 break;
             }
             
-            case 'p': {
+            case 's': {
                 assert(NULL != optarg);
                 arg_val = optarg;
-                g_port_id = strtoul(arg_val, NULL, 0);
+                g_slot_id = strtoul(arg_val, NULL, 0);
                 break;
             }
             
@@ -106,9 +120,9 @@ parse_error:
 static void help() {
     printf(
         "-----------------------------------------------------------------------------------\r\n"
-        "argument format: -i 0xVVV -i 0xPPP [-p port_index]\r\n"
+        "argument format: -i 0xVVV -i 0xPPP [-s slot_id]\r\n"
         "\tVVV/PPP: value to be set in REG_PF_DEMO1_ADDER_CFG_WDATA0/REG_PF_DEMO1_ADDER_CFG_WDATA1 register\r\n"
-        "\tport_index: the VF's index, 0 as default\r\n"
+        "\tslot_id: the VF's slot id, 0 as default\r\n"
         "\t-h: print help\r\n"
         "-----------------------------------------------------------------------------------\r\n"
         );

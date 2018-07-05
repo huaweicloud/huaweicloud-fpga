@@ -13,21 +13,36 @@
 //     Huawei Software License for more details. 
 //------------------------------------------------------------------------------
 
+#ifndef _DPI_COMMON_H_
+#define _DPI_COMMON_H_
 
-`ifndef _COMMON_REG_SVH_
-`define _COMMON_REG_SVH_
+#include <stdarg.h>
 
-// ./tb_pkg.svh
-`include "tb_pkg.svh"
+// Log level
 
-typedef bit [`AXI4L_DATA_WIDTH - 1 : 0] REG_DATA_t;
-typedef bit [`AXI4L_ADDR_WIDTH - 1 : 0] REG_ADDR_t;
+typedef enum {
+    LOG_FATAL  = 1,
+    LOG_ERROR  = 2,
+    LOG_WARNING= 4,
+    LOG_INFO   = 8,
+    LOG_DEBUG  = 10
+} tb_rep_lev_t;
 
-const REG_ADDR_t g_reg_demo_version    = 'h0;
-const REG_ADDR_t g_reg_adder_cfg_wdata0= 'h1;
-const REG_ADDR_t g_reg_adder_cfg_wdata1= 'h2;
-const REG_ADDR_t g_reg_adder_sum_rdata = 'h3;
-const REG_ADDR_t g_reg_oppos_data      = 'h4;
+extern void tb_report(int  level,
+                      char *id,
+                      char *info);
 
-`endif // _COMMON_REG_SVH_
+extern void tb_delay(uint32_t x);
 
+extern void ul_reg_read(uint64_t addr, uint32_t *data);
+extern void ul_reg_write(uint64_t addr, uint32_t  data);
+
+extern void cfg_get_string(char *name,
+                           char **value,
+                           char *dflt);
+
+extern void cfg_get_int(char *name,
+                        int  *value,
+                        int  dflt);
+
+#endif // _DPI_COMMON_H_

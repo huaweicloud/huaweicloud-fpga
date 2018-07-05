@@ -124,8 +124,9 @@ int main(int argc, char** argv)
     cl_mem input_a;                     // device memory used for the input array
     cl_mem input_b;                     // device memory used for the input array
     cl_mem output;                      // device memory used for the output array
-   
-    if (argc != 2){
+    int slot_id;
+	
+    if (argc != 3){
         printf("%s <inputfile>\n", argv[0]);
         return EXIT_FAILURE;
     }
@@ -205,9 +206,28 @@ int main(int argc, char** argv)
         return EXIT_FAILURE;
     }
 
-
+	if ((argv[2] == 0) || (strlen(argv[2]) == 0))
+    {    
+        printf("Slot NO. is null!\n");
+        exit(0);
+    }
+	slot_id=atoi(argv[2]);
+    printf("Slot NO. is %d\n",slot_id);
+	
+    if (((int)device_count - 1) < slot_id)
+    {
+        printf("Error: Slot NO. is out of range!\n");
+        exit(0);
+    }
+    
+    //device_id = devices[slot_id];
+    //printf("device. is %d\n",device_id);
+    //err = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_ACCELERATOR,
+    //                     1, &device_id, NULL);
     err = clGetDeviceIDs(platform_id, CL_DEVICE_TYPE_ACCELERATOR,
-                         1, &device_id, NULL);
+                         16, &device_id, NULL);
+    device_id = devices[slot_id];
+   
     if (err != CL_SUCCESS)
         {
             printf("Error: Failed to create a device group!\n");

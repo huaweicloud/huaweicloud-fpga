@@ -62,8 +62,6 @@ def get_parser():
 
 
 def main():
-    utils.check_login_user()
-
     parser = get_parser()
     if len(sys.argv) <= 1:
         parser.print_help()

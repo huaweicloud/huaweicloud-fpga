@@ -97,7 +97,9 @@ The SDAccel HDK platform serves to complete the compilation and simulation of th
 
 6. Perform the hardware test.
 
-  Select the **hw** mode as shown in step 4 to compile and generate an .xclbin file, register an image, load the image, and perform the hardware test on the running environment according to the SDAccel SDK process in the following sections.
+  Generate DCP files.
+
+
   For details about how to register an image, see [Registering an FPGA Image](./Registering an FPGA Image.md). For details about how to load the image, see [Loading an FPGA Image](../tools/fpga_tool/docs/load_an_fpga_image.md).
 
 SDAccel SDK Operation Instructions

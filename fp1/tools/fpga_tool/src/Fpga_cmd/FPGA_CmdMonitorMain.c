@@ -1,7 +1,7 @@
 /*-
  *   BSD LICENSE
  *
- *   Copyright(c)  2017 Huawei Technologies Co., Ltd. All rights reserved.
+ *   Copyright(c)  2017-2018 Huawei Technologies Co., Ltd. All rights reserved.
  *
  *   Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions
@@ -60,12 +60,297 @@ COMMAND_PROC_FUNC g_pafnFpgaCmdList[CMD_PARSE_END] =
     [CMD_HFI_CLEAR] = FPGA_MonitorClearHfi,
     [CMD_IMAGE_INQUIRE] = FPGA_MonitorInquireFpgaImageInfo,
     [CMD_RESOURSE_INQUIRE] = FPGA_MonitorDisplayDevice,
+    [CMD_STATUS_INQUIRE] = FPGA_MonitorAlmMsgs,
     [CMD_LED_STATUS_INQUIRE] = FPGA_MonitorInquireLEDStatus,
     [CMD_TOOL_VERSION] = NULL,
 };
 UINT32 g_ulparseParaFlag = 0;
 
+typedef struct {
+    UINT32 ulRegBase;           /* 寄存器基址 32位 */ 
+    UINT32 RegIdx:9;           /* 寄存器列表最长为 512*/
+    UINT32 Bit:6;               /* 告警寄存器bit 最大为63 */
+    UINT32 Lvl:3;               /* 级别最多为 8 */
+    UINT32 ucAlmCode:10;         /* 告警码偏移 最多为 1024 */
+    UINT32 ucNoAlmValue:1;
+    UINT32 Reserve:3;           /* 预留 2 bit: 最大值 4 */
+}FPGA_ALM_REG_INFO;
 
+typedef struct {
+    UINT8 ucBitVal;
+    UINT32 ulAlmCodeBase;
+    FPGA_ALM_REG_INFO* pstrRegInfo;
+}FPGA_ALM_RST;
+
+enum {
+    FPGA_LOGIC_NO_TYPE = 0,
+    FPGA_LOGIC_OCL_TYPE,
+    FPGA_LOGIC_DPDK_TYPE
+};
+
+enum {
+    FPGA_ALM_LOGGING = 0,
+    FPGA_ALM_SHIELDING = 1,
+    FPGA_ALM_ALL = 2,
+    FPGA_ALM_MALFUNC = 3,
+    FPGA_ALM_END = 8
+};
+
+enum {
+    FPGA_SF_ALM = 0,
+    FPGA_SF_STATS,
+    FPGA_SF_CONFIG,
+    FPGA_SF_MAX = 16
+};
+
+#define REG_CLKM_ERR                   0
+#define REG_PARRLT_ERR                 1
+#define REG_RSPBD_ERR                  2
+#define REG_DMAE_0ERR                  3     
+#define REG_DMAE_1ERR                   4
+#define REG_BDQM_ERR                    5
+#define REG_MULQM_ERR0                  6
+#define REG_TXQM_STATUS_HISTORY         7
+#define REG_PRTY_ERR                    8
+#define REG_TXM_ERR                     9   
+#define REG_TXM_STATUS_HISTORY          10
+#define RXM_REQ_BUSY                    11
+#define REG_BDQM_ERR_3RD                12
+#define REG_TRM_FF_ERR                  13
+#define REG_HPI_TXFF_ERR                14
+#define REG_BAR_ACCESS_ERR              15
+#define AXI_FIFO_STATUS                 16
+#define AXI_ADDR_ERR                    17
+#define CM_STATUS                       18
+#define DC_STATUS                       19
+#define MAC_STATUS                      20
+#define SYS_FIFO_STAT                   21
+#define SYS_FLAG                        22
+#define TX_FIFO_STAT1                   23
+#define TX_FIFO_STAT2                   24
+#define BUS_FIFO_STAT1                  25
+#define DMA_SOP_EOP_CHK_ERROR           26
+#define USR_FIFO_STATUS                 27
+#define RX_LEN_UNVLD_CNT                28
+#define RX_STAT_UNVLD_CNT               29
+#define RX_TAG_UNVLD_CNT                30
+#define PLD_TIMEOUT_CNT                 31
+
+#define SDX_REG_SYS_ERR                    0
+#define SDX_REG_DDR0_ECC_STATUS            1
+#define SDX_REG_DDR1_ECC_STATUS            2
+#define SDX_FIREWALL_CTRL_STATUS           3     
+#define SDX_FIREWALL_USR_CTRL_STATUS      4
+#define SDX_FIREWALL_USR_DATA_STATUS      5
+
+#define NORMAL_0                            0
+#define NORMAL_1                            1
+#define REG_BIT(X)                         X
+#define RESERVE                            0
+
+
+static FPGA_ALM_REG_INFO DPDKAlmRegInfoTbl[]=
+{
+    {0x44080, REG_PARRLT_ERR, REG_BIT(7),  FPGA_ALM_LOGGING,  40, NORMAL_0, RESERVE},
+    {0x44080, REG_PARRLT_ERR, REG_BIT(6),  FPGA_ALM_LOGGING,  41, NORMAL_0, RESERVE},
+    {0x44080, REG_PARRLT_ERR, REG_BIT(4),  FPGA_ALM_LOGGING,  43, NORMAL_0, RESERVE},
+    {0x44080, REG_PARRLT_ERR, REG_BIT(3),  FPGA_ALM_LOGGING,  44, NORMAL_0, RESERVE},
+    {0x44080, REG_PARRLT_ERR, REG_BIT(2),  FPGA_ALM_LOGGING,  45, NORMAL_0, RESERVE},
+    {0x44080, REG_PARRLT_ERR, REG_BIT(1),  FPGA_ALM_LOGGING,  46, NORMAL_0, RESERVE},
+    {0x44080, REG_PARRLT_ERR, REG_BIT(0),  FPGA_ALM_LOGGING,  47, NORMAL_0, RESERVE},
+    {0x44081, REG_RSPBD_ERR, REG_BIT(8),  FPGA_ALM_LOGGING,  71, NORMAL_0, RESERVE},
+    {0x44081, REG_RSPBD_ERR, REG_BIT(7),  FPGA_ALM_LOGGING,  72, NORMAL_0, RESERVE},
+    {0x44081, REG_RSPBD_ERR, REG_BIT(6),  FPGA_ALM_LOGGING,  73, NORMAL_0, RESERVE},
+    {0x44081, REG_RSPBD_ERR, REG_BIT(5),  FPGA_ALM_LOGGING,  74, NORMAL_0, RESERVE},
+    {0x44081, REG_RSPBD_ERR, REG_BIT(4),  FPGA_ALM_LOGGING,  75, NORMAL_0, RESERVE},
+    {0x44081, REG_RSPBD_ERR, REG_BIT(3),  FPGA_ALM_LOGGING,  76, NORMAL_0, RESERVE},
+    {0x44081, REG_RSPBD_ERR, REG_BIT(2),  FPGA_ALM_LOGGING,  77, NORMAL_0, RESERVE},
+    {0x40080, REG_DMAE_0ERR, REG_BIT(30), FPGA_ALM_LOGGING,  81, NORMAL_0, RESERVE},
+    {0x40080, REG_DMAE_0ERR, REG_BIT(26), FPGA_ALM_LOGGING,  85, NORMAL_0, RESERVE},
+    {0x41080, REG_BDQM_ERR, REG_BIT(5),  FPGA_ALM_LOGGING,  121, NORMAL_0, RESERVE},
+    {0x41080, REG_BDQM_ERR, REG_BIT(3),  FPGA_ALM_LOGGING,  123, NORMAL_0, RESERVE},
+    {0x41081, REG_MULQM_ERR0, REG_BIT(3),  FPGA_ALM_LOGGING,  127, NORMAL_0, RESERVE},
+    {0x41081, REG_MULQM_ERR0, REG_BIT(2),  FPGA_ALM_LOGGING,  128, NORMAL_0, RESERVE},
+    {0x41081, REG_MULQM_ERR0, REG_BIT(1),  FPGA_ALM_LOGGING,  129, NORMAL_0, RESERVE},
+    {0x41081, REG_MULQM_ERR0, REG_BIT(0),  FPGA_ALM_LOGGING,  130, NORMAL_0, RESERVE},
+    {0x42081, REG_TXM_ERR, REG_BIT(11), FPGA_ALM_LOGGING,  138, NORMAL_0, RESERVE},
+    {0x42081, REG_TXM_ERR, REG_BIT(10), FPGA_ALM_LOGGING,  139, NORMAL_0, RESERVE},
+    {0x42081, REG_TXM_ERR, REG_BIT(9),  FPGA_ALM_LOGGING,  140, NORMAL_0, RESERVE},
+    {0x00B080, REG_TRM_FF_ERR,  REG_BIT(6),  FPGA_ALM_LOGGING,  220, NORMAL_0, RESERVE},
+    {0x17048, AXI_FIFO_STATUS,  REG_BIT(30), FPGA_ALM_LOGGING,  302, NORMAL_0, RESERVE},
+    {0x17048, AXI_FIFO_STATUS,  REG_BIT(22), FPGA_ALM_LOGGING,  310, NORMAL_0, RESERVE},
+    {0x17048, AXI_FIFO_STATUS,  REG_BIT(14), FPGA_ALM_LOGGING,  318, NORMAL_0, RESERVE},
+    {0x17048, AXI_FIFO_STATUS,  REG_BIT(6),  FPGA_ALM_LOGGING,  326, NORMAL_0, RESERVE},
+    {0x1704c, AXI_ADDR_ERR,  REG_BIT(9),  FPGA_ALM_LOGGING,  355, NORMAL_0, RESERVE},
+    {0x1704c, AXI_ADDR_ERR,  REG_BIT(8),  FPGA_ALM_LOGGING,  356, NORMAL_0, RESERVE},
+    {0x17120, CM_STATUS, REG_BIT(14), FPGA_ALM_LOGGING,  382, NORMAL_0, RESERVE},
+    {0x17120, CM_STATUS, REG_BIT(13), FPGA_ALM_LOGGING,  383, NORMAL_0, RESERVE},
+    {0x17120, CM_STATUS, REG_BIT(6),  FPGA_ALM_LOGGING,  390, NORMAL_0, RESERVE},
+    {0x17124, DC_STATUS, REG_BIT(22), FPGA_ALM_LOGGING,  406, NORMAL_0, RESERVE},
+    {0x17124, DC_STATUS, REG_BIT(7),  FPGA_ALM_LOGGING,  421, NORMAL_0, RESERVE},
+    {0x17124, DC_STATUS, REG_BIT(6),  FPGA_ALM_LOGGING,  422, NORMAL_0, RESERVE},
+    {0x17148, MAC_STATUS, REG_BIT(30), FPGA_ALM_LOGGING,  430, NORMAL_0, RESERVE},
+    {0x17148, MAC_STATUS, REG_BIT(22), FPGA_ALM_LOGGING,  438, NORMAL_0, RESERVE},
+    {0x17148, MAC_STATUS, REG_BIT(7),  FPGA_ALM_LOGGING,  453, NORMAL_0, RESERVE},
+    {0x17148, MAC_STATUS, REG_BIT(6),  FPGA_ALM_LOGGING,  454, NORMAL_0, RESERVE},
+    {0x004080, SYS_FIFO_STAT,  REG_BIT(14), FPGA_ALM_LOGGING,  461, NORMAL_0, RESERVE},
+    {0x004080, SYS_FIFO_STAT,  REG_BIT(13), FPGA_ALM_LOGGING,  462, NORMAL_0, RESERVE},
+    {0x004080, SYS_FIFO_STAT,  REG_BIT(12), FPGA_ALM_LOGGING,  463, NORMAL_0, RESERVE},
+    {0x004080, SYS_FIFO_STAT,  REG_BIT(6),  FPGA_ALM_LOGGING,  464, NORMAL_0, RESERVE},
+    {0x004080, SYS_FIFO_STAT,  REG_BIT(5),  FPGA_ALM_LOGGING,  465, NORMAL_0, RESERVE},
+    {0x004080, SYS_FIFO_STAT,  REG_BIT(4),  FPGA_ALM_LOGGING,  466, NORMAL_0, RESERVE},
+    {0x004011, SYS_FLAG,  REG_BIT(8),  FPGA_ALM_LOGGING,  467, NORMAL_0, RESERVE},
+    {0x004011, SYS_FLAG,  REG_BIT(0),  FPGA_ALM_LOGGING,  468, NORMAL_0, RESERVE},
+    {0x004040, TX_FIFO_STAT1, REG_BIT(30), FPGA_ALM_LOGGING,  469, NORMAL_0, RESERVE},
+    {0x004040, TX_FIFO_STAT1, REG_BIT(29), FPGA_ALM_LOGGING,  470, NORMAL_0, RESERVE},
+    {0x004040, TX_FIFO_STAT1, REG_BIT(28), FPGA_ALM_LOGGING,  471, NORMAL_0, RESERVE},
+    {0x004040, TX_FIFO_STAT1, REG_BIT(22), FPGA_ALM_LOGGING,  472, NORMAL_0, RESERVE},
+    {0x004040, TX_FIFO_STAT1, REG_BIT(21), FPGA_ALM_LOGGING,  473, NORMAL_0, RESERVE},
+    {0x004040, TX_FIFO_STAT1, REG_BIT(20), FPGA_ALM_LOGGING,  474, NORMAL_0, RESERVE},
+    {0x004040, TX_FIFO_STAT1, REG_BIT(14), FPGA_ALM_LOGGING,  475, NORMAL_0, RESERVE},
+    {0x004040, TX_FIFO_STAT1, REG_BIT(13), FPGA_ALM_LOGGING,  476, NORMAL_0, RESERVE},
+    {0x004040, TX_FIFO_STAT1, REG_BIT(12), FPGA_ALM_LOGGING,  477, NORMAL_0, RESERVE},
+    {0x004040, TX_FIFO_STAT1, REG_BIT(6),  FPGA_ALM_LOGGING,  478, NORMAL_0, RESERVE},
+    {0x004040, TX_FIFO_STAT1, REG_BIT(5),  FPGA_ALM_LOGGING,  479, NORMAL_0, RESERVE},
+    {0x004040, TX_FIFO_STAT1, REG_BIT(4),  FPGA_ALM_LOGGING,  480, NORMAL_0, RESERVE},
+    {0x004041, TX_FIFO_STAT2, REG_BIT(22), FPGA_ALM_LOGGING,  481, NORMAL_0, RESERVE},
+    {0x004041, TX_FIFO_STAT2, REG_BIT(21), FPGA_ALM_LOGGING,  482, NORMAL_0, RESERVE},
+    {0x004041, TX_FIFO_STAT2, REG_BIT(20), FPGA_ALM_LOGGING,  483, NORMAL_0, RESERVE},
+    {0x004041, TX_FIFO_STAT2, REG_BIT(14), FPGA_ALM_LOGGING,  484, NORMAL_0, RESERVE},
+    {0x004041, TX_FIFO_STAT2, REG_BIT(13), FPGA_ALM_LOGGING,  485, NORMAL_0, RESERVE},
+    {0x004041, TX_FIFO_STAT2, REG_BIT(12), FPGA_ALM_LOGGING,  486, NORMAL_0, RESERVE},
+    {0x004041, TX_FIFO_STAT2, REG_BIT(6),  FPGA_ALM_LOGGING,  487, NORMAL_0, RESERVE},
+    {0x004041, TX_FIFO_STAT2, REG_BIT(5),  FPGA_ALM_LOGGING,  488, NORMAL_0, RESERVE},
+    {0x004041, TX_FIFO_STAT2, REG_BIT(4),  FPGA_ALM_LOGGING,  489, NORMAL_0, RESERVE},
+    {0x004042, BUS_FIFO_STAT1, REG_BIT(30), FPGA_ALM_LOGGING,  490, NORMAL_0, RESERVE},
+    {0x004042, BUS_FIFO_STAT1, REG_BIT(29), FPGA_ALM_LOGGING,  491, NORMAL_0, RESERVE},
+    {0x004042, BUS_FIFO_STAT1, REG_BIT(28), FPGA_ALM_LOGGING,  492, NORMAL_0, RESERVE},
+    {0x004042, BUS_FIFO_STAT1, REG_BIT(14), FPGA_ALM_LOGGING,  493, NORMAL_0, RESERVE},
+    {0x004042, BUS_FIFO_STAT1, REG_BIT(13), FPGA_ALM_LOGGING,  494, NORMAL_0, RESERVE},
+    {0x004042, BUS_FIFO_STAT1, REG_BIT(12), FPGA_ALM_LOGGING,  495, NORMAL_0, RESERVE},
+    {0x004042, BUS_FIFO_STAT1, REG_BIT(6),  FPGA_ALM_LOGGING,  496, NORMAL_0, RESERVE},
+    {0x004042, BUS_FIFO_STAT1, REG_BIT(5),  FPGA_ALM_LOGGING,  497, NORMAL_0, RESERVE},
+    {0x004042, BUS_FIFO_STAT1, REG_BIT(4),  FPGA_ALM_LOGGING,  498, NORMAL_0, RESERVE},
+    {0x004044, DMA_SOP_EOP_CHK_ERROR, REG_BIT(24), FPGA_ALM_LOGGING,  499, NORMAL_0, RESERVE},
+    {0x00404a, USR_FIFO_STATUS, REG_BIT(14), FPGA_ALM_LOGGING,  501, NORMAL_0, RESERVE},
+    {0x00404a, USR_FIFO_STATUS, REG_BIT(13), FPGA_ALM_LOGGING,  502, NORMAL_0, RESERVE},
+    {0x00404a, USR_FIFO_STATUS, REG_BIT(12), FPGA_ALM_LOGGING,  503, NORMAL_0, RESERVE},
+    {0x00404a, USR_FIFO_STATUS, REG_BIT(6),  FPGA_ALM_LOGGING,  504, NORMAL_0, RESERVE},
+    {0x00404a, USR_FIFO_STATUS, REG_BIT(5),  FPGA_ALM_LOGGING,  505, NORMAL_0, RESERVE},
+    {0x00404a, USR_FIFO_STATUS, REG_BIT(4),  FPGA_ALM_LOGGING,  506, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(15), FPGA_ALM_LOGGING,  507, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(14), FPGA_ALM_LOGGING,  508, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(13), FPGA_ALM_LOGGING,  509, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(12), FPGA_ALM_LOGGING,  510, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(11), FPGA_ALM_LOGGING,  511, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(10), FPGA_ALM_LOGGING,  512, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(15), FPGA_ALM_LOGGING,  513, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(14), FPGA_ALM_LOGGING,  514, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(13), FPGA_ALM_LOGGING,  515, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(12), FPGA_ALM_LOGGING,  516, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(11), FPGA_ALM_LOGGING,  517, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(10), FPGA_ALM_LOGGING,  518, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(9),  FPGA_ALM_LOGGING,  519, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(8),  FPGA_ALM_LOGGING,  520, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(7),  FPGA_ALM_LOGGING,  521, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(6),  FPGA_ALM_LOGGING,  522, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(5),  FPGA_ALM_LOGGING,  523, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(4),  FPGA_ALM_LOGGING,  524, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(3),  FPGA_ALM_LOGGING,  525, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(2),  FPGA_ALM_LOGGING,  526, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(1),  FPGA_ALM_LOGGING,  527, NORMAL_0, RESERVE},
+    {0x004081, RX_LEN_UNVLD_CNT, REG_BIT(0),  FPGA_ALM_LOGGING,  528, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(15), FPGA_ALM_LOGGING,  529, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(14), FPGA_ALM_LOGGING,  530, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(13), FPGA_ALM_LOGGING,  531, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(12), FPGA_ALM_LOGGING,  532, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(11), FPGA_ALM_LOGGING,  533, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(10), FPGA_ALM_LOGGING,  534, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(9),  FPGA_ALM_LOGGING,  535, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(8),  FPGA_ALM_LOGGING,  536, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(7),  FPGA_ALM_LOGGING,  537, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(6),  FPGA_ALM_LOGGING,  538, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(5),  FPGA_ALM_LOGGING,  539, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(4),  FPGA_ALM_LOGGING,  540, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(3),  FPGA_ALM_LOGGING,  541, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(2),  FPGA_ALM_LOGGING,  542, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(1),  FPGA_ALM_LOGGING,  543, NORMAL_0, RESERVE},
+    {0x004082, RX_STAT_UNVLD_CNT, REG_BIT(0),  FPGA_ALM_LOGGING,  544, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(15), FPGA_ALM_LOGGING,  545, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(14), FPGA_ALM_LOGGING,  546, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(13), FPGA_ALM_LOGGING,  547, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(12), FPGA_ALM_LOGGING,  548, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(11), FPGA_ALM_LOGGING,  549, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(10), FPGA_ALM_LOGGING,  550, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(9),  FPGA_ALM_LOGGING,  551, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(8),  FPGA_ALM_LOGGING,  552, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(7),  FPGA_ALM_LOGGING,  553, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(6),  FPGA_ALM_LOGGING,  554, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(5),  FPGA_ALM_LOGGING,  555, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(4),  FPGA_ALM_LOGGING,  556, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(3),  FPGA_ALM_LOGGING,  557, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(2),  FPGA_ALM_LOGGING,  558, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(1),  FPGA_ALM_LOGGING,  559, NORMAL_0, RESERVE},
+    {0x004083, RX_TAG_UNVLD_CNT, REG_BIT(0),  FPGA_ALM_LOGGING,  560, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(15), FPGA_ALM_LOGGING,  561, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(14), FPGA_ALM_LOGGING,  562, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(13), FPGA_ALM_LOGGING,  563, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(12), FPGA_ALM_LOGGING,  564, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(11), FPGA_ALM_LOGGING,  565, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(10), FPGA_ALM_LOGGING,  566, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(9),  FPGA_ALM_LOGGING,  567, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(8),  FPGA_ALM_LOGGING,  568, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(7),  FPGA_ALM_LOGGING,  569, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(6),  FPGA_ALM_LOGGING,  570, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(5),  FPGA_ALM_LOGGING,  571, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(4),  FPGA_ALM_LOGGING,  572, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(3),  FPGA_ALM_LOGGING,  573, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(2),  FPGA_ALM_LOGGING,  574, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(1),  FPGA_ALM_LOGGING,  575, NORMAL_0, RESERVE},
+    {0x004088, PLD_TIMEOUT_CNT, REG_BIT(0),  FPGA_ALM_LOGGING,  576, NORMAL_0, RESERVE}
+    
+};
+
+static FPGA_ALM_REG_INFO SDAccelAlmRegInfoTbl[]=
+{
+    {0x1000000, SDX_REG_DDR0_ECC_STATUS, REG_BIT(1),  FPGA_ALM_LOGGING, 1, NORMAL_0, RESERVE},
+    {0x1000000, SDX_REG_DDR0_ECC_STATUS, REG_BIT(0),  FPGA_ALM_LOGGING, 2, NORMAL_0, RESERVE},
+    {0x1010000, SDX_REG_DDR1_ECC_STATUS, REG_BIT(1),  FPGA_ALM_LOGGING, 3, NORMAL_0, RESERVE},
+    {0x1010000, SDX_REG_DDR1_ECC_STATUS, REG_BIT(0),  FPGA_ALM_LOGGING, 4, NORMAL_0, RESERVE},
+    {0xd0000,  SDX_FIREWALL_CTRL_STATUS,     REG_BIT(20), FPGA_ALM_LOGGING, 8, NORMAL_0, RESERVE},
+    {0xd0000,  SDX_FIREWALL_CTRL_STATUS,     REG_BIT(19), FPGA_ALM_LOGGING, 9, NORMAL_0, RESERVE},
+    {0xd0000,  SDX_FIREWALL_CTRL_STATUS,     REG_BIT(18), FPGA_ALM_LOGGING, 10, NORMAL_0, RESERVE},
+    {0xd0000,  SDX_FIREWALL_CTRL_STATUS,     REG_BIT(17), FPGA_ALM_LOGGING, 11, NORMAL_0, RESERVE},
+    {0xd0000,  SDX_FIREWALL_CTRL_STATUS,     REG_BIT(16), FPGA_ALM_LOGGING, 12, NORMAL_0, RESERVE},
+    {0xd0000,  SDX_FIREWALL_CTRL_STATUS,     REG_BIT(4),  FPGA_ALM_LOGGING, 13, NORMAL_0, RESERVE},
+    {0xd0000,  SDX_FIREWALL_CTRL_STATUS,     REG_BIT(3),  FPGA_ALM_LOGGING, 14, NORMAL_0, RESERVE},
+    {0xd0000,  SDX_FIREWALL_CTRL_STATUS,     REG_BIT(2),  FPGA_ALM_LOGGING, 15, NORMAL_0, RESERVE},
+    {0xd0000,  SDX_FIREWALL_CTRL_STATUS,     REG_BIT(1),  FPGA_ALM_LOGGING, 16, NORMAL_0, RESERVE},
+    {0xd0000,  SDX_FIREWALL_CTRL_STATUS,     REG_BIT(0),  FPGA_ALM_LOGGING, 17, NORMAL_0, RESERVE},
+    {0xe0000,  SDX_FIREWALL_USR_CTRL_STATUS, REG_BIT(20), FPGA_ALM_LOGGING, 18, NORMAL_0, RESERVE},
+    {0xe0000,  SDX_FIREWALL_USR_CTRL_STATUS, REG_BIT(19), FPGA_ALM_LOGGING, 19, NORMAL_0, RESERVE},
+    {0xe0000,  SDX_FIREWALL_USR_CTRL_STATUS, REG_BIT(18), FPGA_ALM_LOGGING, 20, NORMAL_0, RESERVE},
+    {0xe0000,  SDX_FIREWALL_USR_CTRL_STATUS, REG_BIT(17), FPGA_ALM_LOGGING, 21, NORMAL_0, RESERVE},
+    {0xe0000,  SDX_FIREWALL_USR_CTRL_STATUS, REG_BIT(16), FPGA_ALM_LOGGING, 22, NORMAL_0, RESERVE},
+    {0xe0000,  SDX_FIREWALL_USR_CTRL_STATUS, REG_BIT(4),  FPGA_ALM_LOGGING, 23, NORMAL_0, RESERVE},
+    {0xe0000,  SDX_FIREWALL_USR_CTRL_STATUS, REG_BIT(3),  FPGA_ALM_LOGGING, 24, NORMAL_0, RESERVE},
+    {0xe0000,  SDX_FIREWALL_USR_CTRL_STATUS, REG_BIT(2),  FPGA_ALM_LOGGING, 25, NORMAL_0, RESERVE},
+    {0xe0000,  SDX_FIREWALL_USR_CTRL_STATUS, REG_BIT(1),  FPGA_ALM_LOGGING, 26, NORMAL_0, RESERVE},
+    {0xe0000,  SDX_FIREWALL_USR_CTRL_STATUS, REG_BIT(0),  FPGA_ALM_LOGGING, 27, NORMAL_0, RESERVE},
+    {0xf0000,  SDX_FIREWALL_USR_DATA_STATUS, REG_BIT(20), FPGA_ALM_LOGGING, 28, NORMAL_0, RESERVE},
+    {0xf0000,  SDX_FIREWALL_USR_DATA_STATUS, REG_BIT(19), FPGA_ALM_LOGGING, 29, NORMAL_0, RESERVE},
+    {0xf0000,  SDX_FIREWALL_USR_DATA_STATUS, REG_BIT(18), FPGA_ALM_LOGGING, 30, NORMAL_0, RESERVE},
+    {0xf0000,  SDX_FIREWALL_USR_DATA_STATUS, REG_BIT(17), FPGA_ALM_LOGGING, 31, NORMAL_0, RESERVE},
+    {0xf0000,  SDX_FIREWALL_USR_DATA_STATUS, REG_BIT(16), FPGA_ALM_LOGGING, 32, NORMAL_0, RESERVE},
+    {0xf0000,  SDX_FIREWALL_USR_DATA_STATUS, REG_BIT(4),  FPGA_ALM_LOGGING, 33, NORMAL_0, RESERVE},
+    {0xf0000,  SDX_FIREWALL_USR_DATA_STATUS, REG_BIT(3),  FPGA_ALM_LOGGING, 34, NORMAL_0, RESERVE},
+    {0xf0000,  SDX_FIREWALL_USR_DATA_STATUS, REG_BIT(2),  FPGA_ALM_LOGGING, 35, NORMAL_0, RESERVE},
+    {0xf0000,  SDX_FIREWALL_USR_DATA_STATUS, REG_BIT(1),  FPGA_ALM_LOGGING, 36, NORMAL_0, RESERVE},
+    {0xf0000,  SDX_FIREWALL_USR_DATA_STATUS, REG_BIT(0),  FPGA_ALM_LOGGING, 37, NORMAL_0, RESERVE}
+};
+
+#define LEN_BIT_8 (8)
+#define TBL_LEN(a) (sizeof(a)/sizeof(a[0]))
 /*******************************************************************************
 Function     : FPGA_MonitorInitModule
 Description  : Global variable initialize
@@ -111,6 +396,125 @@ UINT32 FPGA_MonitorExecuteCmd( void )
     }
 
     return g_pafnFpgaCmdList[g_strFpgaModule.ulOpcode](  );
+}
+ /*******************************************************************************
+ Function     : FPGA_DoMonitorDisplayAlmInfo
+ Description  : Subroutine of Display the FPGA alarm information
+ Input        : UINT8 *aucAlmBitStrm , UINT32 ulAlmLen, UINT8 ucAlmLevel
+ Output       : FPGA_ALM_RST* astrRst, UINT32* ulAlmCnt
+ Return       : 0:sucess other:fail  
+ *******************************************************************************/
+UINT32 FPGA_DoMonitorDisplayAlmInfo( UINT8 *aucAlmBitStrm , UINT32 ulAlmLen, UINT8 ucAlmLevel, FPGA_ALM_RST* astrRst, UINT32* pulAlmCnt)
+{
+    UINT32 i = 0;
+    UINT8 ucType = FPGA_LOGIC_NO_TYPE;
+    FPGA_ALM_REG_INFO* AlmRegInfos[] = {SDAccelAlmRegInfoTbl, DPDKAlmRegInfoTbl};
+    UINT32 AlmTblLen[] = {TBL_LEN(SDAccelAlmRegInfoTbl), TBL_LEN(DPDKAlmRegInfoTbl)};
+    UINT32 ulAlmCodeBases[]={SDX_ALM_CODE_BASE, BASIC_ALM_CODE_BASE};
+
+    if ( (aucAlmBitStrm == NULL) || (astrRst == NULL) || (pulAlmCnt == NULL))
+    {
+        LOG_ERROR( "FPGA_DoMonitorDisplayAlmInfo parameter array is NULL");
+        return SDKRTN_MONITOR_INPUT_ERROR;
+    }
+
+    /* 从msgbox得到逻辑类型: 迭代获得前LEN_BIT_8的值 */
+    ucType = aucAlmBitStrm[LOGIC_TYPE_BIT - 1];
+
+    if ( ucType > 1)
+    {
+        LOG_ERROR( "FPGA_DoMonitorDisplayAlmInfo ucType bit(8bit) is invalid");
+        return SDKRTN_MONITOR_INPUT_ERROR;
+    }
+
+
+    if ( ulAlmLen < ( AlmTblLen[ucType] + LOGIC_TYPE_BIT ) )
+    {
+        LOG_ERROR( "FPGA_DoMonitorDisplayAlmInfo ulAlmLen is too small");
+        return SDKRTN_MONITOR_INPUT_ERROR;
+    }    
+
+    *pulAlmCnt = 0;
+
+    /*结果录入: 利用union记录整个寄存器值 */
+    for ( i = 0; i < AlmTblLen[ucType]; i++ )
+    {
+        if ( aucAlmBitStrm[ (i + LOGIC_TYPE_BIT) - 1] == AlmRegInfos[ucType][i].ucNoAlmValue)
+        {
+            continue;
+        }
+
+        /* 只有符合告警等级， 并且和默认值不同，才会记录，用来回显 */
+        if (( AlmRegInfos[ucType][i].Lvl == ucAlmLevel ) || ( AlmRegInfos[ucType][i].Lvl == FPGA_ALM_ALL ))
+        {
+        
+            /* 记录告警值 */
+            astrRst[*pulAlmCnt].pstrRegInfo= &( AlmRegInfos[ucType][i] );
+            /* 关联告警值对应的寄存器基地址 */
+            astrRst[*pulAlmCnt].ucBitVal= aucAlmBitStrm[(i + LOGIC_TYPE_BIT - 1)];
+            astrRst[*pulAlmCnt].ulAlmCodeBase = ulAlmCodeBases[ucType];
+
+            *pulAlmCnt += 1;
+        }      
+    }
+
+    fprintf (stdout, "%u alarm was found.\r\n", *pulAlmCnt);
+
+    return SDKRTN_MONITOR_SUCCESS;
+}
+
+ /*******************************************************************************
+ Function     : FPGA_MonitorDisplayAlmInfo
+ Description  : Display the FPGA alarm information
+ Input        : UINT32 ulSlotIndex, UINT8 AlmLevel, UINT8 Almtype, UINT8 *acAlmInfo, UINT32 ulAlmLen
+ Output       : UINT8 *acAlmInfo
+ Return       : 0:sucess other:fail       
+ *******************************************************************************/
+UINT32 FPGA_MonitorDisplayAlmInfo( UINT32 ulSlotIndex, UINT8 ucAlmLevel, UINT8 ucAlmtype, UINT8 *aucAlmBitStrm , UINT32 ulAlmLen)
+{
+
+    UINT32 i = 0;
+    UINT32 ulAlmCnt = 0;
+    FPGA_ALM_RST astrRst[MAX_MBOX_BIT_LEN] ={0};
+    UINT32 ulRet = SDKRTN_MONITOR_ERROR_BASE;
+    
+    if ( ulSlotIndex >= FPGA_SLOT_MAX )
+    {
+        LOG_ERROR( "FPGA_MonitorDisplayAlmInfo slot is out of range %d", ulSlotIndex );
+        return SDKRTN_MONITOR_INPUT_ERROR;
+    }
+
+    if ( ulAlmLen > MAX_MBOX_BIT_LEN )
+    {
+        LOG_ERROR( "FPGA_MonitorDisplayAlmInfo ulAlmLen is larger than max:%u", MAX_MBOX_BIT_LEN);
+        return SDKRTN_MONITOR_INPUT_ERROR;
+    }
+
+    if ( ucAlmtype >= FPGA_SF_MAX )
+    {
+        LOG_ERROR( "FPGA_MonitorDisplayAlmInfo ulAlmLen is larger than max:%u", MAX_MBOX_BIT_LEN );
+        return SDKRTN_MONITOR_INPUT_ERROR;
+    }
+    
+    /* 子过程: 便于LLT对输出结果的检查 */
+    ulRet = FPGA_DoMonitorDisplayAlmInfo(aucAlmBitStrm, ulAlmLen, ucAlmLevel, astrRst, &ulAlmCnt);
+
+    if ( SDKRTN_MONITOR_SUCCESS!= ulRet)
+    {
+        LOG_ERROR( "FPGA_MonitorDisplayAlmInfo is failed");
+        return ulRet;
+    }
+    
+    /* 打印结果 */
+    for ( i = 0; i < ulAlmCnt; i++ )
+    {
+        fprintf(stdout, 
+            "Alarm (Error Code %4u): bit %2u of Register (Address: 0x%032x, BitValue:%d \r\n",
+            astrRst[i].pstrRegInfo->ucAlmCode + astrRst[i].ulAlmCodeBase, astrRst[i].pstrRegInfo->Bit, 
+            astrRst[i].pstrRegInfo->ulRegBase, astrRst[i].ucBitVal);
+    }    
+    
+    return SDKRTN_MONITOR_SUCCESS;
 }
 
  /*******************************************************************************
@@ -311,6 +715,54 @@ UINT32 FPGA_MonitorDisplayDevice( void )
     printf(" --------------------------------------------------\n");    
 
     return SDKRTN_MONITOR_SUCCESS;
+}
+
+/*******************************************************************************
+Function     : FPGA_MonitorAlmMsgs(void)
+Description  : The entrance function of collect fpga alarm messages and display  
+Input        : None
+Output       : None
+Return       : 0:sucess other:fail   
+*******************************************************************************/
+UINT32 FPGA_MonitorAlmMsgs(void)
+{
+    UINT32 ulRet = SDKRTN_MONITOR_ERROR_BASE;
+
+    UINT8 * acAlmStream = NULL;
+
+    acAlmStream = (UINT8* ) calloc (MAX_MBOX_BIT_LEN ,  sizeof(UINT8));    
+    if (NULL == acAlmStream)
+    {
+        LOG_ERROR( "FPGA_MonitorAlmMsgs calloc failed\r\n");
+        return SDKRTN_MONITOR_MALLOC_ERROR;
+    }
+
+    ulRet = FPGA_MgmtQueryAlmMsgs( g_strFpgaModule.ulSlotIndex,  
+        g_strFpgaModule.SF_TYPE_FIRST_BYTE,  g_strFpgaModule.SF_LVL_FIRST_BYTE,
+        acAlmStream,  MAX_MBOX_BIT_LEN);
+    
+    if ( SDKRTN_MONITOR_SUCCESS != ulRet )
+    {
+        LOG_ERROR( "FPGA_MgmtQueryAlmMsgs failed ulRet = 0x%x\r\n", ulRet );
+        free(acAlmStream);
+        acAlmStream = NULL;
+        return ulRet;
+    } 
+
+    ulRet = FPGA_MonitorDisplayAlmInfo( g_strFpgaModule.ulSlotIndex,  
+        g_strFpgaModule.SF_TYPE_FIRST_BYTE,  g_strFpgaModule.SF_LVL_FIRST_BYTE,
+        acAlmStream,  MAX_MBOX_BIT_LEN);
+    
+    if ( SDKRTN_MONITOR_SUCCESS != ulRet )
+    {
+        LOG_ERROR( "FPGA_MonitorDisplayAlmInfo failed ulRet = 0x%x\r\n", ulRet );
+    }
+
+    free(acAlmStream);
+    acAlmStream = NULL;
+    
+    return ulRet;
+
 }
 
 /*******************************************************************************

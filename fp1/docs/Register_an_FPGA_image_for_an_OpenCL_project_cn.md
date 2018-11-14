@@ -23,14 +23,18 @@
 
 AEI_Register.sh脚本的命令格式如下所示。
 
-Usage:sh AEI_Register.sh *-n* [AEI_name] *-d* [AEI_Description]
+sh AEI_Register.sh -p [dcp_obs_path] -o [log_obs_dir] -n [AEI_name] -d [AEI_Description]
 
--   *-n*选项用于指定待注册FPGA镜像的AEI名称（AEI_name）。AEI_name是由英文大小写字母、数字、下划线、中划线组成的字符串，长度为1到64位。
+-   *-p* DCP文件存储在OBS桶中的文件路径。dcp_obs_path 不能以“/”开头，必须以“.tar”结尾，不能为空，不能以“.”开头或结尾。dcp_obs_path由英文大、小写字母，数字，中划线，下划线，斜杠，英文句号组成。长度4到128个字符。
 
--   *-d*选项用于指定待注册FPGA镜像的AEI描述信息（AEI_Description）。AEI_Description由中文汉字、中文句号逗号、英文大小写字母、数字、中划线、下划线、英文句号逗号、空格组成的字符串，长度为0到255位。
+-   *-o* （可选）后台编译所产生的给用户查看的LOG文件所在的OBS桶中的文件目录。当log_obs_dir参数未指定或为空时，默认与DCP文件位于同一级目录下。
 
--   AEI_name和AEI_Description参数需要分别用引号括起来，例如  sh AEI_Register.sh -n "ocl-test" -d "ocl-desc"
-  
+-   *-n* 选项指定待注册的FPGA镜像（AEI）名称。AEI_name是由英文大小写字母、数字、下划线、中划线组成的字符串，长度为1到64位，用户自行设计即可。
+
+-   *-d* 选项指定待注册的FPGA镜像（AEI）描述信息。AEI_Description由中文汉字、中文句号逗号、英文大小写字母、数字、中划线、下划线、英文句号逗号、空格组成的字符串，长度为0到255位，用户自行设计即可。
+
+-   参数之间需要分别用引号括起来，例如sh AEI_Register.sh -p "vu9p/abc.tar" -o "vu9p" -n "ocl-test" -d "ocl-desc"
+
 在AEI_Register.sh脚本执行成功后，会产生如下的回显信息。
 
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#  
@@ -56,7 +60,7 @@ status: saving
 
 例如，用户可以执行如下命令来注册一个OCL镜像，并将AEI_name设置为“ocl-test”，将AEI_Description设置为“ocl-desc”。
 
-[root\@ scripts]\# sh AEI_Register.sh -n "ocl-test" -d "ocl-desc"  
+[root\@ scripts]\# sh AEI_Register.sh -p "vu9p/abc.tar" -o "vu9p" -n "ocl-test" -d "ocl-desc"
 fis argument(s) and config file are OK
 INFO: OCL Running
 #############################################################

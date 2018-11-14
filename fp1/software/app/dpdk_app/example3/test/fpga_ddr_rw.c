@@ -10,7 +10,11 @@
 #include <string.h>
 
 #include "fpga_ddr_rw_interface.h"
-int result_flag[10] = { 0 };
+#include "memory_manager.h"
+
+#define THREAD_NUM_MAX (64)
+
+unsigned int result_flag[THREAD_NUM_MAX] = { 0 };
 
 #define STR_PARSE_ARG   "t:p:m:s:l:f:r:w:oh"
 unsigned int thread_num = 1;
@@ -21,10 +25,27 @@ unsigned int slot_id = 0;
 unsigned long long fpga_ddr_wr_addr = 0;
 unsigned long long fpga_ddr_rd_addr = 0;
 unsigned int success_thread_num = 0;
-#define RETRY_TIME  (100000)
+#define RETRY_TIME  (10000000)
 static pthread_mutex_t g_result_lock = PTHREAD_MUTEX_INITIALIZER;
-void callback( unsigned int thread_id, unsigned int slot_id, rw_ddr_data rw_data, int rw_flag)
+unsigned int read_flag1 = 0;
+unsigned int read_flag2 = 0;
+unsigned int write_flag1 =0;
+unsigned int write_flag2 =0;
+
+void rw_sleep_func(unsigned int length)
 {
+    if(MBUF_128B_SIZE >= length)
+    {
+        struct timespec ts;
+        ts.tv_sec = 0;
+        ts.tv_nsec = 100;
+        (void)nanosleep(&ts, NULL);
+    }
+}
+
+void callback( unsigned int thread_id, unsigned int slotid, rw_ddr_data rw_data, int rw_flag)
+{
+    (void)slotid;
     if(rw_flag == 1) {
         (void)memory_manager_free_bulk((void*)(rw_data.cpu_vir_dst_addr));
     }
@@ -38,9 +59,14 @@ void callback( unsigned int thread_id, unsigned int slot_id, rw_ddr_data rw_data
         (void)memory_manager_free_bulk((void*)(rw_data.cpu_vir_src_addr));
     }
    
+    (void)pthread_mutex_lock(&g_result_lock);
     result_flag[thread_id]++;
+    if(result_flag[thread_id] > package_num)
+        printf("Some errors occurred, Please reduce the bd delivery rate! \n");
+    (void)pthread_mutex_unlock(&g_result_lock);
     return;
 }
+
 void *rw_fpga_ddr_func(void *para) {
 
     int ret;
@@ -50,7 +76,7 @@ void *rw_fpga_ddr_func(void *para) {
     rw_ddr_data write_data;
     unsigned int idx = 0;
     unsigned int retry_time = 0;
-    (void)para;
+    unsigned int th_mode = *(unsigned int *)para;
 
     ret = alloc_thread_id(&thread_id);
     if(ret) {
@@ -64,7 +90,7 @@ void *rw_fpga_ddr_func(void *para) {
         for(retry_time = 0; retry_time < RETRY_TIME; retry_time++) {
             src_addr = memory_manager_alloc_bulk(len);
             if(NULL == src_addr) {
-                usleep(100);
+                (void)usleep(1);
                 continue;
             }
             else {
@@ -73,16 +99,16 @@ void *rw_fpga_ddr_func(void *para) {
         }
         if(retry_time == RETRY_TIME) {
             (void)free_thread_id(thread_id);
-            printf("call memory_manager_alloc_bulk fail1 . %d\n", idx );
+            printf(" memory alloc failed . %d\n", idx );
             return NULL;
         }
 
-        if(mode == 1)   /*read*/
+        if(th_mode == 1)   /*read*/
         {
             write_data.cpu_vir_dst_addr = (unsigned long long)src_addr;
             write_data.fpga_ddr_rd_addr = fpga_ddr_rd_addr;
         }
-        else if(mode == 2)  /*write*/
+        else if(th_mode == 2)  /*write*/
         {
             write_data.cpu_vir_src_addr = (unsigned long long)src_addr;
             write_data.fpga_ddr_wr_addr = fpga_ddr_wr_addr;
@@ -95,7 +121,7 @@ void *rw_fpga_ddr_func(void *para) {
             for(retry_time = 0; retry_time < RETRY_TIME; retry_time++) {
                 src_addr1 = memory_manager_alloc_bulk(len);
                 if(NULL == src_addr1) {
-                    usleep(100);
+                    (void)usleep(1);
                     continue;
                 }
                 else {
@@ -104,19 +130,21 @@ void *rw_fpga_ddr_func(void *para) {
             }
             if(retry_time == RETRY_TIME) {
                 (void)free_thread_id(thread_id);
-                printf("call memory_manager_alloc_bulk fail2 . %d\n", idx);
+                printf("memory alloc fail2 . %d\n", idx);
                 return NULL;
             }
             write_data.cpu_vir_dst_addr = (unsigned long long)src_addr1;
             
         }
+        
         write_data.length = len;
         for(retry_time = 0; retry_time < RETRY_TIME; retry_time++) {
-            if(mode == 1)
+            rw_sleep_func(len);
+            if(th_mode == 1)
             {
                 ret = read_data_from_fddr(thread_id, slot_id, write_data);
             }
-            else if(mode == 2)
+            else if(th_mode == 2)
             {
                 ret = write_data_to_fddr(thread_id, slot_id, write_data);
             }
@@ -125,8 +153,7 @@ void *rw_fpga_ddr_func(void *para) {
                 ret = process_data_with_fpga(thread_id, slot_id, write_data);
             }
             if(ret) {
-                usleep(100);
-                //printf("read error.\n");
+                (void)usleep(10);
                 continue;
             }
             else {
@@ -137,7 +164,7 @@ void *rw_fpga_ddr_func(void *para) {
             (void)free_thread_id(thread_id);
             (void)memory_manager_free_bulk(src_addr);
 
-            if(mode == 0)
+            if(th_mode == 0)
             {
                 (void)memory_manager_free_bulk(src_addr1);
             }
@@ -145,15 +172,16 @@ void *rw_fpga_ddr_func(void *para) {
         }
     }  
 
-     while(1) {
+    while(1) {
         if(result_flag[thread_id] == package_num) {
             (void)pthread_mutex_lock(&g_result_lock);
             success_thread_num++;
+            result_flag[thread_id] = 0;	
             (void)pthread_mutex_unlock(&g_result_lock);
             printf("thread id %d, result num %d, all come back, quit it .\n", thread_id, result_flag[thread_id]);
             break;
         }
-        usleep(1000);
+        (void)usleep(1);
     }
 
     ret = free_thread_id(thread_id);
@@ -165,6 +193,7 @@ void *rw_fpga_ddr_func(void *para) {
 
     return NULL;
 }
+
 static void help() {
     printf(
         "-----------------------------------------------------------------------------------\r\n"
@@ -179,6 +208,7 @@ static void help() {
         "\t-h: print help\n"
         "-----------------------------------------------------------------------------------\r\n");
 }
+
 static int parse_arg(int argc, char* argv[]) {
     char*   arg_val = NULL;
     int     ch = 0;
@@ -193,7 +223,7 @@ static int parse_arg(int argc, char* argv[]) {
                 if(errno == ERANGE) {
                     goto parse_error;
                 } else {
-                    if(value ==  0) {
+                    if(value ==  0 || value > THREAD_NUM_MAX) {
                         printf("-t param input unvalid.\n");
                     }
                     else {
@@ -304,9 +334,8 @@ parse_error:
 
 int main(int argc, char* argv[]) {
     int ret;
-    pthread_t thread_id[20];
+    pthread_t thread_id[THREAD_NUM_MAX];
     unsigned int i = 0;
-    unsigned int value;
     unsigned long long diff;
     struct timeval  tx_start_time, tx_end_time;
 
@@ -322,7 +351,8 @@ int main(int argc, char* argv[]) {
 
     (void)gettimeofday(&tx_start_time, NULL);
     for(i = 0; i < thread_num; i++) {
-        ret = pthread_create(&thread_id[i], NULL, rw_fpga_ddr_func, NULL);
+        ret = pthread_create(&thread_id[i], NULL, rw_fpga_ddr_func, &mode);
+
         if (0 != ret)
         {
             printf("call pthread_create 0x%x failed.\n", ret);
@@ -331,7 +361,7 @@ int main(int argc, char* argv[]) {
 
     for (i = 0; i < thread_num; i++)
     {
-        pthread_join(thread_id[i],NULL);
+        (void)pthread_join(thread_id[i],NULL);
     }
 
     printf("\n------------\n");
@@ -344,7 +374,8 @@ int main(int argc, char* argv[]) {
     }
     (void)gettimeofday(&tx_end_time, NULL);
     diff = 1000000*(tx_end_time.tv_sec-tx_start_time.tv_sec) + tx_end_time.tv_usec - tx_start_time.tv_usec;
-    printf("Speed %f Gbps\n", ((float)len * thread_num * package_num *8/1000/1000/1000*1000*1000/diff));
+    printf("Speed %f Gbps\n", ((float)len * thread_num * package_num * 8/1000/1000/1000*1000*1000/diff));
+    printf("Speed %f Mpps\n", ((float) thread_num * package_num /1000/1000*1000*1000/diff));
 
     info_collect_mem_manager();
 

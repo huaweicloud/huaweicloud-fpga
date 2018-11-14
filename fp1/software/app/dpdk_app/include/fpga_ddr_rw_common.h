@@ -49,8 +49,8 @@
 #define STATIC_BD_SIZE         (64 + sizeof(struct rte_mbuf) + RTE_PKTMBUF_HEADROOM)
 
 #define RING_QUEUE_NAME "queue_ring"
-#define RING_QUEUE_NUM  65536
-#define THREAD_MAX_NUM  10
+#define RING_QUEUE_NUM  1048576
+#define THREAD_MAX_NUM  64
 #define QUEUE_USED      1
 typedef struct thread_info
 {

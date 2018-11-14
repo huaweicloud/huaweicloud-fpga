@@ -154,6 +154,7 @@ RTL构建结束，生成的二进制文件存放在目录`$WORK_DIR/hardware/viv
 - usr_prjxx_partial.bin
 - usr_prjxx_partial.bit
 - usr_prjxx_routed.dcp
+- manifest.json
 
-最终通过调用系统命令`AEI_Register.sh`完成上传，系统会将需要的的加载文件`usr_prjxx_routed.dcp 和 usr_prjxx_partial.bin` 上传到存储桶并返回AEI，由系统完成加载。
+最终通过调用系统命令`AEI_Register.sh`完成上传，系统会将需要的文件`usr_prjxx_routed.dcp 和 manifest.json` 上传到存储桶并返回AEI，由系统完成编译。
 命令详细使用方法见[usr_prj0构建指南](./usr_prj0/README_CN.md)。

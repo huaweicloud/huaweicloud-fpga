@@ -20,19 +20,21 @@
 
 执行`sh build.sh`命令构建工程。
 
-\----结束
-
 #### 执行注册脚本
 
 AEI_Register.sh脚本的命令格式如下所示。
 
-Usage:sh AEI_Register.sh *-n* [AEI_name] *-d* [AEI_Description]
+sh AEI_Register.sh -p [dcp_obs_path] -o [log_obs_dir] -n [AEI_name] -d [AEI_Description]
 
--   *-n*选项用于指定待注册FPGA镜像的AEI名称（AEI_name）。AEI_name是由英文大小写字母、数字、下划线、中划线组成的字符串，长度为1到64位。
+-   *-p* DCP文件存储在OBS桶中的文件路径。dcp_obs_path 不能以“/”开头，必须以“.tar”结尾，不能为空，不能以“.”开头或结尾。dcp_obs_path由英文大、小写字母，数字，中划线，下划线，斜杠，英文句号组成。长度4到128个字符。
 
--   *-d*选项用于指定待注册FPGA镜像的AEI描述信息（AEI_Description）。AEI_Description由中文汉字、中文句号逗号、英文大小写字母、数字、中划线、下划线、英文句号逗号、空格组成的字符串，长度为0到255位。
+-   *-o* （可选）后台编译所产生的给用户查看的LOG文件所在的OBS桶中的文件目录。当log_obs_dir参数未指定或为空时，默认与DCP文件位于同一级目录下。
 
--   *AEI_name* 和 *AEI_Description*两个参数需要用双引号括起来，例如`sh AEI_Register.sh -n "DPDK-test" -d "DPDK-desc"`。
+-   *-n* 选项指定待注册的FPGA镜像（AEI）名称。AEI_name是由英文大小写字母、数字、下划线、中划线组成的字符串，长度为1到64位，用户自行设计即可。
+
+-   *-d* 选项指定待注册的FPGA镜像（AEI）描述信息。AEI_Description由中文汉字、中文句号逗号、英文大小写字母、数字、中划线、下划线、英文句号逗号、空格组成的字符串，长度为0到255位，用户自行设计即可。
+
+-   参数之间需要分别用引号括起来，例如sh AEI_Register.sh -p "vu9p/abc.tar" -o "vu9p" -n "dpdk-test" -d "dpdk-desc"
 
 
 在AEI_Register.sh脚本执行成功后，会产生如下的回显信息。
@@ -48,7 +50,7 @@ id: 0000\*\*\*\*\*\*\*\*5568015e3c87835c0326
 status: saving
 
 -   “Success: 200
-    OK”信息表示AEI_Register.sh脚本执行成功。AEI_Register.sh脚本执行成功并不代表FPGA镜像注册成功。用户需要执行fisclient程序的查询列表子命令，并使用注册回显信息中FPGA镜像ID来查询相应的FPGA镜像信息。如果FPGA镜像的状态是“active”，则表示FPGA镜像注册成功。确认注册成功后用户才能进行FPGA镜像的加载操作。
+    OK”信息表示AEI_Register.sh脚本执行成功。AEI_Register.sh脚本执行成功并不代表FPGA镜像注册成功。用户需要执行fisclient程序（用法参考根目录下README_CN.md 1.2.2章节）的查询列表子命令，并使用注册回显信息中FPGA镜像ID来查询相应的FPGA镜像信息。如果FPGA镜像的状态是“active”，则表示FPGA镜像注册成功。确认注册成功后用户才能进行FPGA镜像的加载操作。
 
 -   “id:
     0000\*\*\*\*\*\*\*\*5568015e3c87835c0326”信息表示FPGA镜像管理为待注册FPGA镜像分配的ID为0000\*\*\*\*\*\*\*\*5568015e3c87835c0326，可用于查询FPGA镜像的注册操作是否成功以及后续的加载等操作。
@@ -61,7 +63,7 @@ status: saving
 例如，用户可以执行如下命令来注册一个DPDK镜像，并将AEI_name设置为“DPDK-test”，将AEI_Description设置为“DPDK-desc”。
 
 **说明：**执行以下命令运行约20分钟左右。
-[root\@ scripts]\# sh AEI_Register.sh -n "DPDK-test" -d "DPDK-desc"  
+[root\@ scripts]\# sh AEI_Register.sh -p "vu9p/abc.tar" -o "vu9p" -n "dpdk-test" -d "dpdk-desc"  
 fis argument(s) and config file are OK
 INFO: OCL Running
 #############################################################

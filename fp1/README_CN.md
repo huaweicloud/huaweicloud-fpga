@@ -175,7 +175,7 @@ HDK的运行流程分为：基于vivado的流程，和基于sdaccel的流程。
 2. 预编译Questasim仿真库（如果存在Questasim工具）；
 3. DPDK调用Vivado工具生成IP以及DDR仿真模型，OpenCL调用SDx工具及DSA等压缩包；
 4. DPDK下载OBS桶中的dcp文件和压缩包，OpenCL下载OBS桶中的DSA文件和压缩包，该过程大约需要3~5分钟，请耐心等待。
- 
+
 **说明** ：出现以下情况需要重新执行 `source setup.sh`命令： 
 
 1. 重新打开一个终端时；  
@@ -208,7 +208,7 @@ SDx开发模式采用Xilinx的SDAccel架构完成fpga与处理器的数据交互
 
 ### 上传与注册
 
-用户可以依据fpga云服务提供的API以及上传和注册工具，完成bin文件的上传和注册ID的生成，详细注册方法请参考文档[usr_prj0构建指南](./hardware/vivado_design/user/usr_prj0/prj/README_CN.md)中的“AEI_Register.sh文件配置说明”章节。
+用户可以依据fpga云服务提供的API以及上传和注册工具，完成dcp文件的打包上传和注册ID的生成，详细注册方法请参考文档[usr_prj0构建指南](./hardware/vivado_design/user/usr_prj0/prj/README_CN.md)中的“AEI_Register.sh文件配置说明”章节。
 
 <a id="sec-4-5" name="sec-4-5"></a>
 

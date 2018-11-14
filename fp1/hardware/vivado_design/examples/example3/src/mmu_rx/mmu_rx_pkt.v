@@ -62,7 +62,7 @@ module  mmu_rx_pkt
                  input          [7:0]                   reg_timer_1us_cfg          ,
                  output  reg    [3:0]                   reg_mmu_rxpkt_en           ,
                  output  reg                            reg_mmu_txpkt_en           ,
-                 output  reg                            write_ddr_rd_bd_5dly       ,
+                 output  reg                            write_ddr_rd_bd_4dly       ,
                  output  reg                            add_hacc_en_5dly           ,
                  output         [31:0]                  reg_mmu_rxpkt_sta          ,
                  output         [31:0]                  reg_mmu_rxpkt_sta1         ,
@@ -86,8 +86,7 @@ reg                               pkt_back_rd_4dly        ;
 reg                               write_ddr_rd_bd_1dly    ;
 reg                               write_ddr_rd_bd_2dly    ;
 reg                               write_ddr_rd_bd_3dly    ;
-reg                               write_ddr_rd_bd_4dly    ;
-//reg                               write_ddr_rd_bd_5dly    ;
+
 
 //wire      [3:0]                   tb_rr4_nef              ;
 wire      [7:0]                   tb_rr8_nef              ;
@@ -144,6 +143,8 @@ wire                              ae2ve_pkt_ff            ;
 reg                               down_flag               ;
 
 wire      [539:0]                 mmu_tx2rx_bd_rdata      ;
+reg       [511:0]                 mmu_tx2rx_bd_rdata_1dly ;
+reg       [511:0]                 mmu_tx2rx_bd_rdata_2dly ;
 reg       [511:0]                 mmu_tx2rx_bd_rdata_lock ;
 reg       [511:0]                 header_lock[3:0]        ;
 reg       [511:0]                 header_sel              ;
@@ -290,19 +291,23 @@ assign add_hacc_0use  = rxff_reop & tb_rr8_ack & que_eoc_bitmap[tb_rr8_qnum[1:0]
 assign add_hacc_1use  = rxff_reop & (~tb_rr8_ack)&que_eoc_flag;  
 assign eoc_tag_ren = eoc_tag_ren_tmp[3:0];
 assign bucket_dec_wend = bucket_dec_wend_tmp[3:0];
-    
+     
+always@(posedge clk_sys)
+begin
+    mmu_tx2rx_bd_rdata_1dly <= mmu_tx2rx_bd_rdata[511:0];
+    mmu_tx2rx_bd_rdata_2dly <= mmu_tx2rx_bd_rdata_1dly;
+end
+     
 always@(posedge clk_sys or posedge rst)
 begin
     if(rst == 1'd1)begin
         mmu_tx2rx_bd_rdata_lock <= 512'd0;
     end
-    else if(pkt_back_rd[4]==1'b1) begin
-        mmu_tx2rx_bd_rdata_lock <= mmu_tx2rx_bd_rdata[511:0];
+    else if(write_ddr_rd_bd_2dly==1'b1) begin
+        mmu_tx2rx_bd_rdata_lock <= mmu_tx2rx_bd_rdata_2dly;
     end 
     else;   
 end
-    
-
 
 always@(posedge clk_sys or posedge rst)
 begin
@@ -643,7 +648,7 @@ begin
       3'd1 :  down_flag = eoc_eop[1];  
       3'd2 :  down_flag = eoc_eop[2];   
       3'd3 :  down_flag = eoc_eop[3];   
-      default:down_flag = write_ddr_rd_bd_4dly;
+      default:down_flag = write_ddr_rd_bd_3dly;
    endcase
 end   
 
@@ -664,7 +669,6 @@ begin
         write_ddr_rd_bd_2dly <= 1'b0;
         write_ddr_rd_bd_3dly <= 1'b0;
         write_ddr_rd_bd_4dly <= 1'b0;
-        write_ddr_rd_bd_5dly <= 1'b0;
     end
     else begin
         pkt_back_rd_1dly <= (|pkt_back_rd[3:0]);
@@ -676,7 +680,6 @@ begin
         write_ddr_rd_bd_2dly <= write_ddr_rd_bd_1dly;
         write_ddr_rd_bd_3dly <= write_ddr_rd_bd_2dly;
         write_ddr_rd_bd_4dly <= write_ddr_rd_bd_3dly;
-        write_ddr_rd_bd_5dly <= write_ddr_rd_bd_4dly;
     end
 end
 
@@ -689,8 +692,8 @@ begin
     else begin
         ae2ve_pkt_wen <= pkt_back_rd_4dly | 
                          tb_rr8_ack_3dly | 
+                         write_ddr_rd_bd_3dly | 
                          write_ddr_rd_bd_4dly | 
-                         write_ddr_rd_bd_5dly | 
                          add_hacc_en_4dly | 
                          add_hacc_en_5dly;
     end
@@ -745,10 +748,10 @@ end
 //517-512:mod
 always@(posedge clk_sys )
 begin
-    if ((tb_rr8_ack_3dly == 1'b1)||(add_hacc_en_4dly == 1'b1) || (write_ddr_rd_bd_4dly == 1'b1)) begin
+    if ((tb_rr8_ack_3dly == 1'b1)||(add_hacc_en_4dly == 1'b1) || (write_ddr_rd_bd_3dly == 1'b1)) begin
        ae2ve_pkt_wdata_rev <= 28'd0;
     end
-    else if ((add_hacc_en_5dly == 1'b1) || (write_ddr_rd_bd_5dly == 1'b1)) begin
+    else if ((add_hacc_en_5dly == 1'b1) || (write_ddr_rd_bd_4dly == 1'b1)) begin
        ae2ve_pkt_wdata_rev <= {20'd0,2'd2,6'd32};
     end
     else if((pkt_reop_4dly == 1'b1)&&(eoc_eop_sel == 1'b1)&&(pkt_back_rd_4dly==1'b1)) begin
@@ -765,10 +768,10 @@ begin
     if (tb_rr8_ack_3dly == 1'b1) begin
        ae2ve_pkt_wdata_512b <= {header[511:217],1'b0,header[215:0]};
     end
-    else if ((add_hacc_en_4dly == 1'b1) || (write_ddr_rd_bd_4dly == 1'b1)) begin
+    else if ((add_hacc_en_4dly == 1'b1) || (write_ddr_rd_bd_3dly == 1'b1)) begin
        ae2ve_pkt_wdata_512b <= {header_sel[511:217],down_flag,8'd0,header_sel[175:128],32'd0,header_sel[127:0]};
     end
-    else if (write_ddr_rd_bd_5dly == 1'b1) begin
+    else if (write_ddr_rd_bd_4dly == 1'b1) begin
        ae2ve_pkt_wdata_512b <= {256'd0,header_sel_1dly[399:384],64'd0,len_in_hardacc_1dly,6'd0,header_sel_1dly[233:224],28'd0,header_sel_1dly[327:292],28'd0,header_sel_1dly[291:256]};
     end
     else if (add_hacc_en_5dly == 1'b1) begin
@@ -841,7 +844,7 @@ begin
     end
 end
 
-assign reg_mmu_rxpkt_sta = {1'd0,ae2ve_pkt_ff,tb_rr8_nef[4],eoc_tag_empty,chn_seq_empty,cur_que,que_eoc_bitmap[3:0],fifo_status,bucket_af,pkt_back_full_que,pkt_back_empty,tb_rr8_nef[3:0]}; 
+assign reg_mmu_rxpkt_sta = {ve_ff_empty,ae2ve_pkt_ff,tb_rr8_nef[4],eoc_tag_empty,chn_seq_empty,cur_que,que_eoc_bitmap[3:0],fifo_status,bucket_af,pkt_back_full_que,pkt_back_empty,tb_rr8_nef[3:0]}; 
 assign reg_mmu_rxpkt_sta1 = {23'd0,que_eoc_flag,rr8_req_nvld,tb_rr8_req,mmu_tx2rx_bd_afull,mmu_tx2rx_bd_empty,mmu_tx2rx_bd_fifo_stat[3:0]}; 
 assign reg_mmu_rxpkt_err = {11'd0,mmu_tx2rx_bd_fifo_stat[6:4],reg_ddr_tmout_err,fifo_err,reg_tmout_us_err,reg_bucket_err,empty_full_err};      
 /*********************************************************************************************************************\

@@ -82,6 +82,7 @@ module  mmu_rx_bd
     signals
 \*********************************************************************************************************************/
 //reg                                 axis_fifo_rd                    ;
+reg                                 tdm_flg                         ;
 reg                                 axis_fifo_rd_1dly               ;
 wire    [539:0]                     axis_fifo_rdata_conver          ;
 wire    [539:0]                     axis_fifo_rdata                 ;
@@ -146,6 +147,7 @@ wire                                fifo_err                        ;
 wire                                bd2rx_fifo_err                  ;            
 wire                                chn_seq_parity_err              ;            
 wire    [3:0]                       eoc_tag_parity_err              ;            
+wire    [31:0]                      eoc_tag_ff_stat                 ;            
 
 wire    [3:0]                       overflow                        ;            
 wire    [3:0]                       underflow                       ;            
@@ -186,16 +188,28 @@ genvar k ;
 always@(posedge clk_sys or posedge rst)
 begin
     if(rst == 1'd1)begin
+        tdm_flg <= 1'd0;    
+    end
+    else begin
+        tdm_flg <= ~tdm_flg;    
+    end
+end
+
+always@(posedge clk_sys or posedge rst)
+begin
+    if(rst == 1'd1)begin
         axis_fifo_rd <= 1'd0;    
     end
     else if((axis_fifo_emp == 1'd0)&&(cache_ff == 1'd0)
-            &&(axis_fifo_rd == 1'd0)&&(cut_flag==1'b0))begin
+            &&(axis_fifo_rd == 1'd0)&&(cut_flag==1'b0) && 
+           (tdm_flg == 1'b1))begin
         axis_fifo_rd <= 1'd1;    
     end
     else begin
         axis_fifo_rd <= 1'd0;    
     end
 end
+
 
 //------------------------------------------------------------------------------
 always@(posedge clk_sys or posedge rst)
@@ -205,7 +219,7 @@ begin
     end
     else if((bd2rx_axis_fifo_emp == 1'd0)&&(cache_ff == 1'd0) &&
             (bd2rx_axis_fifo_rd == 1'd0)&&(cut_flag==1'b0) && 
-            (mmu_tx2rx_bd_afull == 1'b0))begin
+            (mmu_tx2rx_bd_afull == 1'b0) && (tdm_flg == 1'b0))begin
         bd2rx_axis_fifo_rd <= 1'd1;    
     end
     else begin
@@ -544,8 +558,40 @@ assign chn_seq_wen      = axis_fifo_rd_1dly;
 assign chn_seq_wdata    = ddr_id ;
 
 
-assign reg_mmu_rxbd_err = {8'd0,bd2rx_fifo_err,chn_seq_ff_stat,reg_len_err,fifo_err,chn_seq_parity_err,eoc_tag_parity_err,underflow,overflow};
-assign reg_mmu_rxbd_sta = {5'd0,cut_flag,mmu_tx2rx_bd_afull,bd2rx_axis_fifo_emp,bd2rx_fifo_status,cache_ff,axis_fifo_emp,fifo_status,chn_seq_full,chn_seq_empty,eoc_tag_full,eoc_tag_empty,ve_ff_aff,ve_ff_empty};
+assign reg_mmu_rxbd_err = {1'b0,
+                          eoc_tag_ff_stat[30:28],
+                          eoc_tag_ff_stat[22:20],
+                          eoc_tag_ff_stat[14:12],
+                          eoc_tag_ff_stat[6:4],
+                          bd2rx_fifo_err,
+                          chn_seq_ff_stat[6:4],
+                          reg_len_err,
+                          fifo_err,
+                          chn_seq_parity_err,
+                          eoc_tag_parity_err,
+                          underflow,
+                          overflow};
+
+assign reg_mmu_rxbd_sta = {5'd0,
+                          cut_flag,
+                          mmu_tx2rx_bd_afull,
+                          bd2rx_axis_fifo_emp,
+                          bd2rx_fifo_status,
+                          cache_ff,
+                          axis_fifo_emp,
+                          fifo_status,
+                          chn_seq_full,
+                          chn_seq_empty,
+                          eoc_tag_full,
+                          eoc_tag_empty,
+                          ve_ff_aff,
+                          ve_ff_empty};
+
+assign reg_eoc_tag_ff_stat = {16'd0,
+                          eoc_tag_ff_stat[27:24],
+                          eoc_tag_ff_stat[19:16],
+                          eoc_tag_ff_stat[11:8],
+                          eoc_tag_ff_stat[3:0]};
 
 assign reg_mmu_rxbd_en  = axis_fifo_rd_1dly; 
 assign reg_mmu_rdcmd_en = rcmd_ff_wen; 
@@ -664,7 +710,7 @@ generate
              .afull             (eoc_tag_full[k]        ), 
              .aempty            (                       ),
              .parity_err        (eoc_tag_parity_err[k]  ),
-             .fifo_stat         (reg_eoc_tag_ff_stat[8*(k+1)-1:8*k]  ) 
+             .fifo_stat         (eoc_tag_ff_stat[8*(k+1)-1:8*k]  ) 
              );
          
     end

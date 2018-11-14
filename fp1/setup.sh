@@ -106,7 +106,7 @@ function check_more_soft () {
 # Show usage info
 function usage () {
     echo  -e "\e[0;35m Usage: source setup.sh [software directory] / -c / --clean / -u / -l / -xr \e[0m"
-    echo  -e "\e[0;35m Setup hardware develop eviranment. \e[0m"
+    echo  -e "\e[0;35m Setup hardware develop environment. \e[0m"
     echo  -e "\e[0;35m example: source setup.sh \e[0m"
     echo  -e "\e[0;35m example: source setup.sh /opt \e[0m"
     echo  -e "\e[0;35m \e[0m"
@@ -118,7 +118,7 @@ function usage () {
     echo  -e "\e[0;35m         -l / --license       Specify user license cfg for software \e[0m"
     echo  -e "\e[0;35m         -xr/ --xilinxreq     Specify xilinx vivado version \e[0m"
     echo  -e "\e[0;35m         -x / --usesdx        Using SDAccel develop mode \e[0m"
-    echo  -e "\e[0;35m         -v / --verbose       Enable Verbose mode(More infomation will be print) \e[0m"
+    echo  -e "\e[0;35m         -v / --verbose       Enable Verbose mode(More information will be print) \e[0m"
     echo  -e "\e[0;35m         [software directory] Software install directory(If not define using /software as default) \e[0m"
 }
 
@@ -358,7 +358,7 @@ echo
 echo "---------------------------------------------------"
 echo
 
-echo -n "Checking software infomation."
+echo -n "Checking software information."
 
 if [ -f $WORK_DIR/.find_tmp ] ; then
     rm -f $WORK_DIR/.find_tmp
@@ -399,7 +399,7 @@ echo "---------------------------------------------------"
 echo
 
 # Get vivado directory
-echo "Checking vivado/sdx infomation..."
+echo "Checking vivado/sdx information..."
 echo
 
 echo "---------------------------------------------------"
@@ -508,7 +508,7 @@ echo
 echo "---------------------------------------------------"
 echo
 
-echo "Checking verdi infomation..."
+echo "Checking verdi information..."
 info_show_n "Checking whether verdi env has been set : "
 
 verdi_info=`which verdi 2> /dev/null`
@@ -551,7 +551,7 @@ echo
 echo "---------------------------------------------------"
 echo
 
-echo "Checking vcs infomation..."
+echo "Checking vcs information..."
 info_show_n "Checking whether vcs env has been set : "
 
 vcs_info=`which vcs 2> /dev/null`
@@ -654,7 +654,7 @@ echo
 echo "---------------------------------------------------"
 echo
 
-echo "Checking questa infomation..."
+echo "Checking questa information..."
 info_show_n "Checking whether questa env has been set : "
 questa_info=`which vsim 2> /dev/null`
 
@@ -761,7 +761,7 @@ if [ $fpga_dev_mode -eq 0 -a $FPGA_DEVELOP_MODE == "vivado" ] ; then
 
     ip_broken=0
 
-    echo "Checking ip infomation..."
+    echo "Checking ip information..."
     info_show_n "Checking whether rdimma_x8_16GB_2133Mbps ip has existed : "
     if [ -d $LIB_DIR/ip/rdimma_x8_16GB_2133Mbps ] ; then
         if [ -f $LIB_DIR/ip/rdimma_x8_16GB_2133Mbps/rdimma_x8_16GB_2133Mbps.xci ] ; then
@@ -938,7 +938,7 @@ echo
 #check gcc and sudo 
 ###################################################################################################
 #check gcc
-echo "Check the gcc/sudo infomation..."
+echo "Check the gcc/sudo information..."
 gcc_info=`which gcc 2>/dev/null`
 if [ -z "$gcc_info" ]; then
     echo "ERROR: gcc has not been installed."
@@ -970,10 +970,10 @@ mkdir -p ${bonding_log%/*}
 export FPGA_TOOL_DIR=$WORK_DIR
 fpga_tool_dist_dir=$FPGA_TOOL_DIR/tools/fpga_tool/dist
 
-echo "Checking fpga tool infomation..."
+echo "Checking fpga tool information..."
 
 if [ -f "/usr/lib64/libfpgamgmt.so" -a -f "$fpga_tool_dist_dir/FpgaCmdEntry" ];then
-    echo "Fpgatool had been installed successfully, do not need to reisntall"
+    echo "Fpgatool had been installed successfully, do not need to reinstall"
 else
     fpga_tool_build_dir=$FPGA_TOOL_DIR/tools/fpga_tool/build
     #make fpga_tool

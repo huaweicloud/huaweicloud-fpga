@@ -1,7 +1,7 @@
 /*-
  *   BSD LICENSE
  *
- *   Copyright(c)  2017 Huawei Technologies Co., Ltd. All rights reserved.
+ *   Copyright(c)  2018 Huawei Technologies Co., Ltd. All rights reserved.
  *
  *   Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions
@@ -50,6 +50,7 @@ typedef unsigned long long UINT64;
 #define SDKRTN_ERR_BASE                         0xFFFFF000
 
 #define FPGA_SLOT_MAX                           8
+#define SF_OPT_LEVEL_MAX                        3
 #define HFI_ID_LEN_MAX                          36
 #define HFI_ID_LEN                              32
 #define FPGA_VF_BAR_NUM_MAX                     1
@@ -178,5 +179,6 @@ UINT32 FPGA_PciScanAllSlots( FpgaResourceMap straFpgaArray[], UINT32 ulSize );
 UINT32 FPGA_MgmtOpsMutexRlock( UINT32 ulSlotId, INT32 * plFd );
 UINT32 FPGA_MgmtOpsMutexWlock( UINT32 ulSlotId, INT32 * plFd );
 UINT32 FPGA_MgmtOpsMutexUnlock( INT32 lFd );
+UINT32 FPGA_MgmtQueryAlmMsgs( UINT32 ulSlotIndex, UINT8 Almtype, UINT8 AlmLevel, UINT8 *acAlmInfo,  UINT32 ulAlmLen);
 
 #endif

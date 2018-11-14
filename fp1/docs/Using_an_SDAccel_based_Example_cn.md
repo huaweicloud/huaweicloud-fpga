@@ -29,9 +29,9 @@ SDAccel HDK主要完成SDAccel开发流程的编译和仿真部分，需要在SD
 
   	FPGA_DEVELOP_MODE="sdx"  
   	VIVADO_VER_REQ="2017.4.op" 
-  	
+
     华北：`XILINX_LIC_SETUP="2100@100.125.1.240:2100@100.125.1.245"`
-    
+
     华南：`XILINX_LIC_SETUP="2100@100.125.16.137:2100@100.125.16.138"`
 
     华东：`XILINX_LIC_SETUP="2100@100.125.17.108:2100@100.125.17.109"`
@@ -96,7 +96,11 @@ SDAccel HDK主要完成SDAccel开发流程的编译和仿真部分，需要在SD
 
 6. 硬件测试。
 
-  按照步骤4选择hw模式编译并生成xclbin文件，需要先完成环境配置及SDK的编译（具体可参考根目录下README 3.1.2章节），按照下节SDAccel SDK流程在执行环境上进行硬件测试。
+  按照步骤4选择hw模式编译并生成xclbin文件。
+
+##### 说明:
+
+xclbin文件名称需要用户根据自己的具体名称进行相应调整。
 
 
 使用SDAccel SDK

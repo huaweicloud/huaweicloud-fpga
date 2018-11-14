@@ -1,7 +1,7 @@
 /*-
  *   BSD LICENSE
  *
- *   Copyright(c)  2017 Huawei Technologies Co., Ltd. All rights reserved.
+ *   Copyright(c)  2017-2018 Huawei Technologies Co., Ltd. All rights reserved.
  *
  *   Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions
@@ -53,6 +53,8 @@ typedef unsigned long long UINT64;
 #define HFI_ID_LEN_MAX                          36
 #define HFI_ID_LEN                              32
 #define FPGA_VF_BAR_NUM_MAX                     1
+
+
 
 #define HW_VF_VENDOR_ID                         0x19e5
 #define HW_VF_DEVICE_ID                         0xd503

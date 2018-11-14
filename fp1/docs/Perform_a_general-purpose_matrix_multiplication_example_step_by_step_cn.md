@@ -73,7 +73,7 @@ sh run.sh emu ../prj/bin/mmult ../prj/bin/bin_mmult_hw_emu.xclbin
 
 ```bash
 cd $HW_FPGA_DIR/hardware/sdaccel_design/examples/mmult_hls/scripts
-sh AEI_Register.sh -n "mmult" -d "mmult-test"
+sh AEI_Register.sh -p "obs_path" -o "obs_dir" -n "ocl-test" -d "ocl-desc"
 ```
 
 ## 3.2 编译host

@@ -64,7 +64,7 @@ make TC=sv_demo_001
 
 ```bash
 cd $HW_FPGA_DIR/hardware/vivado_design/examples/example2/prj
-sh AEI_Register.sh -n "DPDK-test" -d "DPDK-desc"
+sh AEI_Register.sh -p "vu9p/abc.tar" -o "vu9p" -n "ocl-test" -d "ocl-desc"
 ```
 
 ## 3.2 加载FPGA镜像

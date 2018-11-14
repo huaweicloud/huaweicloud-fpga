@@ -77,7 +77,7 @@ usr_prj0的prj文件夹层级结构如下：
 <a id="sec-2-7" name="sec-2-7"></a>
 
 - AEI_Register.sh  
-  该命令主要用于完成pr校验、bit文件生成、上传等步骤，执行该文件即可实现将bit文件上传至OBS桶，并获取注册ID，详细使用说明请见[AEI_Register.sh使用说明](#sec-3-5)。
+  该命令主要用于完成dcp文件打包上传等步骤，执行该文件即可实现将dcp文件打包上传至OBS桶，并获取注册ID，详细使用说明请见[AEI_Register.sh使用说明](#sec-3-5)。
 
 <a id="sec-3" name="sec-3"></a>
 
@@ -134,7 +134,7 @@ usr_prj0的prj文件夹层级结构如下：
 | [-i] or [-I] or [-impl]    | 单步执行实现       |
 | [-p] or [-P] or [-pr]      | 单步执行pr校验     |
 | [-b] or [-B] or [-bit]     | 单步执行目标文件生成   |
-| [-e] or [-E] or [-encrypt] | 综合选择加密，默认不加密      |
+| [-e] or [-E] or [-encrypt] | 综合选择加密，默认不加密 |
 | [-h] or [-H] or [-help]    | build.sh帮助说明 |
 | [-s_strategy_help]         | 综合策略帮助说明     |
 | [-i_strategy_help]         | 实现策略帮助说明     |
@@ -237,22 +237,22 @@ usr_prj0的prj文件夹层级结构如下：
 
 ### AEI_Register.sh命令的使用说明
 
-该命令主要完成pr校验、bit文件生成、上传等步骤，执行该文件即可实现将bit文件上传至OBS桶，并获取注册ID。
+该命令主要完成dcp文件打包上传等步骤，执行该文件即可实现将dcp文件上传至OBS桶，并获取注册ID。
 执行AEI_Register.sh脚本的命令格式如下：
 
 ```bash
-  $ sh AEI_Register.sh -n [AEI_name] -d [AEI_Description]
+  $ sh AEI_Register.sh -p [dcp_obs_path] -o [log_obs_dir] -n [AEI_name] -d [AEI_Description]
 
-  # -n选项指定待注册的FPGA镜像（AEI）名称。
-  # AEI_name是由英文大小写字母、数字、下划线、中划线组成的字符串，长度为1到64位，用户自行设计即可。
-  # -d选项指定待注册的FPGA镜像（AEI）描述信息。
-  # AEI_Description由中文汉字、中文句号逗号、英文大小写字母、数字、中划线、下划线、英文句号逗号、空格组成的字符串，长度为0到255位，用户自行设计即可。
-  # AEI_name和AEI_Description参数需要分别用引号括起来，例如sh AEI_Register.sh -n "DPDK-test" -d "DPDK-desc"
+  # -p DCP文件存储在OBS桶中的文件路径。dcp_obs_path 不能以“/”开头，必须以“.tar”结尾，不能为空，不能以“.”开头或结尾。dcp_obs_path由英文大、小写字母，数字，中划线，下划线，斜杠，英文句号组成。长度4到128个字符。
+  # -o （可选）后台编译所产生的给用户查看的LOG文件所在的OBS桶中的文件目录。当log_obs_dir参数未指定或为空时，默认与DCP文件位于同一级目录下。   
+  # -n 选项指定待注册的FPGA镜像（AEI）名称。AEI_name是由英文大小写字母、数字、下划线、中划线组成的字符串，长度为1到64位，用户自行设计即可。
+  # -d 选项指定待注册的FPGA镜像（AEI）描述信息。AEI_Description由中文汉字、中文句号逗号、英文大小写字母、数字、中划线、下划线、英文句号逗号、空格组成的字符串，长度为0到255位，用户自行设计即可。
+  # 参数之间需要分别用引号括起来，例如sh AEI_Register.sh -p "vu9p/abc.tar" -o "vu9p" -n "ocl-test" -d "ocl-desc"
 ```
 
 **重要说明**:
 
-- 执行AEI_Register.sh命令完成`pr校验`、`bit文件生成`和`注册ID生成`3个步骤，因此该步骤耗时稍长。
+- 执行AEI_Register.sh命令完成`dcp文件打包上传`和`注册ID生成`3个步骤，因此该步骤耗时稍长。
 
 - 在AEI_Register.sh脚本执行成功后，会产生如下的回显信息。
 

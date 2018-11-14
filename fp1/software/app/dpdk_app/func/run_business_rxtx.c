@@ -209,9 +209,9 @@ int mbufs_pool_init(pst_mbufs_pool p_mbufs_pool, pstBusinessThreadArgs p_busines
             /* For FMMU, send data to FPGA_DDR_MODULE_NUM DDRs to balance the load,
                calucate the FPGA DDR addr with DDR idx, queue idx and mbuf idx */
             extend_data_tx->src_fpga_phy_addr = FPGA_DDR_BASE + 
-                (mbuf_idx % FPGA_DDR_MODULE_NUM) * (FPGA_DDR_ALL_SIZE(overflow_protect)/FPGA_DDR_MODULE_NUM) + 
-                (p_mbufs_pool->queue_idx) * MBUFS_NB_IN_POOL * secondary_data_size +
-                (mbuf_idx / FPGA_DDR_MODULE_NUM * secondary_data_size);
+                ((uint64_t)mbuf_idx % FPGA_DDR_MODULE_NUM) * (FPGA_DDR_ALL_SIZE(overflow_protect)/FPGA_DDR_MODULE_NUM) + 
+                ((uint64_t)p_mbufs_pool->queue_idx) * MBUFS_NB_IN_POOL * (uint64_t)secondary_data_size +
+                ((uint64_t)mbuf_idx / FPGA_DDR_MODULE_NUM * (uint64_t)secondary_data_size);
     
             extend_data_tx->dst_fpga_phy_addr = extend_data_tx->src_fpga_phy_addr;
         }
@@ -383,10 +383,10 @@ int run_business_thread(pstBusinessThreadArgs p_business_thread_args) {
     real_rx_nb = p_business_thread_args->real_rx_nb;
     if ((real_tx_nb == p_business_thread_args->p_business_args->packet_num) 
             && (real_rx_nb == p_business_thread_args->p_business_args->packet_num)) {
-        printf("\033[1;32;40mport %u, queue %u TX/RX all success, all process %lu packets\033[0m\n\n\r\n",  \
+        printf("\033[1;32;40mport %u, queue %u TX/RX all success, all process %u packets\033[0m\n\n\r\n",  \
             port_id, queue_idx, p_business_thread_args->p_business_args->packet_num);
     } else {
-        printf("\033[1;31;40mport %u, queue %u TX/RX some error, all process TX %lu packets, RX %lu packets, Require %lu packets\033[0m\r\n",   \
+        printf("\033[1;31;40mport %u, queue %u TX/RX some error, all process TX %u packets, RX %u packets, Require %u packets\033[0m\r\n",   \
             port_id, queue_idx, real_tx_nb, real_rx_nb, p_business_thread_args->p_business_args->packet_num);
         goto error;
     }
@@ -536,8 +536,8 @@ static int run_business_tx_thread_route(void* arg) {
                 tx_mbufs, cur_require_tx_nb, &curr_real_tx_nb);
         pst_tx_thead_args->real_tx_nb += curr_real_tx_nb;
         if (status < 0) {
-            printf("\033[1;31;40mrequire_tx_all(%lu), real_tx_all(%lu), "
-                "require_loop_all(%lu), failed_loop_time(%lu)\033[0m\r\n",
+            printf("\033[1;31;40mrequire_tx_all(%u), real_tx_all(%u), "
+                "require_loop_all(%u), failed_loop_time(%u)\033[0m\r\n",
                 pst_tx_thead_args->p_business_args->packet_num, pst_tx_thead_args->real_tx_nb,
                 tx_time+1, tx_time_idx);
             return 0;
@@ -579,8 +579,8 @@ static int run_business_rx_thread_route(void* arg) {
         pst_rx_thead_args->real_rx_nb += curr_real_rx_nb;
 
         if (status < 0) {
-            printf("\033[1;31;40mrequire_rx_all(%lu), real_rx_all(%lu), "
-                "require_loop_all(%lu), failed_loop_time(%lu)\033[0m\r\n",
+            printf("\033[1;31;40mrequire_rx_all(%u), real_rx_all(%u), "
+                "require_loop_all(%u), failed_loop_time(%u)\033[0m\r\n",
                 pst_rx_thead_args->p_business_args->packet_num, pst_rx_thead_args->real_rx_nb,
                 rx_time+1, rx_time_idx);
             return 0;
@@ -593,7 +593,7 @@ static int run_business_rx_thread_route(void* arg) {
      * caculation os gbps: (number of receive packages) * (length of message(bytes)) * 8 / 1000 / 1000 / 1000 / (time consumed(second))
      */
     
-    printf("\033[1;32;40m----------------port %u, queue %u rx_packet_len %u, packet_num: %lu, performance = %lu gbps----------------\033[0m\r\n",
+    printf("\033[1;32;40m----------------port %u, queue %u rx_packet_len %u, packet_num: %u, performance = %lu gbps----------------\033[0m\r\n",
         port_id, queue_idx, \
         pst_rx_thead_args->p_business_args->packet_len,
         pst_rx_thead_args->p_business_args->packet_num,

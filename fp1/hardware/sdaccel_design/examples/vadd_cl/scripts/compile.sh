@@ -88,13 +88,6 @@ function make_hw
         HW_COMP_ISOK=1
     fi
     
-    if [ -f $realpath/../prj/bin/*.xclbin ];then
-	    sh $realpath/../../../lib/scripts/creat_ocl_manifest.sh $realpath
-    else
-	    echo "ERROR:hardware xclbin not found!"
-		cd $realpath
-        exit
-    fi
     
 	cd $realpath
 }
@@ -138,7 +131,7 @@ if [[ $1 == "cpu_em" ]]
         else 
             echo "*************************************************"
             echo "****                                     ********"
-            echo -e "****  CPU EMULATION COMPILE\e[1;31m FIALED \e[0m     ********"
+            echo -e "****  CPU EMULATION COMPILE\e[1;31m FAILED \e[0m     ********"
             echo "****                                     ********"
             echo "*************************************************"
         fi
@@ -155,7 +148,7 @@ elif [[ $1 == "hw_em" ]]
         else 
             echo "*************************************************"
             echo "****                                     ********"
-            echo -e "****  HW EMULATION COMPILE\e[1;31m FIALED \e[0m       ********"
+            echo -e "****  HW EMULATION COMPILE\e[1;31m FAILED \e[0m       ********"
             echo "****                                     ********"
             echo "*************************************************"
         fi
@@ -172,7 +165,7 @@ elif [[ $1 == "host" ]]
         else 
             echo "*************************************************"
             echo "****                                     ********"
-            echo -e "****       HOST COMPILE\e[1;31m FIALED \e[0m          ********"
+            echo -e "****       HOST COMPILE\e[1;31m FAILED \e[0m          ********"
             echo "****                                     ********"
             echo "*************************************************"
         fi
@@ -189,7 +182,7 @@ elif [[ $1 == "hw" ]]
         else 
             echo "*************************************************"
             echo "****                                     ********"
-            echo -e "****   HARDWARE COMPILE\e[1;31m FIALED \e[0m          ********"
+            echo -e "****   HARDWARE COMPILE\e[1;31m FAILED \e[0m          ********"
             echo "****                                     ********"
             echo "*************************************************"
         fi
@@ -206,7 +199,7 @@ elif [[ $1 == "clean" ]]
         else 
             echo "*************************************************"
             echo "****                                     ********"
-            echo -e "****   COMPILE CLEAN\e[1;31m FIALED \e[0m             ********"
+            echo -e "****   COMPILE CLEAN\e[1;31m FAILED \e[0m             ********"
             echo "****                                     ********"
             echo "*************************************************"
         fi

@@ -79,12 +79,12 @@ wire       [31:0]           cpu_data_out2         ;
 wire       [31:0]           cpu_data_out80        ;
 wire       [31:0]           cpu_data_out81        ;
 wire       [31:0]           cpu_data_out82        ;
-wire       [31:0]           cpu_data_out83        ;
 
 //sta
 wire       [31:0]           cpu_data_out100       ;
 wire       [31:0]           cpu_data_out101       ;
 wire       [31:0]           cpu_data_out102       ;
+wire       [31:0]           cpu_data_out103       ;
 
 //cnt
 wire       [31:0]           cpu_data_out180       ;
@@ -210,24 +210,6 @@ err_wc_reg_inst
      .err_flag_in        ( reg_axi_tmout_err        )        
      );
 
-err_wc_reg_inst
-        #(
-        .ADDR_WIDTH(24),
-        .VLD_WIDTH(32)
-         )
-    inst_reg_eoc_tag_ff_stat                                      
-     (
-     .clk                ( clk_sys                  ),       
-     .reset              ( rst                      ),       
-
-     .cpu_data_out       ( cpu_data_out83           ),       
-     .cpu_data_in        ( cpu_data_in              ),       
-     .cpu_addr           ( cpu_addr                 ),       
-     .cpu_wr             ( cpu_wr                   ),       
-     .its_addr           ( {REG_MMU_RX_ID,3'd0,9'h083}),      
-     .err_flag_in        ( reg_eoc_tag_ff_stat      )        
-     );
-
 ro_reg_inst
         #(
         .ADDR_WIDTH(24),
@@ -266,6 +248,20 @@ ro_reg_inst
      .its_addr           ( {REG_MMU_RX_ID,3'd0,9'h102}),   
      .din                ( reg_mmu_rxpkt_sta1       )        
      );
+
+ro_reg_inst
+        #(
+        .ADDR_WIDTH(24),
+        .VLD_WIDTH(32)                                    
+         )
+     inst_reg_eoc_tag_ff_stat                                    
+     (
+     .cpu_data_out       ( cpu_data_out103          ),   
+     .cpu_addr           ( cpu_addr                 ),   
+     .its_addr           ( {REG_MMU_RX_ID,3'd0,9'h103}),   
+     .din                ( reg_eoc_tag_ff_stat       )        
+     );
+
 
 
 
@@ -496,7 +492,6 @@ begin
            7'h00: cpu_data_out_err <= cpu_data_out80;
            7'h01: cpu_data_out_err <= cpu_data_out81;
            7'h02: cpu_data_out_err <= cpu_data_out82;
-           7'h03: cpu_data_out_err <= cpu_data_out83;
          default: cpu_data_out_err <= 32'd0;
         endcase
     end
@@ -512,6 +507,7 @@ begin
            7'h00: cpu_data_out_sts <= cpu_data_out100;
            7'h01: cpu_data_out_sts <= cpu_data_out101;
            7'h02: cpu_data_out_sts <= cpu_data_out102;
+           7'h03: cpu_data_out_sts <= cpu_data_out103;
 
          default: cpu_data_out_sts <= 32'd0;
        endcase

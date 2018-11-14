@@ -71,10 +71,11 @@ else
     DEVICE_REPO_OPT = --xp prop:solution.device_repo_paths=${XDEVICE_REPO_PATH} 
 endif
 
+XOCC_DCP_GEN = --xp param:compiler.acceleratorBinaryContent=dcp
 PLATFORM_PATH=./../../../lib/platform/huawei_vu9p_dynamic_fp1_5_0/huawei_vu9p_dynamic_fp1_5_0.xpfm
 HOST_CFLAGS += -I${XILINX_SDX}/runtime/include/1_2
 HOST_LFLAGS += -L${XILINX_SDX}/runtime/lib/x86_64 -lxilinxopencl -lstdc++
-CLCC_OPT += $(CLCC_OPT_LEVEL) ${DEVICE_REPO_OPT} -f ${PLATFORM_PATH} ${KERNEL_DEFS} ${KERNEL_INCS}
+CLCC_OPT += $(CLCC_OPT_LEVEL) ${DEVICE_REPO_OPT} -f ${PLATFORM_PATH} ${XOCC_DCP_GEN} ${KERNEL_DEFS} ${KERNEL_INCS}
 
 ifeq (${KEEP_TEMP},1)
     CLCC_OPT += -s

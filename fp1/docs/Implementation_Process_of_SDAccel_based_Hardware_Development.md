@@ -19,6 +19,8 @@ Contents
 
 [Version Compilation](#sec-7)
 
+[Example of Using the xclbinsplit Tool](#sec-8)
+
 <a id="sec-1" name="sec-1"></a>
 
 SDAccel-Based Operation Process
@@ -59,6 +61,7 @@ User operation processes include the simulation development process and the hard
 | Create a user project.                   | Create a user project.                   | Run a command to create a user project in one-click mode. |
 | Compile source files.                    | Compile source files.                    | After the project configuration is complete, run the **compile.sh** script to compile, link, and generate the host program, and to compile the kernel, implement synthesis, placing, and routing, and generate target files. |
 | Generate target files.                   | Generate target files.                   | The generated target files are stored in the **/prj/bin/** directory. |
+| Generate dcp files.                      | Generate dcp files.                      | The generated dcp files are stored in the **/prj/bin/** directory. |
 | Modify configuration files.              | Modify configuration files according to README.md. | Modify configuration files of AEI_Regsiter.sh and fisclient before registering an image. |
 | Register an image.                       | Register an SDAccel image.               | Use AEI_Regsiter.sh to register an SDAccel image with the SDAccel image management module. After the registration, an ID is assigned to the SDAccel image. |
 | Check the image registration status.     | Check whether the SDAccel image is successfully registered. | Use the image ID to check whether the SDAccel image is successfully registered. |
@@ -212,3 +215,20 @@ Run the `compile.sh` script to compile, link, and generate the host program, and
 For details, see `HW_FPGA_DIR/hardware/sdaccel_design/user/<usr_prj_name>/README.md`.  
 
 **Each compilation clears the previously compiled contents. Back up the compiled files before a new compilation.**
+
+<a id="sec-8" name="sec-8"></a>
+Example of Using the xclbinsplit Tool
+------------
+
+
+```bash
+cd $HW_FPGA_DIR/hardware/sdaccel_design/user/<usr_prj_name>/prj/bin
+/software/Xilinx/SDx_2017.4_op/SDx/2017.4.op/runtime/bin/xclbinsplit bin_mmult_hw.xclbin
+mv split-primary.bit split-primary.dcp
+```
+
+##### Notes:
+
+You need to adjust the path of the xclbinsplit tool based on the VM environment.
+
+You need to change the xclbin file names based on the actual situation.

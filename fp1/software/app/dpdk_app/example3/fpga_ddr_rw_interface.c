@@ -135,7 +135,7 @@ int read_data_from_fddr (unsigned int thread_id, unsigned int slot_id, rw_ddr_da
 
     if(rw_data.cpu_vir_dst_addr == 0 || rw_data.length == 0         \
         || rw_data.length > (4*1024*1024)) {
-        printf("call check_thread_id_valid fail.\n");
+        printf("call check_cpu_vir_dst_addr_valid fail.\n");
         return -2;
     }
 
@@ -220,10 +220,10 @@ int read_register(unsigned int slot_id, unsigned int addr, unsigned int *value) 
         return -4;
     }
     
-    (void)pci_bar2_read_regs(g_port_id[slot_id], &addr, sizeof(addr)/sizeof(unsigned int), value);
+    ret = pci_bar2_read_regs(g_port_id[slot_id], &addr, sizeof(addr)/sizeof(unsigned int), value);
     printf("addr: 0x%08x, data: 0x%08x\r\n", addr, *value);
 
-    return 0;
+    return ret;
 }
 int write_register(unsigned int slot_id ,unsigned int addr, unsigned int value) {
     int ret = 0;
@@ -233,7 +233,7 @@ int write_register(unsigned int slot_id ,unsigned int addr, unsigned int value) 
         return -4;
     }
 
-    (void)pci_bar2_write_regs(g_port_id[slot_id], &addr, &value, sizeof(addr)/sizeof(unsigned int));
+    ret = pci_bar2_write_regs(g_port_id[slot_id], &addr, &value, sizeof(addr)/sizeof(unsigned int));
 
-    return 0;
+    return ret;
 }

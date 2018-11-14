@@ -64,7 +64,7 @@ module mmu_tx_pkt
     //interface with mmu_tx_bd
     //fpga ddr sa, da 
     output   reg                             hacc_wr                           ,
-    output   wire    [8:0]                   hacc_waddr                        ,
+    output   reg     [8:0]                   hacc_waddr                        ,
     output   reg     [87:0]                  hacc_wdata                        ,
 
     //online cnt feedback
@@ -314,7 +314,11 @@ begin
     else;
 end
 
-assign hacc_waddr = hacc_sn;
+always @ (posedge clk_sys)
+begin
+    hacc_waddr <= hacc_sn;
+end
+
 
 always @ (posedge clk_sys or posedge rst)
 begin
@@ -717,17 +721,17 @@ begin
     end
     else begin
         reg_mmu_tx_pkt_err          <= {
-                                       {(30 - DDR_NUM*4){1'b0}},
-                                       sn_fifo_stat[5],
-                                       seq_fifo_stat[5],
-                                       ddr_rsp_fifo_stat[29],
-                                       ddr_rsp_fifo_stat[21],
-                                       ddr_rsp_fifo_stat[13],
-                                       ddr_rsp_fifo_stat[5],
-                                       eoc_fifo_stat[29],
-                                       eoc_fifo_stat[21],
-                                       eoc_fifo_stat[13],
-                                       eoc_fifo_stat[5],
+                                       4'd0,
+                                       sn_fifo_stat[5:4],
+                                       seq_fifo_stat[5:4],
+                                       ddr_rsp_fifo_stat[29:28],
+                                       ddr_rsp_fifo_stat[21:20],
+                                       ddr_rsp_fifo_stat[13:12],
+                                       ddr_rsp_fifo_stat[5:4],
+                                       eoc_fifo_stat[29:28],
+                                       eoc_fifo_stat[21:20],
+                                       eoc_fifo_stat[13:12],
+                                       eoc_fifo_stat[5:4],
                                        ddr_info_fifo_err,
                                        pkt_fifo_err
                                        }; 

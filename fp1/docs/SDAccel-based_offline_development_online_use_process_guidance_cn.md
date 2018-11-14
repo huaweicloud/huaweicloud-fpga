@@ -15,11 +15,11 @@
 
 [配置开发环境](#sec-3)
 
-[生成manifest文件](#sec-4)
+[存放xclbin文件](#sec-4)
 
-[注册镜像](#sec-5)
+[注册镜像](#sec-6)
 
-[加载运行程序](#sec-6)
+[加载运行程序](#sec-7)
 
 <a id="sec-1" name="sec-1"></a>
 总体操作流程
@@ -33,9 +33,9 @@
 
 用户在申请到相应的华为云虚拟机之后，下载开发套件到所申请的虚拟机，具体下载方式如下：
 
-+ 对于https连接执行`git clone https://github.com/Huawei/huaweicloud-fpga.git`命令下载。
++ 对于https连接执行`git clone https://github.com/huaweicloud/huaweicloud-fpga.git`命令下载。
 
-+ 对于ssh连接执行`git clone git@github.com:Huawei/huaweicloud-fpga.git`命令下载。
++ 对于ssh连接执行`git clone git@github.com/huaweicloud/huaweicloud-fpga.git`命令下载。
 
 <a id="sec-3" name="sec-3"></a>
 配置开发环境
@@ -56,7 +56,7 @@ FPGA镜像管理工具的安装和配置请参考根目录`huaweicloud-fpga`下R
 
 #### 设置EDA工具开发模式、版本号
 
-用户打开开发套件`huaweicloud-fpga/fp1/`下的`setup.cfg`文件，将FPGA线上开发工具`FPGA_DEVELOP_MODE`设置为SDAccel ，将`VIVADO_VER_REQ`设置为2017.4.op：
+用户打开开发套件`huaweicloud-fpga/fp1/`下的`setup.cfg`文件，将FPGA线上开发工具`FPGA_DEVELOP_MODE`设置为sdx ，将`VIVADO_VER_REQ`设置为2017.4.op：
 
 ```bash
 FPGA_DEVELOP_MODE="sdx"
@@ -87,43 +87,40 @@ source $HW_FPGA_DIR/setup.sh
 ```
 
 <a id="sec-4" name="sec-4"></a>
-生成manifest文件
+存放xclbin文件
 ------------
 
 创建工程，用于存放xclbin文件：
 
 ```bash
-cd huaweicloud-fpga/fp1/hardware/sdaccel_design/user
+cd $HW_FPGA_DIR/hardware/sdaccel_design/user
 sh create_prj.sh usr_prj temp_cl
 ```
 
-用户上传线下生成的`xclbin`文件到用户创建的文件夹`usr_prj/prj/bin/`中。
+用户上传线下生成的`xclbin`文件到用户创建的文件夹`$HW_FPGA_DIR/hardware/sdaccel_design/user/usr_prj/prj/bin/`中，特别注意：用户线下生成的`xclbin`必须要能生成`dcp`的，否则无法正常注册。
 
-由于是线下开发，未生成注册镜像环节用到的manifest.txt文件，因此需要单独生成，生成方式如下：
+##### 说明:
 
-```bash
-cd huaweicloud-fpga/fp1/hardware/sdaccel_design/user/usr_prj/scripts
-sh ../../../lib/scripts/creat_ocl_manifest.sh ./
-```
+xclbin文件名称需要用户根据自己的具体名称进行相应调整。
 
-<a id="sec-5" name="sec-5"></a>
+<a id="sec-6" name="sec-6"></a>
 注册镜像
 ------------
 
 注册镜像流程部分请参考根目录`huaweicloud-fpga`下README_CN.md中2.1.2章节。具体如下：
 
 ```bash
-sh AEI_Register.sh -n [AEI_name] -d [AEI_Description]
+sh AEI_Register.sh -p "vu9p/abc.tar" -o "vu9p" -n "ocl-test" -d "ocl-desc"
 ```
 
-<a id="sec-6" name="sec-6"></a>
+<a id="sec-7" name="sec-7"></a>
 加载运行程序
 ------------
 
 创建用户驱动软件文件夹：
 
 ```bash
-cd huaweicloud-fpga/fp1/software/app/sdaccel_app
+cd $HW_FPGA_DIR/software/app/sdaccel_app
 mkdir usr_app
 cp -r ./mmult_hls/* ./usr_app
 cd usr_app
@@ -135,10 +132,11 @@ cd usr_app
 
 ```bash
 make
-sh run.sh mmult huaweicloud-fpga/fp1/hardware/sdaccel_design/user/usr_prj/prj/bin/xxx.xclbin
+sh run.sh xxx $HW_FPGA_DIR/hardware/sdaccel_design/user/usr_prj/prj/bin/xxx.xclbin 0
 ```
 
 **说明:**
 
-xxx.xclbin文件为用户所上传的文件名。
+上面run.sh脚本后的xxx表示用户生成可执行文件的名称；
+xxx.xclbin文件为用户所上传的文件名；
 run.sh具体使用请执行sh run.sh -h查看。

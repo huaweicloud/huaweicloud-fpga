@@ -68,7 +68,7 @@ Shell是HDK提供的静态逻辑部分，包括PCIe、DDR4等外围接口设计�
   `grub2-mkconfig > /boot/grub2/grub.cfg`  
   c.	重启虚拟机。  
 
-**Q: 为什么运行发包程序packet_process出现错误"Cannot init data mbuf pool for port "或"Current CONFIG_RTE_MAX_MEMSEG=256 is not enough"?** 
+**Q: 为什么运行发包程序packet_process出现错误"Cannot init data mbuf pool for port "或"Current CONFIG_RTE_MAX_MEMSEG=256 is not enough"或"Aborted(core dumped)" ?** 
 
 **产生该现象的两种情况：**  
 -  包长较长，队列较多时默认配置的8192个hugepage数量不够，导致连续内存不够用，例如使用包长1M，8队列运行packet_process例程时会出现该问题。  

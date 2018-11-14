@@ -52,7 +52,8 @@ module  tx_bd
                  //dfx
                  output  reg                      mmu_tx2rx_wr_bd_wen      ,
                  output  reg                      mmu_tx2rx_rd_bd_wen      ,
-                 output  wire    [5:0]            tx_bd_sta                ,
+                 output  wire    [15:0]           tx_bd_err                ,
+                 output  wire    [15:0]           tx_bd_sta                ,
                  output  reg     [10:0]           mmu_tx_online_beat       ,
                  input           [10:0]           reg_mmu_tx_online_beat           
                 );
@@ -77,8 +78,18 @@ reg                    hardacc_flag          ;
 reg                    sod_cmd_flag          ;
 reg                    eod_cmd_flag          ;
 reg   [8:0]            ram_sn                ;
+reg   [9:0]            init_cnt              ;
+wire                   init_done             ;
+reg                    init_done_1dly        ;
+reg                    init_ff_wen           ;
+reg   [8:0]            init_ff_wdata         ;
 reg   [12:0]           rd_len                ;
 reg   [63:0]           rd_src_addr           ;
+reg                    ff_wen_sel            ;
+reg   [8:0]            ff_wdata_sel          ;
+wire  [9:0]            ff_wdata_sel_odd      ;
+wire  [9:0]            hdacc_sn_rdata        ;
+wire  [7:0]            hdacc_sn_ff_stat      ;
 reg                    ddr_rsp_ren           ;
 reg                    stxqm2inq_fifo_rd_1dly;
 reg                    stxqm2inq_fifo_rd_2dly;
@@ -100,6 +111,7 @@ wire  [87:0]           hcc_rdata             ;
 wire  [10:0]           ddr_rsp_rdata         ;
 wire                   ddr_rsp_empty         ;
 wire                   ddr_rsp_afull         ;
+wire  [7:0]            ddr_rsp_ff_stat       ;
 wire  [255:0]          ppm2stxm_rxffc_wdata_p;
 wire  [511:0]          tx2kernel_bd_wdata_p  ;
 wire  [511:0]          tx2kernel_bd_wdata_tmp;
@@ -121,12 +133,24 @@ begin
         stxqm2inq_fifo_rd_1dly <= stxqm2inq_fifo_rd     ;
         stxqm2inq_fifo_rd_2dly <= stxqm2inq_fifo_rd_1dly;
         ddr_rsp_ren_1dly       <= ddr_rsp_ren           ;
-        ddr_rsp_ren_2dly       <= ddr_rsp_ren_1dly           ;
+        ddr_rsp_ren_2dly       <= ddr_rsp_ren_1dly      ;
     end
 end
 
 //------------------------------------------------------------------------------
-assign tx_bd_sta = {mmu_rx2tx_afull,ddr_rsp_afull,stxm2ppm_rxffc_ff,inq2stxqm_fifo_emp,kernel2tx_afull,ddr_rsp_empty};
+assign tx_bd_sta = {8'd0,
+                    mmu_rx2tx_afull,
+                    kernel2tx_afull,
+                    stxm2ppm_rxffc_ff,
+                    inq2stxqm_fifo_emp,
+                    hdacc_sn_ff_stat[0],
+                    hdacc_sn_ff_stat[2],
+                    ddr_rsp_afull,
+                    ddr_rsp_empty};
+
+assign tx_bd_err = {8'd0,
+                    hdacc_sn_ff_stat[7:4],
+                    ddr_rsp_ff_stat[7:4]};
 
 assign stxqm2inq_fifo_wdata = {stxqm2inq_fifo_rdata[287:256],
                                stxqm2inq_fifo_rdata[7  :0]  ,
@@ -431,14 +455,76 @@ end
 
 always@(posedge clk_sys or posedge rst)
 begin
-    if(rst == 1'd1)begin
-        ram_sn <= 9'h1ff;
+    if( rst ==1'b1 ) begin
+        ram_sn <= 9'd0;
     end
-    else if(stxqm2inq_fifo_rd == 1'd1)begin
-        ram_sn <= ram_sn + 9'd1;
+    else if (stxqm2inq_fifo_rd == 1'b1) begin
+        ram_sn <= hdacc_sn_rdata[8:0];
     end
     else ;
 end
+
+always@(posedge clk_sys or posedge rst)
+begin
+    if( rst ==1'b1 ) begin
+        init_cnt <= 10'd0;
+    end
+    else if (init_done == 1'b0) begin
+        init_cnt <= init_cnt + 10'd1 ;
+    end
+    else ;
+end 
+
+assign init_done = init_cnt[9];
+
+always@(posedge clk_sys or posedge rst)
+begin
+    if( rst == 1'b1) begin
+        init_done_1dly <= 1'b0;
+        init_ff_wen <= 1'b0;
+    end
+    else begin
+        init_done_1dly <= init_done;
+        init_ff_wen <= (init_done == 1'b0);
+    end
+end
+
+always@(posedge clk_sys)
+begin
+    if (init_done ==1'b0) begin
+        init_ff_wdata <= init_cnt[8:0];
+    end
+    else begin
+        init_ff_wdata <= 9'd0; 
+    end
+end
+
+//free fifo wen and wdata select
+always@(posedge clk_sys or posedge rst)
+begin
+    if (rst == 1'b1) begin
+        ff_wen_sel <= 1'b0;
+    end
+    else if (init_done_1dly == 1'b0) begin
+        ff_wen_sel <= init_ff_wen;   //init_ff_wen invalid(from 1 to 0) means initial free fifo done
+    end
+    else begin
+        ff_wen_sel <= ddr_rsp_ren;
+    end
+end
+
+always @(posedge clk_sys)
+begin
+    if (init_done_1dly == 1'b0) begin
+        ff_wdata_sel <= init_ff_wdata; //init_ff_wen invalid(from 1 to 0) means initial free fifo done
+    end
+    else begin
+        ff_wdata_sel <= ddr_rsp_rdata[8:0];
+    end
+end
+
+assign ff_wdata_sel_odd = {^ff_wdata_sel,ff_wdata_sel};
+
 
 always@(posedge clk_sys or posedge rst)
 begin
@@ -591,7 +677,7 @@ sfifo_cbb_enc # (
         .AFULL_UNFL_THD       ( 450                 ),
         .AEMPTY_THD           ( 8                   ) 
         )
-U_rd_cmd_fifo  (
+u_rd_cmd_fifo  (
         .clk_sys              ( clk_sys             ),
         .reset                ( rst                 ),
         .wen                  ( wr_ddr_rsp_en       ),
@@ -604,7 +690,36 @@ U_rd_cmd_fifo  (
         .afull                ( ddr_rsp_afull       ), 
         .aempty               (                     ),
         .parity_err           (                     ),
-        .fifo_stat            (                     ) 
+        .fifo_stat            ( ddr_rsp_ff_stat     ) 
         );
+
+sfifo_cbb_enc # (
+        .FIFO_PARITY          ( "FALSE"             ),
+        .PARITY_DLY           ( "FALSE"             ),
+        .FIFO_DO_REG          ( 0                   ), 
+        .RAM_DO_REG           ( 0                   ),
+        .FIFO_ATTR            ( "ahead"             ),
+        .FIFO_WIDTH           ( 10                  ),
+        .FIFO_DEEP            ( 9                   ),
+        .AFULL_OVFL_THD       ( 450                 ),
+        .AFULL_UNFL_THD       ( 450                 ),
+        .AEMPTY_THD           ( 8                   ) 
+        )
+u_hardacc_sn_fifo  (
+        .clk_sys              ( clk_sys             ),
+        .reset                ( rst                 ),
+        .wen                  ( ff_wen_sel          ),
+        .wdata                ( ff_wdata_sel_odd    ),
+        .ren                  ( stxqm2inq_fifo_rd   ),
+        .rdata                ( hdacc_sn_rdata      ),
+        .full                 (                     ),
+        .empty                (                     ),
+        .usedw                (                     ),
+        .afull                (                     ), 
+        .aempty               (                     ),
+        .parity_err           (                     ),
+        .fifo_stat            ( hdacc_sn_ff_stat    ) 
+        );
+
 
 endmodule

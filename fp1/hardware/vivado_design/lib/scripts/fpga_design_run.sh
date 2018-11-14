@@ -181,7 +181,7 @@ function run_prj {
 		    impl_result="successfully"
 		    if [ -f $UL_DIR/prj/build/checkpoints/to_facs/*.dcp ];then
 		    	dcp_name=`echo $UL_DIR/prj/build/checkpoints/to_facs/*.dcp`
-		    	sh $FPGA_SCRIPT_DIR/creat_dpdk_manifest.sh $dcp_name
+				python $FPGA_SCRIPT_DIR/create_dpdk_metadata.py "$dcp_name"
 		    fi
 	    else
 		    str=`cat $timing_info_file |grep "Timing constraints are not met"`

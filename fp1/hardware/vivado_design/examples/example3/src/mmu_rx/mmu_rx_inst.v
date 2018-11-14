@@ -227,7 +227,7 @@ mmu_rx_pkt u_mmu_rx_pkt
    .reg_mmu_rxpkt_en         (reg_mmu_rxpkt_en       ),        
    .reg_mmu_txpkt_en         (reg_mmu_txpkt_en       ),     
    .add_hacc_en_5dly         (reg_add_hacc_en        ),     
-   .write_ddr_rd_bd_5dly     (reg_write_ddr_bd       ),     
+   .write_ddr_rd_bd_4dly     (reg_write_ddr_bd       ),     
    .reg_mmu_rxpkt_sta        (reg_mmu_rxpkt_sta      ),
    .reg_mmu_rxpkt_sta1       (reg_mmu_rxpkt_sta1     ),
    .reg_mmu_rxpkt_err        (reg_mmu_rxpkt_err      ),

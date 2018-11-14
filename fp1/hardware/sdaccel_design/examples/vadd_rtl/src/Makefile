@@ -26,6 +26,7 @@ XPFM=huawei_vu9p_dynamic_fp1_5_0.xpfm
 XPFM_PATH := ./../../../lib/platform/huawei_vu9p_dynamic_fp1_5_0/
 KERNEL_NAME = vadd
 TARGET = hw_emu
+XOCC_DCP_GEN = --xp param:compiler.acceleratorBinaryContent=dcp
 
 XCLBIN := ${EXE_PATH}/${KERNEL_NAME}.${TARGET}.$(basename ${XPFM}).xclbin
 XO := ${KERNEL_NAME}.${TARGET}.$(basename ${XPFM}).xo
@@ -61,7 +62,7 @@ $(EXE): $(OBJS)
 	$(CC) -o $@ $(OBJS) $(FLAGS)
 
 $(XCLBIN): $(XO)
-	$(CLCC) -f $(XPFM_PATH)/$(XPFM) --link $(XO) -t $(TARGET) -o $(XCLBIN) --temp_dir ./tempd --log_dir ./logd --report_dir ./repd
+	$(CLCC) -f $(XPFM_PATH)/$(XPFM) ${XOCC_DCP_GEN} --link $(XO) -t $(TARGET) -o $(XCLBIN) --temp_dir ./tempd --log_dir ./logd --report_dir ./repd
 	
 $(XO):
 	vivado -mode batch -nojournal -notrace -nolog -source  gen_xo.tcl -tclargs $(XO) $(KERNEL_NAME) $(TARGET) $(basename ${XPFM})

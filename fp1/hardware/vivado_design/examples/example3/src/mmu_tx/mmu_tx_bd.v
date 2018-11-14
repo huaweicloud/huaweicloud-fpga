@@ -67,7 +67,8 @@ module  mmu_tx_bd
                  output  wire                     mmu_tx2rx_bd_wen         ,
                  output  wire                     mmu_tx2rx_wr_bd_wen      ,
                  output  wire                     mmu_tx2rx_rd_bd_wen      ,
-                 output  wire    [5:0]            tx_bd_sta                ,
+                 output  wire    [15:0]           tx_bd_sta                ,
+                 output  wire    [15:0]           tx_bd_err                ,
                  output  wire    [10:0]           mmu_tx_online_beat       ,
                  input   wire    [10:0]           reg_mmu_tx_online_beat           
                   );
@@ -116,6 +117,7 @@ tx_bd      u_tx_bd
                  .wr_ddr_rsp_en            (wr_ddr_rsp_en         ),     
                  .wr_ddr_rsp_sn            (wr_ddr_rsp_sn         ),
                  .tx_bd_sta                (tx_bd_sta             ),
+                 .tx_bd_err                (tx_bd_err             ),
                  .mmu_tx_online_beat       (mmu_tx_online_beat    ),
                  .reg_mmu_tx_online_beat   (reg_mmu_tx_online_beat)        
                   );

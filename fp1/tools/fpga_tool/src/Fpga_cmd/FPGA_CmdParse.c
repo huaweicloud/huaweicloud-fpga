@@ -1,7 +1,7 @@
 /*-
  *   BSD LICENSE
  *
- *   Copyright(c)  2017 Huawei Technologies Co., Ltd. All rights reserved.
+ *   Copyright(c)  2017-2018 Huawei Technologies Co., Ltd. All rights reserved.
  *
  *   Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions
@@ -53,7 +53,7 @@ extern "C"{
 
 extern UINT32 g_ulparseParaFlag;
 
-INT8 *g_pacCommandEntryHelp[12] =
+INT8 *g_pacCommandEntryHelp[13] =
 {
     "  Summary:",
     "    FpgaCmdEntry [Opcode] [-h/-?]",
@@ -65,6 +65,7 @@ INT8 *g_pacCommandEntryHelp[12] =
     "     CF --Clear the fpga image",
     "     DF --Display the fpga resource maps",
     "     IF --Inquire the fpga image status",
+    "     SF --Inquiry the fpga device status",
     "     IL --Inquire the user led status",
     "     IV --Display the tool version"
 };
@@ -157,6 +158,27 @@ INT8 *g_pacInquireLedStatusHelp[14] =
     "          Constraints: Positive integer from 0 to the total slots minus 1.",
     "      -h/-?, --help",
     "          Display this help.",
+};
+
+INT8 *g_pacInquireFpgaStatusHelp[17] =
+{
+    "  Summary:",
+    "      FpgaCmdEntry SF [Parameters]",
+    "      Example: FpgaCmdEntry SF -S <slot num>",
+    "               FpgaCmdEntry SF -L <status level>",
+    "               FpgaCmdEntry SF -h",
+    "               FpgaCmdEntry SF -?",
+    "  Description:",
+    "      Display the FPGA device status of the specified slot, hardware alarm",
+    "      as default type.",
+    "  Parameters:",
+    "      -S, --fpga-image-slot",
+    "          The logical slot number for the FPGA image.",
+    "          Constraints: Positive integer from 0 to the total slots minus 1.",
+    "      -L, --level",
+    "          Display the status infomation level: 0 for detailed level, 1 for basic",    
+    "      -h/-?, --help",
+    "          Display this help."
 };
 
 /*******************************************************************************
@@ -261,6 +283,130 @@ void  FPGA_ParsePrintHelpInfo( INT8 *pcCmdName,  INT8 *pcBuf[], UINT32 ulNum )
     }
 
     return;
+}
+
+/*******************************************************************************
+Function     : FPGA_DoParseVMAlmMsg
+Description  : Display the Alarm err code and register value of tool
+Input        : INT32 argc, INT8 *argv[]
+Output       : None
+Return       : 0:sucess other:fail  
+*******************************************************************************/
+UINT32 FPGA_DoParseVMAlmMsg( INT32 argc, INT8 *argv[] )
+{
+    INT32 lOpt = 0;
+    struct option strLongOptions[] =
+    {
+        {"FpgaInfo", required_argument, 0, FPGA_SLOT_INFO},
+        {"Type", required_argument, 0, COMMAND_STATUS_FUNCTION_TYPE},
+        {"Level", required_argument, 0, COMMAND_STATUS_FUNCTION_LEVEL},
+        {"Helph", no_argument, 0, COMMAND_HELP_INFO},
+        {"Help?", no_argument, 0, COMMAND_HELP_INFO1},
+        {0, 0, 0, 0},
+    };
+    INT32 lLongIndex = 0;
+    UINT32 ulRet = SDKRTN_PARSE_ERROR_BASE;
+    UINT32* pulLevel = (void *)&(g_strFpgaModule.SF_LVL_FIRST_BYTE);
+    UINT32 ulParaFlag = 0;
+    
+    if ( argc < INPUT_PARAS_FOR_SF_MIN )
+    {
+        fprintf(stdout, "ERROR: Input parameter number should be 3 at least.\r\n" );
+        return SDKRTN_PARSE_INPUT_ERROR;
+    }
+
+    if ( argc > INPUT_PARAS_FOR_SF_MAX )
+    {
+        fprintf(stdout, "[***TIPS***] CMD-SV Input parameter number shouldn't be bigger than %d.\r\n", INPUT_PARAS_FOR_SF_MAX );
+        return SDKRTN_PARSE_INPUT_ERROR;
+    }
+
+    if ( '-' != *argv[2] )
+    {
+        fprintf(stdout, "[***TIPS***] Parameter format is incorrect and should be prefixed '-'.\r\n" );
+        return SDKRTN_PARSE_INPUT_ERROR;
+    }
+
+    while ( ( lOpt = getopt_long( argc, argv, "S:T:L:?h",strLongOptions, &lLongIndex ) ) != ERROR )
+    {
+        ulParaFlag  = PARA_FLAG;
+        switch (lOpt)
+        {
+            /* -S */
+            case FPGA_SLOT_INFO:
+            {
+                ulRet = FPGA_ParseString2Uint( &g_strFpgaModule.ulSlotIndex, optarg );
+                if ( SDKRTN_PARSE_SUCCESS != ulRet || g_strFpgaModule.ulSlotIndex >= FPGA_SLOT_MAX )
+                {
+                    fprintf(stdout, "[***TIPS***]Option -S should be followed by a decimal number and within 0~%d \r\n", FPGA_SLOT_MAX);
+                    return SDKRTN_PARSE_SLOT_ERROR;
+                }
+                break;
+            }
+            /* -L */
+            case COMMAND_STATUS_FUNCTION_LEVEL:
+            {
+                ulRet = FPGA_ParseString2Uint( pulLevel, optarg );
+                if ( SDKRTN_PARSE_SUCCESS != ulRet || g_strFpgaModule.SF_LVL_FIRST_BYTE > SF_OPT_LEVEL_MAX )
+                {
+                    fprintf(stdout, "[***TIPS***]Option -L Should be followed by a decimal number and within 0~2 \r\n" );
+                    return SDKRTN_PARSE_SF_LEVEL_ERROR;
+                }
+
+                break;
+            }
+            /* -T */
+            case COMMAND_STATUS_FUNCTION_TYPE:
+            {
+                fprintf(stdout, "[***TIPS***]Option -T is not supported in this version: Only Alarm status is available for SF default.\r\n" ); 
+                return SDKRTN_PARSE_SF_TYPE_ERROR;
+            }
+            /* -h */
+            case COMMAND_HELP_INFO:
+            /* -? */
+            case COMMAND_HELP_INFO1:
+            {
+                FPGA_ParsePrintHelpInfo(argv[0], g_pacInquireFpgaStatusHelp, sizeof_array(g_pacInquireFpgaStatusHelp));
+                g_ulparseParaFlag = QUIT_FLAG;
+                return SDKRTN_PARSE_SUCCESS;
+            }
+            /* 无效选项 */
+            default:
+            {
+                fprintf(stdout, "\r\nERROR: Invalid input parameter:FmtCmdEntry -%c.\r\n", lOpt);
+                return SDKRTN_PARSE_INVALID_PARA_ERROR;
+            }
+        }
+    }
+    if ( 0 == ulParaFlag ) 
+    {
+        /* No opt was found when code runs here */
+        fprintf(stdout,"\r\nERROR: No Invalid input parameter exists.\r\n" );
+        return SDKRTN_PARSE_INVALID_PARA_ERROR;
+    }
+
+    return SDKRTN_PARSE_SUCCESS;
+}
+
+/*******************************************************************************
+Function     : FPGA_ParseVMAlmMsg
+Description  : Display the Alarm err code and register value of tool
+Input        : INT32 argc, INT8 *argv[]
+Output       : None
+Return       : 0:sucess other:fail  
+*******************************************************************************/
+UINT32 FPGA_ParseVMAlmMsg( INT32 argc, INT8 *argv[] )
+{
+    UINT32 ulRet = SDKRTN_PARSE_ERROR_BASE;
+
+    ulRet =  FPGA_DoParseVMAlmMsg( argc, argv );
+    
+    if ( SDKRTN_PARSE_SUCCESS != ulRet)
+    {
+       FPGA_ParsePrintHelpInfo( argv[0], g_pacInquireFpgaStatusHelp, sizeof_array( g_pacInquireFpgaStatusHelp ) );
+    }
+
+    return ulRet;
 }
 
 /*******************************************************************************
@@ -399,22 +545,15 @@ UINT32 FPGA_ParseLoadHfi( INT32 argc, INT8 *argv[] )
     UINT32 ulRet = SDKRTN_PARSE_ERROR_BASE;
     UINT32 ulParaFlag = 0;
 
-    if ( argc < INPUT_PARAS_FOR_PARSE_MIN )
+    if ( argc != INPUT_PARAS_FOR_LF_MAX )
     {
-        printf( "[***TIPS***] CMD-LF Input parameter number shouldn't be less than %d.\r\n", INPUT_PARAS_FOR_PARSE_MIN );
-        FPGA_ParsePrintHelpInfo(argv[0], g_pacHfiLoadHelp, sizeof_array(g_pacHfiLoadHelp));
-        return SDKRTN_PARSE_INPUT_ERROR;
-    }
-
-    if ( argc > INPUT_PARAS_FOR_LF_MAX )
-    {
-        printf( "[***TIPS***] CMD-LF Input parameter number shouldn't be more than %d.\r\n", INPUT_PARAS_FOR_LF_MAX );
+        printf( "[***TIPS***] CMD-LF Input parameter number must be %d.\r\n", INPUT_PARAS_FOR_LF_MAX );
         FPGA_ParsePrintHelpInfo(argv[0], g_pacHfiLoadHelp, sizeof_array(g_pacHfiLoadHelp));
         return SDKRTN_PARSE_INPUT_ERROR;
     }
 
     /* Check the format of the parameter */
-    if ( '-' != *argv[2] )
+    if ( ( '-' != *argv[2] ) || ( '-' != *argv[4] ) )
     {
         printf("Parameter format is incorrect and should be prefixed '-'.\r\n");
         FPGA_ParsePrintHelpInfo(argv[0], g_pacHfiLoadHelp, sizeof_array(g_pacHfiLoadHelp));
@@ -843,9 +982,10 @@ UINT32 FPGA_ParseCommand( INT32 argc, INT8 *argv[] )
         {"LF", CMD_HFI_LOAD, FPGA_ParseLoadHfi},
         {"CF", CMD_HFI_CLEAR, FPGA_ParseClearHfi},
         {"IF", CMD_IMAGE_INQUIRE, FPGA_ParseInquireFpgaImageInfo},
+        {"SF", CMD_STATUS_INQUIRE, FPGA_ParseVMAlmMsg},
         {"DF", CMD_RESOURSE_INQUIRE, FPGA_ParseInquireFpgaResource},
         {"IL", CMD_LED_STATUS_INQUIRE, FPGA_ParseInquireLEDStatus},
-        {"IV", CMD_TOOL_VERSION, FPGA_ParseShowVersion},
+        {"IV", CMD_TOOL_VERSION, FPGA_ParseShowVersion}
     };
     INPUT_COMMAND_PARSE *pstrTempParse = NULL;
     INT8 *pcInputPara = NULL;

@@ -60,75 +60,81 @@ static unsigned int g_dev_count = 0;
 static int
 pci_parse_sysfs_value(const char *filename, unsigned long *val)
 {
-	FILE *f;
-	char buf[BUFSIZ];
-	char *end = NULL;
+    FILE *f;
+    char buf[BUFSIZ];
+    char *end = NULL;
 
-	if ((f = fopen(filename, "r")) == NULL) {
-		printf("%s(): cannot open sysfs value %s\n",
-			__func__, filename);
-		return -1;
-	}
+    if(NULL == filename) {
+        printf("%s(): file path is invalid. %s\n",
+        __func__, filename);
+        return -1;
+    }
 
-	if (fgets(buf, sizeof(buf), f) == NULL) {
-		printf("%s(): cannot read sysfs value %s\n",
-			__func__, filename);
-		fclose(f);
-		return -1;
-	}
-	*val = strtoul(buf, &end, 0);
-	if ((buf[0] == '\0') || (end == NULL) || (*end != '\n')) {
-		printf("%s(): cannot parse sysfs value %s\n",
-				__func__, filename);
-		fclose(f);
-		return -1;
-	}
-	fclose(f);
-	return 0;
+    if ((f = fopen(filename, "r")) == NULL) {
+        printf("%s(): cannot open sysfs value %s\n",
+        __func__, filename);
+        return -1;
+    }
+
+    if (fgets(buf, sizeof(buf), f) == NULL) {
+        printf("%s(): cannot read sysfs value %s\n",
+        __func__, filename);
+        fclose(f);
+    return -1;
+    }
+    *val = strtoul(buf, &end, 0);
+    if ((buf[0] == '\0') || (end == NULL) || (*end != '\n')) {
+        printf("%s(): cannot parse sysfs value %s\n",
+        	__func__, filename);
+        fclose(f);
+        return -1;
+    }
+    fclose(f);
+    return 0;
 }
 
 static int
 parse_pci_addr_format(const char *buf, int bufsize, uint16_t *domain,
 		uint8_t *bus, uint8_t *devid, uint8_t *function)
 {
-	/* first split on ':' */
+    /* first split on ':' */
     union splitaddr {
-		struct {
-			char *domain;
-			char *bus;
-			char *devid;
-			char *function;
-		}bdf;
-		char *str[PCI_FMT_NVAL]; /* last element-separator is "." not ":" */
-	} splitaddr;
+    	struct {
+            char *domain;
+            char *bus;
+            char *devid;
+            char *function;
+        }bdf;
+        char *str[PCI_FMT_NVAL]; /* last element-separator is "." not ":" */
+    } splitaddr;
 
-	char *buf_copy = strndup(buf, bufsize);
-	if (buf_copy == NULL)
-		return -1;
+    char *buf_copy = strndup(buf, bufsize);
+    if (buf_copy == NULL)
+        return -1;
 
-	if (rte_strsplit(buf_copy, bufsize, splitaddr.str, PCI_FMT_NVAL, ':')
-			!= PCI_FMT_NVAL - 1)
-		goto error;
-	/* final split is on '.' between devid and function */
-	splitaddr.bdf.function = strchr(splitaddr.bdf.devid,'.');
-	if (splitaddr.bdf.function == NULL)
-		goto error;
-	*splitaddr.bdf.function++ = '\0';
+    if (rte_strsplit(buf_copy, bufsize, splitaddr.str, PCI_FMT_NVAL, ':')
+        != PCI_FMT_NVAL - 1)
+        goto error;
+    /* final split is on '.' between devid and function */
+    splitaddr.bdf.function = strchr(splitaddr.bdf.devid,'.');
+    if (splitaddr.bdf.function == NULL)
+        goto error;
+    *splitaddr.bdf.function++ = '\0';
 
-	/* now convert to int values */
-	errno = 0;
-	*domain = (uint16_t)strtoul(splitaddr.bdf.domain, NULL, 16);
-	*bus = (uint8_t)strtoul(splitaddr.bdf.bus, NULL, 16);
-	*devid = (uint8_t)strtoul(splitaddr.bdf.devid, NULL, 16);
-	*function = (uint8_t)strtoul(splitaddr.bdf.function, NULL, 10);
-	if (errno != 0)
-		goto error;
+    /* now convert to int values */
+    errno = 0;
+    *domain = (uint16_t)strtoul(splitaddr.bdf.domain, NULL, 16);
+    *bus = (uint8_t)strtoul(splitaddr.bdf.bus, NULL, 16);
+    *devid = (uint8_t)strtoul(splitaddr.bdf.devid, NULL, 16);
+    *function = (uint8_t)strtoul(splitaddr.bdf.function, NULL, 10);
+    if (errno != 0)
+        goto error;
 
-	free(buf_copy); /* free the copy made with strdup */
-	return 0;
+    free(buf_copy); /* free the copy made with strdup */
+    return 0;
 error:
-	free(buf_copy);
-	return -1;
+    free(buf_copy);
+    return -1;
 }
 
 static void
@@ -141,31 +147,31 @@ pci_scan_one(const char *dirname, uint16_t domain, uint8_t bus,
     unsigned long tmp;
     unsigned int i = 0, j = 0;
     int ret = 0;
-    
+
     memset(&pci_device, 0, sizeof(pci_device));
-   
+
     pci_device.addr.domain = domain;
-	pci_device.addr.bus = bus;
-	pci_device.addr.devid = devid;
-	pci_device.addr.function = function;
+    pci_device.addr.bus = bus;
+    pci_device.addr.devid = devid;
+    pci_device.addr.function = function;
 
     /* get vendor id */
-	(void)snprintf_s(filename, sizeof(filename), sizeof(filename) - 1, "%s/vendor", dirname);   
-	if (pci_parse_sysfs_value(filename, &tmp) < 0) {
-		return;
-	}
-	pci_device.id.vendor_id = (uint16_t)tmp;
+    (void)snprintf_s(filename, sizeof(filename), sizeof(filename) - 1, "%s/vendor", dirname);   
+    if (pci_parse_sysfs_value(filename, &tmp) < 0) {
+        return;
+    }
+    pci_device.id.vendor_id = (uint16_t)tmp;
 
-	/* get device id */
-	(void)snprintf_s(filename, sizeof(filename), sizeof(filename) - 1, "%s/device", dirname);
-	if (pci_parse_sysfs_value(filename, &tmp) < 0) {
-		return;
-	}
-	pci_device.id.device_id = (uint16_t)tmp;
+    /* get device id */
+    (void)snprintf_s(filename, sizeof(filename), sizeof(filename) - 1, "%s/device", dirname);
+    if (pci_parse_sysfs_value(filename, &tmp) < 0) {
+        return;
+    }
+    pci_device.id.device_id = (uint16_t)tmp;
 
     /* get the requested device */
     if(DEVICE_VENDOR_ID != pci_device.id.vendor_id      \
-        || DEVICE_DEVICE_ID != pci_device.id.device_id)
+    || DEVICE_DEVICE_ID != pci_device.id.device_id)
         return;
 
     if(g_dev_count == 0) {
@@ -178,7 +184,7 @@ pci_scan_one(const char *dirname, uint16_t domain, uint8_t bus,
     for(i = 0; i < g_dev_count; i++) {
         ret = rte_eal_compare_pci_addr(&pci_device.addr, &g_acce_devices[i].addr);
         if (ret > 0)
-	        continue;
+            continue;
         else if(ret < 0) {
             for(j = g_dev_count; j > i; j--) {
                 g_acce_devices[j] = g_acce_devices[j - 1];
@@ -195,7 +201,7 @@ pci_scan_one(const char *dirname, uint16_t domain, uint8_t bus,
     /* add to tail */
     g_acce_devices[g_dev_count] = pci_device;
     g_dev_count++;
-    
+
     return;    
 }
 /*

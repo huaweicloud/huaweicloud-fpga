@@ -33,9 +33,9 @@ Downloading the Development Suite
 
 After applying for a Huawei cloud virtual machine (VM), download the development suite to the VM.
 
-+ For connection over HTTPS, run the `git clone https://github.com/Huawei/huaweicloud-fpga.git` command to download the suite.
++ For connection over HTTPS, run the `git clone https://github.com/huaweicloud/huaweicloud-fpga.git` command to download the suite.
 
-+ For connection over SSH, run the `git clone git@github.com:Huawei/huaweicloud-fpga.git` command to download the suite.
++ For connection over SSH, run the `git clone git@github.com/huaweicloud/huaweicloud-fpga.git` command to download the suite.
 
 <a id="sec-3" name="sec-3"></a>
 Configuring the Development Environment
@@ -56,7 +56,7 @@ For details about how to install and configure the FPGA image management tool, s
 
 #### Setting the Development Mode and Version for EDA
 
-Open the `setup.cfg` file in the `huaweicloud-fpga/fp1/` directory, and set `FPGA_DEVELOP_MODE` to **SDAccel** and `VIVADO_VER_REQ` to **2017.4.op**.
+Open the `setup.cfg` file in the `huaweicloud-fpga/fp1/` directory, and set `FPGA_DEVELOP_MODE` to **sdx** and `VIVADO_VER_REQ` to **2017.4.op**.
 
 ```bash
 FPGA_DEVELOP_MODE="sdx"
@@ -97,14 +97,7 @@ cd huaweicloud-fpga/fp1/hardware/sdaccel_design/user
 sh create_prj.sh usr_prj temp_cl
 ```
 
-Upload the `xclbin` file generated offline to the `usr_prj/prj/bin/` folder you have created.
-
-The **manifest.txt** file used for image registration is not generated during offline development. Therefore, the file needs to be generated separately.
-
-```bash
-cd huaweicloud-fpga/fp1/hardware/sdaccel_design/user/usr_prj/scripts
-sh ../../../lib/scripts/creat_ocl_manifest.sh ./
-```
+The .xclbin files are stored in the prj `huaweicloud-fpga/fp1/hardware/sdaccel_design/user/bin/` directory.
 
 <a id="sec-5" name="sec-5"></a>
 Registering an Image
@@ -113,7 +106,7 @@ Registering an Image
 Run the following script to register an image. For details, see section 2.1.2 in **README.md** in the root directory `huaweicloud-fpga`.
 
 ```bash
-sh AEI_Register.sh -n [AEI_name] -d [AEI_Description]
+sh AEI_Register.sh -p "vu9p/abc.tar" -o "vu9p" -n "ocl-test" -d "ocl-desc"
 ```
 
 <a id="sec-6" name="sec-6"></a>

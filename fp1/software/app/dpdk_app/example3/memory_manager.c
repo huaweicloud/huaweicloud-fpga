@@ -45,6 +45,7 @@
 #include <rte_mbuf.h>
 #include <rte_debug.h>
 #include <rte_errno.h>
+#include <bitmap.h>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -75,8 +76,18 @@
 static MEM_POOL_CFG_DFX_STRU g_mem_pool_cfg[MAX_MEMPOOL_NUM] = {};
 static int g_mem_pool_cfg_init_flag = 0;
 
+int memory_pool_reconstruction( MEM_POOL_CFG_DFX_STRU * p_pool_conf );
+int addr_check_func(void ** addr, unsigned int num, unsigned int size);
+void* memory_manager_alloc(unsigned int buff_size);
+
+//for memory self check
+int * array;
+
 int memory_manager_init( MEM_POOL_CFG_STRU * mem_pool_cfg )
 {
+    array = (int *)malloc(sizeof(int) * mem_pool_cfg->buf_num);
+    memset(array, 0x00, sizeof(int) * mem_pool_cfg->buf_num);
+
     struct rte_mempool* mem_pool;
 
     char pool_name[10] = { 0 };
@@ -210,10 +221,66 @@ int memory_manager_init( MEM_POOL_CFG_STRU * mem_pool_cfg )
     g_mem_pool_cfg[mem_pool_cfg->buf_type].mem_pool = mem_pool;
     g_mem_pool_cfg[mem_pool_cfg->buf_type].phy2virt_offset = mem_pool->elt_va_start - mem_pool->elt_pa[0];
 
+    return memory_pool_reconstruction(&g_mem_pool_cfg[mem_pool_cfg->buf_type]);
+}
+
+int addr_check_func(void ** addr, unsigned int num, unsigned int size)
+{
+    void ** p_addr = addr;
+    unsigned int i;
+    unsigned int j;
+
+    for(i = 1; i < num; i++)
+    {
+        if(((unsigned long long)addr[i] - (unsigned long long)addr[i - 1]) != (unsigned long long)size)
+            return -1;
+    }
+    
+    for(i = 0; i < num - 1; i++)
+    {
+        for(j = i + 1; j < num; j++)
+        {
+            if(p_addr[i] == p_addr[j])
+                return -1;
+        }
+    }
     return 0;
 }
 
-void* memory_manager_alloc_bulk(unsigned int buff_size)
+int memory_pool_reconstruction( MEM_POOL_CFG_DFX_STRU * p_pool_conf )
+{
+    unsigned int buf_num = p_pool_conf->buff_num;
+    unsigned int i;
+    
+    p_pool_conf->bitmap = (unsigned long * )malloc((unsigned int)bitmap_size(buf_num));
+    p_pool_conf->mbuf_addrs = (void **)malloc(sizeof(void *) * buf_num);
+
+    void ** p_mbuf_addrs = p_pool_conf->mbuf_addrs;
+    
+    for(i = 0 ; i < p_pool_conf->buff_num; i ++)
+    {
+        p_mbuf_addrs[i] = (void *)memory_manager_alloc(p_pool_conf->buff_size);
+        if(NULL == p_mbuf_addrs[i])
+        {
+            printf("[%s] line:%d [%s], reconstruction memory pool faild. \n", __FILE__, __LINE__, __FUNCTION__);
+            return -1;
+        }
+//        printf("\t  %5u. mbuf addr = %llx \n", i, (unsigned long long)(p_mbuf_addrs[i]));
+    }
+    
+    p_pool_conf->buff_pool_start_addr = (unsigned long long)p_pool_conf->mbuf_addrs[0];
+    p_pool_conf->buff_pool_end_addr = (unsigned long long)(p_pool_conf->mbuf_addrs[p_pool_conf->buff_num-1]);
+
+    //printf("\t  ***** buff_pool_start_addr = %llx \n", (unsigned long long)(p_pool_conf->buff_pool_start_addr));
+    //printf("\t  ***** buff_pool_end_addr = %llx \n", (unsigned long long)(p_pool_conf->buff_pool_end_addr));
+    
+    bitmap_clear(p_pool_conf->bitmap, 0, buf_num);
+
+    //return addr_check_func(p_pool_conf->mbuf_addrs, p_pool_conf->buff_num, p_pool_conf->mbuf_addrs[1] - p_pool_conf->mbuf_addrs[0]);
+	return 0;
+}
+
+void* memory_manager_alloc(unsigned int buff_size)
 {
     unsigned int idx;
     struct rte_mempool* valid_mpool;
@@ -244,6 +311,12 @@ void* memory_manager_alloc_bulk(unsigned int buff_size)
         return NULL;
     }
 
+    if(idx >= MAX_MEMPOOL_NUM)
+    {
+        printf("[%s] line:%d [%s], can not find mem pool for size[%d]\n", __FILE__, __LINE__, __FUNCTION__, buff_size);
+        return NULL;
+    }
+
     /* alloc bulk from mempool */
     (void)pthread_mutex_lock(&g_mem_pool_cfg[idx].alloc_mutex);
     
@@ -266,7 +339,7 @@ void* memory_manager_alloc_bulk(unsigned int buff_size)
     return buff_vaddr;
 }
 
-int memory_manager_free_bulk( void* buff_vaddr)
+int memory_manager_free( void* buff_vaddr)
 {
     struct rte_mbuf *m;
     struct rte_mbuf *start;
@@ -315,6 +388,178 @@ int memory_manager_free_bulk( void* buff_vaddr)
     (void)pthread_mutex_unlock(&g_mem_pool_cfg[i].alloc_mutex);
 
     return 0;
+}
+
+void * memory_manager_alloc_block(unsigned int buff_size)
+{
+    unsigned int pool_idx;
+    unsigned int buff_idx;
+    void * buff_vaddr;
+
+    if ( 0 == buff_size )
+    {
+        printf("[%s] line:%d [%s], buff_size is 0\n", __FILE__, __LINE__, __FUNCTION__);
+        return NULL;
+    }
+
+    /* find suitable mempool */
+    for ( pool_idx = 0 ; pool_idx < MAX_MEMPOOL_NUM ; pool_idx++ )
+    {
+        if (( 1 == g_mem_pool_cfg[pool_idx].flag_created ) && (g_mem_pool_cfg[pool_idx].buff_size >= buff_size))
+        {
+            break;
+        }
+    }
+
+    if ( MAX_MEMPOOL_NUM <= pool_idx )
+    {
+        printf("[%s] line:%d [%s], no supported alloc for size[%d]\n", __FILE__, __LINE__, __FUNCTION__, buff_size);
+        return NULL;
+    }
+
+    /* alloc bulk from mempool */
+    (void)pthread_mutex_lock(&g_mem_pool_cfg[pool_idx].alloc_mutex);
+    
+    buff_idx = bitmap_find_next_zero_area(g_mem_pool_cfg[pool_idx].bitmap, g_mem_pool_cfg[pool_idx].buff_num, 0, 1, 0);
+    if ( buff_idx >= g_mem_pool_cfg[pool_idx].buff_num)
+    {
+	 (void)pthread_mutex_unlock(&g_mem_pool_cfg[pool_idx].alloc_mutex);
+        printf("[%s] line:%d [%s], mem alloc failed\n", __FILE__, __LINE__, __FUNCTION__);
+        return NULL;
+    }
+
+    bitmap_set(g_mem_pool_cfg[pool_idx].bitmap, buff_idx, 1);
+
+    buff_vaddr = g_mem_pool_cfg[pool_idx].mbuf_addrs[buff_idx];
+
+    if(array[buff_idx] != 0)
+    {
+        printf("alloc error:^^^^^^^^^^^^^^^^^^^^ buff_idx = %d\n", buff_idx);
+    }
+    array[buff_idx] ++;
+    
+    //printf("-------- bitmap = 0x%llx , 0x%llx, \n", g_mem_pool_cfg[pool_idx].bitmap[0], g_mem_pool_cfg[pool_idx].bitmap[1]);
+    
+    (void)pthread_mutex_unlock(&g_mem_pool_cfg[pool_idx].alloc_mutex);
+    
+    return buff_vaddr;
+}
+
+int memory_manager_free_block( void* buff_vaddr)
+{
+    unsigned int pool_idx = 0;
+    unsigned int buff_idx = 0;
+
+    if ( NULL == buff_vaddr )
+    {
+        printf("[%s] line:%d [%s], buff_vaddr is 0\n", __FILE__, __LINE__, __FUNCTION__);
+        return -1;
+    }
+
+    /* find which mempool it belong to */
+    for(pool_idx = 0; pool_idx < MAX_MEMPOOL_NUM; pool_idx++)
+    {
+        if(0 == g_mem_pool_cfg[pool_idx].flag_created)
+            continue;
+
+        if((unsigned long long)buff_vaddr >= g_mem_pool_cfg[pool_idx].buff_pool_start_addr
+            && (unsigned long long)buff_vaddr <= g_mem_pool_cfg[pool_idx].buff_pool_end_addr)
+        {
+            break;
+        }
+    }
+
+    if(MAX_MEMPOOL_NUM == pool_idx)
+    {
+        printf("[%s] line:%d [%s], Not find in Mem Pool\n", __FILE__, __LINE__, __FUNCTION__);
+        return -2;
+    }
+
+    if((unsigned long long)buff_vaddr < g_mem_pool_cfg[pool_idx].buff_pool_start_addr || (unsigned long long)buff_vaddr > g_mem_pool_cfg[pool_idx].buff_pool_end_addr)
+    {
+        printf("[%s] line:%d [%s], Not find in Mem Pool, addr = 0x%llx \n", __FILE__, __LINE__, __FUNCTION__, (unsigned long long)buff_vaddr);
+        return -3;
+    }
+    buff_idx = (unsigned int)((unsigned long long)buff_vaddr - g_mem_pool_cfg[pool_idx].buff_pool_start_addr) / ((unsigned long long)g_mem_pool_cfg[pool_idx].mbuf_addrs[1] - (unsigned long long)g_mem_pool_cfg[pool_idx].mbuf_addrs[0]);
+    //printf("free:-----------------sub = %llx, size = %llx , addr = %llx, buff_idx = %d \n", (unsigned long long)(buff_vaddr - g_mem_pool_cfg[pool_idx].buff_pool_start_addr), (unsigned long long)(g_mem_pool_cfg[pool_idx].mbuf_addrs[1] - g_mem_pool_cfg[pool_idx].mbuf_addrs[0]), buff_vaddr, buff_idx);
+    
+    /* free bulk from mem buff pool */
+    (void)pthread_mutex_lock(&g_mem_pool_cfg[pool_idx].alloc_mutex);
+    
+    bitmap_clear(g_mem_pool_cfg[pool_idx].bitmap, buff_idx, 1);
+
+    (void)pthread_mutex_unlock(&g_mem_pool_cfg[pool_idx].alloc_mutex);
+
+    return 0;
+}
+
+void * memory_manager_alloc_bulk(unsigned int buff_size)
+{
+    return memory_manager_alloc_n_region(buff_size, MEMORY_POOL_READ_DATA_RAGINE, MEMORY_POOL_SEPERATE_RAGINE_NUM);
+}
+
+int memory_manager_free_bulk( void* buff_vaddr)
+{
+    memory_manager_free_block(buff_vaddr);
+}
+
+void * memory_manager_alloc_n_region(unsigned int buff_size, unsigned int reg_idx, unsigned int reg_num)
+{
+    unsigned int pool_idx;
+    unsigned int buff_idx;
+    void * buff_vaddr;
+
+    if ( 0 == buff_size )
+    {
+        printf("[%s] line:%d [%s], buff_size is 0\n", __FILE__, __LINE__, __FUNCTION__);
+        return NULL;
+    }
+
+    if( reg_idx >= reg_num )
+    {
+        printf("[%s] line:%d [%s], Invalid regine index = %u.\n", __FILE__, __LINE__, __FUNCTION__, reg_idx);
+        return NULL;
+    }
+
+    /* find suitable mempool */
+    for ( pool_idx = 0 ; pool_idx < MAX_MEMPOOL_NUM ; pool_idx++ )
+    {
+        if (( 1 == g_mem_pool_cfg[pool_idx].flag_created ) && (g_mem_pool_cfg[pool_idx].buff_size >= buff_size))
+        {
+            break;
+        }
+    }
+
+    if ( MAX_MEMPOOL_NUM <= pool_idx )
+    {
+        printf("[%s] line:%d [%s], no supported alloc for size[%d]\n", __FILE__, __LINE__, __FUNCTION__, buff_size);
+        return NULL;
+    }
+
+    if( reg_num > g_mem_pool_cfg[pool_idx].buff_num )
+    {
+        printf("[%s] line:%d [%s], Invalid input parameter, reg_num is too large. \n", __FILE__, __LINE__, __FUNCTION__);
+        return NULL;
+    }
+
+    /* alloc bulk from mempool */
+    (void)pthread_mutex_lock(&g_mem_pool_cfg[pool_idx].alloc_mutex);
+
+    unsigned int num_per_reg = g_mem_pool_cfg[pool_idx].buff_num / reg_num; //n memory block in each region
+    buff_idx = (unsigned int)bitmap_find_next_zero_area(g_mem_pool_cfg[pool_idx].bitmap, g_mem_pool_cfg[pool_idx].buff_num, (unsigned long)reg_idx * (unsigned long)num_per_reg, 1, 0);
+    if(buff_idx >= (reg_idx + 1) * num_per_reg)
+    {
+	(void)pthread_mutex_unlock(&g_mem_pool_cfg[pool_idx].alloc_mutex);
+	return NULL;	
+    }
+
+    bitmap_set(g_mem_pool_cfg[pool_idx].bitmap, buff_idx, 1);
+
+    buff_vaddr = g_mem_pool_cfg[pool_idx].mbuf_addrs[buff_idx];
+
+    (void)pthread_mutex_unlock(&g_mem_pool_cfg[pool_idx].alloc_mutex);
+    
+    return buff_vaddr;
 }
 
 int memory_manager_v2p( void* buff_vaddr, unsigned long long* buff_paddr )

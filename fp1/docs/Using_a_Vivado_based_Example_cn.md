@@ -169,7 +169,7 @@ Example1示例主要实现用户逻辑的版本号读取、数据取反、加法
 运行读取UL逻辑寄存器的命令如下：
 
 `./ul_read_bar2_data -s XXX -a AAA`  
- 
+
 其中AAA是需要读取的寄存器地址。
 
 ##### 例子6 写入UL逻辑寄存器。
@@ -314,12 +314,12 @@ Example2主要实现用户逻辑DMA环回通道和DDR读取功能。
 
 **DDR读写测试中相关参数说明**  
 
-| Parameter | Description                              |
-| --------- | ---------------------------------------- |
-| **-s**    | slot ID. (The scope is [0, 7]) The default value is 0. |
-| **-n**    | DDR ID. The default value is 0.  |
-| **-a**    | DDR address |
-| **-d**    | DDR write data |
+| 参数     | 描述                         |
+| ------ | -------------------------- |
+| **-s** | slot ID。（范围是 [0、7]） 默认值是 0 |
+| **-n** | DDR ID。默认值是0               |
+| **-a** | DDR 地址                     |
+| **-d** | 写入DDR的数据                   |
 
 ##### 步骤1 设置DDR值。
 

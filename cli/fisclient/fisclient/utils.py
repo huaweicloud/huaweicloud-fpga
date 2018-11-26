@@ -15,8 +15,6 @@
 
 from __future__ import print_function
 
-import collections
-import getpass
 import hashlib
 import json
 import os
@@ -76,10 +74,23 @@ def compute_md5(*args):
     return m.hexdigest()
 
 
-def check_login_user():
-    user = getpass.getuser()
-    if user != 'root':
-        exit('Please run as root. (Current user is %s)' % user)
+def retry_decorator(f):
+    def g(*args, **kwargs):
+        failed = True
+        retry_cnt = 0
+        while failed:
+            failed = False
+            try:
+                return f(*args, **kwargs)
+            except Exception as e:
+                failed = True
+                retry_cnt = retry_cnt + 1
+                if retry_cnt <= 3:
+                    print('%s failed, retry #%d:\n%s' % (f.__name__, retry_cnt, e))
+                else:
+                    print('%s failed, give up retry' % (f.__name__))
+                    raise e
+    return g
 
 
 def _check_bucket_acl_location(bucket_name, ak, sk, host, region_id, domain_id):
@@ -124,37 +135,46 @@ def check_bucket_name(bucket_name):
     return True
 
 
-def check_fpga_image_file(file_name):
-    expand_file_name = os.path.expanduser(file_name)
-    object_key = os.path.basename(expand_file_name)
-    if not os.path.isfile(expand_file_name):
-        msg = '"%s" is not an existing regular file' % file_name
+def check_dcp_file(dcp_file):
+    expand_file_name = os.path.expanduser(dcp_file)
+    if not expand_file_name.endswith('.tar'):
+        msg = '"%s" should endswith .tar suffix' % dcp_file
         raise exception.FisException(msg)
-    if object_key.endswith((u'.bin', u'.xclbin')) and re.match(u'[a-zA-Z0-9_./\-]{4,64}$', object_key):
-        return object_key
-    else:
-        raise exception.ParameterException('fpga_image_file_name', object_key)
+    if not os.path.isfile(expand_file_name):
+        msg = '"%s" is not an existing regular file' % dcp_file
+        raise exception.FisException(msg)
 
 
-def _check_metadata(metadata):
-    try:
-        obj = json.loads(metadata, object_pairs_hook=collections.OrderedDict)
-    except ValueError:
+def _check_dcp_obs_path(dcp_path):
+    if not re.match(u'[a-zA-Z0-9_./\-]{4,128}$', dcp_path):
         return False
-    if not isinstance(obj, dict):
+    if dcp_path.startswith('/') or not dcp_path.endswith('.tar'):
         return False
-    if len(json.dumps(obj)) > 1024:
+    for d in dcp_path.split('/')[:-1]:
+        if d == '' or d.startswith('.') or d.endswith('.'):
+            return False
+    return True
+
+
+def _check_log_obs_directory(log_directory):
+    if not re.match(u'[a-zA-Z0-9_./\-]{0,64}$', log_directory):
         return False
+    if log_directory.startswith('/') or log_directory.endswith('/'):
+        return False
+    if log_directory != '':
+        for d in log_directory.split('/'):
+            if d == '' or d.startswith('.') or d.endswith('.'):
+                return False
     return True
 
 
 _check_dict = {
+    'dcp_obs_path': _check_dcp_obs_path,
+    'log_obs_directory': _check_log_obs_directory,
     'name': lambda value: re.match(u'[a-zA-Z0-9-_]{1,64}$', value),
-    'metadata': lambda value: _check_metadata(value),
     'description': lambda value: re.match(
         u'[\u4e00-\u9fa5\u3002\uff0ca-zA-Z0-9-_., ]{0,255}$',
         value),
-    'file_name': lambda value: value.endswith((u'.bin', u'.xclbin')) and re.match(u'[a-zA-Z0-9_./\-]{4,64}$', value),
     'fpga_image_id': lambda value: re.match(u'[0-9a-f]{32}$', value),
     'image_id': lambda value: re.match(
         u'[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',

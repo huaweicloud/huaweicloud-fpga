@@ -43,22 +43,22 @@ az_region_map = {
 
 endpoints = {
     'cn-north-1': {
-        'obs': 'obs.cn-north-1.myhwclouds.com',
-        'iam': 'iam.cn-north-1.myhuaweicloud.com',
+        'obs': 'obs.cn-north-1.myhuaweicloud.com',
+        'iam': 'iam.myhuaweicloud.com',
         'vpc': 'vpc.cn-north-1.myhuaweicloud.com',
         'fis': 'ecs.cn-north-1.myhuaweicloud.com',
         'dns': ['100.125.1.250', '100.125.21.250']
     },
     'cn-south-1': {
-        'obs': 'obs.cn-south-1.myhwclouds.com',
-        'iam': 'iam.cn-south-1.myhuaweicloud.com',
+        'obs': 'obs.cn-south-1.myhuaweicloud.com',
+        'iam': 'iam.myhuaweicloud.com',
         'vpc': 'vpc.cn-south-1.myhuaweicloud.com',
         'fis': 'ecs.cn-south-1.myhuaweicloud.com',
         'dns': ['100.125.1.250', '100.125.136.29']
     },
     'cn-east-2': {
-        'obs': 'obs.cn-east-2.myhwclouds.com',
-        'iam': 'iam.cn-east-2.myhuaweicloud.com',
+        'obs': 'obs.cn-east-2.myhuaweicloud.com',
+        'iam': 'iam.myhuaweicloud.com',
         'vpc': 'vpc.cn-east-2.myhuaweicloud.com',
         'fis': 'ecs.cn-east-2.myhuaweicloud.com',
         'dns': ['100.125.17.29', '100.125.135.29']
@@ -94,21 +94,21 @@ def configure_intranet_dns_ecs(region):
         utils.print_err('Configure private DNS of ECS failed: %s' % encode.exception_to_unicode(e))
 
 
-def configure_intranet_dns_vpc(ak, sk, project_id, region, host):
+def configure_intranet_dns_vpc(ak, sk, project_id, region, ecs_host, vpc_host):
     try:
         dns = endpoints.get(region, {}).get('dns')
         instance_id = rest.get_instance_id_from_metadata()
         if dns is None or instance_id is None:
             return
-        nics = rest.get_os_interface(ak, sk, project_id, region, host, instance_id)
+        nics = rest.get_os_interface(ak, sk, project_id, region, ecs_host, instance_id)
         for nic in nics.get('interfaceAttachments', []):
             net_id = nic.get('net_id')
-            subnet = rest.get_subnet(ak, sk, project_id, region, host, net_id).get('subnet', {})
+            subnet = rest.get_subnet(ak, sk, project_id, region, vpc_host, net_id).get('subnet', {})
             if subnet.get('primary_dns') in dns:
                 continue
             vpc_id = subnet.get('vpc_id')
             dns_body = {'subnet': {'name': subnet.get('name'), 'primary_dns': dns[0], 'secondary_dns': dns[1]}}
-            rest.put_subnet(ak, sk, project_id, region, host, vpc_id, net_id, json.dumps(dns_body))
+            rest.put_subnet(ak, sk, project_id, region, vpc_host, vpc_id, net_id, json.dumps(dns_body))
     except Exception as e:
         msg = encode.exception_to_unicode(e)
         if getattr(e, 'code', None) == 404:

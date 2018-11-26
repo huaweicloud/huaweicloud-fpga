@@ -45,13 +45,12 @@ def get_parser():
 
         desc = callback.__doc__ or ''
         help = desc.strip().split('\n')[0]
-        arguments = getattr(callback, 'arguments', [])
-
         command = attr[3:].replace('_', '-')
         subparser = subparsers.add_parser(command,
                                           help=help,
                                           description=desc,
                                           add_help=False)
+        arguments = getattr(callback, 'arguments', [])
         for (args, kwargs) in arguments:
             subparser.add_argument(*args, **kwargs)
         subparser.set_defaults(func=callback)
@@ -69,7 +68,7 @@ def main():
 
     argv = [encode.convert_to_unicode(a) for a in sys.argv[1:]]
     args = parser.parse_args(argv)
-    if args.subcmd.startswith('fpga-image'):
+    if args.subcmd.startswith('fpga-image') or args.subcmd == 'get-log-file':
         config.read_config_and_verify()
     elif args.subcmd == 'help':
         args.subcommands = subcommands

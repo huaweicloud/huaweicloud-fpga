@@ -16,7 +16,6 @@
 from __future__ import print_function
 
 from collections import OrderedDict
-import json
 import os
 import re
 import sys
@@ -128,7 +127,7 @@ def do_configure(args):
         else:
             # configure region_id interactively when get it from ECS metadata failed
             configure_region_id = True
-            print('\n\033[31mNote: If an incorrect Region ID is used, the FPGA image registration and querying may succeed, but the FPGA loading will fail.\033[0m')
+            print('\n\033[31mNote: If an incorrect Region ID is used, the FPGA image creation and querying may succeed, but the FPGA loading will fail.\033[0m')
             print('Choose the Region where you are located.')
             regions = config.endpoints.keys()
             print('Available Regions:')
@@ -149,6 +148,7 @@ def do_configure(args):
         obs_endpoint = config.get_endpoint(region_id, 'obs')
         iam_endpoint = config.get_endpoint(region_id, 'iam')
         vpc_endpoint = config.get_endpoint(region_id, 'vpc')
+        ecs_endpoint = config.get_endpoint(region_id, 'fis')
         fis_endpoint = config.get_endpoint(region_id, 'fis')
 
         # configure intranet dns of ecs
@@ -203,7 +203,7 @@ def do_configure(args):
         available_bucket = [bucket for bucket in all_bucket
                             if utils.is_bucket_valid(bucket, access_key, secret_key, obs_endpoint, region_id, domain_id)]
         if available_bucket:
-            print('\nChoose or Create a Bucket for storing the FPGA images to be registered.')
+            print('\nChoose or Create a Bucket for storing the DCP and LOG files.')
             print('Available Bucket(s):')
             for i, bucket in enumerate(available_bucket, 1):
                 print('  (%d) %s' % (i, bucket))
@@ -218,7 +218,7 @@ def do_configure(args):
                         _check_and_create_bucket(bucket_name, all_bucket, access_key, secret_key, region_id, obs_endpoint)):
                     break
         else:
-            print('\nCreate a Bucket for storing the FPGA images to be registered.')
+            print('\nCreate a Bucket for storing the DCP and LOG files.')
             while True:
                 bucket_name = raw_input('Bucket Name [%s]: ' % bucket_name_old).strip() or bucket_name_old
                 if _check_and_create_bucket(bucket_name, all_bucket, access_key, secret_key, region_id, obs_endpoint):
@@ -226,7 +226,7 @@ def do_configure(args):
 
         # configure intranet dns of vpc
         print('\nChecking private DNS of VPC.')
-        config.configure_intranet_dns_vpc(access_key, secret_key, project_id, region_id, vpc_endpoint)
+        config.configure_intranet_dns_vpc(access_key, secret_key, project_id, region_id, ecs_endpoint, vpc_endpoint)
 
         # save new settings
         if not configure_region_id:
@@ -247,41 +247,47 @@ def do_configure(args):
         exit()
 
 
-@utils.arg('--fpga-image-file', metavar='<FilePath>', required=True,
-           help='The path of FPGA image file in the file system')
+@utils.arg('--dcp-file', metavar='<FilePath>', required=True,
+           help='The DCP file path in the local file system')
+@utils.arg('--dcp-obs-path', metavar='<OBSFilePath>', required=True,
+           help='The DCP file path in the OBS bucket')
+@utils.arg('--log-obs-directory', metavar='<OBSDirPath>',
+           help='The LOG file directory in the OBS bucket')
 @utils.arg('--name', metavar='<String>', required=True,
            help='The name of FPGA image')
-@utils.arg('--metadata', metavar='<Object>', required=True,
-           help='The metadata of FPGA image')
 @utils.arg('--description', metavar='<String>',
            help='The description of FPGA image')
-def do_fpga_image_register(args):
-    """Register an FPGA image"""
-    object_key = utils.check_fpga_image_file(args.fpga_image_file)
+def do_fpga_image_create(args):
+    """Create an FPGA image"""
     access_key = os.getenv('OS_ACCESS_KEY')
     secret_key = os.getenv('OS_SECRET_KEY')
     obs_endpoint = os.getenv('OS_OBS_ENDPOINT')
     bucket_name = os.getenv('OS_BUCKET_NAME')
 
+    utils.check_dcp_file(args.dcp_file)
+
     kwargs = OrderedDict()
+    kwargs['dcp_obs_path'] = args.dcp_obs_path
+    if args.log_obs_directory is not None:
+        kwargs['log_obs_directory'] = args.log_obs_directory
     kwargs['name'] = args.name
-    kwargs['metadata'] = args.metadata
     if args.description is not None:
         kwargs['description'] = args.description
     utils.check_param(**kwargs)
-    kwargs['location'] = '%s:%s' % (bucket_name, object_key)
-    kwargs['metadata'] = json.loads(args.metadata,
-                                    object_pairs_hook=OrderedDict)
 
-    print('Uploading FPGA image to OBS')
-    status_code, reason, filesize, time_diff = rest.put_object(access_key, secret_key, args.fpga_image_file,
-                                                               bucket_name, object_key, obs_endpoint)
-    if status_code != 200:
-        raise FisException("Upload FPGA image file to OBS failed: %s %s" % (status_code, reason))
-    print('Upload %s bytes using %s seconds' % (filesize, time_diff))
+    print('Uploading DCP file to OBS')
+    _, _, filesize, time_diff = rest.put_dcp_file(access_key, secret_key, args.dcp_file,
+                                                  bucket_name, args.dcp_obs_path, obs_endpoint)
+    print('Upload %s bytes using %s second(s)' % (filesize, time_diff))
 
-    print('Registering FPGA image to FIS')
-    status_code, reason, body = rest.fpga_image_register(*_get_config(), fpga_image=kwargs)
+    print('Creating FPGA image to FIS')
+    fpga_image = {
+        'dcp_location': '%s:%s' % (bucket_name, args.dcp_obs_path),
+        'log_directory': args.log_obs_directory,
+        'name': args.name,
+        'description': args.description
+    }
+    status_code, reason, body = rest.fpga_image_create(*_get_config(), fpga_image=fpga_image)
     if status_code != 200 or not isinstance(body, dict):
         raise FisException(_invalid_resp(status_code, reason, body))
     fi = body.get('fpga_image', {})
@@ -316,6 +322,8 @@ def do_fpga_image_delete(args):
     _do_resp(status_code, reason)
 
 
+@utils.arg('--fpga-image-id', metavar='<UUID>',
+           help='The ID of FPGA image')
 @utils.arg('--page', metavar='<Int>',
            help='The page number for pagination query')
 @utils.arg('--size', metavar='<Int>',
@@ -323,6 +331,8 @@ def do_fpga_image_delete(args):
 def do_fpga_image_list(args):
     """Query FPGA images of a tenant"""
     kwargs = OrderedDict()
+    if args.fpga_image_id is not None:
+        kwargs['fpga_image_id'] = args.fpga_image_id
     if args.page is not None and args.size is not None:
         kwargs['page'] = args.page
         kwargs['size'] = args.size
@@ -425,3 +435,49 @@ def do_fpga_image_relation_list(args):
 
     if args.image_id is None and args.fpga_image_id is None:
         print('Tips: The FPGA image relations can only be obtained if at least one of the \033[31m--fpga-image-id\033[0m and \033[31m--image-id\033[0m arguments is specified, otherwise only an empty list is returned.')
+
+
+@utils.arg('--fpga-image-id', metavar='<UUID>', required=True,
+           help='The ID of FPGA image')
+def do_get_log_file(args):
+    """Get the log file of an FPGA image"""
+    access_key = os.getenv('OS_ACCESS_KEY')
+    secret_key = os.getenv('OS_SECRET_KEY')
+    obs_endpoint = os.getenv('OS_OBS_ENDPOINT')
+
+    kwargs = OrderedDict()
+    kwargs['fpga_image_id'] = args.fpga_image_id
+    utils.check_param(**kwargs)
+
+    status_code, reason, body = rest.fpga_image_list(*_get_config(), params=kwargs)
+    if status_code != 200 or not isinstance(body, dict):
+        raise FisException(_invalid_resp(status_code, reason, body))
+    fi_list = body.get('fpgaimages', [])
+
+    if not fi_list:
+        raise FisException('FPGA Image [%s] does not exist' % args.fpga_image_id)
+    fpga_image = fi_list[0]
+    if fpga_image.get('status') not in ('active', 'error'):
+        raise FisException('FPGA Image [%s] status [%s] is not "active" or "error"' % (args.fpga_image_id, fpga_image.get('status')))
+    log_directory = fpga_image.get('log_directory')
+    if log_directory is None:
+        raise FisException('FPGA Image [%s] has no log file' % args.fpga_image_id)
+
+    print('Log directory is "%s"' % log_directory)
+    l = log_directory.split(':')
+    if len(l) != 2 or l[0] == '':
+        raise FisException('Log directory [%s] is invalid' % log_directory)
+    file_name = args.fpga_image_id + '_log.tar'
+    if os.path.lexists(file_name):
+        raise FisException('The file [%s] already exists in the current directory' % file_name)
+    bucket_name = l[0]
+    if l[1]:
+        object_key = '%s/%s' % (l[1], file_name)
+    else:
+        object_key = file_name
+
+    print('Downloading Log file from OBS')
+    status_code, reason, filesize, time_diff = rest.get_log_file(access_key, secret_key, file_name,
+                                                                 bucket_name, object_key, obs_endpoint)
+    _do_resp(status_code, reason)
+    print('Download %s bytes using %s second(s)' % (filesize, time_diff))

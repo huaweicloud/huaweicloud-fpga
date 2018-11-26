@@ -163,7 +163,8 @@ def make_bucket(ak, sk, bucket_name, location, host):
     return (resp.status_code, resp.reason)
 
 
-def put_object(ak, sk, file_name, bucket_name, object_key, host):
+@utils.retry_decorator
+def put_dcp_file(ak, sk, file_name, bucket_name, object_key, host):
     expand_file_name = os.path.expanduser(file_name)
     with open(expand_file_name, 'rb') as f:
         m = hashlib.md5()
@@ -197,6 +198,34 @@ def put_object(ak, sk, file_name, bucket_name, object_key, host):
         if resp.status_code >= 300:
             raise HttpException(resp.status_code, resp.reason, get_xml_error(resp.text, args=(bucket_name, object_key)))
         return (resp.status_code, resp.reason, content_length, time_diff)
+
+
+def get_log_file(ak, sk, file_name, bucket_name, object_key, host):
+    resource = '/%s/%s' % (bucket_name, object_key)
+    date = time.strftime("%a, %d %b %Y %H:%M:%S +0000", time.gmtime())
+    string_to_sign = 'GET\n\n\n%s\n%s' % (date, resource)
+    signature = base64.b64encode(hmac.new(sk, string_to_sign, hashlib.sha1).digest())
+
+    t1 = datetime.datetime.now()
+    resp = requests.get(
+            'https://%s%s' % (host, resource),
+            headers={'Host': host,
+                     'Date': date,
+                     'Authorization': 'AWS %s:%s' % (ak, signature)},
+            timeout=timeout,
+            verify=cert_verify)
+    t2 = datetime.datetime.now()
+    time_diff = (t2 - t1).total_seconds()
+    if resp.status_code >= 300:
+        msg = get_xml_error(resp.text, args=(bucket_name, object_key))
+        if 'NoSuchKey' in msg:
+            msg += '\n\033[31mTips: The log file may have NOT been generated, or have been Deleted or Moved.\033[0m'
+        raise HttpException(resp.status_code, resp.reason, msg)
+
+    with open(file_name, 'wb') as f:
+        f.write(resp.content)
+
+    return (resp.status_code, resp.reason, len(resp.content), time_diff)
 
 
 # iam
@@ -250,8 +279,8 @@ def put_subnet(ak, sk, project_id, region, host, vpc_id, net_id, body):
 
 
 # fis
-def fpga_image_register(ak, sk, project_id, region, host, fpga_image):
-    uri = '/v1/%s/cloudservers/fpga_image' % project_id
+def fpga_image_create(ak, sk, project_id, region, host, fpga_image):
+    uri = '/v2/%s/cloudservers/fpga_image' % project_id
     body = json.dumps({'fpga_image': fpga_image})
     headers = sign_request_v4(ak, sk, 'POST', host, uri, region, 'ecs', body=body)
     headers['Content-Type'] = 'application/json;charset=utf8'

@@ -27,13 +27,13 @@ def get_parser():
     parser = argparse.ArgumentParser(
         prog='fischeck',
         add_help=False)
+    parser.add_argument('--dcp-obs-path',
+                        action='store')
+    parser.add_argument('--log-obs-directory',
+                        action='store')
     parser.add_argument('--name',
                         action='store')
-    parser.add_argument('--metadata',
-                        action='store')
     parser.add_argument('--description',
-                        action='store')
-    parser.add_argument('--file-name',
                         action='store')
     parser.add_argument('--fpga-image-id',
                         action='store')
@@ -53,14 +53,14 @@ def main():
 
     # read and check args
     kwargs = {}
+    if args.dcp_obs_path is not None:
+        kwargs['dcp_obs_path'] = args.dcp_obs_path
+    if args.log_obs_directory is not None:
+        kwargs['log_obs_directory'] = args.log_obs_directory
     if args.name is not None:
         kwargs['name'] = args.name
-    if args.metadata is not None:
-        kwargs['metadata'] = args.metadata
     if args.description is not None:
         kwargs['description'] = args.description
-    if args.file_name is not None:
-        kwargs['file_name'] = args.file_name
     if args.fpga_image_id is not None:
         kwargs['fpga_image_id'] = args.fpga_image_id
     if args.image_id is not None:
@@ -83,7 +83,6 @@ def main():
     domain_id = os.getenv('OS_DOMAIN_ID')
     project_id = os.getenv('OS_PROJECT_ID')
     obs_endpoint = os.getenv('OS_OBS_ENDPOINT')
-    vpc_endpoint = os.getenv('OS_VPC_ENDPOINT')
     fis_endpoint = os.getenv('OS_FIS_ENDPOINT')
 
     try:

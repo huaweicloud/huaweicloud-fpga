@@ -7,9 +7,11 @@
 - [3 配置](#3-配置)
 - [4 介绍](#4-介绍)
   - [4.1 fis命令](#41-fis命令)
-  - [4.2 查询](#42-查询)
-  - [4.3 删除](#43-删除)
-  - [4.4 关联、解关联和查询关联](#44-关联解关联和查询关联)
+  - [4.2 创建](#42-创建)
+  - [4.3 查询](#43-查询)
+  - [4.4 获取日志文件](#44-获取日志文件)
+  - [4.5 删除](#45-删除)
+  - [4.6 关联、解关联和查询关联](#46-关联解关联和查询关联)
 - [5 fis命令详解](#5-fis命令详解)
   - [5.1 查看帮助信息](#51-查看帮助信息)
   - [5.2 删除子命令](#52-删除子命令)
@@ -17,6 +19,7 @@
   - [5.4 关联子命令](#54-关联子命令)
   - [5.5 解关联子命令](#55-解关联子命令)
   - [5.6 查询关联子命令](#56-查询关联子命令)
+  - [5.7 获取日志子命令](#57-获取日志子命令)
 
 <a name="operating-environment-requirements"></a>
 # 1 运行环境要求 #
@@ -51,7 +54,7 @@
 | ---- | ---- |
 | **Access Key** | 接入键标识AK |
 | **Secret Key** | 安全接入键SK |
-| **Bucket Name** | 用于存放待注册FPGA镜像的OBS桶 |
+| **Bucket Name** | 用于存放DCP和LOG文件的OBS桶 |
 
 > **fisclient** 会自动保存用户上一次的有效配置参数。用户在配置过程中，既可以输入新的配置参数，也可以通过输入单个**回车键**来使用上一次的配置参数。<br/>
 > 在完成配置后，用户可以执行 **fis configure --dump** 命令查看当前的配置。
@@ -69,14 +72,14 @@ Secret Key []: a0vet3Eh********************cIr4meJzYSMe
 当提示输入 **Secret Key** 时，请输入用户的**安全接入键（Secret Access Key）**。
 
 ### 步骤2 配置桶参数 ###
-桶参数 **Bucket Name** 表示存放待注册FPGA镜像的OBS桶。
+桶参数 **Bucket Name** 表示存放DCP和LOG文件的OBS桶。
 
 > 如果用户在当前区域中已经拥有了符合条件的OBS桶，**fisclient** 会罗列出这些桶，用户只需要从中选择一个即可。
 
 #### 场景1 创建新的OBS桶 ####
 
 <pre>
-Choose or Create a Bucket for storing the FPGA images to be registered.
+Choose or Create a Bucket for storing the DCP and LOG files.
 Available Bucket(s):
   (1) hello-fpga1
 Bucket Name []: hello-fpga2
@@ -97,13 +100,13 @@ Bucket "hello-fpga2" created
 #### 场景2 使用已有的OBS桶 ####
 
 <pre>
-Choose or Create a Bucket for storing the FPGA images to be registered.
+Choose or Create a Bucket for storing the DCP and LOG files.
 Available Bucket(s):
   (1) hello-fpga1
   (2) hello-fpga2
 Bucket Name []: 2
 </pre>
-如果用户希望使用已有的OBS桶，则当提示输入 **Bucket Name** 时，请输入相应OBS桶的序号。例如，用户在当前区域中拥有 **hello-fpga1** 和 **hello-fpga2** 两个符合条件的OBS桶，并希望使用 **hello-fpga2** 来存放待注册的FPGA镜像，则请输入 **hello-fpga2** 对应的序号，即 **2** 。
+如果用户希望使用已有的OBS桶，则当提示输入 **Bucket Name** 时，请输入相应OBS桶的序号。例如，用户在当前区域中拥有 **hello-fpga1** 和 **hello-fpga2** 两个符合条件的OBS桶，并希望使用 **hello-fpga2** 来存放DCP和LOG文件，则请输入 **hello-fpga2** 对应的序号，即 **2** 。
 
 > 当用户期望选择或创建的桶名与Available Bucket(s)列表中OBS桶的序号冲突时，用户可以在桶名前添加一个!符号，使用 **!mybucket** 表示期望选择或创建的桶名为 **mybucket**。
 
@@ -133,13 +136,43 @@ fis命令的格式为 **fis &lt;subcommand&gt; &lt;option&gt;**
 
 fis命令的详细使用说明请参见[fis命令详解](#fis-command-description)。
 
+<a name="create"></a>
+## 4.2 创建 ##
+
+- 步骤1. 执行工程中的 **AEI_Register.sh** 脚本创建FPGA镜像，并得到一个FPGA镜像ID。
+
+> 创建配额：单个租户一次最多只能创建**一个**FPGA镜像。当租户尝试同时创建多个FPGA镜像时，创建将失败。<br/>
+> 异步创建：创建FPGA镜像是一个异步过程。**步骤1**成功执行并不表示FPGA镜像创建成功。用户还需要执行**步骤2**，直到FPGA镜像的状态为 **active** 时，才表示FPGA镜像创建成功。
+
+- 步骤2. [查询](#query)创建的进度直到创建完成。在创建过程中，FPGA镜像的状态会不断变化。当状态为 **active** 或 **error** 时，表示创建完成。
+
+> [root@ ~]# fis fpga-image-list --fpga-image-id &lt;FPGA镜像ID&gt;
+
+- 步骤3. 在FPGA镜像创建完成后，[获取构建日志文件](#get-log)。
+
+> [root@ ~]# fis get-log-file --fpga-image-id &lt;FPGA镜像ID&gt;
+
 <a name="query"></a>
-## 4.2 查询 ##
-在注册FPGA镜像后，用户可以使用fis查询子命令查询自身拥有的FPGA镜像的信息。在确认FPGA镜像的状态是 **active** 后，用户可以使用相应的FPGA镜像ID执行后续的加载、删除、关联等操作。<br/>
+## 4.3 查询 ##
+在创建FPGA镜像后，用户可以使用fis查询子命令查询自身拥有的FPGA镜像的信息。
 
 > 注意，用户通过fis查询子命令只能查询到**自身拥有的FPGA镜像**的信息。对于购买的和共享的FPGA镜像，用户需要通过**fis查询关联子命令**来查询相应的信息。例如，用户可以参考[查询共享的FPGA镜像](#querying-the-shared-fpga-image)来了解如何查询FPGA共享镜像的信息。
 
-fis查询子命令以一个表格来呈现FPGA镜像信息，并且支持分页查询功能。更多详细信息请参见[查询子命令](#query-subcommand)。
+fis查询子命令以一个表格来呈现FPGA镜像信息，并且支持分页查询功能。更多详细信息请参见[查询子命令](#query-subcommand)。<br/>
+
+### FPGA镜像状态 ###
+FPGA镜像具有如下6种状态：
+
+| 状态 | 说明 |
+| ------- | ----------- |
+| **initialling** | 创建初始化 |
+| **scheduling** | 等待调度创建 |
+| **creating** | 正在创建中 |
+| **active** | 可用 |
+| **deleting** | 删除中 |
+| **error** | 操作异常 |
+
+在确认FPGA镜像的状态是 **active** 后，用户可以使用相应的FPGA镜像ID执行后续的加载、删除、关联等操作。
 
 ### 示例 ###
 执行以下fis命令查询FPGA镜像：
@@ -152,14 +185,30 @@ Success: 200 OK
 | 000000******08b4015e3224afe203c3 | OCL_001 | active | False     | 43   | 2017-09-19 02:27:31 | mmult_01    | {"manifest_format_version": "1", "pci_vendor_id": "0x19e5", "pci_device_id": "0xD512", "pci_subsystem_id": "-", "pci_subsystem_vendor_id": "-", "shell_type": "0x121", "shell_version": "0x0001", "hdk_version": "SDx 2017.1", "date": "2017/09/17_18:37:12"} |         |
 +----------------------------------+---------+--------+-----------+------+---------------------+-------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------+
 </pre>
-- 用户之前注册的FPGA镜像的ID为 **000000\*\*\*\*\*\*08b4015e3224afe203c3**。
-- FPGA镜像的状态为 **active**，表示用户之前的注册操作执行成功。
+- 用户之前创建的FPGA镜像的ID为 **000000\*\*\*\*\*\*08b4015e3224afe203c3**。
+- FPGA镜像的状态为 **active**，表示用户之前的创建操作执行成功。
 
 因此，用户可以使用该FPGA镜像ID进行后续的加载、删除、关联等操作。
 
+<a name="get-log"></a>
+## 4.4 获取日志文件 ##
+在FPGA镜像创建完成后，用户可以执行fis获取日志子命令将相应的构建日志文件下载到本地。构建日志文件会保存到当前目录下，并按照 **{FPGA镜像ID}_log.tar** 的格式命名。更多详细信息请参见[fis获取日志子命令](#get-log-subcommand)。
+
+### 示例 ###
+获取ID为 **0086137b\*\*\*\*\*\*\*\*016535d03b210005** 的FPGA镜像的日志文件。
+<pre>
+[root@ ~]# fis get-log-file --fpga-image-id 0086137b********016535d03b210005
+Log directory is "obs-test-fpga:vu9p"
+Downloading Log file from OBS
+Success: 200 OK
+Download 2517 bytes using 0.078489 second(s)
+[root@ ~]# ls
+0086137b********016535d03b210005_log.tar
+</pre>
+
 <a name="deletion"></a>
-## 4.3 删除 ##
-删除操作允许FPGA镜像的拥有者执行FPGA镜像的删除操作。当用户不再使用某个注册成功的FPGA镜像，并且希望从FPGA镜像管理模块中删除该FPGA镜像相关的记录时，可以使用fis删除子命令进行FPGA镜像删除操作。此外，如果用户在执行fis查询子命令时发现某个FPGA镜像的状态是 **error** 时，可以使用fis删除子命令删除该FPGA镜像记录。<br/>
+## 4.5 删除 ##
+删除操作允许FPGA镜像的拥有者执行FPGA镜像的删除操作。当用户不再使用某个创建成功的FPGA镜像，并且希望从FPGA镜像管理模块中删除该FPGA镜像相关的记录时，可以使用fis删除子命令进行FPGA镜像删除操作。此外，如果用户在执行fis查询子命令时发现某个FPGA镜像的状态是 **error** 时，可以使用fis删除子命令删除该FPGA镜像记录。<br/>
 如果FPGA镜像已经和某个弹性云服务器镜像关联，FPGA镜像将被置于“保护”状态（FPGA镜像的 **protected** 属性被置为 **True**），不允许被删除。更多详细信息请参见[删除子命令](#deletion-subcommand)。
 
 ### 删除确认 ###
@@ -185,10 +234,10 @@ Success: 204 No Content
 | id                               | name     | status | protected | size | createdAt           | description | metadata                                                                                                                                                                                                                                                                                                                                                                                  | message                    |
 +----------------------------------+----------+--------+-----------+------+---------------------+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------+
 | ff********5056b2015d5e13608c73c7 | OCL_001  | active | False     | 43   | 2017-09-19 02:27:31 | mmult_01    | {"manifest_format_version": "1", "pci_vendor_id": "0x19e5", "pci_device_id": "0xD512", "pci_subsystem_id": "-", "pci_subsystem_vendor_id": "-", "shell_type": "0x121", "shell_version": "0x0001", "hdk_version": "SDx 2017.1", "date": "2017/09/18_18:27:12"}                                                                                                                             |                            |
-| 4010b39c5d4********48e97411005ae | dpdk_002 | error  | False     | 45   | 2017-09-19 16:39:27 | example_02  | {"manifest_format_version": "1", "pci_vendor_id": "0x19e5", "pci_device_id": "0xD503", "pci_subsystem_id": "-", "pci_subsystem_vendor_id": "-", "dcp_hash": "ced75657********60f212a9454f6c5ae33d50f0a248e99dbef638231b26960c", "shell_type": "0x101", "shell_version": "0x0013", "dcp_file_name": "ul_pr_top_routed.dcp", "hdk_version": "Vivado 2017.2", "date": "2017/09/19_13:51:41"} | register fpga image failed |
+| 4010b39c5d4********48e97411005ae | dpdk_002 | error  | False     | 45   | 2017-09-19 16:39:27 | example_02  | {"manifest_format_version": "1", "pci_vendor_id": "0x19e5", "pci_device_id": "0xD503", "pci_subsystem_id": "-", "pci_subsystem_vendor_id": "-", "dcp_hash": "ced75657********60f212a9454f6c5ae33d50f0a248e99dbef638231b26960c", "shell_type": "0x101", "shell_version": "0x0013", "dcp_file_name": "ul_pr_top_routed.dcp", "hdk_version": "Vivado 2017.2", "date": "2017/09/19_13:51:41"} | create fpga image failed   |
 +----------------------------------+----------+--------+-----------+------+---------------------+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+----------------------------+
 </pre>
-如果用户希望删除不再使用的ID为 **ff\*\*\*\*\*\*\*\*5056b2015d5e13608c73c7** 的FPGA镜像，以及注册失败的ID为 **4010b39c5d4\*\*\*\*\*\*\*\*48e97411005ae** 的FPGA镜像，可以执行如下的fis命令：
+如果用户希望删除不再使用的ID为 **ff\*\*\*\*\*\*\*\*5056b2015d5e13608c73c7** 的FPGA镜像，以及创建失败的ID为 **4010b39c5d4\*\*\*\*\*\*\*\*48e97411005ae** 的FPGA镜像，可以执行如下的fis命令：
 
 - 删除不再使用的FPGA镜像。
 <pre>
@@ -205,18 +254,18 @@ Success: 204 No Content
 在上述命令中，**--fpga-image-id** 选项指定待删除的FPGA镜像的ID，**--force** 选项指定执行强制删除操作。如果命令的回显信息为 **Success: 204 No Content**，则表示fis删除子命令执行成功。然而，删除子命令执行成功并不代表FPGA镜像删除成功。用户需要执行查询操作，如果查找不到待删除的FPGA镜像的信息，则表示FPGA镜像删除成功。
 
 <a name="association-disassociation-association-query"></a>
-## 4.4 关联、解关联和查询关联 ##
-通过关联操作，用户可以将已成功注册的FPGA镜像提供给 **位于相同区域** 的其他用户使用，包括如下两种场景：
+## 4.6 关联、解关联和查询关联 ##
+通过关联操作，用户可以将已成功创建的FPGA镜像提供给 **位于相同区域** 的其他用户使用，包括如下两种场景：
 
-- 市场镜像场景：将已成功注册的FPGA镜像发布到云市场进行交易。
-- 共享镜像场景：将已成功注册的FPGA镜像共享给指定用户。
+- 市场镜像场景：将FPGA镜像发布到云市场进行交易。
+- 共享镜像场景：将FPGA镜像共享给指定用户。
 
 通过查询关联操作，用户可以查询其他用户提供的FPGA镜像。通过解关联操作，用户可以取消FPGA镜像的共享。<br/>
 本小节以共享镜像场景为例来说明关联、解关联和查询关联操作的使用。这些子命令的更多详细信息请参见[关联子命令](#association-subcommand)、[解关联子命令](#disassociation-subcommand)和[查询关联子命令](#association-query-subcommand)。
 
 <a name="sharing-the-fpga-image"></a>
 ### 共享FPGA镜像 ###
-当用户A想要将自己拥有的一个已注册成功的FPGA镜像共享给用户B时，需要完成以下步骤。以下假设用户A想将ID为 **4010b39c5d4\*\*\*\*\*\*\*\*\*\*f2cf8070c7e** 的 **通用型架构** 的FPGA镜像共享给用户B。 
+当用户A想要将自己拥有的一个FPGA镜像共享给用户B时，需要完成以下步骤。以下假设用户A想将ID为 **4010b39c5d4\*\*\*\*\*\*\*\*\*\*f2cf8070c7e** 的 **通用型架构** 的FPGA镜像共享给用户B。 
 
 - 步骤1：从 **通用型架构** 的FPGA弹性云服务器创建一个ECS私有镜像，更多详细信息请参见[创建私有镜像](https://support.huaweicloud.com/usermanual-ims/zh-cn_topic_0030713180.html)。
 
@@ -288,16 +337,16 @@ Command-line interface to the fis API.
 positional arguments: 
   &lt;subcommand&gt; 
     configure           Invoke interactive (re)configuration tool
+    fpga-image-create   Create an FPGA image
     fpga-image-delete   Delete an FPGA image
     fpga-image-list     Query FPGA images of a tenant
-    fpga-image-register
-                        Register an FPGA image
     fpga-image-relation-create
                         Create the relation of an FPGA image and an ECS image
     fpga-image-relation-delete
                         Delete the relation of an FPGA image and an ECS image
     fpga-image-relation-list
                         Query FPGA image relations visible to a tenant
+    get-log-file        Get the log file of an FPGA image
     help                Display help about fis or one of its subcommands
 
 See "fis help COMMAND" for help on a specific command.
@@ -308,20 +357,19 @@ fis命令的格式为 **fis &lt;subcommand&gt; &lt;option&gt;**
 - 子命令 **&lt;subcommand&gt;** 指定执行的fis命令的功能。
 - 选项 **&lt;option&gt;** 特定于子命令，为子命令指定命令参数。
 
-fis命令包含如下8个子命令。
+fis命令包含如下子命令。
 
 | 命令 | 说明 |
 | ------- | ----------- |
 | **configure** | 配置子命令，用于调用 **fisclient** 的交互式配置工具 |
+| **fpga-image-create** | 创建子命令，用于创建FPGA镜像 |
 | **fpga-image-delete** | 删除子命令，用于删除FPGA镜像 |
 | **fpga-image-list** | 查询子命令，用于查询租户拥有的FPGA镜像详情列表信息 |
-| **fpga-image-register** | 注册子命令，用于注册FPGA镜像 |
 | **fpga-image-relation-create** | 关联子命令，用于创建FPGA镜像与弹性云服务器镜像的关联关系 |
 | **fpga-image-relation-delete** | 解关联子命令，用于删除FPGA镜像与弹性云服务器镜像的关联关系 |
 | **fpga-image-relation-list** | 查询关联子命令，用于查询租户可见的FPGA镜像与弹性云服务器镜像的关联关系 |
+| **get-log-file** | 获取日志子命令，用于获取FPGA镜像的日志文件 |
 | **help** | 帮助子命令，用于显示fis命令或fis子命令的帮助信息 |
-
-> fis注册子命令 **fpga-image-register** 在用户执行 **AEI_Register.sh** 脚本时将自动调用。用户不需要单独执行该命令实现注册FPGA镜像。
 
 <a name="deletion-subcommand"></a>
 ## 5.2 删除子命令 ##
@@ -377,15 +425,17 @@ Success: 204 No Content
 查询子命令以表格的形式呈现租户拥有的FPGA镜像的信息。同时，查询子命令提供分页查询功能。
 
 ### 命令格式 ###
-**fis fpga-image-list** **[--page** *&lt;Int&gt;***] [--size** *&lt;Int&gt;***]**
+**fis fpga-image-list [--fpga-image-id** *&lt;UUID&gt;***]** **[--page** *&lt;Int&gt;***] [--size** *&lt;Int&gt;***]**
 
 ### 参数说明 ###
 | 参数 | 说明 | 取值 | 备注 |
 | --------- | ----------- | ----- | ------- |
-| **--page** | （可选）分页查询时的页编号。 | **page**参数是[1,65535)范围内的十进制整数，并且不能包含+号。 | 由用户自行指定。 |
-| **--size** | （可选）分页查询时的页大小。 | **size**参数是[1,100]范围内的十进制整数，并且不能包含+号。 | 由用户自行指定。 |
+| **--fpga-image-id** | （可选）待查询的FPGA镜像的ID。 | **fpga-image-id**参数是由英文小写字母a-f，数字0-9组成的32位字符串。 | - |
+| **--page** | （可选）分页查询时的页编号。 | **page**参数是[1,65535)范围内的十进制整数，并且不能包含+号。 | - |
+| **--size** | （可选）分页查询时的页大小。 | **size**参数是[1,100]范围内的十进制整数，并且不能包含+号。 | - |
 
-> **page** 参数和 **size** 参数必须同时存在或同时不存在，并且只有当两个参数同时存在时分页查询功能才能生效。
+> **page** 参数和 **size** 参数必须同时存在或同时不存在，并且只有当两个参数同时存在时分页查询功能才能生效。<br/>
+> 当指定 **fpga_image_id** 参数时，分页查询参数 **page** 和 **size** 将不起作用。
 
 ### 使用说明 ###
 当回显信息中包含 **Success: 200 OK** 时，表示查询子命令执行成功，此时回显信息是一个包含下述列标题的表格。
@@ -400,7 +450,7 @@ The following table describes the table headers.
 | --------- | ----------- |
 | **id** | FPGA镜像的ID |
 | **name** | FPGA镜像的名称 |
-| **status** | FPGA镜像的状态 |
+| **status** | FPGA镜像的状态<br/>取值范围：<br/>initialling, scheduling, creating, active, deleting, error |
 | **protected** | FPGA镜像是否处于“保护”状态 |
 | **size** | FPGA镜像的文件大小，单位为MB |
 | **createdAt** | FPGA镜像的创建时间（UTC） |
@@ -548,8 +598,8 @@ Success: 204 No Content
 | --------- | ----------- | ----- | ------- |
 | **--fpga-image-id** | （可选）待查询关联的FPGA镜像的ID。 | **fpga-image-id**参数是由英文小写字母a-f，数字0-9组成的32位字符串。 | 在查询子命令执行成功后，用户可以在回显信息中查找到相应的FPGA镜像ID。 |
 | **--image-id** | （可选）待查询关联的弹性云服务器镜像的ID。 | **image-id**参数遵循IMS（镜像服务）的镜像ID限制。 | 用户可以在镜像的详情页面中获取镜像ID。 |
-| **--page** | （可选）分页查询时的页编号。 | **page**参数是[1,65535)范围内的十进制整数，并且不能包含+号。 | 由用户自行指定。 |
-| **--size** | （可选）分页查询时的页大小。 | **size**参数是[1,100]范围内的十进制整数，并且不能包含+号。 | 由用户自行指定。 |
+| **--page** | （可选）分页查询时的页编号。 | **page**参数是[1,65535)范围内的十进制整数，并且不能包含+号。 | - |
+| **--size** | （可选）分页查询时的页大小。 | **size**参数是[1,100]范围内的十进制整数，并且不能包含+号。 | - |
 
 > 只有至少指定 **fpga-image-id** 和 **image-id** 参数中的一个时，用户才可能查询到关联关系，否则只会返回一个空列表。<br/>
 > **page** 和 **size** 参数必须同时存在或同时不存在，并且只有当两个参数同时存在时分页查询功能才能生效。<br/>
@@ -570,7 +620,7 @@ Success: 204 No Content
 | **image_id** | 弹性云服务器镜像的ID |
 | **fpga_image_id** | FPGA镜像的ID |
 | **name** | FPGA镜像的名称 |
-| **status** | FPGA镜像的状态 |
+| **status** | FPGA镜像的状态<br/>取值范围：<br/>initialling, scheduling, creating, active, deleting, error |
 | **protected** | FPGA镜像是否处于“保护”状态 |
 | **size** | FPGA镜像的文件大小，单位为MB |
 | **createdAt** | FPGA镜像的创建时间（UTC） |
@@ -607,4 +657,45 @@ Success: 200 OK
 | 404223ca-8**b-4**2-a**e-d187****61bc | 00000000********015e98dce81501db | dpdk_001 | active | True      | 45   | 2017-09-18 16:29:27 | example_01  | {"manifest_format_version": "1", "pci_vendor_id": "0x19e5", "pci_device_id": "0xD503", "pci_subsystem_id": "-", "pci_subsystem_vendor_id": "-", "dcp_hash": "ced75657********60f212a9454f6c5ae33d50f0a248e99dbef638231b26960c", "shell_type": "0x101", "shell_version": "0x0013", "dcp_file_name": "ul_pr_top_routed.dcp", "hdk_version": "Vivado 2017.2", "date": "2017/09/18_13:41:41"} |         |
 | 404223ca-8**b-4**2-a**e-d187****61bc | 00000000********015e97f6408d01cd | OCL_001  | active | True      | 43   | 2017-09-18 02:37:31 | mmult_01    | {"manifest_format_version": "1", "pci_vendor_id": "0x19e5", "pci_device_id": "0xD512", "pci_subsystem_id": "-", "pci_subsystem_vendor_id": "-", "shell_type": "0x121", "shell_version": "0x0001", "hdk_version": "SDx 2017.1", "date": "2017/09/17_18:37:12"}                                                                                                                             |         |
 +--------------------------------------+----------------------------------+----------+--------+-----------+------+---------------------+-------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+---------+
+</pre>
+
+<a name="get-log-subcommand"></a>
+## 5.7 获取日志子命令 ##
+用户可以使用获取日志子命令下载FPGA镜像的日志文件。
+
+### 命令格式 ###
+**fis get-log-file --fpga-image-id** *&lt;UUID&gt;*
+
+### 参数说明 ###
+| 参数 | 说明 | 取值 | 备注 |
+| --------- | ----------- | ----- | ------- |
+| **--fpga-image-id** | （必选）待下载日志文件的FPGA镜像的ID。 | **fpga-image-id**参数是由英文小写字母a-f，数字0-9组成的32位字符串。 | 在查询子命令执行成功后，用户可以在回显信息中查找到相应的FPGA镜像ID。 |
+
+### 使用说明 ###
+当回显信息中包含 **Success: 200 OK** 时，表示获取日志子命令执行成功。此时，日志文件会保存到当前目录下，并按照 **{FPGA镜像ID}_log.tar** 的格式命名，例如 **0086137b\*\*\*\*\*\*\*\*016535d03b210005_log.tar**。
+
+<br/>
+当获取日志子命令执行失败时，回显信息中会包含相应的错误原因信息。
+
+- Example
+<pre>
+[root@ ~]# fis get-log-file --fpga-image-id 0086137b\*\*\*\*\*\*\*\*0165332ab1280031
+Log directory is "obs-test-fpga:vu9p/log"
+Downloading Log file from OBS
+Error: 404 Not Found
+The specified key does not exist., Code=NoSuchKey, RequestId=00010F4B\*\*\*\*\*\*\*\*6535EA40A1CEAELK, Function=get_log_file, Arguments=(u'obs-test-fpga', u'vu9p/log/0086137b\*\*\*\*\*\*\*\*0165332ab1280031_log.tar')
+Tips: The log file may have NOT been generated, or have been Deleted or Moved.
+</pre>
+错误信息表示待下载的日志文件可能还未生成，或已被删除或移动。
+
+### 示例 ###
+获取ID为 **0086137b\*\*\*\*\*\*\*\*016535d03b210005** 的FPGA镜像的日志文件。
+<pre>
+[root@ ~]# fis get-log-file --fpga-image-id 0086137b********016535d03b210005
+Log directory is "obs-test-fpga:vu9p"
+Downloading Log file from OBS
+Success: 200 OK
+Download 2517 bytes using 0.078489 second(s)
+[root@ ~]# ls
+0086137b********016535d03b210005_log.tar
 </pre>

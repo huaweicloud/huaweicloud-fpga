@@ -20,11 +20,12 @@ from encode import convert_to_unicode
 
 
 def stripNameSpace(xml):
-    ns_regex = b'^(<?[^>]+?>\s*)(<\w+) xmlns=[\'"](http://[^\'"]+)[\'"](.*)'
+    ns_regex = r'^(<\?.+\?>\s*)(<\w+) xmlns=[\'"](http://[^\'"]+)[\'"](.*)'
     r = re.compile(ns_regex, re.MULTILINE)
-    if r.match(xml):
-        xmlns = r.match(xml).groups()[2]
-        xml = r.sub('\\1\\2\\4', xml)
+    result = r.match(xml)
+    if result:
+        xmlns = result.groups()[2]
+        xml = r.sub(r'\1\2\4', xml)
     else:
         xmlns = None
     return xml, xmlns
@@ -49,7 +50,7 @@ def getDictFromTree(tree):
             content = None
         child_tag = convert_to_unicode(child.tag)
         if child_tag in ret_dict:
-            if not type(ret_dict[child_tag]) == list:
+            if not isinstance(ret_dict[child_tag], list):
                 ret_dict[child_tag] = [ret_dict[child_tag]]
             ret_dict[child_tag].append(content or "")
         else:

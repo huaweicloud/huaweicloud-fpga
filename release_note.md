@@ -1,110 +1,117 @@
-# FPGA 加速云服务实例特性概述
+# FPGA Accelerated Cloud Server Instance Feature Overview
+[切换到中文版](./release_note_cn.md)
 
 
-* 每个用户可以依据自己的加速类型灵活选择高性能实例(DPDK)或者通用性(opencl)实例。  
+* Users can flexibly select high-performance instances (DPDK) or general-purpose instances (opencl) based on their acceleration types.  
 
-* 每个用户可以申请带1张、2张、4张和8张VU9P的FPGA加速卡。
+* Each user can apply for one, two, four, or eight VU9P FPGA acceleration cards.
 
-* 每个FPGA加速卡用户可以使用的接口如下：
-  - `1个pcie gen3 x16 `接口    
-  - `4个ddr4` RDIMM接口
+* Interfaces available for FPGA acceleration card users are as follows:
+  - `One PCIe Gen3 x16` interface    
+  - `Four DDR4` RDIMM interfaces
 
-* PCIE支持的特性：
-  * 高性能实例：
-    - `1个 PF `(physical function)
-    - `1个 VF` (Virtual function)
-    - 每个VF支持`8`个队列   
-  * 通用性实例：
-    - `2个PF`(physical function)
+* PCIe features are as follows:
+  * High-performance instances:
+    - `One physical function (PF)`
+    - `One virtual function (VF)`
+    - `Eight` queues for each VF   
+  * Common instances:
+    - `Two PFs`
 
-* 用户逻辑和静态逻辑之间的接口特性:
-  * 高性能实例：
-    - 静态逻辑到用户逻辑之间的DMA数据通道是`512 bit`位宽的AXI4-Stream接口
-    - 用户逻辑到静态逻辑之间的DMA数据通道是`512 bit`位宽的AXI4-Stream接口
-    - 静态逻辑到用户逻辑之间的DMA BD（Buffer Description）通道是`256 bit`位宽的AXI4-Stream接口
-    - 用户逻辑到静态逻辑之间的DMA BD（Buffer Description）通道是`256 bit`位宽的AXI4-Stream接口
-    - 寄存器访问和bar空间映射使用的是`32 bit`位宽的AXI4-Lite接口
-    - DDR的接口使用的是`512 bit`位宽的AXI4接口
-  * 通用性实例：
-    - 用户逻辑和静态逻辑之间的数据通道是`512 bit`位宽的AXI4-MM接口
-    - 用户逻辑和静态逻辑之间的控制通道是`32 bit`位宽的AXI4-Lite接口
+* Interface features between user logic and static logic are as follows:
+  * High-performance instances:
+    - The DMA data channel from static logic to user logic uses the AXI4-Stream interface with a bit width of `512 bits`.
+    - The DMA data channel from user logic to static logic uses the AXI4-Stream interface with a bit width of `512 bits`.
+    - The DMA buffer description (BD) channel from static logic to user logic uses the AXI4-Stream interface with a bit width of `256 bits`.
+    - The DMA BD channel from user logic to static logic uses the AXI4-Stream interface with a bit width of `256 bits`.
+    - The register access and BAR space mapping use the AXI4-Lite interface a bit width of `32 bits`.
+    - DDRs use the AXI4 interface with a bit width of `512 bits`.
+  * Common instances:
+    - The data channel from user logic to static logic uses the AXI4-MM interface with a bit width of `512 bits`.
+    - The control channel from user logic to static logic uses the AXI4-Lite interface with a bit width of `512 bits`.
 
 
-* DDR接口划分：
-  - 1个DDR控制器放置在静态逻辑部分
-  - 3个DDR控制器放置在用户逻辑部分
-  - 支持用户最多使用`4个DDR控制器`
+* The DDR interface partition is as follows:
+  - One DDR controller is placed in the static logic partition.
+  - Three DDR controllers are placed in the user logic partition.
+  - A maximum of four DDR controllers can be used.
+
+# Release 1.2.1
+
+- Added the PR check function to DPDK and OCL.
+- Optimized the OCL script.
+- Optimized the document.
 
 # Release 1.2.0
 
-- 支持1:N多卡场景
-- 支持SDAccel 2017.4开发套件
-- 支持多shell版本共存场景
-- DPDK场景支持用户APP单写/单读/环回访问FPGA下挂DDR场景
-- DPDK场景仿真优化，并支持单写/单读/环回仿真模式
-- 文档优化
-- 增加XVC特性
+- Supported the 1:N multi-card scenario.
+- Supported the SDAccel 2017.4 development suite
+- Supported coexistence of multiple shell versions.
+- Supported user APP single-write, single-read, and loopback access to the DDR connected to an FPGA in the DPDK scenario.
+- Optimized simulation in the DPDK scenario to support single-write, single-read, and loopback emulation modes.
+- Optimized the document.
+- Added the XVC feature.
 
 # Release 1.1.2
 
-- 支持1:N多卡场景
-- 文档优化
+- Supported the 1:N multi-card scenario.
+- Optimized the document.
 
 # Release 1.1.1
 
-- 文档优化
-- AEI注册方式优化；
+- Optimized the document.
+- Optimized the AEI registration mode.
 
 # Release 1.1.0
 
-- vivado 仿真平台优化；
-- SDAccel 的 xdma驱动优化；
-- 文档优化，新增 User_Development_Guide_for_an_FACS文档；
-- opencl代码解决安全漏洞；
-- example3 src代码优化；
-- dpdk代码优化；
+- Optimize the -vivado simulation platform.
+- Optimized the xdma driver of SDAccel.
+- Optimized the document and added the User_Development_Guide_for_an_FACS document.
+- Resolved security vulnerabilities in the opencl code.
+- Optimized the example3 src code.
+- Optimized the dpdk src code.
 
 # Release 1.0.1
-- 文档优化，合入各类文档体验问题100余个；
-- setup.sh脚本优化，解决文件覆盖异常提示；
-- pmd代码缺陷解决；
-- 修改perf.cpp，datamover.h，shim.cpp适配代码扫描；
-- dpdk编译脚本优化：修改build_dpdk.sh与build_dpdk_app.sh脚本，执行错误打印相应的错误说明及返回相应的错误码；执行成功后，打印成功信息；
+- Optimized the document with more than 100 experience problems of various documents incorporated.
+- Optimized the setup.sh script to resolve the problem that the file coverage is abnormal.
+- Fixed the bugs in the pmd code.
+-Modified perf.cpp, datamover.h, and shim.cpp for code scanning.
+- Optimized the dpdk compilation script: The build_dpdk.sh and build_dpdk_app.sh scripts are modified. When an error occurs, the error description is displayed and the error code is returned. After the command is executed successfully, the system displays a message indicating that the operation is successful.
 
 # Release 1.0.0
-- 这是Huawei Cloud FPGA设计实例的首个公开版本。有关该版本功能的详细信息，可以在以下的**FPGA 设计实例特性概述**以及**FPGA 设计实例特性详述**章节中找到。
+- This is the first public version of the Huawei Cloud FPGA design instance. For details about its functions, see **FPGA Design Instance Feature Overview** and **FPGA Design Instance Feature Description**.
 
 ---
-# FPGA实例特性详述
+# FPGA Instance Feature Description
 
-# 目录
+# Contents
 
-## 1. [工程构建](#工程构建)
-## 2. [用户仿真](#用户仿真)
-## 3. [应用测试](#应用测试)
-## 4. [工具环境](#工具环境)
-## 5. [license要求](#license要求)
-## 6. [即将支持特性](#即将支持特性)
+## 1 [Project Building](#Project Building)
+## 2 [User Simulation](#User Simulation)
+## 3 [Application Tests](#Application Tests)
+## 4 [Tools and Environment](#Tools and Environment)
+## 5 [License Requirements](#License Requirements)
+## 6 [Features To Be Supported](#Features To Be Supported)
 ***
-<a name="工程构建"></a>
-# 工程构建
+<a name="Project Building"></a>
+# Project Building
 
-## 概述
-执行工程构建之前必须要`确认vivado工具及license安装完成`；工程构建旨在用户通过最小的改动实现符合时序要求的工程设计。
+## Overview
+Before building a project, `ensure that Vivado and license are installed`. The project building aims to design a project that meets the timing requirements through the minimum modification.
 
-## 特性列表
+## Features
 
-* 支持vivado设计和sdaccel高级语言设计
+* Vivado and SDAccel designs
 
-* 支持用户使用`VHDL和Verilog`编码
+* `VHDL and Verilog` coding
 
-* 支持用户使用`opencL、c和c++`编码
+* `OpenCL, C, and C++` coding
 
-* 支持VHDL、Verilog、opencL、c、c++和SystemVerilog代码`自动扫描加密`
+* `Automatic scanning and encryption` of VHDL, Verilog, OpenCL, C, C++, and SystemVerilog code
 
-* 支持用户配置和执行命令解耦，用户只需要`定义自己的工程名字和路径`等变量，即可完成工程构建
+* User configuration and command execution decoupling. To build a project, you only need to `define the project name and path`.
 
-* 支持所有的Vivado综合策略用户可灵活配置选择，支持的综合策略:
+* Flexible configuration and selection of all Vivado synthesis policies. Available synthesis policies are as follows:
   - DEFAULT
   - AreaOptimized_high
   - AreaOptimized_medium
@@ -114,7 +121,7 @@
   - PerfThresholdCarry
   - RuntimeOptimized
 
-* 支持所有的Vivado实现策略用户可灵活配置选择，支持的综合策略:
+* Flexible configuration of all Vivado implementation policies. Available implementation policies are as follows:
   - DEFAULT
   - Explore
   - ExplorePostRoutePhysOpt
@@ -144,101 +151,101 @@
   - Flow_RuntimeOptimized
   - Flow_Quick
 
-* 支持用户工程构建完成后，自动检查时序报告，并打印检查结果
+* Automatic timing report checking and check result printing after project building
 
-* 支持用户使用Vivado IP catalog自定义IP
+* IP customizing by using Vivado IP catalog
 
-* 支持PR校验
+* PR verification
 
-* 支持综合、实现、pr校验、目标文件生成操作`分步执行`
+* `Execution in steps` for synthesis, implementation, PR verification, and target file generation
 
-* 支持`定时执行`工程
+* `Scheduled execution` of projects
 
-* 支持用户代码、华为IP和Xilinx IP自动扫描机制
+* Automatic scanning of user code, Huawei IP, and Xilinx IP
 
-* 支持`一键式`创建用户目录
+* `One-click` user directory creation
 
-* SHELL的SHA256校验
+* SHELL SHA256 check
 
 
 ---
 
-<a name="用户仿真"></a>
+<a name="User Simulation"></a>
 
-# 用户仿真
+# User Simulation
 
-## 概述
-执行工程构建之前必须要`确认vivado工具及license安装完成`；用户仿真旨在通过验证平台证实已有的设计是否符合设计预期要求。
+## Overview
+Before executing a project, ensure that `Vivado and license are installed`. User simulation aims to verify whether the existing designs are as required through the verification platform.
 
-## 特性列表
+## Features
 
-* Testbench采用`systemverilog-2012标准语法`编写
+* `Standard SystemVerilog 2012 syntax` supported in Testbench
 
-* 支持代码覆盖率的收集以及报告的生成
-  - 收集代码覆盖率的文件可由用户自定义
+* Code coverage collection and report generation
+  - Customizable code coverage collection files
 
-* 支持axi4/axi4-lite部分验证特性
-  - 支持AXI4接口的burstlen`从1到255`
-  - 支持AXI4接口AW以及AR通道的outstanding特性
-  - 支持burst长度与实际长度的一致性检查
-  - 支持基于AXI4/AXI4-lite标准协议的部分覆盖率收集
-  - 支持基于AXI4/AXI4-lite标准协议的部分断言检查
+* AXI4 and AXI4-Lite verification features
+  - `burstlen` of the AXI4 interface supported `from 1 to 255`
+  - `outstanding` feature of the AXI4 AW and AR channels
+  - Consistency check of the `burst` length and the actual length
+  - Coverage collection based on the AXI4 and AXI4-Lite protocols
+  - Assertion check based on the AXI4 and AXI4-Lite protocols
 
-* 支持用户自定义激励
-  - 支持用户通过配置文件自定义激励
-  - 支持用户自己实现激励产生以及发送部分
+* Customizable incentives
+  - Customizable incentives based on configuration files
+  - Incentive generating and sending by users
 
-* 支持用户自定义callback方法
-  - 支持用户自定义callback task/function，为用户提供了实现自定义功能而无需修改testbench的方法
+* Customizable callback methods
+  - Customizable callback task/function (Modifying Testbench is not needed.)
 
-* 支持testbench与testcase分离
-  - 支持testbench与testcase分离，为用户提供了`自行设计、实现testcase而无需修改testbench`的方法
+* Decoupling of Testbench and Testcase
+  - `Testcase design and implementation without modifying Testbench`
 
-* 提供简易Scoreboard
-  - 支持基本的报文比对，报文比对基于stream_id以及fsn
+* Simple Scoreboard
+  - Basic packet comparison based on stream_id and fsn
 
-* 支持功能覆盖率的收集以及报告的生成
-  - 支持基于AXI4/AXI4-Lite的部分功能覆盖率
-  - 支持的功能覆盖率包括`burst_len, burst_size, burst_mode, strobe`等
+* Function coverage collection and report generation
+  - Function coverage based on the AXI4 and AXI4-Lite interfaces
+  - A function coverage of `burst_len, burst_size, burst_mode, and strobe`
 
-* 支持接口的断言
-  - 支持基于`AXI4/AXI4-Lite接口`的部分断言
-  - 断言主要覆盖X/Z状态的检查
+* Interface assertion
+  - Assertion based on the `AXI4 and AXI4-Lite interfaces`
+  - Assertion covering the X/Z status check
 
-* 支持调试工具
-  - 支持使用`Verdi/DVE/questasim/vivado`进行调试
+* Debugging tools
+  - `Verdi, DVE, QuestaSim, and Vivado` for debugging
 
-* 支持预编译Xilinx仿真库
-  - 支持预编译Xilinx的仿真库（包含unisims、unimacro以及secureip等）以提高仿真编译的速度
-
----
-
-
-<a name="应用测试"></a>
-
-# 应用测试
-
-## 概述
-
-在`fp1/software/`下，有一个app 工程子目录，用户可以通过一些脚本代码(应用程序)编译应用工程，对工程进行特性或功能测试。详细测试方法，用户可以参考该目录下面的readme进行测试。
+* Precompiling Xilinx simulation libraries
+  - unisims, unimacro, and secureip provided to improve the speed of simulation compilation
 
 ---
 
-<a name="工具环境"></a>
 
-# 工具环境
+<a name="Application Tests"></a>
 
-* 支持的工具和环境如下：
+# Application Tests
+
+## Overview
+
+In the `fp1/software/` directory, there is an application project subdirectory. You can compile an application project by using script code (applications) to test features or functions of the project. For details, see readme in this directory.
+
+---
+
+<a name="Tools and Environment"></a>
+
+# Tools and Environment
+
+* The supported tools and environment are as follows:
   - Linux `centos 7.3`  
   - Xilinx `Vivado 2017.2` 
   - Xilinx `SDAccel 2017.1` 
 
 ---
 
-<a name="license要求"></a>
+<a name="License Requirements"></a>
 
-# license要求
-* 需要的license如下      
+# License Requirements
+* The required licenses are as follows:      
   - SysGen  
   - PartialReconfiguration  
   - Simulationt  
@@ -249,7 +256,7 @@
   - EncryptedWriter_v2  
   - xcvu9p_bitgen  
 ---
-<a name="即将支持特性"></a>
+<a name="Features To Be Supported"></a>
 
-# 即将支持特性
+# Features To Be Supported
 * peer to peer

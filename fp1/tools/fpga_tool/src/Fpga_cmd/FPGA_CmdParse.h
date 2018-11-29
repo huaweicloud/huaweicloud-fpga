@@ -1,7 +1,7 @@
 /*-
  *   BSD LICENSE
  *
- *   Copyright(c)  2017-2018 Huawei Technologies Co., Ltd. All rights reserved.
+ *   Copyright(c)  2017 Huawei Technologies Co., Ltd. All rights reserved.
  *
  *   Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions
@@ -38,12 +38,10 @@
 #define FPGA_SLOT_INFO                      'S'
 #define HFI_ID_INFO                         'I'
 #define DISPLAY_FPGA_PHY_INFO               'D'
-#define COMMAND_STATUS_FUNCTION_TYPE        'T'
-#define COMMAND_STATUS_FUNCTION_LEVEL       'L'
 #define COMMAND_HELP_INFO                   'h'
 #define COMMAND_HELP_INFO1                  '?'
 
-#define HFI_TOOL_VERSION  "v106"
+#define HFI_TOOL_VERSION  "v105"
 
 #define INPUT_PARAS_NUM_MIN                     2
 #define INPUT_PARAS_FOR_PARSE_MIN               3
@@ -52,8 +50,6 @@
 #define INPUT_PARAS_FOR_IF_MAX                  4
 #define INPUT_PARAS_FOR_LF_MAX                  6
 #define INPUT_PARAS_FOR_CF_MAX                  4
-#define INPUT_PARAS_FOR_SF_MIN                 3
-#define INPUT_PARAS_FOR_SF_MAX                  8
 #define INPUT_OPTCODE_LENGTH_LIMIT              3 
 
 /************************* Define error code ************************************/
@@ -69,8 +65,6 @@
 #define SDKRTN_PARSE_INVALID_RANGE_ERROR         ( SDKRTN_PARSE_ERROR_BASE + 0x7 )
 #define SDKRTN_PARSE_INVALID_VALUE_ERROR         ( SDKRTN_PARSE_ERROR_BASE + 0x8 )
 #define SDKRTN_PARSE_INVALID_CODE_ERROR          ( SDKRTN_PARSE_ERROR_BASE + 0x9 )
-#define SDKRTN_PARSE_SF_LEVEL_ERROR              ( SDKRTN_PARSE_ERROR_BASE + 0xa )
-#define SDKRTN_PARSE_SF_TYPE_ERROR               ( SDKRTN_PARSE_ERROR_BASE + 0xb )
 #define PRINTED_COUNT                            0
 
 
@@ -88,11 +82,11 @@ UINT32 FPGA_ParseCommand( INT32 argc, INT8 *argv[] );
 UINT32 FPGA_ParseClearHfi( INT32 argc, INT8 *argv[] );
 
 
-extern INT8 *g_pacCommandEntryHelp[13];
+extern INT8 *g_pacCommandEntryHelp[12];
 extern INT8 *g_pacHfiLoadHelp[16];
 extern INT8 *g_pacHfiClearHelp[14];
 extern INT8 *g_pacInquireFpgaHelp[12];
 extern INT8 *g_pacInquireImageHelp[14];
 extern INT8 *g_pacInquireLedStatusHelp[14];
-extern INT8 *g_pacInquireFpgaStatusHelp[17];
+
 #endif

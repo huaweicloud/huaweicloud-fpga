@@ -1,7 +1,7 @@
 /*-
  *   BSD LICENSE
  *
- *   Copyright(c)  2017-2018 Huawei Technologies Co., Ltd. All rights reserved.
+ *   Copyright(c)  2017 Huawei Technologies Co., Ltd. All rights reserved.
  *
  *   Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions
@@ -55,26 +55,10 @@
 #define LOAD_ERR_NAME_LEN_MAX                    20
 #define QUIT_FLAG                                1              
 #define PARA_FLAG                                              1
-#define MAX_REG_NAME_BYTES                        64
-#define MAX_ALM_NAME_BYTES                        64
-#define MAX_ALM_DESC_BYTES                        256
 
 #define FPGA_OPS_STATUS_MASK                  0xffff0000
 #define FPGA_OPS_STATUS_SHIFT                 16
 #define FPGA_LOAD_ERROR_MASK                  0xffff
-
-#define BASIC_ALM_CODE_BASE                7000
-#define SDX_ALM_CODE_BASE                  5000
-
-/* 查询VM侧告警信息功能 SF */
-#define MAX_MBOX_BIT_LEN                 (64 * 8)
-
-#define LOGIC_TYPE_BIT                     8
-#define SF_LVL_FIRST_BYTE ulReserved[0]
-#define SF_LVL_VALUE_BYTE ulReserved[4]
-
-#define SF_TYPE_FIRST_BYTE ulReserved[4]
-#define SF_TYPE_VALUE_BYTE ulReserved[8]
 
 typedef struct tagFPGA_CMD_PARA
 {
@@ -90,7 +74,6 @@ typedef enum tagUSER_CMD_LIST{
     CMD_HFI_CLEAR,
     CMD_IMAGE_INQUIRE,
     CMD_RESOURSE_INQUIRE,
-    CMD_STATUS_INQUIRE,
     CMD_LED_STATUS_INQUIRE,
     CMD_TOOL_VERSION,
     CMD_PARSE_END
@@ -104,6 +87,5 @@ UINT32 FPGA_MonitorInquireFpgaImageInfo(void);
 UINT32 FPGA_MonitorDisplayDevice( void );
 UINT32 FPGA_MonitorInquireLEDStatus(void);
 UINT32 FPGA_MonitorClearHfi(void);
-UINT32 FPGA_MonitorAlmMsgs(void);
 
 #endif

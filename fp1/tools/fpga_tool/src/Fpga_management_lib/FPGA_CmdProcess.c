@@ -1,7 +1,7 @@
 /*-
  *   BSD LICENSE
  *
- *   Copyright(c)  2017-2018 Huawei Technologies Co., Ltd. All rights reserved.
+ *   Copyright(c)  2017 Huawei Technologies Co., Ltd. All rights reserved.
  *
  *   Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions
@@ -354,57 +354,6 @@ UINT32 FPGA_MgmtInit( void )
     
     return SDKRTN_PROCESS_SUCCESS;
 }
-
-/*******************************************************************************
-Function     : FPGA_MgmtQueryAlmMsgInit
-Description  : Initialize the Query FPGA alarm status comand
-Input        : INT8 *pcHfiId
-Output       : MBOX_MSG_DATA *punMsg, UINT32 *pulLen
-Return       : 0:sucess other:fail
-*******************************************************************************/
-UINT32 FPGA_MgmtQueryAlmMsgInit( UINT8 ucAlmtype, UINT8 ucAlmLevel, MBOX_MSG_DATA *punMsg, UINT32 *pulLen)
-{
-    SFMsgReq *pstrMsgReq = NULL;
-    UINT16 usPayLoadLen = 0;
-
-    if ( NULL == punMsg )
-    {
-        LOG_ERROR( "FPGA_MgmtLoadMsgInit pstMsg is NULL" );
-        return SDKRTN_PROCESS_INTPUT_ERROR;
-    }
-
-    if ( NULL == pulLen )
-    {
-        LOG_ERROR( "FPGA_MgmtLoadMsgInit pulLen is NULL" );
-        return SDKRTN_PROCESS_INTPUT_ERROR;
-    }
-
-    /* Convert the message payload into a structure */
-    pstrMsgReq = ( void * )punMsg->strCmdMsgInfo.aucBody;
-    usPayLoadLen = sizeof( HfiLoadMsgReq );
-
-    /* Fill in command header */
-    punMsg->strCmdMsgInfo.strMsgHead.ulVersion = HFI_CMD_API_VERSION;
-    punMsg->strCmdMsgInfo.strMsgHead.ulOpt = HFI_CMD_QUERY_STATUS;
-    punMsg->strCmdMsgInfo.strMsgHead.ulId = HFI_CMD_MSG_FLAG;
-    
-    /* Fill payload lenth and flag */
-    punMsg->strCmdMsgInfo.strMsgHead.usLength = usPayLoadLen;
-    punMsg->strCmdMsgInfo.strMsgHead.usFlag = SEND_MSG_LENGTH_FLAG;
-
-    /* Fill in the message body */
-
-    pstrMsgReq->ucSFLevel = ucAlmLevel;
-    pstrMsgReq->ucSFType = ucAlmtype;
-    
-    pstrMsgReq->ulFpgaMsgFlag = FPGA_MSG_FLAG_INIT_VALUE;
-    
-    /* Get message lenth */
-    *pulLen = sizeof( HFI_CMD_HEAD ) + usPayLoadLen;
-
-    return SDKRTN_PROCESS_SUCCESS;
-}
-
 
 /*******************************************************************************
 Function     : FPGA_MgmtLoadMsgInit
@@ -821,114 +770,6 @@ UINT32 FPGA_MgmtProcCmd( UINT32 ulSlotIndex, MBOX_MSG_DATA *punMsgSend,  MBOX_MS
 
     close( lFd );
     return SDKRTN_PROCESS_SUCCESS;
-}
-
-/*******************************************************************************
-Function     : FPGA_DoMgmtQueryAlmMsgs
-Description  : Query FPGA alarm messages
-Input        : UINT32 ulSlotIndex, UINT8 Almtype, UINT8 AlmLevel, UINT8 *acAlmInfo,  UINT32 ulAlmLen
-Output       : UINT8 *acAlmInfo
-Return       : 0:sucess other:fail
-*******************************************************************************/
-UINT32 FPGA_DoMgmtQueryAlmMsgs( UINT32 ulSlotIndex, UINT8 Almtype, UINT8 AlmLevel, UINT8 *acAlmInfo,  UINT32 ulAlmLen)
-{
-    UINT32 ulRet = SDKRTN_PROCESS_SUCCESS;
-    UINT32 ulLen = 0;
-    UINT32 ulIntIdx = 0;
-    UINT32 ulByteIdx = 0;
-    UINT32 ulBitIdx = 0;
-    MBOX_MSG_DATA unMsgSend = { { { 0 } } };
-    MBOX_MSG_DATA unMsgRsp = { { { 0 } } };
-
-    if ( ulAlmLen < 320 )
-    {
-        LOG_ERROR( "ulAlmLen is too short for 320 bit" );
-        return SDKRTN_PROCESS_INI_ALM_MSG_ERROR;
-    }
-
-    /* Initialize message */
-    ulRet = FPGA_MgmtQueryAlmMsgInit(Almtype, AlmLevel,  &unMsgSend, &ulLen);
-    if ( OK != ulRet )
-    {
-        LOG_ERROR( "FpgaLoadMsgInit failed" );
-        return SDKRTN_PROCESS_INI_ALM_MSG_ERROR;
-    }
-
-    /* Send command to PF */
-    ulRet = FPGA_MgmtProcCmd( ulSlotIndex, &unMsgSend, &unMsgRsp, &ulLen );
-    if ( OK != ulRet )
-    {
-        LOG_ERROR( "FPGA_MgmtProcCmd failed, ulRet = 0x%x", ulRet );
-        return SDKRTN_PROCESS_SEND_CMD_MSG_ERROR;
-    }
-    /* Fill in the message body , big endian data to small endian mailbox */
-
-    for ( ulIntIdx =0; ulIntIdx< 10; ulIntIdx++)
-    {
-        for( ulByteIdx = 0; ulByteIdx < 4; ulByteIdx++ )       
-        {        
-            for ( ulBitIdx =0; ulBitIdx < 8; ulBitIdx++ )
-            {
-                acAlmInfo[ulIntIdx * 8 * 4 + 8 * ulByteIdx + ulBitIdx] = 
-                    BIT_OF_BYTE( (7 - ulBitIdx) , 
-                    ((UINT8)(unMsgRsp.strCmdMsgInfo.aucBody[8 + ( 3 - ulByteIdx ) + 4 * ulIntIdx])));
-            }
-        }
-    }
-    
-    return SDKRTN_PROCESS_SUCCESS;
-}
-
-/*******************************************************************************
-Function     : FPGA_MgmtQueryAlmMsgs
-Description  : Query FPGA alarm messages
-Input        : UINT32 ulSlotIndex
-Output       : None
-Return       : 0:sucess other:fail
-*******************************************************************************/
-UINT32 FPGA_MgmtQueryAlmMsgs( UINT32 ulSlotIndex, UINT8 Almtype, UINT8 AlmLevel, UINT8 *acAlmInfo,  UINT32 ulAlmLen)
-{
-    UINT32 ulRet = SDKRTN_PROCESS_ERROR_BASE;
-    INT32 lFd = 0;
-    UINT32 QueryErrCode = SDKRTN_PROCESS_SUCCESS;
-    
-    if ( ulSlotIndex >= FPGA_SLOT_MAX )
-    {
-        fprintf(stdout, "[***TIPS***]Please input the correct slot number.\r\n" );
-        return SDKRTN_PROCESS_INTPUT_ERROR;
-    }
-
-    if ( ulAlmLen < MBOX_MSG_DATA_LEN * 8 )
-    {
-        LOG_ERROR( "ulAlmLen is below 64 * 8.\r\n" );
-        return SDKRTN_PROCESS_INTPUT_ERROR;
-    }
-
-
-    /* Set and recognize the file Wlock */
-    ulRet = FPGA_MgmtOpsMutexWlock( ulSlotIndex, &lFd );
-    if ( OK != ulRet )
-    {
-        LOG_ERROR( "FPGA_MgmtLoadHfiImage wlock failed" );
-        return SDKRTN_PROCESS_Mutex_WLOCK_ERROR;
-    }
-
-    ulRet = FPGA_DoMgmtQueryAlmMsgs(ulSlotIndex, Almtype, AlmLevel, acAlmInfo, ulAlmLen);
-    if ( OK != ulRet )
-    {
-        LOG_ERROR( "FPGA_DoMgmtQueryAlmMsgs failed" );
-        QueryErrCode = ulRet;
-    }
-
-    /* Unlock the file Wlock and close the file*/
-    ulRet = FPGA_MgmtOpsMutexUnlock( lFd );
-    if ( OK != ulRet )
-    {
-        LOG_ERROR( "FPGA_MgmtLoadHfiImage unlock failed" );
-        return SDKRTN_PROCESS_Mutex_UNLOCK_ERROR;
-    }
-
-    return QueryErrCode;
 }
 
 /*******************************************************************************

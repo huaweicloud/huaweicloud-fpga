@@ -1,7 +1,7 @@
 /*-
  *   BSD LICENSE
  *
- *   Copyright(c)  2017-2018 Huawei Technologies Co., Ltd. All rights reserved.
+ *   Copyright(c)  2017 Huawei Technologies Co., Ltd. All rights reserved.
  *
  *   Redistribution and use in source and binary forms, with or without
  *   modification, are permitted provided that the following conditions
@@ -64,7 +64,6 @@
 #define LOAD_AEIID_CHECK_ERR                     9  /* AEI ID is invalid */
 #define CLEAR_GET_LOCK_BUSY                101  /* Clear command Get lock busy */
 
-#define BIT_OF_BYTE(x,y) ((y >> x) & 0x1)
 /************************* Define error code ************************************/
 #define PROCESS_ERROR                          6
 #define SDKRTN_PROCESS_SUCCESS                 0
@@ -82,11 +81,6 @@
 #define SDKRTN_PROCESS_SPRINTF_FAIL            ( SDKRTN_PROCESS_ERROR_BASE + 0xB )
 #define SDKRTN_PROCESS_SHELL_TYPE_ERROR        ( SDKRTN_PROCESS_ERROR_BASE + 0xC )
 #define SDKRTN_PROCESS_AEIID_ERROR             ( SDKRTN_PROCESS_ERROR_BASE + 0xD )
-#define SDKRTN_PROCESS_Mutex_WLOCK_ERROR       ( SDKRTN_PROCESS_ERROR_BASE + 0xE )
-#define SDKRTN_PROCESS_Mutex_UNLOCK_ERROR      ( SDKRTN_PROCESS_ERROR_BASE + 0xF )
-#define SDKRTN_PROCESS_SEND_CMD_MSG_ERROR      ( SDKRTN_PROCESS_ERROR_BASE + 0x10 )
-#define SDKRTN_PROCESS_INI_ALM_MSG_ERROR       ( SDKRTN_PROCESS_ERROR_BASE + 0x11 )
-
 
 typedef struct tagFPGA_MBOX_OPT_INFO
 {
@@ -122,6 +116,7 @@ typedef union tagMBOX_MSG_DATA
 }MBOX_MSG_DATA;
 
 
+
 typedef struct tagHfiLoadMsgReq
 {
     INT8          acHfiId[HFI_ID_LEN_MAX];
@@ -129,24 +124,12 @@ typedef struct tagHfiLoadMsgReq
     UINT32      ulReserved;
 } HfiLoadMsgReq;
 
-
-
-typedef struct tagSFMsgReq
-{
-    UINT8      ucSFType;
-    UINT8      ucSFLevel;
-    UINT32      ulFpgaMsgFlag;
-} SFMsgReq;
-
-
-
 typedef enum tagFpgaCmdListForHost
 {
     HFI_CMD_ERROR = 0,
     HFI_CMD_LOAD = 1,
     HFI_CMD_INQUIRE = 2,
     HFI_CMD_CLEAR = 3,
-    HFI_CMD_QUERY_STATUS = 4,
     HFI_CMD_END
 }FpgaCmdListForHost;
 
